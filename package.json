@@ -1,5 +1,5 @@
 {
-    "name": "terminal-live",
+    "name": "@baigao_h/terminal-live",
     "version": "0.1.0",
     "description": "A small game running on the terminal.",
     "main": "dist/main.js",

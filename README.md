@@ -19,7 +19,7 @@
 ## Installation
 
 ```bash
-npm install -g terminal-live
+npm install -g @baigao_h/terminal-live
 ```
 
 ## Usage

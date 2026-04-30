@@ -19,7 +19,7 @@
 ## 安装
 
 ```bash
-npm install -g terminal-live
+npm install -g @baigao_h/terminal-live
 ```
 ## 使用
 ```bash
