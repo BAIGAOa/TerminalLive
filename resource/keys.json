@@ -1,0 +1,65 @@
+{
+  "keys": [
+    {
+      "keyName": "e",
+      "operate": "exit-game",
+      "category": "menu"
+    },
+    {
+      "keyName": "s",
+      "operate": "start-game",
+      "category": "menu"
+    },
+    {
+      "keyName": "c",
+      "operate": "enter-config",
+      "category": "menu"
+    },
+    {
+      "keyName": "q",
+      "operate": "return-to-mainInterface",
+      "category": [
+        "game",
+        "config",
+        "language",
+        "achievement"
+      ]
+    },
+    {
+      "keyName": "return",
+      "operate": "next-round",
+      "category": "game"
+    },
+    {
+      "keyName": "l",
+      "operate": "enter-language",
+      "category": "menu"
+    },
+    {
+      "keyName": "a",
+      "operate": "enter-achievement",
+      "category": "menu"
+    },
+    {
+      "keyName": "p",
+      "operate": "toggle-console",
+      "category": [
+        "menu",
+        "game",
+        "config",
+        "achievement",
+        "language"
+      ]
+    },
+    {
+      "keyName": "r",
+      "operate": "show-attributes",
+      "category": "game"
+    },
+    {
+      "keyName": "t",
+      "operate": "show-status",
+      "category": "game"
+    }
+  ]
+}

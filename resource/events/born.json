@@ -1,0 +1,8 @@
+{
+  "type": "BirthEvent",
+  "id": "born",
+  "nameKey": "events.born",
+  "rangeKey": ["0-1"],
+  "weight": 100,
+  "once": true
+}

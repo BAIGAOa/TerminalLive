@@ -1,0 +1,15 @@
+{
+  "language": "zh_CN",
+  "player": {
+    "playerName": "Fuck",
+    "age": 0,
+    "health": 80,
+    "height": 1.55,
+    "weight": 45,
+    "angerValue": 0,
+    "excitationValue": 0,
+    "depressionValue": 0,
+    "weakValue": 0,
+    "fortune": 0
+  }
+}

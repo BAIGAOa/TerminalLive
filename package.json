@@ -1,0 +1,54 @@
+{
+    "name": "terminal-live",
+    "version": "0.1.0",
+    "description": "A small game running on the terminal.",
+    "main": "dist/main.js",
+    "bin": {
+        "terminal-live": "dist/main.js"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "README_ZH.md",
+        "LICENSE",
+        "resource"
+    ],
+    "scripts": {
+        "build": "tsc --locale zh-CN",
+        "start": "node dist/main.js",
+        "dev": "npm run build && npm run start",
+        "watch": "tsc --watch --locale zh-CN",
+        "clean": "rm -rf dist",
+        "runtsc": "npx tsx src/main.tsx"
+    },
+    "keywords": [
+        "terminal",
+        "live",
+        "ink",
+        "react",
+        "tui",
+        "cli"
+    ],
+    "author": "BAIGAO",
+    "license": "AGPL-3.0",
+    "type": "module",
+    "engines": {
+        "node": ">=18"
+    },
+    "devDependencies": {
+        "@types/lodash-es": "^4.17.12",
+        "@types/node": "^20.19.39",
+        "@types/react": "^19.2.14",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "di-wise": "^0.2.8",
+        "ink": "^7.0.1",
+        "ink-select-input": "^6.2.0",
+        "ink-text-input": "^6.0.0",
+        "lodash-es": "^4.18.1",
+        "os-locale": "^8.0.0",
+        "react": "^19.2.4",
+        "zod": "^4.3.6"
+    }
+}
