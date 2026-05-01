@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import React from 'react';
 import { Box, render, Text } from 'ink';
 import MainInterface from './ui/MainInterface.js';
