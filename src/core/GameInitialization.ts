@@ -14,6 +14,8 @@ import ModPluginLoader from "./mod/ModPluginLoader.js";
 import ConsoleStore from "./console/ConsoleStore.js";
 import { container } from "../Container.js";
 import { Screens } from "../content/Screens.js";
+import EventHistory from "../event/EventHistory.js";
+import { ArchiveStore } from "./archive/ArchiveStore.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -26,6 +28,8 @@ export default class GameInitialization {
 
   public monitor!: KeyboardMonitor;
   public player!: Player;
+  public eventHistory: EventHistory;
+  public archiveStore: ArchiveStore;
 
   public modPluginLoader: ModPluginLoader;
 
@@ -36,11 +40,14 @@ export default class GameInitialization {
     this.achievementStore = inject(AchievementStore);
     this.modLoader = inject(ModLoader);
     this.modRegistry = inject(ModRegistry);
+    this.eventHistory = inject(EventHistory);
+    this.archiveStore = inject(ArchiveStore);
     this.modPluginLoader = inject(ModPluginLoader);
   }
 
   private loadModPlugins(): void {
     this.modPluginLoader.setPlayer(this.player);
+    this.archiveStore.setPlayer(this.player);
     this.modPluginLoader.loadEnabled();
     const enabledMods = this.configStore.getEnabledMods();
     for (const modName of enabledMods) {
@@ -87,6 +94,7 @@ export default class GameInitialization {
     container.resolve(ConsoleStore);
     await this.configurationInitialization();
     this.loadPlayer();
+    this.eventHistory.load();
     this.loadContent();
     this.loadModPlugins();
     this.initGame();

@@ -93,5 +93,16 @@
     "playerConfig.noCategorySelected": "← 先にカテゴリを選択してください",
     "playerConfig.editHint": "Enterで保存、ESCでキャンセル",
     "playerConfig.saveSuccess": "属性を保存しました",
-    "mod.message.loadSuccess": "Mod {modName} を読み込みました"
+    "mod.message.loadSuccess": "Mod {modName} を読み込みました",
+    "main.archive": "セーブ管理",
+    "archive.title": "セーブ管理",
+    "archive.empty": "セーブがありません。S で現在のゲームを保存。",
+    "archive.saveSuccess": "ゲームを保存しました。",
+    "archive.loadSuccess": "セーブを読み込みました。再起動します...",
+    "archive.deleteConfirm": "このセーブを削除しますか？Enter で確認、Esc でキャンセル。",
+    "archive.playerName": "プレイヤー",
+    "archive.age": "年齢",
+    "archive.savedAt": "保存日時",
+    "archive.hint": "S: 保存 | Enter: 読込 | D: 削除 | Esc: 戻る",
+    "key-enter-archive": "セーブ管理を開く"
 }

@@ -93,5 +93,16 @@
     "playerConfig.noCategorySelected": "← Select a category first",
     "playerConfig.editHint": "Enter to save, ESC to cancel",
     "playerConfig.saveSuccess": "Attribute saved and persisted",
-    "mod.message.loadSuccess": "Mod {modName} loaded successfully"
+    "mod.message.loadSuccess": "Mod {modName} loaded successfully",
+    "main.archive": "Save/Load",
+    "archive.title": "Save Management",
+    "archive.empty": "No saves yet. Press S to save current game.",
+    "archive.saveSuccess": "Game saved successfully.",
+    "archive.loadSuccess": "Save loaded. Game will now restart...",
+    "archive.deleteConfirm": "Delete this save? Press Enter to confirm, Esc to cancel.",
+    "archive.playerName": "Player",
+    "archive.age": "Age",
+    "archive.savedAt": "Saved",
+    "archive.hint": "S: Save | Enter: Load | D: Delete | Esc: Back",
+    "key-enter-archive": "Enter Archive"
 }

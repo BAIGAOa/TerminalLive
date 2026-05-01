@@ -93,5 +93,16 @@
     "playerConfig.noCategorySelected": "← 请先选择一个分类",
     "playerConfig.editHint": "Enter 保存，ESC 取消",
     "playerConfig.saveSuccess": "属性已保存并持久化",
-    "mod.message.loadSuccess": "模组 {modName} 加载成功"
+    "mod.message.loadSuccess": "模组 {modName} 加载成功",
+    "main.archive": "存档管理",
+    "archive.title": "存档管理",
+    "archive.empty": "暂无存档。按 S 保存当前游戏。",
+    "archive.saveSuccess": "游戏已保存。",
+    "archive.loadSuccess": "存档已加载，游戏即将重启...",
+    "archive.deleteConfirm": "确认删除此存档？按 Enter 确认，Esc 取消。",
+    "archive.playerName": "玩家",
+    "archive.age": "年龄",
+    "archive.savedAt": "保存时间",
+    "archive.hint": "S: 保存 | Enter: 加载 | D: 删除 | Esc: 返回",
+    "key-enter-archive": "进入存档管理"
 }

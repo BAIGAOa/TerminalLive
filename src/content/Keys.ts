@@ -21,6 +21,7 @@ export default class Keys {
   public static toggleConsole: Key;
   public static showAttributes: Key;
   public static showStatus: Key;
+  public static enterArchive: Key;
 
   public static load(): void {
     if (!this.init) {
@@ -74,6 +75,11 @@ export default class Keys {
 
       this.showStatus = new Key("show-status", () => {
         viveGame.setView(GameViveModes.status);
+      });
+
+      this.enterArchive = new Key("enter-archive", () => {
+        highLight.setActive("archive");
+        setTimeout(() => screen.setScene(SCENES.archive), 200);
       });
     }
   }

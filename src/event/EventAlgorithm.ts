@@ -41,6 +41,7 @@ export default class EventAlgorithm {
   ];
 
   private modPluginLoader: ModPluginLoader;
+  
 
   constructor() {
     this.eventCenter = inject(EventCenter);

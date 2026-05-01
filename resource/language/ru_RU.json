@@ -93,5 +93,16 @@
     "playerConfig.noCategorySelected": "← Сначала выберите категорию",
     "playerConfig.editHint": "Enter для сохранения, ESC для отмены",
     "playerConfig.saveSuccess": "Атрибут сохранён",
-    "mod.message.loadSuccess": "Мод {modName} загружен"
+    "mod.message.loadSuccess": "Мод {modName} загружен",
+    "main.archive": "Сохранения",
+    "archive.title": "Управление сохранениями",
+    "archive.empty": "Сохранений нет. Нажмите S, чтобы сохранить игру.",
+    "archive.saveSuccess": "Игра сохранена.",
+    "archive.loadSuccess": "Сохранение загружено. Игра перезапустится...",
+    "archive.deleteConfirm": "Удалить это сохранение? Enter — подтвердить, Esc — отмена.",
+    "archive.playerName": "Игрок",
+    "archive.age": "Возраст",
+    "archive.savedAt": "Сохранено",
+    "archive.hint": "S: Сохранить | Enter: Загрузить | D: Удалить | Esc: Назад",
+    "key-enter-archive": "Открыть сохранения"
 }

@@ -179,4 +179,16 @@ export default class AchievementStore {
     }
     this.emitChange();
   }
+
+  public saveFromArchive(
+    unlocked: Array<{ id: string; unlockedAt: number | null }>,
+  ): void {
+    for (const { id, unlockedAt } of unlocked) {
+      const achievement = this.achievements.get(id);
+      if (achievement) {
+        achievement.unlocked = true;
+        achievement.unlockedAt = unlockedAt;
+      }
+    }
+  }
 }

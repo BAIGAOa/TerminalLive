@@ -226,6 +226,45 @@ Install `@baigao_h/terminal-live` as a dev dependency to get full type definitio
 
 Enabled mods are persisted in `resource/config.json` under `enabledMods`.
 
+## Save System
+
+Saves are stored in `~/.archive_live/` as timestamped JSON files (e.g. `2026-05-01-12-00.json`).
+
+### Save Contents
+
+Each save contains a complete snapshot of the game state:
+
+- **Player attributes** — name, age, health, height, weight, emotions, fortune
+- **Event history** — which events have been triggered or blocked
+- **Achievement progress** — which achievements are unlocked
+- **Game configuration** — language and enabled mods
+
+### Saving
+
+Open **Save Management** from the main menu. Press `S` to save the current game. The file is named automatically with the current timestamp.
+
+### Loading
+
+1. Open **Save Management** from the main menu
+2. Use `↑` / `↓` to select a save
+3. Press `Enter` to load
+
+Loading writes the saved data back to the game's configuration files and exits. **Restart the game** to continue from the loaded state.
+
+### Deleting
+
+Select a save and press `D`. Confirm with `Enter` or cancel with `Esc`.
+
+### Key bindings in Save Management
+
+| Key | Action |
+|-----|--------|
+| `S` | Save current game |
+| `Enter` | Load selected save |
+| `D` | Delete selected save |
+| `↑` / `↓` | Navigate saves |
+| `Esc` | Return to main menu |
+
 ## Development
 
 ```bash

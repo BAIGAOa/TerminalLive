@@ -10,6 +10,7 @@ import AchievementScreen from "../ui/Achievement.js";
 import Config from "../ui/Config.js";
 import PlayerConfig from "../ui/PlayerConfig.js";
 import ModManager from "../ui/ModManager.js";
+import Archive from "../ui/Archive.js";
 
 export class Screens {
   private static init = false;
@@ -51,6 +52,13 @@ export class Screens {
       component: AchievementScreen,
       nameKey: "main.achievement",
       highlightId: "achievement",
+    });
+
+    screenReg.register({
+      scene: SCENES.archive,
+      component: Archive,
+      nameKey: "main.archive",
+      highlightId: "archive",
     });
 
     const settingReg = container.resolve(SettingRegistry);
