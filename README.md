@@ -65,23 +65,165 @@ All persistent data is stored under the resource/ directory inside the installat
 
 Player attributes (name, age, health, emotions, fortune) can be edited in-game through Player Config.
 
+
 ## Mods
 
-Mods live in ~/.mod_live/<mod-name>/. Each mod can provide:
+Mods are stored in `~/.mod_live/<mod-name>/`. Each mod can add events, translations, custom logic via plugins, and even custom UI screens.
 
-· An index.js entry that implements the ModPlugin interface (hooks, custom event types).
-· JSON event definitions in an events/ folder.
-· Language files in a language/ folder.
-· A mod.json manifest (name, version, description, author).
+### Directory Structure
 
-Enable or disable mods in the Mod Manager (Settings > Mod Manager). Changes require a restart.
+```
+~/.mod_live/
+  my-mod/
+    mod.json          # Mod manifest (required)
+    index.js          # Plugin entry (optional)
+    events/           # JSON event definitions (optional)
+      custom.json
+    language/         # Translation files (optional)
+      en_US.json
+      zh_CN.json
+```
 
-For developers, the mod API exposes:
+### Manifest (`mod.json`)
 
-· Lifecycle hooks (onInit, onPlayerUpdate, onIncidentTrigger, …)
-· An EventBus for custom events.
-· ConfigStore for persistence.
-· A createEventClass helper to define new incident types.
+```json
+{
+  "name": "my-mod",
+  "version": "1.0.0",
+  "description": "An example mod",
+  "main": "index.js",
+  "author": "your-name"
+}
+```
+
+### JSON Event Definitions
+
+Place `.json` files in `events/`. Each file defines one event instance:
+
+```json
+{
+  "type": "BirthEvent",
+  "id": "my-custom-event",
+  "nameKey": "events.myEvent",
+  "rangeKey": ["10-50"],
+  "weight": 0.3,
+  "once": false,
+  "predecessorEvent": null,
+  "excludedIds": [],
+  "postEvent": null
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | string | Event class name (must be registered via `registerEventTypes` or built-in) |
+| `id` | string | Unique event identifier |
+| `nameKey` | string | Translation key for in-game log display |
+| `rangeKey` | string[] | Age ranges where this event can trigger (e.g. `["5-12", "18-25"]`) |
+| `weight` | number | Random weight (higher = more likely) |
+| `once` | boolean \| string[] | `true` = trigger once globally. Array of ranges = trigger once per range |
+| `predecessorEvent` | string \| null | This event only triggers if the predecessor has been triggered |
+| `excludedIds` | string[] | Events that become blocked when this event triggers |
+| `postEvent` | string \| object[] \| null | Event(s) scheduled after this one triggers |
+
+### Plugin Entry (`index.js`)
+
+The entry file exports a `ModPlugin` object. The game calls its methods at specific lifecycle points.
+
+```javascript
+module.exports = {
+  id: "my-mod",
+
+  // Register custom event types (optional)
+  registerEventTypes(registry, ctx) {
+    const MyEvent = ctx.createEventClass({
+      apply(player, self) {
+        player.fortune += 100;
+        ctx.logger.info("Custom event triggered!");
+      },
+      getWeight(player) {
+        return player.angerValue > 50 ? 0.6 : 0.1;
+      },
+    });
+    registry.register("MyEvent", MyEvent);
+  },
+
+  // Lifecycle hooks (optional)
+  hooks: {
+    onInit(ctx) {
+      ctx.logger.info("Mod loaded!");
+      // Register a custom UI screen
+      ctx.registerScreen({
+        scene: "myModSettings",
+        component: MySettingsComponent,
+        nameKey: "myMod.settingsTitle",
+        highlightId: "mySettings",
+      });
+    },
+
+    onPlayerUpdate(player, ctx) {
+      if (player.health < 30) {
+        ctx.logger.warn("Low health!");
+      }
+    },
+
+    onIncidentTrigger(incident, player, ctx) {
+      // Return false to block an event
+      if (incident.id === "academic-stress" && player.angerValue > 80) {
+        return false;
+      }
+    },
+
+    onIncidentExecuted(incident, player, ctx) {
+      ctx.logger.info(`Event completed: ${incident.id}`);
+    },
+  },
+};
+```
+
+### ModContext API
+
+The `ctx` object provided to all hooks and callbacks:
+
+| Property / Method | Description |
+|-------------------|-------------|
+| `ctx.eventBus` | Global event bus. Use `on(event, callback)` and `emit(event, data)`. Built-in events: `player:updated`, `incident:executed`, `achievement:unlocked`. |
+| `ctx.configStore` | Persistent config storage. Use `getSnapshot()` and `update(partial)`. |
+| `ctx.logger` | Logging: `info(msg)`, `warn(msg)`, `error(msg)`. Output appears in terminal stdout. |
+| `ctx.getPlayer()` | Returns the current `Player` instance. |
+| `ctx.createEventClass(def)` | Creates a dynamic `Incident` subclass from `{ apply, getWeight? }`. Returns a constructor to pass to `registry.register()`. |
+| `ctx.registerScreen(entry)` | Registers a custom UI screen: `{ scene, component, nameKey, highlightId? }`. Scene ID is an arbitrary string. |
+| `ctx.navigateTo(scene)` | Navigates to a registered scene (built-in: `"game"`, `"config"`, `"language"`, `"achievement"`, `"menu"`). |
+
+### Lifecycle Hooks
+
+| Hook | When Called | Use Case |
+|------|-------------|----------|
+| `onInit(ctx)` | After mod is loaded, before game starts | Initialization, event subscriptions, screen registration |
+| `onPlayerCreated(player, ctx)` | After player object is created | Modify initial player state |
+| `onPlayerUpdate(player, ctx)` | Every round, after player.update() | Per-turn side effects, stat monitoring |
+| `onIncidentTrigger(incident, player, ctx)` | Before an incident is executed | Block events (return `false`), conditional logic |
+| `onIncidentExecuted(incident, player, ctx)` | After an incident has executed | Logging, follow-up actions |
+
+### Developing Mods with TypeScript
+
+```bash
+cd ~/.mod_live/my-mod
+npm init -y
+npm install --save-dev typescript @baigao_h/terminal-live
+npx tsc --module commonjs --target es2022 --outDir . index.ts
+```
+
+Install `@baigao_h/terminal-live` as a dev dependency to get full type definitions for `ModPlugin`, `ModContext`, `Player`, `Incident`, etc.
+
+### Enabling Mods
+
+1. Place your mod directory in `~/.mod_live/`
+2. Launch the game, go to **Settings → Mod Manager**
+3. Toggle your mod on (press Enter)
+4. Restart the game
+
+Enabled mods are persisted in `resource/config.json` under `enabledMods`.
 
 ## Development
 

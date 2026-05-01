@@ -7,6 +7,9 @@ import ConfigStore from "../store/ConfigStore.js";
 import Player from "../../world/Player.js";
 import { Incident, IncidentParameter } from "../../world/Incident.js";
 import { ModContext, ModPlugin, ModEventClassDef } from "./types.js";
+import { ScreenRegistry } from "../store/ScreenRegistry.js";
+import { container } from "../../Container.js";
+import ScreenStore from "../store/ScreenStore.js";
 
 // 单个钩子函数的存储条目，包含函数本身和它绑定的 ModContext
 interface HookEntry {
@@ -25,6 +28,7 @@ export default class ModPluginLoader {
   private eventBus: EventBus;
   // 持久化配置存储
   private configStore: ConfigStore;
+  private screenRegistry: ScreenRegistry;
 
   // 当前玩家引用，由外部调用 setPlayer 注入
   private playerRef: Player | null = null;
@@ -41,6 +45,7 @@ export default class ModPluginLoader {
     this.eventTypeRegistry = inject(EventTypeRegistry);
     this.eventBus = inject(EventBus);
     this.configStore = inject(ConfigStore);
+    this.screenRegistry = inject(ScreenRegistry);
   }
 
   // 设置当前玩家对象，供模组上下文中的 getPlayer 使用
@@ -174,6 +179,18 @@ export default class ModPluginLoader {
       },
       // 动态创建 Incident 子类，使用传入的 ModEventClassDef 作为行为定义
       createEventClass: (def: ModEventClassDef) => this.makeEventClass(def),
+
+      registerScreen: (entry) => {
+        this.screenRegistry.register({
+          scene: entry.scene,
+          component: entry.component,
+          nameKey: entry.nameKey,
+          highlightId: entry.highlightId ?? entry.scene,
+        });
+      },
+      navigateTo: (scene) => {
+        container.resolve(ScreenStore).setScene(scene);
+      },
     };
   }
 

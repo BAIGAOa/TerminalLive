@@ -8,7 +8,6 @@ import {
 import KeyboardMonitor from "../core/keys/KeyboardMonitor.js";
 import KeysCenter from "../core/keys/KeysCenter.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import { Scenes } from "../types/Scenes.js";
 
 // ============================================================
 // 类型定义
@@ -26,7 +25,7 @@ export type FocusPanel = "left" | "right";
 
 export interface SceneMenuItem {
   label: string;
-  value: Scenes;
+  value: string;
 }
 
 export interface ConfigItem {
@@ -47,7 +46,7 @@ export interface ConfigData {
   leftItems: SceneMenuItem[];
   rightItems: ConfigItem[];
   focus: FocusPanel;
-  activeScene: Scenes | null;
+  activeScene: string | null;
   isLeftFocused: boolean;
   isRightFocused: boolean;
   t: (key: string, params?: Record<string, string | number>) => string;
@@ -108,7 +107,7 @@ function normalizeKey(
 
 /** 场景名翻译——回退到枚举值 */
 function translateScene(
-  scene: Scenes,
+  scene: string,
   t: (key: string, params?: Record<string, string | number>) => string,
 ): string {
   const key = `scene.${scene}`;
@@ -120,10 +119,10 @@ function translateScene(
 }
 
 /** 从 KeysConfig 提取所有不重复的场景 */
-function buildSceneMenu(config: KeysConfig): Scenes[] {
-  const set = new Set<Scenes>();
+function buildSceneMenu(config: KeysConfig): string[] {
+  const set = new Set<string>();
   for (const item of config.keys) {
-    const categories: Scenes[] = Array.isArray(item.category)
+    const categories: string[] = Array.isArray(item.category)
       ? item.category
       : [item.category];
     for (const cat of categories) {
@@ -136,11 +135,11 @@ function buildSceneMenu(config: KeysConfig): Scenes[] {
 /** 从 KeysConfig 构建指定场景的 UI 列表 */
 function buildFilteredItems(
   config: KeysConfig,
-  scene: Scenes,
+  scene: string,
   t: (key: string, params?: Record<string, string | number>) => string,
 ): ConfigItem[] {
   const filtered = config.keys.filter((item) => {
-    const categories: Scenes[] = Array.isArray(item.category)
+    const categories: string[] = Array.isArray(item.category)
       ? item.category
       : [item.category];
     return categories.includes(scene);
@@ -172,7 +171,7 @@ export function useConfig(
   const { t } = useI18n();
   const [status, setStatus] = useState<ConfigStatus>({ kind: "loading" });
   const [focus, setFocus] = useState<FocusPanel>("left");
-  const [activeScene, setActiveScene] = useState<Scenes | null>(null);
+  const [activeScene, setActiveScene] = useState<string | null>(null);
   const jsonParser = useRef(new JSONparsing("keys.json"));
 
   // 加载配置

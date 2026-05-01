@@ -43,6 +43,18 @@ export interface ModContext {
    * 传入的 def.apply 会作为事件的执行逻辑，def.getWeight 可选地影响随机权重。
    */
   createEventClass: (def: ModEventClassDef) => new (params: IncidentParameter) => Incident;
+  /**
+   * 注册自定义 UI 场景。场景 ID 任意字符串，不与内置冲突即可。
+   * 注册后可通过 navigateTo 跳转，或绑定按键触发 setScene。
+   */
+  registerScreen: (entry: {
+    scene: string;
+    component: React.ComponentType<any>;
+    nameKey: string;
+    highlightId?: string;
+  }) => void;
+  /** 导航到任意场景 */
+  navigateTo: (scene: string) => void;
 }
 
 // 模组自定义事件类的行为描述

@@ -1,15 +1,14 @@
 import React from "react";
 import { Box, Text } from "ink";
 import SelectInput from "ink-select-input";
-import Config from "./Config.js";
-import { useSettingScreen, SettingMenu } from "../hooks/useSettingScreen.js";
+import { SETTING_MENU, useSettingScreen } from "../hooks/useSettingScreen.js";
 import Player from "../world/Player.js";
-import PlayerConfig from "./PlayerConfig.js";
-import ModManager from "./ModManager.js";
+import { SettingRegistry } from "../core/store/SettingRegistry.js";
+import { container } from "../Container.js";
 
 interface SettingSelectedProps {
   label: string;
-  value: SettingMenu;
+  value: string;
   highlightColor: string;
   isSelected?: boolean;
 }
@@ -32,29 +31,35 @@ interface SettingProps {
 
 export default function Setting({ onConfigChange, player }: SettingProps) {
   const data = useSettingScreen(onConfigChange);
+  const registry = container.resolve(SettingRegistry);
 
-  if (data.activeMenu === SettingMenu.keyBoardConfig) {
-    return <Config onConfigChange={data.onConfigChange} onBack={data.onBack} />;
+  if (data.activeMenu !== SETTING_MENU.none) {
+    const entry = registry.getEntry(data.activeMenu);
+    if (entry) {
+      return <entry.component
+        onConfigChange={data.onConfigChange}
+        onBack={data.onBack}
+        player={player}
+      />;
+    }
   }
 
-  if (data.activeMenu === SettingMenu.playerConfig && player) {
-    return <PlayerConfig player={player} onBack={data.onBack} />
-  }
-
-  if (data.activeMenu === SettingMenu.modManager) {
-    return <ModManager onBack={data.onBack} />;
-  }
+  const items = registry.getAll().map((e) => ({
+    label: data.t(e.nameKey),
+    value: e.menu,
+    highlightColor: "green" as const,
+  }));
 
   return (
     <Box flexDirection="column" padding={1} width="100%" alignItems="center" height={data.rows}>
       <Box width="100%" height={3} borderColor="white" borderStyle="round">
         <Box justifyContent="center" width="100%">
-          <Text color="gray" bold>{data.t('setting.title')}</Text>
+          <Text color="gray" bold>{data.t("setting.title")}</Text>
         </Box>
       </Box>
       <Box marginTop={1}>
         <SelectInput
-          items={data.menuItems}
+          items={items}
           onSelect={data.onSelectMenu as any}
           itemComponent={SettingBox as any}
         />

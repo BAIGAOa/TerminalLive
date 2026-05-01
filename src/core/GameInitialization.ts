@@ -13,6 +13,7 @@ import ModRegistry from "./mod/ModRegistry.js";
 import ModPluginLoader from "./mod/ModPluginLoader.js";
 import ConsoleStore from "./console/ConsoleStore.js";
 import { container } from "../Container.js";
+import { Screens } from "../content/Screens.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -62,6 +63,7 @@ export default class GameInitialization {
   private loadContent(): void {
     EventTypes.registerAll();
     this.modLoader.load();
+    Screens.load();
     Keys.load();
     Achievements.load();
   }

@@ -67,21 +67,163 @@ Q 返回主菜单
 
 ## 模组
 
-模组存放在 ~/.mod_live/<模组名>/，每个模组可包含：
+模组存放在 `~/.mod_live/<模组名>/` 下。每个模组可以添加事件、翻译、插件自定义逻辑，甚至自定义 UI 界面。
 
-· 一个 index.js 入口，实现 ModPlugin 接口（提供钩子、自定义事件类型）。
-· events/ 目录下的 JSON 事件定义文件。
-· language/ 目录下的语言文件。
-· mod.json 清单（名称、版本、描述、作者）。
+### 目录结构
 
-在设置 > 模组管理中启用或关闭模组，修改后需重启游戏生效。
+```
+~/.mod_live/
+  my-mod/
+    mod.json          # 模组清单（必需）
+    index.js          # 插件入口（可选）
+    events/           # JSON 事件定义（可选）
+      custom.json
+    language/         # 翻译文件（可选）
+      zh_CN.json
+      en_US.json
+```
 
-面向开发者的模组 API 提供：
+### 清单文件（`mod.json`）
 
-· 生命周期钩子（onInit、onPlayerUpdate、onIncidentTrigger 等）
-· 自定义事件的事件总线 EventBus
-· 持久化存储 ConfigStore
-· 动态创建事件类的 createEventClass 辅助方法
+```json
+{
+  "name": "my-mod",
+  "version": "1.0.0",
+  "description": "示例模组",
+  "main": "index.js",
+  "author": "your-name"
+}
+```
+
+### JSON 事件定义
+
+在 `events/` 目录下放置 `.json` 文件，每个文件定义一个事件实例：
+
+```json
+{
+  "type": "BirthEvent",
+  "id": "my-custom-event",
+  "nameKey": "events.myEvent",
+  "rangeKey": ["10-50"],
+  "weight": 0.3,
+  "once": false,
+  "predecessorEvent": null,
+  "excludedIds": [],
+  "postEvent": null
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `type` | string | 事件类名（需通过 `registerEventTypes` 注册或使用内置类型） |
+| `id` | string | 唯一事件标识 |
+| `nameKey` | string | 游戏日志中显示的翻译键 |
+| `rangeKey` | string[] | 事件可触发的年龄段（如 `["5-12", "18-25"]`） |
+| `weight` | number | 随机权重（越大越可能被选中） |
+| `once` | boolean \| string[] | `true` = 全局只触发一次。数组 = 每个段只触发一次 |
+| `predecessorEvent` | string \| null | 前置事件 ID，只有该事件触发后本事件才可触发 |
+| `excludedIds` | string[] | 本事件触发后，被排除的事件 ID 列表 |
+| `postEvent` | string \| object[] \| null | 本事件触发后，后续调度的事件 |
+
+### 插件入口（`index.js`）
+
+入口文件导出 `ModPlugin` 对象，游戏在特定生命周期节点调用其方法。
+
+```javascript
+module.exports = {
+  id: "my-mod",
+
+  // 注册自定义事件类型（可选）
+  registerEventTypes(registry, ctx) {
+    const MyEvent = ctx.createEventClass({
+      apply(player, self) {
+        player.fortune += 100;
+        ctx.logger.info("自定义事件触发！");
+      },
+      getWeight(player) {
+        return player.angerValue > 50 ? 0.6 : 0.1;
+      },
+    });
+    registry.register("MyEvent", MyEvent);
+  },
+
+  // 生命周期钩子（可选）
+  hooks: {
+    onInit(ctx) {
+      ctx.logger.info("模组已加载！");
+      // 注册自定义 UI 界面
+      ctx.registerScreen({
+        scene: "myModSettings",
+        component: MySettingsComponent,
+        nameKey: "myMod.settingsTitle",
+        highlightId: "mySettings",
+      });
+    },
+
+    onPlayerUpdate(player, ctx) {
+      if (player.health < 30) {
+        ctx.logger.warn("血量危险！");
+      }
+    },
+
+    onIncidentTrigger(incident, player, ctx) {
+      // 返回 false 可阻止事件触发
+      if (incident.id === "academic-stress" && player.angerValue > 80) {
+        return false;
+      }
+    },
+
+    onIncidentExecuted(incident, player, ctx) {
+      ctx.logger.info(`事件完成: ${incident.id}`);
+    },
+  },
+};
+```
+
+### ModContext API
+
+所有钩子和回调中传入的 `ctx` 对象提供以下能力：
+
+| 属性/方法 | 说明 |
+|-----------|------|
+| `ctx.eventBus` | 全局事件总线。使用 `on(event, callback)` 订阅，`emit(event, data)` 发送。内置事件：`player:updated`、`incident:executed`、`achievement:unlocked`。 |
+| `ctx.configStore` | 持久化配置存储。使用 `getSnapshot()` 读取，`update(partial)` 写入。 |
+| `ctx.logger` | 日志输出：`info(msg)`、`warn(msg)`、`error(msg)`。输出到终端 stdout。 |
+| `ctx.getPlayer()` | 返回当前 `Player` 实例。 |
+| `ctx.createEventClass(def)` | 根据 `{ apply, getWeight? }` 动态创建 `Incident` 子类，返回构造函数供 `registry.register()` 使用。 |
+| `ctx.registerScreen(entry)` | 注册自定义 UI 界面：`{ scene, component, nameKey, highlightId? }`，scene 为任意字符串。 |
+| `ctx.navigateTo(scene)` | 导航到已注册的场景（内置：`"game"`、`"config"`、`"language"`、`"achievement"`、`"menu"`）。 |
+
+### 生命周期钩子
+
+| 钩子 | 调用时机 | 典型用途 |
+|------|----------|----------|
+| `onInit(ctx)` | 模组加载后、游戏开始前 | 初始化、订阅事件、注册 UI |
+| `onPlayerCreated(player, ctx)` | 玩家对象创建后 | 修改初始玩家状态 |
+| `onPlayerUpdate(player, ctx)` | 每回合，player.update() 后 | 回合副作用、属性监控 |
+| `onIncidentTrigger(incident, player, ctx)` | 事件执行前 | 阻止事件（返回 `false`）、条件判断 |
+| `onIncidentExecuted(incident, player, ctx)` | 事件执行完成后 | 日志记录、后续操作 |
+
+### TypeScript 开发模组
+
+```bash
+cd ~/.mod_live/my-mod
+npm init -y
+npm install --save-dev typescript @baigao_h/terminal-live
+npx tsc --module commonjs --target es2022 --outDir . index.ts
+```
+
+安装 `@baigao_h/terminal-live` 作为开发依赖，即可获得 `ModPlugin`、`ModContext`、`Player`、`Incident` 等完整类型定义。
+
+### 启用模组
+
+1. 将模组目录放入 `~/.mod_live/`
+2. 启动游戏，进入 **设置 → 模组管理**
+3. 按 Enter 切换启用/关闭
+4. 重启游戏
+
+已启用的模组列表持久化在 `resource/config.json` 的 `enabledMods` 字段中。
+
 
 ## 开发
 
