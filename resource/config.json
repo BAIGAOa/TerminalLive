@@ -12,7 +12,5 @@
     "weakValue": 0,
     "fortune": 0
   },
-  "enabledMods": [
-    "example"
-  ]
+  "enabledMods": []
 }

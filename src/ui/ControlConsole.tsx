@@ -8,7 +8,7 @@ const NotificationItem = ({
   t,
 }: {
   notification: ConsoleNotification;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }) => {
   switch (notification.type) {
     case 'achievement':
@@ -17,6 +17,12 @@ const NotificationItem = ({
           ★ {t('achievement.unlock')} {t(notification.messageKey)}
         </Text>
       );
+    case 'mod':
+      return (
+        <Text color='red'>
+          [mod] {t('mod.message.loadSuccess', {modName: notification.messageKey})}
+        </Text>
+      )
     default:
       return <Text>{t(notification.messageKey)}</Text>;
   }

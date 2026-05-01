@@ -133,7 +133,7 @@ export default class ModPluginLoader {
     }
 
     this.plugins.push(plugin);
-    console.log(`[Mod] ✓ ${name} 已加载`);
+    this.eventBus.emit("moder:loadSuccess", { modName: name });
   }
 
   // 遍历 ModHooks，将存在的钩子函数绑定并推入对应队列

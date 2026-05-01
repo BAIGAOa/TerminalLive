@@ -92,5 +92,6 @@
     "playerConfig.selectAttrHint": "Select an attribute, Enter to edit, ESC to go back",
     "playerConfig.noCategorySelected": "← Select a category first",
     "playerConfig.editHint": "Enter to save, ESC to cancel",
-    "playerConfig.saveSuccess": "Attribute saved and persisted"
+    "playerConfig.saveSuccess": "Attribute saved and persisted",
+    "mod.message.loadSuccess": "Mod {modName} loaded successfully"
 }

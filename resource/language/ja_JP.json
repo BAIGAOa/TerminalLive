@@ -92,5 +92,6 @@
     "playerConfig.selectAttrHint": "属性を選択、Enterで修正、ESCで戻る",
     "playerConfig.noCategorySelected": "← 先にカテゴリを選択してください",
     "playerConfig.editHint": "Enterで保存、ESCでキャンセル",
-    "playerConfig.saveSuccess": "属性を保存しました"
+    "playerConfig.saveSuccess": "属性を保存しました",
+    "mod.message.loadSuccess": "Mod {modName} を読み込みました"
 }

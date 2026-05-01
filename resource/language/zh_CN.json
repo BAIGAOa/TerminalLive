@@ -92,5 +92,6 @@
     "playerConfig.selectAttrHint": "上下键选择属性，回车键修改，ESC 返回",
     "playerConfig.noCategorySelected": "← 请先选择一个分类",
     "playerConfig.editHint": "Enter 保存，ESC 取消",
-    "playerConfig.saveSuccess": "属性已保存并持久化"
+    "playerConfig.saveSuccess": "属性已保存并持久化",
+    "mod.message.loadSuccess": "模组 {modName} 加载成功"
 }

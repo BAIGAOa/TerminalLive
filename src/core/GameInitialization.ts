@@ -11,6 +11,8 @@ import ModLoader from "./mod/ModLoader.js";
 import EventTypes from "./mod/EventTypes.js";
 import ModRegistry from "./mod/ModRegistry.js";
 import ModPluginLoader from "./mod/ModPluginLoader.js";
+import ConsoleStore from "./console/ConsoleStore.js";
+import { container } from "../Container.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -78,6 +80,9 @@ export default class GameInitialization {
   }
 
   public async init() {
+    //提前让控制台激活
+    // 如果不这样做，那么模组加载信息就不会出现在控制台，包括其他信息
+    container.resolve(ConsoleStore);
     await this.configurationInitialization();
     this.loadPlayer();
     this.loadContent();

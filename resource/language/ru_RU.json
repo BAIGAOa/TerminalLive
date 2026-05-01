@@ -92,5 +92,6 @@
     "playerConfig.selectAttrHint": "Выберите атрибут, Enter для изменения, ESC для возврата",
     "playerConfig.noCategorySelected": "← Сначала выберите категорию",
     "playerConfig.editHint": "Enter для сохранения, ESC для отмены",
-    "playerConfig.saveSuccess": "Атрибут сохранён"
+    "playerConfig.saveSuccess": "Атрибут сохранён",
+    "mod.message.loadSuccess": "Мод {modName} загружен"
 }

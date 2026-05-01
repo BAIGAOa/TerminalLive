@@ -23,7 +23,7 @@ const app = await container.resolve(GameInitialization).init()
 
 function App() {
   const data = useApp();
- 
+
   useKeyboardMonitor(app.monitor);
 
   let mainContent: React.ReactNode;
@@ -66,10 +66,12 @@ function App() {
       </Box>
 
       {!data.consoleVisible && data.consoleUnreadCount > 0 && (
-        <Box justifyContent="center">
-          <Text color="yellow">
-            📢 {data.consoleUnreadCount} {data.t('console.unread')} [P]
-          </Text>
+        <Box height={4} width='100%' borderStyle='double' borderColor='cyanBright'>
+          <Box justifyContent="center">
+            <Text color="yellow">
+              📢 {data.consoleUnreadCount} {data.t('console.unread')} [P]
+            </Text>
+          </Box>
         </Box>
       )}
 
