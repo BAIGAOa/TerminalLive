@@ -41,17 +41,18 @@ terminal-live
 
 ## Key bindings (default)
 
-Key Action
-S Start game
-C Open settings
-L Language selection
-A Achievements
-E Exit
-Enter Next round (in game)
-R View attributes
-T View status
-P Toggle notification console
-Q Return to main menu
+| Key    | Action                       |
+|--------|------------------------------|
+| S      | Start game                   |
+| C      | Open settings                |
+| L      | Language selection           |
+| A      | Achievements                 |
+| E      | Exit                         |
+| Enter  | Next round (in game)         |
+| R      | View attributes              |
+| T      | View status                  |
+| P      | Toggle notification console  |
+| Q      | Return to main menu          |
 
 You can change every binding in the Key Recording menu under Settings.
 
