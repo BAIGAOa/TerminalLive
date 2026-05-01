@@ -39,7 +39,7 @@ Run the game:
 terminal-live
 ```
 
-Key bindings (default)
+## Key bindings (default)
 
 Key Action
 S Start game
@@ -55,7 +55,7 @@ Q Return to main menu
 
 You can change every binding in the Key Recording menu under Settings.
 
-Configuration
+## Configuration
 
 All persistent data is stored under the resource/ directory inside the installation folder:
 
@@ -65,7 +65,7 @@ All persistent data is stored under the resource/ directory inside the installat
 
 Player attributes (name, age, health, emotions, fortune) can be edited in-game through Player Config.
 
-Mods
+## Mods
 
 Mods live in ~/.mod_live/<mod-name>/. Each mod can provide:
 
@@ -83,7 +83,7 @@ For developers, the mod API exposes:
 · ConfigStore for persistence.
 · A createEventClass helper to define new incident types.
 
-Development
+## Development
 
 ```bash
 git clone https://github.com/BAIGAOa/TerminalLive
@@ -95,6 +95,6 @@ npm run watch    # watch mode
 
 The game uses di-wise, a third-party dependency injection container library. New services should be decorated with @Scoped(Scope.Container), and they will be registered automatically.
 
-License
+## License
 
 AGPL-3.0

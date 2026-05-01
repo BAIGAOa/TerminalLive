@@ -39,7 +39,7 @@ npm install -g @baigao_h/terminal-live
 terminal-live
 ```
 
-默认按键
+## 默认按键
 
 按键 功能
 S 开始游戏
@@ -55,7 +55,7 @@ Q 返回主菜单
 
 进入 设置 > 按键录制 可以修改所有绑定。
 
-配置
+## 配置
 
 持久化数据保存在安装目录下的 resource/ 文件夹中：
 
@@ -65,7 +65,7 @@ Q 返回主菜单
 
 玩家属性（姓名、年龄、健康、情绪、财富）可在 玩家属性配置 界面中调整。
 
-模组
+## 模组
 
 模组存放在 ~/.mod_live/<模组名>/，每个模组可包含：
 
@@ -83,7 +83,7 @@ Q 返回主菜单
 · 持久化存储 ConfigStore
 · 动态创建事件类的 createEventClass 辅助方法
 
-开发
+## 开发
 
 ```bash
 git clone https://github.com/BAIGAOa/TerminalLive
@@ -95,7 +95,7 @@ npm run watch    # 监视模式
 
 游戏使用的是来自 di-wise 这个第三方依赖注入容器库。新服务需要用 @Scoped(Scope.Container) 装饰器标记，并且会自动注册。
 
-许可证
+## 许可证
 
 AGPL-3.0
 
