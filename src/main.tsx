@@ -19,7 +19,7 @@ import { container } from './Container.js';
 
 const app = await container.resolve(GameInitialization).init()
 
-//主组件
+
 
 function App() {
   const data = useApp();

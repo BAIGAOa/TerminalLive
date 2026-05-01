@@ -9,6 +9,7 @@ import PredecessorFilter from "./filters/PredecessorFilter.js";
 import OnceFilter from "./filters/OnceFilter.js";
 import EventHistory from "./EventHistory.js";
 import PostEventScheduler, { PendingPostEvent } from "./PostEventScheduler.js";
+import ModPluginLoader from "../core/mod/ModPluginLoader.js";
 
 function weightedRandom<T>(
   items: T[],
@@ -39,10 +40,13 @@ export default class EventAlgorithm {
     new OnceFilter(),
   ];
 
+  private modPluginLoader: ModPluginLoader;
+
   constructor() {
     this.eventCenter = inject(EventCenter);
     this.logStore = inject(LogStore);
     this.eventHistory = inject(EventHistory);
+    this.modPluginLoader = inject(ModPluginLoader);
   }
 
   public trigger(player: Player) {
@@ -176,6 +180,10 @@ export default class EventAlgorithm {
     rangeKey: string,
     player: Player,
   ) {
+    //如果是模组事件，就拦截
+    if (!this.modPluginLoader.fireIncidentTrigger(incident, player)) {
+      return;
+    }
     this.eventHistory.markTriggered(incident.id, rangeKey);
     this.eventHistory.markBlocked(incident.excludedIds);
     this.logStore.addEvent(incident);
@@ -184,6 +192,9 @@ export default class EventAlgorithm {
     if (incident.postEvent) {
       this.schedulePostEvents(incident);
     }
+
+    //通知模组系统
+    this.modPluginLoader.fireIncidentExecuted(incident, player);
   }
 
   /**

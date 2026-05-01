@@ -10,6 +10,7 @@ import AchievementStore from "../achievement/AchievementStore.js";
 import ModLoader from "./mod/ModLoader.js";
 import EventTypes from "./mod/EventTypes.js";
 import ModRegistry from "./mod/ModRegistry.js";
+import ModPluginLoader from "./mod/ModPluginLoader.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -23,6 +24,8 @@ export default class GameInitialization {
   public monitor!: KeyboardMonitor;
   public player!: Player;
 
+  public modPluginLoader: ModPluginLoader;
+
   constructor() {
     this.configStore = inject(ConfigStore);
     this.game = inject(Game);
@@ -30,6 +33,18 @@ export default class GameInitialization {
     this.achievementStore = inject(AchievementStore);
     this.modLoader = inject(ModLoader);
     this.modRegistry = inject(ModRegistry);
+    this.modPluginLoader = inject(ModPluginLoader);
+  }
+
+  private loadModPlugins(): void {
+    this.modPluginLoader.setPlayer(this.player);
+    this.modPluginLoader.loadEnabled();
+    const enabledMods = this.configStore.getEnabledMods();
+    for (const modName of enabledMods) {
+      if (this.modRegistry.isValid(modName)) {
+        this.modLoader.loadFromDir(this.modRegistry.getModEventsPath(modName));
+      }
+    }
   }
 
   //初始化配置，用于从本地获取配置并加载
@@ -44,14 +59,7 @@ export default class GameInitialization {
 
   private loadContent(): void {
     EventTypes.registerAll();
-    const enabledMods = this.configStore.getEnabledMods();
-    for (const modName of enabledMods) {
-      if (this.modRegistry.isValid(modName)) {
-        this.modLoader.loadFromDir(this.modRegistry.getModEventsPath(modName));
-      } else {
-        console.warn(`Mod "${modName}" 结构无效，跳过`);
-      }
-    }
+    this.modLoader.load();
     Keys.load();
     Achievements.load();
   }
@@ -73,6 +81,7 @@ export default class GameInitialization {
     await this.configurationInitialization();
     this.loadPlayer();
     this.loadContent();
+    this.loadModPlugins();
     this.initGame();
     await this.initMonitor();
     await this.initAchievementSystem();

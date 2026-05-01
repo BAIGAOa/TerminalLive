@@ -3,6 +3,7 @@ import Player from "../world/Player.js";
 import { container } from "../Container.js";
 import EventAlgorithm from "../event/EventAlgorithm.js";
 import EventBus from "./EventBus.js";
+import ModPluginLoader from "./mod/ModPluginLoader.js";
 
 @Scoped(Scope.Container)
 export default class Game {
@@ -28,6 +29,6 @@ export default class Game {
     this.player.update();
     container.resolve(EventAlgorithm).trigger(this.player);
     container.resolve(EventBus).emit("player:updated");
-    this.player.notify();
+    container.resolve(ModPluginLoader).firePlayerUpdate(this.player);
   }
 }

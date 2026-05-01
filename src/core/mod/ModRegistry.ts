@@ -1,7 +1,8 @@
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { existsSync, mkdirSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { Scope, Scoped } from "di-wise";
+import { ModManifest } from "./types.js";
 
 @Scoped(Scope.Container)
 export default class ModRegistry {
@@ -52,5 +53,23 @@ export default class ModRegistry {
     const hasEvents = existsSync(this.getModEventsPath(modName));
     const hasLang = existsSync(this.getModLanguagePath(modName));
     return hasEvents || hasLang;
+  }
+
+  /**读取模组的入口文件路径*/
+  public getModMainPath(modName: string) {
+    return join(this.MOD_ROOT, modName, "index.js");
+  }
+
+  /**读取模组的mod.json配置文件*/
+  public getModManifest(modName: string): ModManifest | null {
+    try {
+      const raw = readFileSync(
+        join(this.MOD_ROOT, modName, "mod.json"),
+        "utf-8",
+      );
+      return JSON.parse(raw) as ModManifest;
+    } catch {
+      return null;
+    }
   }
 }
