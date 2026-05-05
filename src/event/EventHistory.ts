@@ -1,4 +1,3 @@
-import { Scope, Scoped } from "di-wise";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
@@ -6,7 +5,6 @@ import { fileURLToPath } from "url";
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
-@Scoped(Scope.Container)
 export default class EventHistory {
   private triggered: Set<string> = new Set();
   private blocked: Set<string> = new Set();

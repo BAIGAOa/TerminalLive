@@ -1,12 +1,12 @@
 import { Scope, Scoped } from "di-wise";
 import { container } from "../../Container.js";
-import EventBus from "../EventBus.js";
+import TypedEventBus from "../TypedEventBus.js";
 
 type Listener = () => void;
 
 export interface ConsoleNotification {
   id: string;
-  type: "achievement" | "mod";
+  type: "achievement" | "mod" | "archive" | "catalogCreation";
   messageKey: string;
   timestamp: string;
 }
@@ -26,7 +26,7 @@ export default class ConsoleStore {
   private cachedSnapshot: ConsoleSnapshot | null = null;
 
   constructor() {
-    const eventBus = container.resolve(EventBus);
+    const eventBus = container.resolve(TypedEventBus);
 
     eventBus.on(
       "achievement:unlocked",
@@ -45,6 +45,24 @@ export default class ConsoleStore {
         id: data.modName,
         type: "mod",
         messageKey: data.modName,
+        timestamp: new Date().toLocaleString(),
+      });
+    });
+
+    eventBus.on("level:loadFailed", (data) => {
+      this.addNotification({
+        id: data.levelId,
+        type: "archive",
+        messageKey: data.levelId,
+        timestamp: new Date().toLocaleString(),
+      });
+    });
+
+    eventBus.on("archive:failedCreateFolder", (data) => {
+      this.addNotification({
+        id: data.id,
+        type: "catalogCreation",
+        messageKey: data.id,
         timestamp: new Date().toLocaleString(),
       });
     });

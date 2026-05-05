@@ -1,23 +1,33 @@
 import React from "react";
 import { Box, Text, useInput } from "ink";
+import TextInput from "ink-text-input";
 import { useArchiveScreen } from "../hooks/useArchiveScreen.js";
 
 export default function Archive({ onBack }: { onBack?: () => void }) {
   const data = useArchiveScreen(onBack);
 
   useInput((input, key) => {
+    // 命名优先，防止 TextInput 被全局按键干扰
+    if (data.saveMode) {
+      if (key.escape) data.handleCancelSave();
+      return;
+    }
+    // 删除确认模式
     if (data.confirmDelete) {
       if (key.escape) data.handleCancel();
       if (key.return) data.handleDelete();
       return;
     }
+    // 普通模式
     if (key.upArrow)
-      data.setSelectedIndex((i) => Math.max(0, i - 1));
+      data.setSelectedIndex((i: number) => Math.max(0, i - 1));
     if (key.downArrow)
-      data.setSelectedIndex((i) => Math.min(data.saves.length - 1, i + 1));
+      data.setSelectedIndex((i: number) =>
+        Math.min(data.saves.length - 1, i + 1)
+      );
     if (key.return) data.handleLoad();
     if (key.escape) data.handleCancel();
-    if (input === "s" || input === "S") data.handleSave();
+    if (input === "s" || input === "S") data.handleStartSave();
     if (input === "d" || input === "D") data.handleDelete();
   });
 
@@ -29,7 +39,19 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
         </Text>
       </Box>
 
-      {data.saves.length === 0 ? (
+      {data.saveMode ? (
+        <Box flexDirection="column" flexGrow={1}>
+          <Box marginBottom={1}>
+            <Text>{data.t("archive.enterName")}: </Text>
+            <TextInput
+              value={data.saveName}
+              onChange={data.setSaveName}
+              onSubmit={data.handleSubmitSave}
+            />
+          </Box>
+          <Text dimColor>{data.t("archive.saveHint")}</Text>
+        </Box>
+      ) : data.saves.length === 0 ? (
         <Box flexGrow={1} justifyContent="center" alignItems="center">
           <Text dimColor>{data.t("archive.empty")}</Text>
         </Box>
@@ -51,6 +73,7 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
                   {save.timestamp
                     ? new Date(save.timestamp).toLocaleString()
                     : save.name}
+                  <Text color='white'> Name: {save.name}</Text>
                 </Text>
                 <Text dimColor>
                   {data.t("archive.playerName")}: {save.playerName} |{" "}
@@ -75,7 +98,11 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
       )}
 
       <Box marginTop={1}>
-        <Text dimColor>{data.t("archive.hint")}</Text>
+        <Text dimColor>
+          {data.saveMode
+            ? data.t("archive.saveModeHint")
+            : data.t("archive.hint")}
+        </Text>
       </Box>
     </Box>
   );

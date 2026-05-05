@@ -23,6 +23,20 @@ const NotificationItem = ({
           [mod] {t('mod.message.loadSuccess', {modName: notification.messageKey})}
         </Text>
       )
+    case 'archive':
+      return (
+        <Text bold color='magentaBright'>
+          [archive] {t('archive.message.loadFailed', {levelId: notification.messageKey})}
+        </Text>
+      )
+    case 'catalogCreation' :
+      return(
+        <Text bold color='cyan'>
+          [archive] {t('archive.message.createFailed', {
+            id: notification.messageKey
+          })}
+        </Text>
+      )
     default:
       return <Text>{t(notification.messageKey)}</Text>;
   }

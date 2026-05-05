@@ -1,9 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { container } from "../Container.js";
 import { ArchiveStore } from "../core/archive/ArchiveStore.js";
 import { SaveMeta } from "../core/archive/SaveSchema.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
+import KeyboardMonitor from "../core/keys/KeyboardMonitor.js";
 
 export interface ArchiveScreenData {
   saves: SaveMeta[];
@@ -11,9 +12,14 @@ export interface ArchiveScreenData {
   setSelectedIndex: (fn: (i: number) => number) => void;
   message: string | null;
   confirmDelete: boolean;
+  saveMode: boolean;
+  saveName: string;
+  setSaveName: (name: string) => void;
   rows: number;
   t: (key: string, params?: Record<string, string | number>) => string;
-  handleSave: () => void;
+  handleStartSave: () => void;
+  handleSubmitSave: () => void;
+  handleCancelSave: () => void;
   handleLoad: () => void;
   handleDelete: () => void;
   handleCancel: () => void;
@@ -28,23 +34,50 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [saveMode, setSaveMode] = useState(false);
+  const [saveName, setSaveName] = useState("");
+
+  /** 命名模式下挂起全局键盘监听 */
+  useEffect(() => {
+    KeyboardMonitor.isSuspended = saveMode;
+    return () => {
+      KeyboardMonitor.isSuspended = false;
+    };
+  }, [saveMode]);
 
   const refresh = useCallback(() => {
     setSaves(store.listSaves());
     setSelectedIndex(0);
     setConfirmDelete(false);
+    setSaveMode(false);
+    setSaveName("");
   }, [store]);
 
-  const handleSave = useCallback(() => {
+  const handleStartSave = useCallback(() => {
+    setSaveMode(true);
+    setSaveName("");
+  }, []);
+
+  const handleSubmitSave = useCallback(() => {
+    const trimmed = saveName.trim();
+    if (!trimmed) {
+      setMessage(t("archive.emptyNameError"));
+      return;
+    }
     try {
-      store.save();
+      store.save(trimmed);
       setMessage(t("archive.saveSuccess"));
       refresh();
     } catch (err) {
       setMessage((err as Error).message);
     }
     setTimeout(() => setMessage(null), 3000);
-  }, [store, t, refresh]);
+  }, [saveName, store, t, refresh]);
+
+  const handleCancelSave = useCallback(() => {
+    setSaveMode(false);
+    setSaveName("");
+  }, []);
 
   const handleLoad = useCallback(() => {
     if (saves.length === 0) return;
@@ -72,12 +105,14 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
   }, [saves, selectedIndex, confirmDelete, store, refresh]);
 
   const handleCancel = useCallback(() => {
-    if (confirmDelete) {
+    if (saveMode) {
+      handleCancelSave();
+    } else if (confirmDelete) {
       setConfirmDelete(false);
     } else {
       onBack?.();
     }
-  }, [confirmDelete, onBack]);
+  }, [saveMode, confirmDelete, handleCancelSave, onBack]);
 
   return {
     saves,
@@ -85,9 +120,14 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
     setSelectedIndex,
     message,
     confirmDelete,
+    saveMode,
+    saveName,
+    setSaveName,
     rows,
     t,
-    handleSave,
+    handleStartSave,
+    handleSubmitSave,
+    handleCancelSave,
     handleLoad,
     handleDelete,
     handleCancel,

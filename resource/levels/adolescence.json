@@ -1,0 +1,19 @@
+{
+  "id": "adulthood",
+  "nameKey": "level.adulthood",
+  "descriptionKey": "level.adulthood.desc",
+  "nextLevel": "none",
+  "difficultyIdentification": "normal",
+  "algorithm": "default",
+  "extraFilters": [],
+  "nextLevelUnlock": [
+    {
+      "type": "generalPurpose",
+      "params": { "prop": "age", "num": 18, "cat": "greaterThan" }
+    },
+    {
+      "type": "generalPurpose",
+      "params": { "prop": "health", "num": 50, "cat": "greaterThan" }
+    }
+  ]
+}

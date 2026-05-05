@@ -1,4 +1,3 @@
-import { inject, Scope, Scoped } from "di-wise";
 import Player from "../world/Player.js";
 import { Incident, PostIncidentConfig } from "../world/Incident.js";
 import LogStore from "../core/store/LogStore.js";
@@ -10,6 +9,10 @@ import OnceFilter from "./filters/OnceFilter.js";
 import EventHistory from "./EventHistory.js";
 import PostEventScheduler, { PendingPostEvent } from "./PostEventScheduler.js";
 import ModPluginLoader from "../core/mod/ModPluginLoader.js";
+import FilterContext from "./FilterContext.js";
+import { IEventAlgorithm } from "./IEventAlgorithm.js";
+import TypedEventBus from "../core/TypedEventBus.js";
+import { container } from "../Container.js";
 
 function weightedRandom<T>(
   items: T[],
@@ -26,33 +29,39 @@ function weightedRandom<T>(
   return items[items.length - 1];
 }
 
-@Scoped(Scope.Container)
-export default class EventAlgorithm {
+export default class DefaultEventAlgorithm implements IEventAlgorithm {
   private eventCenter: EventCenter;
   private logStore: LogStore;
   private eventHistory: EventHistory;
-
-  private postEventScheduler: PostEventScheduler = new PostEventScheduler();
-
-  private filters: IncidentFilter[] = [
-    new BlockedFilter(),
-    new PredecessorFilter(),
-    new OnceFilter(),
-  ];
-
   private modPluginLoader: ModPluginLoader;
-  
+  private postEventScheduler: PostEventScheduler;
+  private filters: IncidentFilter[];
 
-  constructor() {
-    this.eventCenter = inject(EventCenter);
-    this.logStore = inject(LogStore);
-    this.eventHistory = inject(EventHistory);
-    this.modPluginLoader = inject(ModPluginLoader);
+  private eventBus: TypedEventBus;
+
+  constructor(deps: {
+    eventCenter: EventCenter;
+    logStore: LogStore;
+    eventHistory: EventHistory;
+    modPluginLoader: ModPluginLoader;
+    filters?: IncidentFilter[];
+  }) {
+    this.eventCenter = deps.eventCenter;
+    this.logStore = deps.logStore;
+    this.eventHistory = deps.eventHistory;
+    this.modPluginLoader = deps.modPluginLoader;
+    this.postEventScheduler = new PostEventScheduler();
+    this.filters = deps.filters ?? [
+      new BlockedFilter(),
+      new PredecessorFilter(),
+      new OnceFilter(),
+    ];
+
+    this.eventBus = container.resolve(TypedEventBus);
   }
 
-  public trigger(player: Player) {
+  public trigger(player: Player): void {
     const postTriggered = this.processPendingPostEvents(player);
-    //提前返回，这意味着后置事件将永远高于普通事件
     if (postTriggered) return;
 
     const matched = this.getMatchedIncidents(player.age);
@@ -65,38 +74,33 @@ export default class EventAlgorithm {
     }
   }
 
-  /**
-   * 处理队列中的后置事件
-   */
+  public reset(): void {
+    this.eventHistory.reset();
+    this.postEventScheduler.reset();
+  }
+
   private processPendingPostEvents(player: Player): boolean {
     const duoEvent = this.postEventScheduler.advanceRound();
     for (const item of duoEvent) {
-      if (this.tryExecutePostEvent(item, player)) {
-        return true;
-      }
+      if (this.tryExecutePostEvent(item, player)) return true;
     }
     return false;
   }
 
-  private tryExecutePostEvent(item: PendingPostEvent, player: Player) {
+  private tryExecutePostEvent(item: PendingPostEvent, player: Player): boolean {
     const incident = this.eventCenter.getIncidentById(item.targetId);
     if (!incident) {
       console.warn(`后置事件id${item.targetId}不存在`);
       return false;
     }
-    if (item.condition && !item.condition(player)) {
-      return false;
-    }
+    if (item.condition && !item.condition(player)) return false;
+
     const originalWeight = incident.weight;
-    if (item.weight !== undefined) {
-      incident.weight = item.weight;
-    }
+    if (item.weight !== undefined) incident.weight = item.weight;
     try {
       const candidate = { incident, rangeKey: "post" as const };
       const eligible = this.filterEligible([candidate]);
-      if (eligible.length === 0) {
-        return false;
-      }
+      if (eligible.length === 0) return false;
       this.executeIncident(incident, "post", player);
       return true;
     } finally {
@@ -126,45 +130,33 @@ export default class EventAlgorithm {
     }
   }
 
-  /**
-   * 根据权重随机选择一个分支
-   */
   private selectedPostBranch(
-    branchs: PostIncidentConfig[],
+    branches: PostIncidentConfig[],
   ): PostIncidentConfig | null {
-    return weightedRandom(branchs, (branch) => branch.weight ?? 1) ?? null;
+    return weightedRandom(branches, (b) => b.weight ?? 1) ?? null;
   }
 
-  /** 根据年龄筛选事件匹配的列表
-   * 返回一个元组，这是因为我们要知道事件是从哪里出来的
-   */
   private getMatchedIncidents(
     age: number,
   ): Array<{ incident: Incident; rangeKey: string }> {
     const result: Array<{ incident: Incident; rangeKey: string }> = [];
-    const allRanges = this.eventCenter.getAllRanges();
-
-    for (const rangeKey of allRanges) {
+    for (const rangeKey of this.eventCenter.getAllRanges()) {
       const [start, end] = rangeKey.split("-").map(Number);
       if (age >= start && age <= end) {
         const incidents = this.eventCenter.getIncidentsByRange(rangeKey);
         if (incidents) {
-          incidents.forEach((incident) => {
-            result.push({ incident, rangeKey });
-          });
+          incidents.forEach((incident) => result.push({ incident, rangeKey }));
         }
       }
     }
-
     return result;
   }
 
-  /** 根据逻辑规则过滤事件 */
   private filterEligible(
     candidates: Array<{ incident: Incident; rangeKey: string }>,
-  ) {
+  ): Array<{ incident: Incident; rangeKey: string }> {
     return candidates.filter(({ incident, rangeKey }) => {
-      const context = {
+      const context: FilterContext = {
         incident,
         rangeKey,
         triggeredHistory: this.eventHistory.getTriggered(),
@@ -175,16 +167,13 @@ export default class EventAlgorithm {
     });
   }
 
-  /** 执行操作 */
-  private executeIncident(
+  protected executeIncident(
     incident: Incident,
     rangeKey: string,
     player: Player,
-  ) {
-    //如果是模组事件，就拦截
-    if (!this.modPluginLoader.fireIncidentTrigger(incident, player)) {
-      return;
-    }
+  ): void {
+    if (!this.modPluginLoader.fireIncidentTrigger(incident, player)) return;
+
     this.eventHistory.markTriggered(incident.id, rangeKey);
     this.eventHistory.markBlocked(incident.excludedIds);
     this.logStore.addEvent(incident);
@@ -194,22 +183,17 @@ export default class EventAlgorithm {
       this.schedulePostEvents(incident);
     }
 
-    //通知模组系统
     this.modPluginLoader.fireIncidentExecuted(incident, player);
+
+    this.eventBus.emit("incident:executed", {
+      incidentId: incident.id,
+    });
   }
 
-  /**
-   * 根据权重挑选事件
-   */
-  private getRandomIncident(
+  protected getRandomIncident(
     list: Array<{ incident: Incident; rangeKey: string }>,
     player: Player,
-  ) {
+  ): { incident: Incident; rangeKey: string } | undefined {
     return weightedRandom(list, (item) => item.incident.getWeight(player));
-  }
-
-  public reset(): void {
-    this.eventHistory.reset();
-    this.postEventScheduler.reset();
   }
 }
