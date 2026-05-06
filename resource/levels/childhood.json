@@ -1,0 +1,12 @@
+{
+  "id": "childhood",
+  "nameKey": "level.childhood",
+  "descriptionKey": "level.childhood.desc",
+  "nextLevel": "adolescence",
+  "difficultyIdentification": "easy",
+  "algorithm": "default",
+  "extraFilters": [],
+  "onEnter": {
+    "setPlayer": { "age": 0 }
+  }
+}

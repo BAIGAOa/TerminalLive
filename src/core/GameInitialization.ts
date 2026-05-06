@@ -16,6 +16,9 @@ import { container } from "../Container.js";
 import { Screens } from "../content/Screens.js";
 import EventHistory from "../event/EventHistory.js";
 import { ArchiveStore } from "./archive/ArchiveStore.js";
+import { registerBuiltinRegistrations } from "../level/BuiltinRegistrations.js";
+import LevelManager from "../level/LevelManager.js";
+import Conditions from "../content/Conditions.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -33,6 +36,8 @@ export default class GameInitialization {
 
   public modPluginLoader: ModPluginLoader;
 
+  public levelManager: LevelManager;
+
   constructor() {
     this.configStore = inject(ConfigStore);
     this.game = inject(Game);
@@ -43,18 +48,7 @@ export default class GameInitialization {
     this.eventHistory = inject(EventHistory);
     this.archiveStore = inject(ArchiveStore);
     this.modPluginLoader = inject(ModPluginLoader);
-  }
-
-  private loadModPlugins(): void {
-    this.modPluginLoader.setPlayer(this.player);
-    this.archiveStore.setPlayer(this.player);
-    this.modPluginLoader.loadEnabled();
-    const enabledMods = this.configStore.getEnabledMods();
-    for (const modName of enabledMods) {
-      if (this.modRegistry.isValid(modName)) {
-        this.modLoader.loadFromDir(this.modRegistry.getModEventsPath(modName));
-      }
-    }
+    this.levelManager = inject(LevelManager);
   }
 
   //初始化配置，用于从本地获取配置并加载
@@ -62,21 +56,26 @@ export default class GameInitialization {
     await this.configStore.init();
   }
 
+  private restoreLevelProgress() {
+    const lastLevelId = this.configStore.getSnapshot().lastLevelId;
+    if (lastLevelId && lastLevelId !== "none") {
+      this.levelManager.lastPlayedLevelId = lastLevelId;
+    }
+  }
+
   //加载创建玩家全局实例
   private loadPlayer(): void {
     this.player = new Player(this.configStore.getPlayerConfig());
+    this.archiveStore.setPlayer(this.player);
   }
 
   private loadContent(): void {
     EventTypes.registerAll();
     this.modLoader.load();
+    Conditions.load();
     Screens.load();
     Keys.load();
     Achievements.load();
-  }
-
-  private initGame(): void {
-    this.game.init(this.player);
   }
 
   private async initMonitor(): Promise<void> {
@@ -89,17 +88,28 @@ export default class GameInitialization {
   }
 
   public async init() {
-    //提前让控制台激活
-    // 如果不这样做，那么模组加载信息就不会出现在控制台，包括其他信息
+    // 提前唤醒控制台，不然后面的消息控制台不会刷新
     container.resolve(ConsoleStore);
     await this.configurationInitialization();
     this.loadPlayer();
     this.eventHistory.load();
     this.loadContent();
-    this.loadModPlugins();
-    this.initGame();
+
+    registerBuiltinRegistrations();
+    const levelManager = container.resolve(LevelManager);
+    levelManager.setPlayer(this.player);
+
+    this.modPluginLoader.setPlayer(this.player);
+    this.modPluginLoader.loadEnabled();
+    levelManager.loadAllLevels(); // 确保在加载所有事件的时候，确保条件已经加载完成，因此需要在模组加载完成之后进行
+
     await this.initMonitor();
     await this.initAchievementSystem();
+
+    this.restoreLevelProgress();
+    this.levelManager.initCompletedLevels(
+      this.configStore.getSnapshot().completedLevels,
+    );
     return this;
   }
 }

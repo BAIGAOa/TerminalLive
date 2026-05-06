@@ -2,7 +2,6 @@ import { createRequire } from "node:module";
 import { Scope, Scoped, inject } from "di-wise";
 import ModRegistry from "./ModRegistry.js";
 import EventTypeRegistry from "./EventTypeRegistry.js";
-import EventBus from "../EventBus.js";
 import ConfigStore from "../store/ConfigStore.js";
 import Player from "../../world/Player.js";
 import { Incident, IncidentParameter } from "../../world/Incident.js";
@@ -10,61 +9,71 @@ import { ModContext, ModPlugin, ModEventClassDef } from "./types.js";
 import { ScreenRegistry } from "../store/ScreenRegistry.js";
 import { container } from "../../Container.js";
 import ScreenStore from "../store/ScreenStore.js";
+import LevelConditionRegistry from "../../level/registry/LevelConditionRegistry.js";
+import AlgorithmRegistry from "../../event/AlgorithmRegistry.js";
+import FilterRegistry from "../../event/registry/FilterRegistry.js";
+import TypedEventBus from "../TypedEventBus.js";
 
-// 单个钩子函数的存储条目，包含函数本身和它绑定的 ModContext
+// 每个钩子条目同时存函数和上下文：fireXxx 方法需要把 ctx 传回给模组的钩子函数。
+// 函数用 bind 绑定了 plugin，这样模组作者写 this.xxx 时，this 指向自己的插件对象。
 interface HookEntry {
   fn: (...args: any[]) => any;
   ctx: ModContext;
 }
 
-// 标注为容器级作用域，整个应用共享同一个实例
+// 模组插件加载器：负责加载模组的 JS 入口文件，构造上下文，注册钩子和事件类型。
+// 它是模组系统和游戏核心之间的桥梁——EventAlgorithm、Game 等核心模块通过它来
+// 触发模组钩子，而不需要直接知道任何模组的存在。
 @Scoped(Scope.Container)
 export default class ModPluginLoader {
-  // 模组注册表，管理所有可用模组的元数据
   private registry: ModRegistry;
-  // 事件类型注册表，供模组注册自定义事件类
   private eventTypeRegistry: EventTypeRegistry;
-  // 全局事件总线
-  private eventBus: EventBus;
-  // 持久化配置存储
+  private eventBus: TypedEventBus;
   private configStore: ConfigStore;
   private screenRegistry: ScreenRegistry;
+  private conditionReg: LevelConditionRegistry;
+  private algoRegister: AlgorithmRegistry;
+  private filterRegister: FilterRegistry;
 
-  // 当前玩家引用，由外部调用 setPlayer 注入
+  // 玩家引用由外部注入——Player 的生命周期由 GameInitialization 管理，
+  // 可能在加载存档时被整体替换，所以这里只存引用而不是持有。
   private playerRef: Player | null = null;
-  // 已加载的插件对象列表
   private plugins: ModPlugin[] = [];
 
-  // 各类生命周期钩子队列
-  private incidentTriggerHooks: HookEntry[] = []; // 事件触发前
-  private incidentExecutedHooks: HookEntry[] = []; // 事件执行后
-  private playerUpdateHooks: HookEntry[] = []; // 玩家每回合更新
+  // 三种钩子队列分开存，这样 fire 时不需要遍历所有钩子再判断类型。
+  // 大多数回合没有事件触发，分开存意味着 playerUpdateHooks 的遍历不会经过事件钩子的空检查。
+  private incidentTriggerHooks: HookEntry[] = [];
+  private incidentExecutedHooks: HookEntry[] = [];
+  private playerUpdateHooks: HookEntry[] = [];
 
   constructor() {
     this.registry = inject(ModRegistry);
     this.eventTypeRegistry = inject(EventTypeRegistry);
-    this.eventBus = inject(EventBus);
+    this.eventBus = inject(TypedEventBus);
     this.configStore = inject(ConfigStore);
     this.screenRegistry = inject(ScreenRegistry);
+    this.conditionReg = inject(LevelConditionRegistry);
+    this.algoRegister = inject(AlgorithmRegistry);
+    this.filterRegister = inject(FilterRegistry);
   }
 
-  // 设置当前玩家对象，供模组上下文中的 getPlayer 使用
   public setPlayer(p: Player): void {
     this.playerRef = p;
   }
 
-  // 加载所有配置中启用的模组
+  // 只加载用户在配置中勾选启用的模组，不会把 ~/.mod_live/ 下的所有东西都拉进来。
+  // 这样用户可以在模组管理界面开关模组，不需要手动删文件夹。
   public loadEnabled(): void {
     const enabled = this.configStore.getEnabledMods();
     for (const name of enabled) {
-      // 检查模组是否在注册表中存在且合法
       if (!this.registry.isValid(name)) continue;
       this.loadOne(name);
     }
   }
 
-  // 触发事件前钩子，遍历所有注册的 onIncidentTrigger
-  // 如果任一钩子显式返回 false，则阻止事件执行
+  // 遍历所有模组的 onIncidentTrigger 钩子。
+  // 任意一个钩子返回 false 就阻止事件——这是一种"一票否决"机制。
+  // 这样模组可以在某些条件下拦截事件。
   public fireIncidentTrigger(incident: Incident, player: Player): boolean {
     for (const { fn, ctx } of this.incidentTriggerHooks) {
       if (fn(incident, player, ctx) === false) return false;
@@ -72,26 +81,30 @@ export default class ModPluginLoader {
     return true;
   }
 
-  // 触发事件执行后钩子
+  // onIncidentExecuted 是纯通知，不关心返回值。
+  // 适合用来做日志、统计、或者触发额外的副作用。
   public fireIncidentExecuted(incident: Incident, player: Player): void {
     for (const { fn, ctx } of this.incidentExecutedHooks) {
       fn(incident, player, ctx);
     }
   }
 
-  // 触发玩家更新后钩子
+  // 每回合玩家更新后调用，给模组一个"巡视"玩家状态的机会。
   public firePlayerUpdate(player: Player): void {
     for (const { fn, ctx } of this.playerUpdateHooks) {
       fn(player, ctx);
     }
   }
 
-  // 加载单个模组： require 入口文件 → 构造上下文 → 注册事件类型 → 注册钩子 → 调用 onInit
+  // 加载单个模组的完整流程：
+  // require 入口 → 校验导出 → 构建上下文 → 注册事件类型 → 注册钩子 → 调用 onInit
+  // 每一步都独立 try/catch，防止一个模组的错误影响其他模组或游戏启动。
   private loadOne(name: string): void {
     const mainPath = this.registry.getModMainPath(name);
     let requireFn: NodeRequire;
     try {
-      // 以模组文件所在目录为基准创建 require 函数，使其能加载自身依赖
+      // 用 createRequire 而不是全局 require：模组可能需要加载自己的 node_modules，
+      // 从模组目录起算模块路径才能正确解析依赖。
       requireFn = createRequire(mainPath);
     } catch {
       console.warn(`[Mod] 无法为 ${name} 创建 require 上下文`);
@@ -106,7 +119,7 @@ export default class ModPluginLoader {
       return;
     }
 
-    // 支持 ES 模块默认导出和 CommonJS 整体导出
+    // 兼容 ES module 的 default 导出和 CommonJS 的 module.exports
     const plugin: ModPlugin = exported.default ?? exported;
     if (
       !plugin ||
@@ -117,21 +130,20 @@ export default class ModPluginLoader {
       return;
     }
 
-    // 创建该模组专属的 ModContext
     const ctx = this.createContext(name);
 
-    // 调用模组的注册事件类型函数（如果有）
     try {
       plugin.registerEventTypes?.(this.eventTypeRegistry, ctx);
     } catch (err) {
       console.error(`[Mod] ${name} 注册事件类型失败:`, (err as Error).message);
     }
 
-    // 将模组提供的钩子注册到对应队列
     this.registerHooks(plugin, ctx);
 
-    // 执行模组的初始化钩子
     try {
+      // onInit 可以是异步的，但这里用了 fire-and-forget——不等它完成。
+      // 这意味着 onInit 中的异步操作（比如加载远程资源）不会阻塞游戏启动，
+      // 但也意味着模组初始化的顺序不可靠。
       plugin.hooks?.onInit?.(ctx);
     } catch (err) {
       console.error(`[Mod] ${name} onInit 失败:`, (err as Error).message);
@@ -141,7 +153,8 @@ export default class ModPluginLoader {
     this.eventBus.emit("moder:loadSuccess", { modName: name });
   }
 
-  // 遍历 ModHooks，将存在的钩子函数绑定并推入对应队列
+  // 把钩子函数 bind 到 plugin 实例上，再存入对应队列。
+  // bind 让模组作者可以在钩子函数里用 this 访问自己插件对象的其他属性和方法。
   private registerHooks(plugin: ModPlugin, ctx: ModContext): void {
     const h = plugin.hooks;
     if (!h) return;
@@ -163,7 +176,8 @@ export default class ModPluginLoader {
     }
   }
 
-  // 根据模组名称创建 ModContext，提供事件总线、配置、日志、玩家引用和事件类工厂
+  // 构建 ModContext。每个模组拿到的 ctx 共享底层对象（eventBus、configStore 等），
+  // 但 logger 前缀是独立的，这样控制台输出能区分是哪个模组在说话。
   private createContext(modName: string): ModContext {
     return {
       eventBus: this.eventBus,
@@ -177,7 +191,6 @@ export default class ModPluginLoader {
         if (!this.playerRef) throw new Error("Player 未初始化");
         return this.playerRef;
       },
-      // 动态创建 Incident 子类，使用传入的 ModEventClassDef 作为行为定义
       createEventClass: (def: ModEventClassDef) => this.makeEventClass(def),
 
       registerScreen: (entry) => {
@@ -185,16 +198,28 @@ export default class ModPluginLoader {
           scene: entry.scene,
           component: entry.component,
           nameKey: entry.nameKey,
+          hide: entry.hide,
           highlightId: entry.highlightId ?? entry.scene,
         });
       },
       navigateTo: (scene) => {
         container.resolve(ScreenStore).setScene(scene);
       },
+      addCondition: (id, ctor, schema) => {
+        this.conditionReg.addCondition(id, ctor, schema);
+      },
+      addAlgorithm: (name, factory) => {
+        this.algoRegister.register(name, factory);
+      },
+      addFilter: (id, filter) => {
+        this.filterRegister.register(id, filter);
+      },
     };
   }
 
-  // 根据 ModEventClassDef 生成一个继承自 Incident 的动态类
+  // 动态生成 Incident 子类。
+  // 模组只需传入 apply 和 getWeight 两个函数，框架帮你搞定构造函数、setup 等样板代码。
+  // 返回的是一个构造函数，可以直接传给 registry.register()。
   private makeEventClass(
     def: ModEventClassDef,
   ): new (params: IncidentParameter) => Incident {
@@ -202,11 +227,11 @@ export default class ModPluginLoader {
       constructor(params: IncidentParameter) {
         super(params);
       }
-      // 事件触发时调用模组定义的 apply
       apply(player: Player): void {
         def.apply(player, this);
       }
-      // 计算权重时优先使用模组自定义 getWeight，否则回退到基类 weight 属性
+      // getWeight 如果没提供就回退到基类的 this.weight（即 JSON 里配的那个数字）。
+      // 这种设计让简单的"固定权重"事件和复杂的"按玩家状态动态权重"事件都能用同一套 API。
       getWeight(player: Player): number {
         return def.getWeight?.(player, this) ?? this.weight;
       }

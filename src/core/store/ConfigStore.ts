@@ -14,6 +14,7 @@ export default class ConfigStore {
     language: "en_US",
     player: { ...DEFAULT_PLAYER_CONFIG },
     enabledMods: [],
+    completedLevels: [],
   };
   private listeners: Set<Listener> = new Set();
   private jsonParser = new JSONparsing("config.json");
