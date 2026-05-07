@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, BoxProps, Text } from "ink";
-import SelectInput from "ink-select-input";
 import { useLanguageScreen } from "../hooks/useLanguageScreen.js";
+import SelectInput from "../tools/ui/SelectInput.js";
 
 interface LanguageBoxProps extends BoxProps {
   label: string;

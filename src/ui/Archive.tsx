@@ -1,35 +1,31 @@
 import React from "react";
-import { Box, Text, useInput } from "ink";
-import TextInput from "ink-text-input";
+import { Box, Text } from "ink";
 import { useArchiveScreen } from "../hooks/useArchiveScreen.js";
+import TextInput from "../tools/ui/TextInput.js";
+import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js";
 
 export default function Archive({ onBack }: { onBack?: () => void }) {
   const data = useArchiveScreen(onBack);
 
-  useInput((input, key) => {
-    // 命名优先，防止 TextInput 被全局按键干扰
+
+  useKeyboardHandler((input, key) => {
     if (data.saveMode) {
-      if (key.escape) data.handleCancelSave();
-      return;
+      if (key.escape) { data.handleCancelSave(); return true }
+      return false // 让 TextInput 接收字符
     }
-    // 删除确认模式
     if (data.confirmDelete) {
-      if (key.escape) data.handleCancel();
-      if (key.return) data.handleDelete();
-      return;
+      if (key.escape) { data.handleCancel(); return true }
+      if (key.return) { data.handleDelete(); return true }
+      return true
     }
-    // 普通模式
-    if (key.upArrow)
-      data.setSelectedIndex((i: number) => Math.max(0, i - 1));
-    if (key.downArrow)
-      data.setSelectedIndex((i: number) =>
-        Math.min(data.saves.length - 1, i + 1)
-      );
-    if (key.return) data.handleLoad();
-    if (key.escape) data.handleCancel();
-    if (input === "s" || input === "S") data.handleStartSave();
-    if (input === "d" || input === "D") data.handleDelete();
-  });
+    if (key.upArrow) { data.setSelectedIndex(i => Math.max(0, i - 1)); return true }
+    if (key.downArrow) { data.setSelectedIndex(i => Math.min(data.saves.length - 1, i + 1)); return true }
+    if (key.return) { data.handleLoad(); return true }
+    if (key.escape) { data.handleCancel(); return true }
+    if (input === 's' || input === 'S') { data.handleStartSave(); return true }
+    if (input === 'd' || input === 'D') { data.handleDelete(); return true }
+    return false
+  }, [data.saveMode, data.confirmDelete, data.saves.length])
 
   return (
     <Box flexDirection="column" padding={1} width="100%" height={data.rows}>

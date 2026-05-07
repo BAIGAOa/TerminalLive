@@ -19,6 +19,8 @@ import { ArchiveStore } from "./archive/ArchiveStore.js";
 import { registerBuiltinRegistrations } from "../level/BuiltinRegistrations.js";
 import LevelManager from "../level/LevelManager.js";
 import Conditions from "../content/Conditions.js";
+import GameStatus from "../content/GameStatus.js";
+import { KeyboardManager } from "./keys/KeyBoardManager.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -38,6 +40,8 @@ export default class GameInitialization {
 
   public levelManager: LevelManager;
 
+  public keyBoardManager: KeyboardManager;
+
   constructor() {
     this.configStore = inject(ConfigStore);
     this.game = inject(Game);
@@ -49,6 +53,7 @@ export default class GameInitialization {
     this.archiveStore = inject(ArchiveStore);
     this.modPluginLoader = inject(ModPluginLoader);
     this.levelManager = inject(LevelManager);
+    this.keyBoardManager = inject(KeyboardManager);
   }
 
   //初始化配置，用于从本地获取配置并加载
@@ -76,6 +81,7 @@ export default class GameInitialization {
     Screens.load();
     Keys.load();
     Achievements.load();
+    GameStatus.load();
   }
 
   private async initMonitor(): Promise<void> {
@@ -104,6 +110,11 @@ export default class GameInitialization {
     levelManager.loadAllLevels(); // 确保在加载所有事件的时候，确保条件已经加载完成，因此需要在模组加载完成之后进行
 
     await this.initMonitor();
+
+    this.keyBoardManager.setDefaultHandler((input, key) =>
+      this.monitor.handleInput(input, key),
+    );
+
     await this.initAchievementSystem();
 
     this.restoreLevelProgress();

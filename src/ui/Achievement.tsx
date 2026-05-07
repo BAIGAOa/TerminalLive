@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import SelectInput from 'ink-select-input';
 import { Achievement } from '../achievement/Achievement.js';
 import { useAchievementScreen, CategoryMenuItem } from '../hooks/useAchievementScreen.js';
+import SelectInput from '../tools/ui/SelectInput.js';
 
 
 const CategoryMenuBox = (props: CategoryMenuItem & { isSelected?: boolean }) => (

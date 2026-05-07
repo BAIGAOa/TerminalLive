@@ -1,7 +1,5 @@
 import React from 'react';
-import { Box, Text, useInput } from 'ink';
-import SelectInput from 'ink-select-input';
-import TextInput from 'ink-text-input';
+import { Box, Text } from 'ink';
 import Player from '../world/Player.js';
 import {
   usePlayerConfig,
@@ -9,6 +7,9 @@ import {
   AttributeItem,
 } from '../hooks/usePlayerConfig.js';
 import { useTerminalSize } from './TerminalSizeContext.js';
+import { useKeyboardHandler } from '../hooks/key/useKeyBoardHandle.js';
+import SelectInput from '../tools/ui/SelectInput.js';
+import TextInput from '../tools/ui/TextInput.js';
 
 // ============================================================
 // 子组件
@@ -58,12 +59,10 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
   const data = usePlayerConfig(player, onBack);
   const { rows } = useTerminalSize();
 
-  
-  useInput((_input, key) => {
-    if (key.escape) {
-      data.onCancelEdit();
-    }
-  });
+  useKeyboardHandler((_input, key) => {
+    if (key.escape) { data.onCancelEdit(); return true }
+    return false
+  })
 
   return (
     <Box flexDirection="column" padding={1} width="100%" height={rows}>

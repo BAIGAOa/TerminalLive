@@ -1,14 +1,16 @@
 import React from "react";
-import { Box, Text, Newline, useInput } from "ink";
+import { Box, Text, Newline } from "ink";
 import useLevelGameScreen from "../hooks/useLevelGameScreen.js";
+import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js";
 
 export default function LevelGame() {
   const data = useLevelGameScreen();
 
-  useInput((_input, key) => {
-    if (key.leftArrow) data.onPrevView();
-    if (key.rightArrow) data.onNextView();
-  });
+  useKeyboardHandler((_input, key) => {
+    if (key.leftArrow) { data.onPrevView(); return true }
+    if (key.rightArrow) { data.onNextView(); return true }
+    return false
+  })
 
   const availableRows = Math.max(data.rows, 20);
 

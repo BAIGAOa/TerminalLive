@@ -1,10 +1,10 @@
 import React from "react";
 import { Box, Text } from "ink";
-import SelectInput from "ink-select-input";
 import { SETTING_MENU, useSettingScreen } from "../hooks/useSettingScreen.js";
 import Player from "../world/Player.js";
 import { SettingRegistry } from "../core/store/SettingRegistry.js";
 import { container } from "../Container.js";
+import SelectInput from "../tools/ui/SelectInput.js";
 
 interface SettingSelectedProps {
   label: string;
