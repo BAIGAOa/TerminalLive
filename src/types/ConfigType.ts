@@ -44,10 +44,11 @@ const PlayerConfigSchema = z.object({
 
 const ConfigSchema = z.object({
   language: z.string().default("en_US"),
+  theme: z.string().default("default"),
   player: PlayerConfigSchema.default({ ...DEFAULT_PLAYER_CONFIG }),
   enabledMods: z.array(z.string()).default([]),
   lastLevelId: z.string().optional(),
-  completedLevels: z.array(z.string()),
+  completedLevels: z.array(z.string()).default([]),
 });
 
 export type ConfigType = z.infer<typeof ConfigSchema>;

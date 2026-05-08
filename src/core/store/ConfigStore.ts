@@ -12,6 +12,7 @@ type Listener = () => void;
 export default class ConfigStore {
   private config: ConfigType = {
     language: "en_US",
+    theme: "default",
     player: { ...DEFAULT_PLAYER_CONFIG },
     enabledMods: [],
     completedLevels: [],
@@ -19,7 +20,6 @@ export default class ConfigStore {
   private listeners: Set<Listener> = new Set();
   private jsonParser = new JSONparsing("config.json");
 
-  /** 初始化从磁盘加载配置，必须在应用启动时调用 */
   public async init(): Promise<void> {
     try {
       this.config = await this.jsonParser.loadingConfig(ConfigSchema);
@@ -34,6 +34,16 @@ export default class ConfigStore {
 
   public async setLanguage(lang: string): Promise<void> {
     this.config = { ...this.config, language: lang };
+    await this.persist();
+    this.emitChange();
+  }
+
+  public getTheme(): string {
+    return this.config.theme ?? "default";
+  }
+
+  public async setTheme(theme: string): Promise<void> {
+    this.config = { ...this.config, theme };
     await this.persist();
     this.emitChange();
   }
@@ -67,11 +77,9 @@ export default class ConfigStore {
     return this.config.player ?? {};
   }
 
-  //更新配置然后持久化
   public async setPlayerConfig(
     partial: Partial<PlayerConfigType>,
   ): Promise<void> {
-    //更新配置
     this.config = {
       ...this.config,
       player: { ...this.config.player, ...partial },
@@ -80,12 +88,10 @@ export default class ConfigStore {
     this.emitChange();
   }
 
-  //获取已启用的 mod 列表
   public getEnabledMods(): string[] {
     return this.config.enabledMods ?? [];
   }
 
-  //设置已启用的 mod 列表并持久化
   public async setEnabledMods(mods: string[]): Promise<void> {
     this.config = { ...this.config, enabledMods: mods };
     await this.persist();

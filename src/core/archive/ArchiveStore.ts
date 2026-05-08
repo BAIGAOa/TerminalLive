@@ -17,10 +17,8 @@ import ConfigStore from "../store/ConfigStore.js";
 import LevelManager from "../../level/LevelManager.js";
 import TypedEventBus from "../TypedEventBus.js";
 import ModRegistry from "../mod/ModRegistry.js";
+import ThemeManager from "../theme/ThemeManager.js";
 
-// 存档管理：负责保存、加载、列出和删除存档文件。
-// 存档目录放在 ~/.archive_live/ 下，和模组目录 ~/.mod_live/ 平级，
-// 用户备份或迁移时这两坨数据一起搬就行。
 
 @Scoped(Scope.Container)
 export class ArchiveStore {
@@ -32,6 +30,7 @@ export class ArchiveStore {
   private configStore: ConfigStore;
   private modRegistry: ModRegistry;
   private eventBus: TypedEventBus;
+  private themeManager: ThemeManager;
 
   constructor() {
     this.SAVE_DIR = join(homedir(), ".archive_live");
@@ -41,6 +40,7 @@ export class ArchiveStore {
     this.configStore = inject(ConfigStore);
     this.modRegistry = inject(ModRegistry);
     this.eventBus = inject(TypedEventBus);
+    this.themeManager = inject(ThemeManager);
   }
 
   public setPlayer(p: Player): void {
@@ -58,23 +58,14 @@ export class ArchiveStore {
     return dirPath;
   }
 
-  /**
-   * 创建存档根目录，用于初始化
-   */
   private ensureRootDir(): void {
     this.createDir(this.SAVE_DIR, "root");
   }
 
-  /**
-   * 创建存档目录
-   */
   private createArchiveDirectory(name: string): string {
     return this.createDir(join(this.SAVE_DIR, name), name);
   }
 
-  /**
-   * 列出所有存档目录
-   */
   public listSaves(): SaveMeta[] {
     let dirs: string[];
     try {
@@ -107,19 +98,12 @@ export class ArchiveStore {
     return result;
   }
 
-  /**
-   * 保存当前游戏状态为一份新存档。
-   * 同时复制已启用的模组到存档内的 mods 目录，使存档自包含。
-   */
   public save(id: string) {
     if (!this.playerRef) throw new Error("Player 未初始化");
 
-    // 创建存档目录
     const path = this.createArchiveDirectory(id);
-    // 创建存档内的 mods 目录
     const modPath = this.createDir(join(path, "mods"), `${id}/mods`);
 
-    // 复制已启用的模组
     const enabledMods = this.configStore.getEnabledMods();
     for (const modName of enabledMods) {
       const src = join(this.modRegistry.MOD_ROOT, modName);
@@ -157,6 +141,7 @@ export class ArchiveStore {
         .map((a) => ({ id: a.id, unlockedAt: a.unlockedAt })),
       config: {
         language: this.configStore.getLanguage(),
+        theme: this.configStore.getTheme(),
         enabledMods: this.configStore.getSnapshot().enabledMods ?? [],
       },
       levels: {
@@ -179,16 +164,11 @@ export class ArchiveStore {
     );
   }
 
-  /**
-   * 从存档目录加载游戏状态。
-   * 先还原模组，再恢复配置、成就、事件历史。
-   */
   public async load(archiveName: string): Promise<void> {
     const path = join(this.SAVE_DIR, archiveName);
     const raw = readFileSync(join(path, "archive.json"), "utf-8");
     const data = saveDataSchema.parse(JSON.parse(raw)) as SaveData;
 
-    // 将存档内的 mods 复制到 ~/.mod_live，覆盖已存在的同名模组
     const archiveMods = join(path, "mods");
     if (existsSync(archiveMods)) {
       const modDirs = readdirSync(archiveMods, { withFileTypes: true })
@@ -205,11 +185,20 @@ export class ArchiveStore {
 
     await this.configStore.update({
       language: data.config.language,
+      theme: data.config.theme ?? "default",
       enabledMods: data.config.enabledMods,
       player: data.player,
       lastLevelId: data.levels.currentLevel,
       completedLevels: data.levels.completedLevels,
     });
+
+    if (data.config.theme && this.themeManager.getCurrentId() !== data.config.theme) {
+      try {
+        this.themeManager.setCurrent(data.config.theme);
+      } catch {
+        this.themeManager.setCurrent("default");
+      }
+    }
 
     this.levelManager.initCompletedLevels(data.levels.completedLevels);
     this.achievementStore.saveFromArchive(data.achievements);
@@ -221,9 +210,6 @@ export class ArchiveStore {
     }
   }
 
-  /**
-   * 删除整个存档目录
-   */
   public delete(name: string): void {
     const dirPath = join(this.SAVE_DIR, name);
     if (existsSync(dirPath)) {
@@ -231,9 +217,6 @@ export class ArchiveStore {
     }
   }
 
-  /**
-   * 将 Map<string, Set<string>> 序列化为普通对象
-   */
   private serializeRangeRecord(): Record<string, string[]> {
     const record = this.levelManager
       .getCurrentEventHistory()

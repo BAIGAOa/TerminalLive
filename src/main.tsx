@@ -12,6 +12,7 @@ import GameInitialization from './core/GameInitialization.js'
 import { container } from './Container.js'
 import { ScreenRegistry } from './core/store/ScreenRegistry.js'
 import { KeyboardManager } from './core/keys/KeyBoardManager.js'
+import { ThemeProvider } from './hooks/theme/ThematicCommunicator.js'
 
 
 const app = await container.resolve(GameInitialization).init()
@@ -21,7 +22,6 @@ function App() {
   const registry = container.resolve(ScreenRegistry)
   const manager = container.resolve(KeyboardManager)
 
-  // 全局唯一按键入口 分发给 KeyboardManager
   useInput((input, key) => {
     manager.handle(input, key)
   })
@@ -97,7 +97,9 @@ function App() {
 render(
   <LanguageProvider>
     <TerminalSizeProvider>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </TerminalSizeProvider>
   </LanguageProvider>,
 )

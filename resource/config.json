@@ -1,5 +1,6 @@
 {
   "language": "zh_CN",
+  "theme": "default",
   "player": {
     "playerName": "DefaultName",
     "age": 0,

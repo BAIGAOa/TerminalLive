@@ -21,6 +21,8 @@ import LevelManager from "../level/LevelManager.js";
 import Conditions from "../content/Conditions.js";
 import GameStatus from "../content/GameStatus.js";
 import { KeyboardManager } from "./keys/KeyBoardManager.js";
+import ThemeParser from "./theme/ThemeParser.js";
+import ThemeManager from "./theme/ThemeManager.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -56,7 +58,6 @@ export default class GameInitialization {
     this.keyBoardManager = inject(KeyboardManager);
   }
 
-  //初始化配置，用于从本地获取配置并加载
   private async configurationInitialization() {
     await this.configStore.init();
   }
@@ -68,7 +69,6 @@ export default class GameInitialization {
     }
   }
 
-  //加载创建玩家全局实例
   private loadPlayer(): void {
     this.player = new Player(this.configStore.getPlayerConfig());
     this.archiveStore.setPlayer(this.player);
@@ -84,6 +84,22 @@ export default class GameInitialization {
     GameStatus.load();
   }
 
+  private initThemes(): void {
+    const themeParser = container.resolve(ThemeParser);
+    themeParser.load();
+
+    const themeManager = container.resolve(ThemeManager);
+    const savedTheme = this.configStore.getTheme();
+    if (themeManager.getCurrentId() !== savedTheme) {
+      try {
+        themeManager.setCurrent(savedTheme);
+      } catch {
+        themeManager.setCurrent("default");
+        this.configStore.setTheme("default");
+      }
+    }
+  }
+
   private async initMonitor(): Promise<void> {
     this.monitor = await KeyboardMonitor.create("keys.json", this.keysCenter);
   }
@@ -94,7 +110,6 @@ export default class GameInitialization {
   }
 
   public async init() {
-    // 提前唤醒控制台，不然后面的消息控制台不会刷新
     container.resolve(ConsoleStore);
     await this.configurationInitialization();
     this.loadPlayer();
@@ -107,7 +122,9 @@ export default class GameInitialization {
 
     this.modPluginLoader.setPlayer(this.player);
     this.modPluginLoader.loadEnabled();
-    levelManager.loadAllLevels(); // 确保在加载所有事件的时候，确保条件已经加载完成，因此需要在模组加载完成之后进行
+    levelManager.loadAllLevels();
+
+    this.initThemes();
 
     await this.initMonitor();
 

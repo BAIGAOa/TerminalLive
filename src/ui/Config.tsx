@@ -122,7 +122,7 @@ export default function Config({ onConfigChange, onBack }: ConfigProps) {
         <Box borderStyle="bold" width="30%">
           <SelectInput
             items={data.leftItems}
-            onSelect={(item) => data.onSelectScene(item)}
+            onSelect={(item) => data.onSelectScene(item as SceneMenuItem)}
             itemComponent={SceneMenuBox as any}
             isFocused={data.isLeftFocused}
           />
@@ -157,7 +157,7 @@ export default function Config({ onConfigChange, onBack }: ConfigProps) {
           ) : (
             <SelectInput
               items={data.rightItems}
-              onSelect={(item) => data.onSelectBinding(item)}
+              onSelect={(item) => data.onSelectBinding(item as ConfigItem)}
               itemComponent={BigBoxItem as any}
               isFocused={data.isRightFocused}
             />
