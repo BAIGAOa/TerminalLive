@@ -2,6 +2,7 @@ import z from "zod";
 
 export const saveDataSchema = z.object({
   version: z.number(),
+  appVersion: z.string(),
   timestamp: z.string(),
   player: z.object({
     playerName: z.string(),
@@ -44,4 +45,5 @@ export interface SaveMeta {
   timestamp: string;
   playerName: string;
   age: number;
+  appVersion: string;
 }

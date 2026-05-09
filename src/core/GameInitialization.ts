@@ -15,7 +15,7 @@ import ConsoleStore from "./console/ConsoleStore.js";
 import { container } from "../Container.js";
 import { Screens } from "../content/Screens.js";
 import EventHistory from "../event/EventHistory.js";
-import { ArchiveStore } from "./archive/ArchiveStore.js";
+import { ArchiveManager } from "./archive/ArchiveManager.js";
 import { registerBuiltinRegistrations } from "../level/BuiltinRegistrations.js";
 import LevelManager from "../level/LevelManager.js";
 import Conditions from "../content/Conditions.js";
@@ -23,6 +23,7 @@ import GameStatus from "../content/GameStatus.js";
 import { KeyboardManager } from "./keys/KeyBoardManager.js";
 import ThemeParser from "./theme/ThemeParser.js";
 import ThemeManager from "./theme/ThemeManager.js";
+import { VersionProvider } from "./version/VersionProvider.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -32,16 +33,12 @@ export default class GameInitialization {
   public achievementStore: AchievementStore;
   public modLoader: ModLoader;
   public modRegistry: ModRegistry;
-
   public monitor!: KeyboardMonitor;
   public player!: Player;
   public eventHistory: EventHistory;
-  public archiveStore: ArchiveStore;
-
+  public archiveManager: ArchiveManager;
   public modPluginLoader: ModPluginLoader;
-
   public levelManager: LevelManager;
-
   public keyBoardManager: KeyboardManager;
 
   constructor() {
@@ -52,7 +49,7 @@ export default class GameInitialization {
     this.modLoader = inject(ModLoader);
     this.modRegistry = inject(ModRegistry);
     this.eventHistory = inject(EventHistory);
-    this.archiveStore = inject(ArchiveStore);
+    this.archiveManager = inject(ArchiveManager);
     this.modPluginLoader = inject(ModPluginLoader);
     this.levelManager = inject(LevelManager);
     this.keyBoardManager = inject(KeyboardManager);
@@ -71,7 +68,6 @@ export default class GameInitialization {
 
   private loadPlayer(): void {
     this.player = new Player(this.configStore.getPlayerConfig());
-    this.archiveStore.setPlayer(this.player);
   }
 
   private loadContent(): void {
@@ -111,6 +107,7 @@ export default class GameInitialization {
 
   public async init() {
     container.resolve(ConsoleStore);
+    container.resolve(VersionProvider);
     await this.configurationInitialization();
     this.loadPlayer();
     this.eventHistory.load();

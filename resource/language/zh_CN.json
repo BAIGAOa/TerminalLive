@@ -133,5 +133,6 @@
     "archive.enterName": "输入存档名称",
     "archive.saveHint": "按 Enter 确认，Esc 取消",
     "archive.saveModeHint": "Enter: 保存 | Esc: 取消",
-    "archive.emptyNameError": "名称不能为空"
+    "archive.emptyNameError": "名称不能为空",
+    "archive.incompatible": "存档不兼容，无法加载。"
 }

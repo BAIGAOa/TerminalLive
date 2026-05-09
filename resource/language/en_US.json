@@ -133,5 +133,6 @@
     "archive.enterName": "Enter save name",
     "archive.saveHint": "Press Enter to save, Esc to cancel",
     "archive.saveModeHint": "Enter: Save | Esc: Cancel",
-    "archive.emptyNameError": "Name cannot be empty"
+    "archive.emptyNameError": "Name cannot be empty",
+    "archive.incompatible": "Archive is incompatible and cannot be loaded."
 }

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { container } from "../Container.js";
-import { ArchiveStore } from "../core/archive/ArchiveStore.js";
+import { ArchiveManager } from "../core/archive/ArchiveManager.js";
 import { SaveMeta } from "../core/archive/SaveSchema.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
@@ -28,7 +28,7 @@ export interface ArchiveScreenData {
 export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
   const { t } = useI18n();
   const { rows } = useTerminalSize();
-  const store = container.resolve(ArchiveStore);
+  const store = container.resolve(ArchiveManager);
 
   const [saves, setSaves] = useState<SaveMeta[]>(() => store.listSaves());
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -37,7 +37,6 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
   const [saveMode, setSaveMode] = useState(false);
   const [saveName, setSaveName] = useState("");
 
-  /** 命名模式下挂起全局键盘监听 */
   useEffect(() => {
     KeyboardMonitor.isSuspended = saveMode;
     return () => {
@@ -82,16 +81,13 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
   const handleLoad = useCallback(() => {
     if (saves.length === 0) return;
     const name = saves[selectedIndex].name;
-    store
-      .load(name)
-      .then(() => {
-        setMessage(t("archive.loadSuccess"));
-        setTimeout(() => process.exit(0), 1500);
-      })
-      .catch((err) => {
-        setMessage((err as Error).message);
-        setTimeout(() => setMessage(null), 3000);
-      });
+    try {
+      store.load(name);
+      setMessage(t("archive.loadSuccess"));
+    } catch {
+      setMessage(t("archive.incompatible"));
+      setTimeout(() => setMessage(null), 3000);
+    }
   }, [saves, selectedIndex, store, t]);
 
   const handleDelete = useCallback(() => {

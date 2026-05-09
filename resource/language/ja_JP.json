@@ -133,5 +133,6 @@
     "archive.enterName": "セーブ名を入力",
     "archive.saveHint": "Enterで保存、Escでキャンセル",
     "archive.saveModeHint": "Enter: 保存 | Esc: キャンセル",
-    "archive.emptyNameError": "名前を入力してください"
+    "archive.emptyNameError": "名前を入力してください",
+    "archive.incompatible": "セーブデータに互換性がありません。読み込めません。"
 }

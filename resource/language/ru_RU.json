@@ -133,5 +133,6 @@
     "archive.enterName": "Введите имя сохранения",
     "archive.saveHint": "Нажмите Enter для сохранения, Esc для отмены",
     "archive.saveModeHint": "Enter: Сохранить | Esc: Отмена",
-    "archive.emptyNameError": "Имя не может быть пустым"
+    "archive.emptyNameError": "Имя не может быть пустым",
+    "archive.incompatible": "Архив несовместим и не может быть загружен."
 }

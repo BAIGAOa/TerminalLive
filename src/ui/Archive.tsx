@@ -7,25 +7,56 @@ import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js";
 export default function Archive({ onBack }: { onBack?: () => void }) {
   const data = useArchiveScreen(onBack);
 
-
-  useKeyboardHandler((input, key) => {
-    if (data.saveMode) {
-      if (key.escape) { data.handleCancelSave(); return true }
-      return false // 让 TextInput 接收字符
-    }
-    if (data.confirmDelete) {
-      if (key.escape) { data.handleCancel(); return true }
-      if (key.return) { data.handleDelete(); return true }
-      return true
-    }
-    if (key.upArrow) { data.setSelectedIndex(i => Math.max(0, i - 1)); return true }
-    if (key.downArrow) { data.setSelectedIndex(i => Math.min(data.saves.length - 1, i + 1)); return true }
-    if (key.return) { data.handleLoad(); return true }
-    if (key.escape) { data.handleCancel(); return true }
-    if (input === 's' || input === 'S') { data.handleStartSave(); return true }
-    if (input === 'd' || input === 'D') { data.handleDelete(); return true }
-    return false
-  }, [data.saveMode, data.confirmDelete, data.saves.length])
+  useKeyboardHandler(
+    (input, key) => {
+      if (data.saveMode) {
+        if (key.escape) {
+          data.handleCancelSave();
+          return true;
+        }
+        return false;
+      }
+      if (data.confirmDelete) {
+        if (key.escape) {
+          data.handleCancel();
+          return true;
+        }
+        if (key.return) {
+          data.handleDelete();
+          return true;
+        }
+        return true;
+      }
+      if (key.upArrow) {
+        data.setSelectedIndex((i) => Math.max(0, i - 1));
+        return true;
+      }
+      if (key.downArrow) {
+        data.setSelectedIndex((i) =>
+          Math.min(data.saves.length - 1, i + 1),
+        );
+        return true;
+      }
+      if (key.return) {
+        data.handleLoad();
+        return true;
+      }
+      if (key.escape) {
+        data.handleCancel();
+        return true;
+      }
+      if (input === "s" || input === "S") {
+        data.handleStartSave();
+        return true;
+      }
+      if (input === "d" || input === "D") {
+        data.handleDelete();
+        return true;
+      }
+      return false;
+    },
+    [data.saveMode, data.confirmDelete, data.saves.length],
+  );
 
   return (
     <Box flexDirection="column" padding={1} width="100%" height={data.rows}>
@@ -66,14 +97,15 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
               >
                 <Text color={isSelected ? "green" : "white"} bold={isSelected}>
                   {isSelected ? "▶ " : "  "}
-                  {save.timestamp
-                    ? new Date(save.timestamp).toLocaleString()
-                    : save.name}
-                  <Text color='white'> Name: {save.name}</Text>
+                  {save.name}
                 </Text>
                 <Text dimColor>
-                  {data.t("archive.playerName")}: {save.playerName} |{" "}
-                  {data.t("archive.age")}: {save.age}
+                  {save.timestamp
+                    ? new Date(save.timestamp).toLocaleString()
+                    : ""}{" "}
+                  | {data.t("archive.playerName")}: {save.playerName}{" "}
+                  | {data.t("archive.age")}: {save.age}{" "}
+                  | v{save.appVersion}
                 </Text>
               </Box>
             );
