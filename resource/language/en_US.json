@@ -134,5 +134,16 @@
     "archive.saveHint": "Press Enter to save, Esc to cancel",
     "archive.saveModeHint": "Enter: Save | Esc: Cancel",
     "archive.emptyNameError": "Name cannot be empty",
-    "archive.incompatible": "Archive is incompatible and cannot be loaded."
+    "archive.incompatible": "Archive is incompatible and cannot be loaded.",
+    "console.enterInputMode": "Input",
+    "console.exitInputMode": "Exit input",
+    "console.results": "Results",
+    "console.noResults": "No command results",
+    "console.inputHint": "Press Tab to enter command input mode",
+    "console.cmd.help": "Available commands: {list}",
+    "console.cmd.clear": "Console cleared",
+    "console.cmd.defaultSuccess": "Command \"{id}\" executed successfully",
+    "console.error.commandNotFound": "Command \"{id}\" does not exist",
+    "console.error.commandFailed": "Command execution failed: {error}",
+    "console.error.emptyInput": "Please enter a command"
 }

@@ -134,5 +134,16 @@
     "archive.saveHint": "按 Enter 确认，Esc 取消",
     "archive.saveModeHint": "Enter: 保存 | Esc: 取消",
     "archive.emptyNameError": "名称不能为空",
-    "archive.incompatible": "存档不兼容，无法加载。"
+    "archive.incompatible": "存档不兼容，无法加载。",
+    "console.enterInputMode": "输入指令",
+    "console.exitInputMode": "退出输入",
+    "console.results": "结果",
+    "console.noResults": "暂无指令结果",
+    "console.inputHint": "按 Tab 进入指令输入模式",
+    "console.cmd.help": "可用指令: {list}",
+    "console.cmd.clear": "控制台已清空",
+    "console.cmd.defaultSuccess": "指令 \"{id}\" 执行成功",
+    "console.error.commandNotFound": "指令 \"{id}\" 不存在",
+    "console.error.commandFailed": "指令执行失败: {error}",
+    "console.error.emptyInput": "请输入指令"
 }

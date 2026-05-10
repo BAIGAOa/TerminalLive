@@ -2,7 +2,6 @@ import { container } from "../Container.js";
 import { ScreenRegistry } from "../core/store/ScreenRegistry.js";
 import { SettingRegistry } from "../core/store/SettingRegistry.js";
 import { SCENES } from "../types/Scenes.js";
-import { SETTING_MENU } from "../hooks/useSettingScreen.js";
 import LevelGame from "../ui/LevelGame.js";
 import Setting from "../ui/Setting.js";
 import Language from "../ui/Language.js";
@@ -73,19 +72,19 @@ export class Screens {
         const settingReg = container.resolve(SettingRegistry);
 
         settingReg.register({
-            menu: SETTING_MENU.keyBoardConfig,
+            menu: "keyBoardConfig",
             component: Config,
             nameKey: "setting.keyBoardConfig",
         });
 
         settingReg.register({
-            menu: SETTING_MENU.playerConfig,
+            menu: "playerConfig",
             component: PlayerConfig,
             nameKey: "setting.playerConfig",
         });
 
         settingReg.register({
-            menu: SETTING_MENU.modManager,
+            menu: "modManager",
             component: ModManager,
             nameKey: "setting.modManager",
         });

@@ -134,5 +134,16 @@
     "archive.saveHint": "Enterで保存、Escでキャンセル",
     "archive.saveModeHint": "Enter: 保存 | Esc: キャンセル",
     "archive.emptyNameError": "名前を入力してください",
-    "archive.incompatible": "セーブデータに互換性がありません。読み込めません。"
+    "archive.incompatible": "セーブデータに互換性がありません。読み込めません。",
+    "console.enterInputMode": "入力",
+    "console.exitInputMode": "入力を終了",
+    "console.results": "結果",
+    "console.noResults": "コマンド結果はありません",
+    "console.inputHint": "Tab でコマンド入力モードに入る",
+    "console.cmd.help": "使用可能なコマンド: {list}",
+    "console.cmd.clear": "コンソールをクリアしました",
+    "console.cmd.defaultSuccess": "コマンド \"{id}\" が実行されました",
+    "console.error.commandNotFound": "コマンド \"{id}\" は存在しません",
+    "console.error.commandFailed": "コマンド実行エラー: {error}",
+    "console.error.emptyInput": "コマンドを入力してください"
 }

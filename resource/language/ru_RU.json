@@ -134,5 +134,16 @@
     "archive.saveHint": "Нажмите Enter для сохранения, Esc для отмены",
     "archive.saveModeHint": "Enter: Сохранить | Esc: Отмена",
     "archive.emptyNameError": "Имя не может быть пустым",
-    "archive.incompatible": "Архив несовместим и не может быть загружен."
+    "archive.incompatible": "Архив несовместим и не может быть загружен.",
+    "console.enterInputMode": "Ввод",
+    "console.exitInputMode": "Выйти из ввода",
+    "console.results": "Результаты",
+    "console.noResults": "Нет результатов команд",
+    "console.inputHint": "Нажмите Tab для ввода команды",
+    "console.cmd.help": "Доступные команды: {list}",
+    "console.cmd.clear": "Консоль очищена",
+    "console.cmd.defaultSuccess": "Команда \"{id}\" выполнена успешно",
+    "console.error.commandNotFound": "Команда \"{id}\" не существует",
+    "console.error.commandFailed": "Ошибка выполнения команды: {error}",
+    "console.error.emptyInput": "Введите команду"
 }

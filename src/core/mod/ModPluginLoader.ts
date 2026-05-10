@@ -13,6 +13,7 @@ import LevelConditionRegistry from "../../level/registry/LevelConditionRegistry.
 import AlgorithmRegistry from "../../event/AlgorithmRegistry.js";
 import FilterRegistry from "../../event/registry/FilterRegistry.js";
 import TypedEventBus from "../TypedEventBus.js";
+import { SettingRegistry } from "../store/SettingRegistry.js";
 
 // 每个钩子条目同时存函数和上下文：fireXxx 方法需要把 ctx 传回给模组的钩子函数。
 // 函数用 bind 绑定了 plugin，这样模组作者写 this.xxx 时，this 指向自己的插件对象。
@@ -34,6 +35,7 @@ export default class ModPluginLoader {
   private conditionReg: LevelConditionRegistry;
   private algoRegister: AlgorithmRegistry;
   private filterRegister: FilterRegistry;
+  private settingCenter: SettingRegistry;
 
   // 玩家引用由外部注入——Player 的生命周期由 GameInitialization 管理，
   // 可能在加载存档时被整体替换，所以这里只存引用而不是持有。
@@ -55,6 +57,7 @@ export default class ModPluginLoader {
     this.conditionReg = inject(LevelConditionRegistry);
     this.algoRegister = inject(AlgorithmRegistry);
     this.filterRegister = inject(FilterRegistry);
+    this.settingCenter = inject(SettingRegistry);
   }
 
   public setPlayer(p: Player): void {
@@ -213,6 +216,9 @@ export default class ModPluginLoader {
       },
       addFilter: (id, filter) => {
         this.filterRegister.register(id, filter);
+      },
+      addSetting: (entry) => {
+        this.settingCenter.register(entry);
       },
     };
   }

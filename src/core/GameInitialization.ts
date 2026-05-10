@@ -24,6 +24,7 @@ import { KeyboardManager } from "./keys/KeyBoardManager.js";
 import ThemeParser from "./theme/ThemeParser.js";
 import ThemeManager from "./theme/ThemeManager.js";
 import { VersionProvider } from "./version/VersionProvider.js";
+import Commands from "../content/Commands.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -78,6 +79,7 @@ export default class GameInitialization {
     Keys.load();
     Achievements.load();
     GameStatus.load();
+    Commands.load();
   }
 
   private initThemes(): void {

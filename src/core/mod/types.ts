@@ -57,6 +57,11 @@ export interface ModContext {
   ) => void;
   addAlgorithm: (name: string, factory: AlgorithmFactory) => void;
   addFilter: (id: string, filter: () => IncidentFilter) => void;
+  addSetting: (entry: {
+    menu: string;
+    component: React.ComponentType<any>;
+    nameKey: string;
+  }) => void;
 }
 
 // 模组自定义事件的行为描述。

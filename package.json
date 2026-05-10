@@ -3,6 +3,7 @@
     "version": "0.1.7",
     "description": "A small game running on the terminal.",
     "main": "dist/main.js",
+    "types": "dist/main.d.ts",
     "bin": {
         "terminal-live": "dist/main.js"
     },
@@ -40,6 +41,12 @@
     "type": "module",
     "engines": {
         "node": ">=18"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/main.d.ts",
+            "import": "./dist/main.js"
+        }
     },
     "devDependencies": {
         "@types/lodash-es": "^4.17.12",
