@@ -2,6 +2,7 @@ import React from "react";
 import { Box, BoxProps, Text } from "ink";
 import { useLanguageScreen } from "../hooks/useLanguageScreen.js";
 import SelectInput from "../tools/ui/SelectInput.js";
+import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
 interface LanguageBoxProps extends BoxProps {
   label: string;
@@ -20,11 +21,12 @@ const LanguageBox = ({ label, isSelected, highlightColor }: LanguageBoxProps) =>
 
 export default function Language() {
   const data = useLanguageScreen();
+  const colors = useThemeColors();
 
   return (
     <Box flexDirection="column" padding={1} width="100%" height={data.rows}>
       <Box justifyContent="center">
-        <Text color="red">{data.t('language.title', { language: data.currentLangCode })}</Text>
+        <Text color={colors.menuTitle}>{data.t('language.title', { language: data.currentLangCode })}</Text>
       </Box>
       <Box marginTop={1} flexDirection="column">
         <SelectInput

@@ -1,20 +1,18 @@
 // Logo.tsx
 import React from "react";
 import { Box, Text } from "ink";
+import { useTheme } from "../hooks/theme/ThematicCommunicator.js";
 
 interface LogoProps {
-  termColor?: string;
-  liveColor?: string;
   marginBottom?: number;
   marginTop?: number;
 }
 
 export default function Logo({ 
-  termColor = "cyan", 
-  liveColor = "green",
   marginBottom = 1,
   marginTop = 0
 }: LogoProps) {
+  const theme = useTheme()
   const termLines = [
     "████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗",
     "╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║",
@@ -36,13 +34,13 @@ export default function Logo({
   return (
     <Box flexDirection="column" alignItems="center" marginBottom={marginBottom} marginTop={marginTop}>
       {termLines.map((line, idx) => (
-        <Text key={`term-${idx}`} color={termColor} bold>
+        <Text key={`term-${idx}`} color={theme.colors.logoTerm} bold>
           {line}
         </Text>
       ))}
       <Box marginY={0} />
       {liveLines.map((line, idx) => (
-        <Text key={`live-${idx}`} color={liveColor} bold>
+        <Text key={`live-${idx}`} color={theme.colors.logoLive} bold>
           {line}
         </Text>
       ))}

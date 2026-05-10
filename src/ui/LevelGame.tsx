@@ -2,30 +2,37 @@ import React from "react";
 import { Box, Text, Newline } from "ink";
 import useLevelGameScreen from "../hooks/useLevelGameScreen.js";
 import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js";
+import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
 export default function LevelGame() {
   const data = useLevelGameScreen();
+  const colors = useThemeColors();
 
   useKeyboardHandler((_input, key) => {
-    if (key.leftArrow) { data.onPrevView(); return true }
-    if (key.rightArrow) { data.onNextView(); return true }
-    return false
-  })
+    if (key.leftArrow) {
+      data.onPrevView();
+      return true;
+    }
+    if (key.rightArrow) {
+      data.onNextView();
+      return true;
+    }
+    return false;
+  });
 
   const availableRows = Math.max(data.rows, 20);
 
   return (
     <Box flexDirection="column" width="100%" height={availableRows} padding={1}>
-      {/* 胜利条件 */}
       <Box
         flexDirection="column"
         borderStyle="single"
-        borderColor="yellow"
+        borderColor={colors.warning}
         paddingX={1}
         paddingY={0}
         marginBottom={1}
       >
-        <Text bold color="yellow">
+        <Text bold color={colors.warning}>
           {data.t("levelDetail.victoryConditions")}
           {data.levelName ? ` — ${data.levelName}` : ""}
         </Text>
@@ -33,46 +40,51 @@ export default function LevelGame() {
           <Text dimColor>  {data.t("levelDetail.noConditions")}</Text>
         ) : (
           data.victoryConditions.map((cond, i) => (
-            <Text key={i} color={cond.isMet ? "green" : "gray"}>
+            <Text
+              key={i}
+              color={cond.isMet ? colors.success : colors.muted}
+            >
               {cond.isMet ? "  ✓" : "  ○"} {cond.description}
             </Text>
           ))
         )}
       </Box>
 
-      {/* 视图切换栏 */}
       <Box
         flexDirection="row"
         borderStyle="single"
-        borderColor="cyan"
+        borderColor={colors.info}
         paddingX={1}
         paddingY={0}
         marginBottom={1}
         justifyContent="space-between"
       >
         <Box flexDirection="row">
-          <Text color="gray">◄ </Text>
-          <Text bold color="white">
+          <Text color={colors.muted}>◄ </Text>
+          <Text bold color={colors.text}>
             {data.t(`gameVive.${data.currentViewId}`) || data.currentViewId}
           </Text>
-          <Text color="gray"> ►</Text>
+          <Text color={colors.muted}> ►</Text>
           <Box marginLeft={2}>
-            <Text dimColor>({data.currentViewIndex + 1}/{data.viewCount})</Text>
+            <Text dimColor>
+              ({data.currentViewIndex + 1}/{data.viewCount})
+            </Text>
           </Box>
         </Box>
         <Box>
           <Text>
             {data.t("game.age")}:{" "}
-            <Text color="yellow" bold>{Math.floor(data.player.age)}</Text>
+            <Text color={colors.warning} bold>
+              {Math.floor(data.player.age)}
+            </Text>
           </Text>
         </Box>
       </Box>
 
-      {/* 动态视图 */}
       <Box
         flexDirection="column"
         borderStyle="single"
-        borderColor="green"
+        borderColor={colors.success}
         padding={1}
         marginBottom={1}
         flexGrow={3}
@@ -84,7 +96,6 @@ export default function LevelGame() {
         )}
       </Box>
 
-      {/* 事件日志 */}
       <Box
         flexDirection="column"
         borderStyle="single"
@@ -112,17 +123,18 @@ export default function LevelGame() {
         ) : (
           <Box flexDirection="column">
             {data.logs.slice(0, 8).map((entry, index) => (
-              <Text key={index} color={entry.isLatest ? "white" : "gray"}>
+              <Text
+                key={index}
+                color={entry.isLatest ? colors.text : colors.muted}
+              >
                 {entry.isLatest ? "▶" : " "}
-                <Text color="cyan">{entry.timestamp}</Text>
+                <Text color={colors.info}>{entry.timestamp}</Text>
                 {" : "}
                 {entry.eventName}
               </Text>
             ))}
             {data.logs.length > 8 && (
-              <Text dimColor>
-                ... +{data.logs.length - 8}
-              </Text>
+              <Text dimColor>... +{data.logs.length - 8}</Text>
             )}
           </Box>
         )}

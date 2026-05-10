@@ -5,6 +5,7 @@ import Player from "../world/Player.js";
 import { SettingRegistry } from "../core/store/SettingRegistry.js";
 import { container } from "../Container.js";
 import SelectInput from "../tools/ui/SelectInput.js";
+import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
 interface SettingBoxProps {
   label: string;
@@ -13,12 +14,27 @@ interface SettingBoxProps {
   isSelected?: boolean;
 }
 
-function SettingBox({ label, isSelected, highlightColor }: SettingBoxProps) {
+function SettingBox({
+  label,
+  isSelected,
+  highlightColor,
+}: SettingBoxProps) {
+  const colors = useThemeColors();
   return (
-    <Box width={40} borderStyle="round"
-      borderColor={isSelected ? highlightColor : 'yellow'} paddingX={1} marginBottom={1}>
+    <Box
+      width={40}
+      borderStyle="round"
+      borderColor={isSelected ? highlightColor : colors.muted}
+      paddingX={1}
+      marginBottom={1}
+    >
       <Box justifyContent="center" width="100%">
-        <Text color={isSelected ? highlightColor : 'white'} bold={isSelected}>{label}</Text>
+        <Text
+          color={isSelected ? highlightColor : colors.text}
+          bold={isSelected}
+        >
+          {label}
+        </Text>
       </Box>
     </Box>
   );
@@ -26,12 +42,13 @@ function SettingBox({ label, isSelected, highlightColor }: SettingBoxProps) {
 
 interface SettingProps {
   onConfigChange?: (newMonitor: any) => void;
-  player?: Player
+  player?: Player;
 }
 
 export default function Setting({ onConfigChange, player }: SettingProps) {
   const data = useSettingScreen(onConfigChange);
   const registry = container.resolve(SettingRegistry);
+  const colors = useThemeColors();
 
   if (data.activeMenu !== "") {
     const entry = registry.getEntry(data.activeMenu);
@@ -46,16 +63,35 @@ export default function Setting({ onConfigChange, player }: SettingProps) {
     }
   }
 
+  const items = registry.getAll().map((e) => ({
+    label: data.t(e.nameKey),
+    value: e.menu,
+    highlightColor: colors.highlight,
+  }));
+
   return (
-    <Box flexDirection="column" padding={1} width="100%" alignItems="center" height={data.rows}>
-      <Box width="100%" height={3} borderColor="white" borderStyle="round">
+    <Box
+      flexDirection="column"
+      padding={1}
+      width="100%"
+      alignItems="center"
+      height={data.rows}
+    >
+      <Box
+        width="100%"
+        height={3}
+        borderColor={colors.text}
+        borderStyle="round"
+      >
         <Box justifyContent="center" width="100%">
-          <Text color="gray" bold>{data.t("setting.title")}</Text>
+          <Text color={colors.settingTitle} bold>
+            {data.t("setting.title")}
+          </Text>
         </Box>
       </Box>
       <Box marginTop={1}>
         <SelectInput
-          items={data.menuItems}
+          items={items}
           onSelect={data.onSelectMenu as any}
           itemComponent={SettingBox as any}
         />

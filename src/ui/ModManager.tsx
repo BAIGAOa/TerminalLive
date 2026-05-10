@@ -2,12 +2,13 @@ import React from "react"
 import { Box, Text } from "ink"
 import { useModScreen } from "../hooks/useModScreen.js"
 import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js"
+import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js"
 
 export default function ModManager({ onBack }: { onBack?: () => void }) {
   const { mods, selectedIndex, setSelectedIndex, toggleMod, rows, t } =
     useModScreen()
+  const colors = useThemeColors();
 
-  // 全局键盘监听 只在当前页面生效 消费事件防止穿透
   useKeyboardHandler(
     (_input, key) => {
       if (key.upArrow) {
@@ -36,7 +37,7 @@ export default function ModManager({ onBack }: { onBack?: () => void }) {
   return (
     <Box flexDirection="column" padding={1} width="100%" height={rows}>
       <Box justifyContent="center" marginBottom={1}>
-        <Text color="yellow" bold>
+        <Text color={colors.menuTitle} bold>
           {t("mod.title")}
         </Text>
       </Box>
@@ -53,11 +54,11 @@ export default function ModManager({ onBack }: { onBack?: () => void }) {
               <Box
                 key={mod.name}
                 borderStyle="round"
-                borderColor={isSelected ? "green" : "gray"}
+                borderColor={isSelected ? colors.highlight : colors.muted}
                 paddingX={1}
                 marginBottom={1}
               >
-                <Text color={isSelected ? "green" : "white"} bold={isSelected}>
+                <Text color={isSelected ? colors.highlight : colors.text} bold={isSelected}>
                   {mod.enabled ? "[✓]" : "[ ]"} {mod.name}
                 </Text>
               </Box>

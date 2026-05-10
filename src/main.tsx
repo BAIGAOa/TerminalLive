@@ -12,7 +12,7 @@ import GameInitialization from './core/GameInitialization.js'
 import { container } from './Container.js'
 import { ScreenRegistry } from './core/store/ScreenRegistry.js'
 import { KeyboardManager } from './core/keys/KeyBoardManager.js'
-import { ThemeProvider } from './hooks/theme/ThematicCommunicator.js'
+import { ThemeProvider, useThemeColors } from './hooks/theme/ThematicCommunicator.js'
 
 
 const app = await container.resolve(GameInitialization).init()
@@ -21,6 +21,7 @@ function App() {
   const data = useApp()
   const registry = container.resolve(ScreenRegistry)
   const manager = container.resolve(KeyboardManager)
+  const colors = useThemeColors()
 
   useInput((input, key) => {
     manager.handle(input, key)
@@ -45,12 +46,12 @@ function App() {
         flexDirection="column"
         padding={1}
       >
-        <Logo termColor="cyan" liveColor="green" marginBottom={2} />
+        <Logo marginBottom={2} />
         {registry.getMainMenuEntries().map((e) => (
           <MainInterface
             key={e.scene}
             title={data.t(e.nameKey)}
-            backgroundColor="black"
+            backgroundColor={colors.background}
             width={40}
             height={5}
             marginTop={-3}
@@ -58,13 +59,13 @@ function App() {
           />
         ))}
         <MainInterface
-          backgroundColor="black"
+          backgroundColor={colors.background}
           title={data.t('main.exit')}
           width={40}
           height={5}
           marginTop={-3}
           isHighlighted={data.highlighting === 'exit'}
-          highlightBackgroundColor="red"
+          highlightBackgroundColor={colors.danger}
         />
       </Box>
     )
@@ -83,7 +84,7 @@ function App() {
           borderColor="cyanBright"
         >
           <Box justifyContent="center">
-            <Text color="yellow">
+            <Text color={colors.warning}>
               📢 {data.consoleUnreadCount} {data.t('console.unread')} [P]
             </Text>
           </Box>

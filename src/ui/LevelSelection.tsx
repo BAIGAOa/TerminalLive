@@ -5,25 +5,30 @@ import { useTerminalSize } from "./TerminalSizeContext.js"
 import LevelDetail from "./LevelDetail.js"
 import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js"
 import SelectInput from "../tools/ui/SelectInput.js"
+import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js"
 
-const DifficultyBox = (props: DifficultyItem & { isSelected?: boolean }) => (
-  <Box
-    borderStyle="double"
-    width="100%"
-    height={4}
-    borderColor={props.isSelected ? "blue" : "gray"}
-  >
-    <Box justifyContent="center" width="100%" height={4}>
-      <Text bold>{props.label}</Text>
+const DifficultyBox = (props: DifficultyItem & { isSelected?: boolean }) => {
+  const colors = useThemeColors();
+  return (
+    <Box
+      borderStyle="double"
+      width="100%"
+      height={4}
+      borderColor={props.isSelected ? colors.highlight : colors.muted}
+    >
+      <Box justifyContent="center" width="100%" height={4}>
+        <Text bold>{props.label}</Text>
+      </Box>
     </Box>
-  </Box>
-)
+  );
+};
 
 const LevelBox = (props: LevelItem & { isSelected?: boolean }) => {
-  let borderColor = "gray"
-  if (props.status === "unlocked") borderColor = "yellow"
-  if (props.status === "completed") borderColor = "green"
-  if (props.isSelected) borderColor = "white"
+  const colors = useThemeColors();
+  let borderColor = colors.muted;
+  if (props.status === "unlocked") borderColor = colors.levelUnlocked;
+  if (props.status === "completed") borderColor = colors.levelCompleted;
+  if (props.isSelected) borderColor = colors.levelSelected;
 
   return (
     <Box
@@ -34,7 +39,7 @@ const LevelBox = (props: LevelItem & { isSelected?: boolean }) => {
       marginBottom={1}
     >
       <Box flexDirection="row" justifyContent="space-between">
-        <Text bold color={props.isSelected ? "white" : undefined}>
+        <Text bold color={props.isSelected ? colors.levelSelected : undefined}>
           {props.label}
         </Text>
         <Text dimColor>
@@ -42,8 +47,8 @@ const LevelBox = (props: LevelItem & { isSelected?: boolean }) => {
         </Text>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 interface LevelSelectionProps {
   onBack?: () => void
@@ -52,6 +57,7 @@ interface LevelSelectionProps {
 export default function LevelSelection({ onBack }: LevelSelectionProps) {
   const data = useLevelSelection(onBack)
   const { rows } = useTerminalSize()
+  const colors = useThemeColors();
 
   useKeyboardHandler((input, key) => {
     if (data.showDetail) {
@@ -85,7 +91,7 @@ export default function LevelSelection({ onBack }: LevelSelectionProps) {
   return (
     <Box flexDirection="column" width="100%" height={rows} padding={1}>
       <Box justifyContent="center" marginBottom={1}>
-        <Text color="yellow" bold>
+        <Text color={colors.menuTitle} bold>
           {data.t("levelSelection.title")}
         </Text>
       </Box>
@@ -100,7 +106,7 @@ export default function LevelSelection({ onBack }: LevelSelectionProps) {
           />
         </Box>
 
-        <Box width="70%" borderStyle="single" borderColor="cyan" padding={1}>
+        <Box width="70%" borderStyle="single" borderColor={colors.info} padding={1}>
           {data.activeDifficulty === null ? (
             <Box flexGrow={1} justifyContent="center" alignItems="center">
               <Text dimColor>{data.t("levelSelection.hintSelectDifficulty")}</Text>

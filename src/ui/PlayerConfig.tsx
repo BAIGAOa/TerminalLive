@@ -10,45 +10,46 @@ import { useTerminalSize } from './TerminalSizeContext.js';
 import { useKeyboardHandler } from '../hooks/key/useKeyBoardHandle.js';
 import SelectInput from '../tools/ui/SelectInput.js';
 import TextInput from '../tools/ui/TextInput.js';
+import { useThemeColors } from '../hooks/theme/ThematicCommunicator.js';
 
-// ============================================================
-// 子组件
-// ============================================================
 
-const CategoryMenuBox = (props: CategoryMenuItem & { isSelected?: boolean }) => (
-  <Box
-    borderStyle="double"
-    width="100%"
-    height={4}
-    borderColor={props.isSelected ? 'blue' : 'gray'}
-  >
-    <Box justifyContent="center" width="100%" height={4}>
-      <Text bold>{props.label}</Text>
+const CategoryMenuBox = (props: CategoryMenuItem & { isSelected?: boolean }) => {
+  const colors = useThemeColors();
+  return (
+    <Box
+      borderStyle="double"
+      width="100%"
+      height={4}
+      borderColor={props.isSelected ? colors.highlight : colors.muted}
+    >
+      <Box justifyContent="center" width="100%" height={4}>
+        <Text bold>{props.label}</Text>
+      </Box>
     </Box>
-  </Box>
-);
+  );
+};
 
-const AttributeRow = (props: AttributeItem & { isSelected?: boolean }) => (
-  <Box
-    borderStyle="round"
-    width="100%"
-    height={4}
-    borderColor={props.isSelected ? 'green' : 'gray'}
-    paddingX={1}
-    marginBottom={1}
-  >
-    <Box flexDirection="row" width="100%" justifyContent="space-between">
-      <Text bold color={props.isSelected ? 'green' : 'white'}>
-        {props.label}
-      </Text>
-      <Text color="yellow">{props.currentValue}</Text>
+const AttributeRow = (props: AttributeItem & { isSelected?: boolean }) => {
+  const colors = useThemeColors();
+  return (
+    <Box
+      borderStyle="round"
+      width="100%"
+      height={4}
+      borderColor={props.isSelected ? colors.success : colors.muted}
+      paddingX={1}
+      marginBottom={1}
+    >
+      <Box flexDirection="row" width="100%" justifyContent="space-between">
+        <Text bold color={props.isSelected ? colors.success : colors.text}>
+          {props.label}
+        </Text>
+        <Text color={colors.warning}>{props.currentValue}</Text>
+      </Box>
     </Box>
-  </Box>
-);
+  );
+};
 
-// ============================================================
-// 主组件
-// ============================================================
 
 interface PlayerConfigProps {
   player: Player;
@@ -58,6 +59,7 @@ interface PlayerConfigProps {
 export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
   const data = usePlayerConfig(player, onBack);
   const { rows } = useTerminalSize();
+  const colors = useThemeColors();
 
   useKeyboardHandler((_input, key) => {
     if (key.escape) { data.onCancelEdit(); return true }
@@ -66,15 +68,13 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
 
   return (
     <Box flexDirection="column" padding={1} width="100%" height={rows}>
-      {/* 标题 */}
       <Box justifyContent="center" marginBottom={1}>
-        <Text color="yellow" bold>
+        <Text color={colors.menuTitle} bold>
           {data.t('playerConfig.title')}
         </Text>
       </Box>
 
       <Box flexDirection="row" width="100%" flexGrow={1} height="100%">
-        {/* 左侧分类菜单 */}
         <Box borderStyle="bold" width="30%">
           <SelectInput
             items={data.leftItems}
@@ -84,15 +84,13 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
           />
         </Box>
 
-        {/* 右侧属性区域 */}
         <Box
           flexDirection="column"
           padding={1}
           width="70%"
           borderStyle="single"
-          borderColor="cyan"
+          borderColor={colors.info}
         >
-          {/* 提示 */}
           {!data.isEditing && data.focus === 'left' && (
             <Box marginBottom={1}>
               <Text dimColor>
@@ -109,16 +107,14 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
             </Box>
           )}
 
-          {/* 未选择分类 */}
           {data.activeCategory === null ? (
             <Box flexGrow={1} justifyContent="center" alignItems="center">
               <Text dimColor>{data.t('playerConfig.noCategorySelected')}</Text>
             </Box>
           ) : data.isEditing ? (
-            /* 编辑模式 */
             <Box flexDirection="column" flexGrow={1}>
               <Box marginBottom={1}>
-                <Text bold color="green">
+                <Text bold color={colors.success}>
                   {data.editingLabel}:{' '}
                 </Text>
               </Box>
@@ -136,12 +132,11 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
               </Box>
               {data.validationError && (
                 <Box marginTop={1}>
-                  <Text color="red">✗ {data.validationError}</Text>
+                  <Text color={colors.error}>✗ {data.validationError}</Text>
                 </Box>
               )}
             </Box>
           ) : (
-            /* 属性列表 */
             <SelectInput
               items={data.rightItems}
               onSelect={data.onSelectAttribute as any}
@@ -152,10 +147,9 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
         </Box>
       </Box>
 
-      {/* 成功消息 */}
       {data.successMessage && (
         <Box marginTop={1} justifyContent="center">
-          <Text color="green">✓ {data.successMessage}</Text>
+          <Text color={colors.success}>✓ {data.successMessage}</Text>
         </Box>
       )}
     </Box>

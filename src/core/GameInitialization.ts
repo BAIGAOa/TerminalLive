@@ -79,7 +79,6 @@ export default class GameInitialization {
     Keys.load();
     Achievements.load();
     GameStatus.load();
-    Commands.load();
   }
 
   private initThemes(): void {
@@ -124,6 +123,8 @@ export default class GameInitialization {
     levelManager.loadAllLevels();
 
     this.initThemes();
+    // 指令的加载需要主题也成功加载
+    Commands.load();
 
     await this.initMonitor();
 

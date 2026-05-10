@@ -5,19 +5,23 @@ import KeyboardMonitor from "../core/keys/KeyboardMonitor.js"
 import { useTerminalSize } from "./TerminalSizeContext.js"
 import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js"
 import SelectInput from "../tools/ui/SelectInput.js"
+import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js"
 
-const SceneMenuBox = (props: SceneMenuItem & { isSelected?: boolean }) => (
-  <Box
-    borderStyle="double"
-    width="100%"
-    height={4}
-    borderColor={props.isSelected ? "blue" : "gray"}
-  >
-    <Box justifyContent="center" width="100%" height={4}>
-      <Text bold>{props.label}</Text>
+const SceneMenuBox = (props: SceneMenuItem & { isSelected?: boolean }) => {
+  const colors = useThemeColors();
+  return (
+    <Box
+      borderStyle="double"
+      width="100%"
+      height={4}
+      borderColor={props.isSelected ? colors.highlight : colors.muted}
+    >
+      <Box justifyContent="center" width="100%" height={4}>
+        <Text bold>{props.label}</Text>
+      </Box>
     </Box>
-  </Box>
-)
+  );
+};
 
 const IconButton = ({
   text,
@@ -27,19 +31,22 @@ const IconButton = ({
   text: string
   color?: string
   isSelected: boolean
-}) => (
-  <Box
-    width={10}
-    height={3}
-    borderStyle="single"
-    borderColor={color}
-    justifyContent="center"
-    alignItems="center"
-    marginX={1}
-  >
-    <Text color={isSelected ? "green" : color}>{text}</Text>
-  </Box>
-)
+}) => {
+  const colors = useThemeColors();
+  return (
+    <Box
+      width={10}
+      height={3}
+      borderStyle="single"
+      borderColor={color}
+      justifyContent="center"
+      alignItems="center"
+      marginX={1}
+    >
+      <Text color={isSelected ? colors.highlight : color}>{text}</Text>
+    </Box>
+  );
+};
 
 const BigButton = ({
   title,
@@ -55,29 +62,32 @@ const BigButton = ({
   width?: string | number
   isSelected?: boolean
   highLightColor?: string
-}) => (
-  <Box
-    flexDirection="column"
-    borderColor={isSelected ? highLightColor : borderColor}
-    borderStyle="round"
-    width={width}
-    height={6}
-    paddingX={1}
-    marginBottom={1}
-  >
-    <Box marginTop={-1} marginLeft={1}>
-      <Text
-        backgroundColor="black"
-        color={isSelected ? "green" : borderColor}
-      >
-        {" "}{title}{" "}
-      </Text>
+}) => {
+  const colors = useThemeColors();
+  return (
+    <Box
+      flexDirection="column"
+      borderColor={isSelected ? highLightColor : borderColor}
+      borderStyle="round"
+      width={width}
+      height={6}
+      paddingX={1}
+      marginBottom={1}
+    >
+      <Box marginTop={-1} marginLeft={1}>
+        <Text
+          backgroundColor={colors.background}
+          color={isSelected ? colors.success : borderColor}
+        >
+          {" "}{title}{" "}
+        </Text>
+      </Box>
+      <Box flexDirection="row" alignItems="center" flexGrow={1}>
+        {children}
+      </Box>
     </Box>
-    <Box flexDirection="row" alignItems="center" flexGrow={1}>
-      {children}
-    </Box>
-  </Box>
-)
+  );
+};
 
 const BigBoxItem = (props: ConfigItem & { isSelected?: boolean }) => (
   <BigButton
@@ -99,6 +109,7 @@ interface ConfigProps {
 export default function Config({ onConfigChange, onBack }: ConfigProps) {
   const data = useConfig(onConfigChange, onBack)
   const { rows } = useTerminalSize()
+  const colors = useThemeColors();
 
   useKeyboardHandler((input, key) => {
     if (data.status.kind === "recording") {
@@ -115,7 +126,7 @@ export default function Config({ onConfigChange, onBack }: ConfigProps) {
   return (
     <Box flexDirection="column" padding={1} width="100%" height={rows}>
       <Box justifyContent="center" marginBottom={1}>
-        <Text color="yellow">{data.t("config-title")}</Text>
+        <Text color={colors.menuTitle}>{data.t("config-title")}</Text>
       </Box>
 
       <Box flexDirection="row" width="100%" flexGrow={1} height="100%">
@@ -133,7 +144,7 @@ export default function Config({ onConfigChange, onBack }: ConfigProps) {
           padding={1}
           width="70%"
           borderStyle="single"
-          borderColor="cyan"
+          borderColor={colors.info}
         >
           {data.focus === "left" && data.leftItems.length > 0 && (
             <Box marginBottom={1}>
@@ -166,9 +177,9 @@ export default function Config({ onConfigChange, onBack }: ConfigProps) {
       </Box>
 
       {data.status.kind === "recording" && (
-        <Box marginTop={1} borderStyle="double" borderColor="cyan" padding={1}>
+        <Box marginTop={1} borderStyle="double" borderColor={colors.info} padding={1}>
           <Text>{data.t("config-underModification")}</Text>
-          <Text color="yellow" bold>{data.status.editingOperate}</Text>
+          <Text color={colors.menuTitle} bold>{data.status.editingOperate}</Text>
           <Text>{data.t("config-tip")}</Text>
         </Box>
       )}
@@ -179,7 +190,7 @@ export default function Config({ onConfigChange, onBack }: ConfigProps) {
       )}
       {data.status.kind === "error" && (
         <Box marginTop={1}>
-          <Text color="red">error: {data.status.message} {data.t("config-error")}</Text>
+          <Text color={colors.error}>error: {data.status.message} {data.t("config-error")}</Text>
         </Box>
       )}
       {data.status.kind === "loading" && (

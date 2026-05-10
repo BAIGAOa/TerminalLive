@@ -142,6 +142,8 @@
     "console.inputHint": "按 Tab 进入指令输入模式",
     "console.cmd.help": "可用指令: {list}",
     "console.cmd.clear": "控制台已清空",
+    "console.cmd.themes": "可用主题: {list}，当前: {current}",
+    "console.cmd.setTheme": "主题已切换为 {id}",
     "console.cmd.defaultSuccess": "指令 \"{id}\" 执行成功",
     "console.error.commandNotFound": "指令 \"{id}\" 不存在",
     "console.error.commandFailed": "指令执行失败: {error}",

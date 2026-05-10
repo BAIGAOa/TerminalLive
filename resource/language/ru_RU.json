@@ -142,6 +142,8 @@
     "console.inputHint": "Нажмите Tab для ввода команды",
     "console.cmd.help": "Доступные команды: {list}",
     "console.cmd.clear": "Консоль очищена",
+    "console.cmd.themes": "Доступные темы: {list}, текущая: {current}",
+    "console.cmd.setTheme": "Тема изменена на {id}",
     "console.cmd.defaultSuccess": "Команда \"{id}\" выполнена успешно",
     "console.error.commandNotFound": "Команда \"{id}\" не существует",
     "console.error.commandFailed": "Ошибка выполнения команды: {error}",

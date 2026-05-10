@@ -142,6 +142,8 @@
     "console.inputHint": "Press Tab to enter command input mode",
     "console.cmd.help": "Available commands: {list}",
     "console.cmd.clear": "Console cleared",
+    "console.cmd.themes": "Available themes: {list}, current: {current}",
+    "console.cmd.setTheme": "Theme switched to {id}",
     "console.cmd.defaultSuccess": "Command \"{id}\" executed successfully",
     "console.error.commandNotFound": "Command \"{id}\" does not exist",
     "console.error.commandFailed": "Command execution failed: {error}",

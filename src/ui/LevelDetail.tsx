@@ -3,6 +3,7 @@ import { Box, Text, Newline } from "ink";
 import Level from "../level/Level.js";
 import { FormattedCondition } from "../hooks/useLevelSelection.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
+import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
 export interface LevelDetailProps {
     level: Level;
@@ -13,7 +14,6 @@ export interface LevelDetailProps {
     onConfirm: () => void;
 }
 
-/** 属性名列表（按显示顺序） */
 const ATTRIBUTE_ORDER: { key: string; category: string }[] = [
     { key: "playerName", category: "basic" },
     { key: "age", category: "physical" },
@@ -41,8 +41,8 @@ export default function LevelDetail({
     t
 }: LevelDetailProps) {
     const { rows } = useTerminalSize();
+    const colors = useThemeColors();
 
-    // 按分类组织属性
     const categorizedAttrs = new Map<string, Array<{ key: string; value: string | number }>>();
     for (const { key, category } of ATTRIBUTE_ORDER) {
         if (key in initialAttributes) {
@@ -58,41 +58,37 @@ export default function LevelDetail({
 
     return (
         <Box flexDirection="column" width="100%" height={rows - 4} padding={1}>
-            {/* 标题 */}
             <Box justifyContent="center" marginBottom={1}>
-                <Text color="yellow" bold>
+                <Text color={colors.menuTitle} bold>
                     {t("levelDetail.title")}: {t(level.nameKey)}
                 </Text>
             </Box>
 
-            {/* 描述 */}
             <Box flexDirection="column" marginBottom={1}>
-                <Text bold color="cyan">
+                <Text bold color={colors.info}>
                     {t("levelDetail.description")}
                 </Text>
                 <Text>{t(level.descriptionKey)}</Text>
             </Box>
 
-            {/* 难度 */}
             <Box marginBottom={1}>
-                <Text bold color="cyan">
+                <Text bold color={colors.info}>
                     {t("levelDetail.difficulty")}:{" "}
                 </Text>
                 <Text color="magenta">{t(`difficulty.${level.difficultyIdentification}`)}</Text>
             </Box>
 
-            {/* 胜利条件 */}
             <Box flexDirection="column" marginBottom={1}>
-                <Text bold color="cyan">
+                <Text bold color={colors.info}>
                     {t("levelDetail.victoryConditions")}
                 </Text>
                 {formattedConditions.length === 0 ? (
-                    <Text color="gray" dimColor>
+                    <Text color={colors.muted} dimColor>
                         {"  "}{t("levelDetail.noConditions")}
                     </Text>
                 ) : (
                     formattedConditions.map((cond, i) => (
-                        <Text key={i} color={cond.isCustom ? "gray" : "white"}>
+                        <Text key={i} color={cond.isCustom ? colors.muted : colors.text}>
                             {"  "}• {cond.description}
                             {cond.isCustom ? ` (${t("levelDetail.custom")})` : ""}
                         </Text>
@@ -100,9 +96,8 @@ export default function LevelDetail({
                 )}
             </Box>
 
-            {/* 初始属性 */}
             <Box flexDirection="column" marginBottom={1}>
-                <Text bold color="cyan">
+                <Text bold color={colors.info}>
                     {t("levelDetail.initialAttributes")}
                 </Text>
                 {Array.from(categorizedAttrs.entries()).map(([category, attrs]) => (
@@ -113,7 +108,7 @@ export default function LevelDetail({
                         {attrs.map(({ key, value }) => (
                             <Text key={key} >
                                 {t(`playerConfig.attr.${key}`)}:{" "}
-                                <Text color="green">{String(value)}</Text>
+                                <Text color={colors.success}>{String(value)}</Text>
                             </Text>
                         ))}
                     </Box>
@@ -122,16 +117,15 @@ export default function LevelDetail({
 
             <Newline />
 
-            {/* 操作提示 */}
-            <Box flexDirection="column" borderStyle="single" borderColor="gray" padding={1}>
+            <Box flexDirection="column" borderStyle="single" borderColor={colors.muted} padding={1}>
                 <Box>
-                    <Text color="green" bold>
+                    <Text color={colors.success} bold>
                         [Enter]{" "}
                     </Text>
                     <Text dimColor>{t("levelDetail.enterHint")}</Text>
                 </Box>
                 <Box>
-                    <Text color="yellow" bold>
+                    <Text color={colors.warning} bold>
                         [Esc]{" "}
                     </Text>
                     <Text dimColor>{t("levelDetail.escHint")}</Text>

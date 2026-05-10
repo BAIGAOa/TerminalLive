@@ -3,20 +3,24 @@ import { Box, Text } from 'ink';
 import { Achievement } from '../achievement/Achievement.js';
 import { useAchievementScreen, CategoryMenuItem } from '../hooks/useAchievementScreen.js';
 import SelectInput from '../tools/ui/SelectInput.js';
+import { useThemeColors } from '../hooks/theme/ThematicCommunicator.js';
 
 
-const CategoryMenuBox = (props: CategoryMenuItem & { isSelected?: boolean }) => (
-  <Box
-    borderStyle="double"
-    width="100%"
-    height={4}
-    borderColor={props.isSelected ? 'blue' : 'gray'}
-  >
-    <Box justifyContent="center" width="100%" height={4}>
-      <Text bold>{props.label}</Text>
+const CategoryMenuBox = (props: CategoryMenuItem & { isSelected?: boolean }) => {
+  const colors = useThemeColors();
+  return (
+    <Box
+      borderStyle="double"
+      width="100%"
+      height={4}
+      borderColor={props.isSelected ? colors.highlight : colors.muted}
+    >
+      <Box justifyContent="center" width="100%" height={4}>
+        <Text bold>{props.label}</Text>
+      </Box>
     </Box>
-  </Box>
-);
+  );
+};
 
 const AchievementCard = ({
   achievement,
@@ -25,6 +29,7 @@ const AchievementCard = ({
   achievement: Achievement;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) => {
+  const colors = useThemeColors();
   const isUnlocked = achievement.unlocked;
 
   if (!isUnlocked && achievement.hidden) {
@@ -32,12 +37,12 @@ const AchievementCard = ({
       <Box
         width="100%"
         borderStyle="round"
-        borderColor="gray"
+        borderColor={colors.muted}
         paddingX={1}
         marginBottom={1}
       >
         <Box flexDirection="column">
-          <Text color="gray" bold>???</Text>
+          <Text color={colors.muted} bold>???</Text>
           <Text dimColor>{t('achievement.hidden')}</Text>
         </Box>
       </Box>
@@ -48,12 +53,12 @@ const AchievementCard = ({
     <Box
       width="100%"
       borderStyle="round"
-      borderColor={isUnlocked ? 'green' : 'gray'}
+      borderColor={isUnlocked ? colors.achievement : colors.achievementLocked}
       paddingX={1}
       marginBottom={1}
     >
       <Box flexDirection="column">
-        <Text color={isUnlocked ? 'green' : 'gray'} bold>
+        <Text color={isUnlocked ? colors.achievement : colors.achievementLocked} bold>
           {isUnlocked ? '✓' : '○'} {t(achievement.nameKey)}
         </Text>
         <Text dimColor={!isUnlocked}>
@@ -72,11 +77,12 @@ const AchievementCard = ({
 
 export default function AchievementScreen() {
   const data = useAchievementScreen();
+  const colors = useThemeColors();
 
   return (
     <Box flexDirection="column" width="100%" height={data.rows}>
       <Box justifyContent="center" marginBottom={1}>
-        <Text color="yellow" bold>
+        <Text color={colors.menuTitle} bold>
           {data.t('achievement.title', {
             unlocked: data.totalUnlocked,
             total: data.allAchievements.length,
@@ -98,7 +104,7 @@ export default function AchievementScreen() {
           padding={1}
           width="70%"
           borderStyle="single"
-          borderColor="cyan"
+          borderColor={colors.info}
         >
           <Box marginBottom={1}>
             <Text dimColor>

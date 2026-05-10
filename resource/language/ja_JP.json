@@ -142,6 +142,8 @@
     "console.inputHint": "Tab でコマンド入力モードに入る",
     "console.cmd.help": "使用可能なコマンド: {list}",
     "console.cmd.clear": "コンソールをクリアしました",
+    "console.cmd.themes": "利用可能なテーマ: {list}、現在: {current}",
+    "console.cmd.setTheme": "テーマを {id} に切り替えました",
     "console.cmd.defaultSuccess": "コマンド \"{id}\" が実行されました",
     "console.error.commandNotFound": "コマンド \"{id}\" は存在しません",
     "console.error.commandFailed": "コマンド実行エラー: {error}",
