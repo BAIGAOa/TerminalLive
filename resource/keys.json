@@ -56,16 +56,6 @@
       ]
     },
     {
-      "keyName": "r",
-      "operate": "show-attributes",
-      "category": "game"
-    },
-    {
-      "keyName": "t",
-      "operate": "show-status",
-      "category": "game"
-    },
-    {
       "keyName": "v",
       "operate": "enter-archive",
       "category": "menu"
