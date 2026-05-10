@@ -1,6 +1,6 @@
 {
     "name": "@baigao_h/terminal-live",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "A small game running on the terminal.",
     "main": "dist/main.js",
     "types": "dist/main.d.ts",
