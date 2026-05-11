@@ -147,5 +147,10 @@
     "console.cmd.defaultSuccess": "Команда \"{id}\" выполнена успешно",
     "console.error.commandNotFound": "Команда \"{id}\" не существует",
     "console.error.commandFailed": "Ошибка выполнения команды: {error}",
-    "console.error.emptyInput": "Введите команду"
+    "console.error.emptyInput": "Введите команду",
+    "setting.theme": "Тема",
+    "themeScreen.title": "Выбор темы",
+    "themeScreen.hint": "↑↓ Выбор  Enter Сменить  D Цвета  Esc Назад",
+    "theme.default": "По умолчанию",
+    "theme.default.desc": "Классическая цветовая схема терминала"
 }

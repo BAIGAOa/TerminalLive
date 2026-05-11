@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { fileURLToPath } from "url";
 import ConfigStore from "../store/ConfigStore.js";
 import { container } from "../../Container.js";
-import ModRegistry from "../mod/ModRegistry.js";
+import ModMonitor from "../mod/ModMonitor.js";
 
 
 const _filename = fileURLToPath(import.meta.url);
@@ -53,7 +53,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const loadModLanguages = (code: string): TranslationData[] => {
     try {
       const configStore = container.resolve(ConfigStore);
-      const modRegistry = container.resolve(ModRegistry);
+      const modRegistry = container.resolve(ModMonitor);
       const enabledMods = configStore.getEnabledMods();
       const result: TranslationData[] = [];
 

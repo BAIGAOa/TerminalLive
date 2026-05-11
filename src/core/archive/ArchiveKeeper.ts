@@ -7,8 +7,8 @@ import type Player from "../../world/Player.js";
 import type AchievementStore from "../../achievement/AchievementStore.js";
 import type ConfigStore from "../store/ConfigStore.js";
 import type LevelManager from "../../level/LevelManager.js";
-import type ModRegistry from "../mod/ModRegistry.js";
 import { VersionProvider } from "../version/VersionProvider.js";
+import ModMonitor from "../mod/ModMonitor.js";
 
 @Scoped(Scope.Container)
 export class ArchivingKeeper {
@@ -25,7 +25,7 @@ export class ArchivingKeeper {
     achievementStore: AchievementStore,
     configStore: ConfigStore,
     levelManager: LevelManager,
-    modRegistry: ModRegistry,
+    modRegistry: ModMonitor,
   ): void {
     const archiveDir = this.ensureDir(name);
     const modNames = configStore.getEnabledMods();

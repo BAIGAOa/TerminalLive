@@ -8,7 +8,7 @@ import { ModManifest } from "./types.js";
 // 它只管路径和目录结构，不负责加载或执行模组代码。
 // 统一放在 ~/.mod_live/ 下，不用在项目目录里翻，用户和模组开发者都好找。
 @Scoped(Scope.Container)
-export default class ModRegistry {
+export default class ModMonitor {
   public readonly MOD_ROOT: string;
 
   constructor() {

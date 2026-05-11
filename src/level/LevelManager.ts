@@ -4,12 +4,12 @@ import LevelLoader from "./LevelLoader.js";
 import Player from "../world/Player.js";
 import EventHistory from "../event/EventHistory.js";
 import ModPluginLoader from "../core/mod/ModPluginLoader.js";
-import ModRegistry from "../core/mod/ModRegistry.js";
 import ConfigStore from "../core/store/ConfigStore.js";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import DifficultyRegistry from "./registry/DifficultyRegistry.js";
 import TypedEventBus from "../core/TypedEventBus.js";
+import ModMonitor from "../core/mod/ModMonitor.js";
+import DifficultyRegistry from "../core/registry/DifficultyRegistry.js";
 
 type Listener = () => void;
 
@@ -17,7 +17,7 @@ type Listener = () => void;
 export default class LevelManager {
   private levelLoader: LevelLoader;
   private modPluginLoader: ModPluginLoader;
-  private modRegistry: ModRegistry;
+  private modRegistry: ModMonitor;
   private configStore: ConfigStore;
   private eventBus: TypedEventBus;
 
@@ -37,7 +37,7 @@ export default class LevelManager {
   constructor() {
     this.levelLoader = inject(LevelLoader);
     this.modPluginLoader = inject(ModPluginLoader);
-    this.modRegistry = inject(ModRegistry);
+    this.modRegistry = inject(ModMonitor);
     this.configStore = inject(ConfigStore);
     this.eventBus = inject(TypedEventBus);
     this.difficultyRegistry = inject(DifficultyRegistry);

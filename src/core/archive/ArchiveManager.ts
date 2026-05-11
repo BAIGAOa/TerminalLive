@@ -13,10 +13,10 @@ import { SaveMeta } from "./SaveSchema.js";
 import AchievementStore from "../../achievement/AchievementStore.js";
 import ConfigStore from "../store/ConfigStore.js";
 import LevelManager from "../../level/LevelManager.js";
-import ModRegistry from "../mod/ModRegistry.js";
 import ThemeManager from "../theme/ThemeManager.js";
 import EventHistory from "../../event/EventHistory.js";
 import { ArchivingKeeper } from "./ArchiveKeeper.js";
+import ModMonitor from "../mod/ModMonitor.js";
 
 type Listener = () => void;
 
@@ -29,7 +29,7 @@ export class ArchiveManager {
   private achievementStore: AchievementStore;
   private configStore: ConfigStore;
   private levelManager: LevelManager;
-  private modRegistry: ModRegistry;
+  private modRegistry: ModMonitor;
   private themeManager: ThemeManager;
   private eventHistory: EventHistory;
 
@@ -41,7 +41,7 @@ export class ArchiveManager {
     this.achievementStore = inject(AchievementStore);
     this.configStore = inject(ConfigStore);
     this.levelManager = inject(LevelManager);
-    this.modRegistry = inject(ModRegistry);
+    this.modRegistry = inject(ModMonitor);
     this.themeManager = inject(ThemeManager);
     this.eventHistory = inject(EventHistory);
   }

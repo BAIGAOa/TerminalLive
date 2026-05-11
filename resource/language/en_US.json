@@ -147,5 +147,10 @@
     "console.cmd.defaultSuccess": "Command \"{id}\" executed successfully",
     "console.error.commandNotFound": "Command \"{id}\" does not exist",
     "console.error.commandFailed": "Command execution failed: {error}",
-    "console.error.emptyInput": "Please enter a command"
+    "console.error.emptyInput": "Please enter a command",
+    "setting.theme": "Theme",
+    "themeScreen.title": "Theme Selection",
+    "themeScreen.hint": "↑↓ Navigate  Enter Switch  D Preview Colors  Esc Back",
+    "theme.default": "Default",
+    "theme.default.desc": "Classic terminal color scheme"
 }

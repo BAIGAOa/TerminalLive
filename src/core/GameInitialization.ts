@@ -9,7 +9,6 @@ import Achievements from "../content/Achievements.js";
 import AchievementStore from "../achievement/AchievementStore.js";
 import ModLoader from "./mod/ModLoader.js";
 import EventTypes from "./mod/EventTypes.js";
-import ModRegistry from "./mod/ModRegistry.js";
 import ModPluginLoader from "./mod/ModPluginLoader.js";
 import ConsoleStore from "./console/ConsoleStore.js";
 import { container } from "../Container.js";
@@ -25,6 +24,7 @@ import ThemeParser from "./theme/ThemeParser.js";
 import ThemeManager from "./theme/ThemeManager.js";
 import { VersionProvider } from "./version/VersionProvider.js";
 import Commands from "../content/Commands.js";
+import ModMonitor from "./mod/ModMonitor.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
@@ -33,7 +33,7 @@ export default class GameInitialization {
   public keysCenter: KeysCenter;
   public achievementStore: AchievementStore;
   public modLoader: ModLoader;
-  public modRegistry: ModRegistry;
+  public modRegistry: ModMonitor;
   public monitor!: KeyboardMonitor;
   public player!: Player;
   public eventHistory: EventHistory;
@@ -48,7 +48,7 @@ export default class GameInitialization {
     this.keysCenter = inject(KeysCenter);
     this.achievementStore = inject(AchievementStore);
     this.modLoader = inject(ModLoader);
-    this.modRegistry = inject(ModRegistry);
+    this.modRegistry = inject(ModMonitor);
     this.eventHistory = inject(EventHistory);
     this.archiveManager = inject(ArchiveManager);
     this.modPluginLoader = inject(ModPluginLoader);

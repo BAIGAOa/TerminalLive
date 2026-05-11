@@ -1,5 +1,5 @@
 import { Scope, Scoped } from "di-wise";
-import Level from "../Level.js";
+import Level from "../../level/Level.js";
 
 @Scoped(Scope.Container)
 export default class DifficultyRegistry {

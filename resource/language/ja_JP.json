@@ -147,5 +147,10 @@
     "console.cmd.defaultSuccess": "コマンド \"{id}\" が実行されました",
     "console.error.commandNotFound": "コマンド \"{id}\" は存在しません",
     "console.error.commandFailed": "コマンド実行エラー: {error}",
-    "console.error.emptyInput": "コマンドを入力してください"
+    "console.error.emptyInput": "コマンドを入力してください",
+    "setting.theme": "テーマ",
+    "themeScreen.title": "テーマ選択",
+    "themeScreen.hint": "↑↓ 選択  Enter 切替  D 色確認  Esc 戻る",
+    "theme.default": "デフォルト",
+    "theme.default.desc": "クラシック端末配色"
 }

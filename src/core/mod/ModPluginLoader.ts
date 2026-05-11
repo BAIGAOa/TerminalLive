@@ -1,6 +1,5 @@
 import { createRequire } from "node:module";
 import { Scope, Scoped, inject } from "di-wise";
-import ModRegistry from "./ModRegistry.js";
 import EventTypeRegistry from "./EventTypeRegistry.js";
 import ConfigStore from "../store/ConfigStore.js";
 import Player from "../../world/Player.js";
@@ -9,11 +8,12 @@ import { ModContext, ModPlugin, ModEventClassDef } from "./types.js";
 import { ScreenRegistry } from "../store/ScreenRegistry.js";
 import { container } from "../../Container.js";
 import ScreenStore from "../store/ScreenStore.js";
-import LevelConditionRegistry from "../../level/registry/LevelConditionRegistry.js";
-import AlgorithmRegistry from "../../event/AlgorithmRegistry.js";
-import FilterRegistry from "../../event/registry/FilterRegistry.js";
 import TypedEventBus from "../TypedEventBus.js";
 import { SettingRegistry } from "../store/SettingRegistry.js";
+import ModMonitor from "./ModMonitor.js";
+import AlgorithmRegistry from "../registry/AlgorithmRegistry.js";
+import FilterRegistry from "../registry/FilterRegistry.js";
+import LevelConditionRegistry from "../registry/LevelConditionRegistry.js";
 
 // 每个钩子条目同时存函数和上下文：fireXxx 方法需要把 ctx 传回给模组的钩子函数。
 // 函数用 bind 绑定了 plugin，这样模组作者写 this.xxx 时，this 指向自己的插件对象。
@@ -27,7 +27,7 @@ interface HookEntry {
 // 触发模组钩子，而不需要直接知道任何模组的存在。
 @Scoped(Scope.Container)
 export default class ModPluginLoader {
-  private registry: ModRegistry;
+  private registry: ModMonitor;
   private eventTypeRegistry: EventTypeRegistry;
   private eventBus: TypedEventBus;
   private configStore: ConfigStore;
@@ -49,7 +49,7 @@ export default class ModPluginLoader {
   private playerUpdateHooks: HookEntry[] = [];
 
   constructor() {
-    this.registry = inject(ModRegistry);
+    this.registry = inject(ModMonitor);
     this.eventTypeRegistry = inject(EventTypeRegistry);
     this.eventBus = inject(TypedEventBus);
     this.configStore = inject(ConfigStore);

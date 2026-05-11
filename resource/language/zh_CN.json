@@ -147,5 +147,10 @@
     "console.cmd.defaultSuccess": "指令 \"{id}\" 执行成功",
     "console.error.commandNotFound": "指令 \"{id}\" 不存在",
     "console.error.commandFailed": "指令执行失败: {error}",
-    "console.error.emptyInput": "请输入指令"
+    "console.error.emptyInput": "请输入指令",
+    "setting.theme": "主题",
+    "themeScreen.title": "主题选择",
+    "themeScreen.hint": "↑↓ 选择  Enter 切换  D 展开颜色预览  Esc 返回",
+    "theme.default": "默认",
+    "theme.default.desc": "经典终端配色"
 }

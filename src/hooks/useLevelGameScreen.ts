@@ -5,9 +5,9 @@ import { useTerminalSize } from "../ui/TerminalSizeContext.js";
 import LevelManager from "../level/LevelManager.js";
 import GameStatusMap from "../core/GameStatusMap.js";
 import Player from "../world/Player.js";
-import LevelCondition from "../level/registry/LevelCondition.js";
 import GeneralPurpose from "../level/conditions/GeneralPurpose.js";
 import type { LogEntry } from "../core/store/LogStore.js";
+import LevelCondition from "../level/LevelCondition.js";
 
 export interface FormattedVictoryCondition {
   description: string;
@@ -60,7 +60,8 @@ export default function useLevelGameScreen(): LevelGameData {
   const player = levelManager.getPlayer();
   useSyncExternalStore(
     player.subscribe,
-    () => `${player.age}|${player.health}|${player.angerValue}|${player.currentStatus}`,
+    () =>
+      `${player.age}|${player.health}|${player.angerValue}|${player.currentStatus}`,
   );
 
   const logStore = levelManager.getCurrentLogStore();
@@ -79,7 +80,8 @@ export default function useLevelGameScreen(): LevelGameData {
   }, [gameStatusMap]);
 
   const [currentViewIndex, setCurrentViewIndex] = useState(0);
-  const safeIndex = viewIds.length > 0 ? Math.min(currentViewIndex, viewIds.length - 1) : 0;
+  const safeIndex =
+    viewIds.length > 0 ? Math.min(currentViewIndex, viewIds.length - 1) : 0;
   const currentViewId = viewIds[safeIndex] ?? "attributes";
   const viewCount = viewIds.length;
 

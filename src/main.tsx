@@ -65,7 +65,6 @@ function App() {
           height={5}
           marginTop={-3}
           isHighlighted={data.highlighting === 'exit'}
-          highlightBackgroundColor={colors.danger}
         />
       </Box>
     )

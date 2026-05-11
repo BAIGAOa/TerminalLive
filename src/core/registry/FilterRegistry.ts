@@ -1,5 +1,5 @@
 import { Scope, Scoped } from "di-wise";
-import IncidentFilter from "../IncidentFilter.js";
+import IncidentFilter from "../../event/IncidentFilter.js";
 
 /**
  * 过滤器注册表。根据名称创建过滤器实例。

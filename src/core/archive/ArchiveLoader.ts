@@ -13,9 +13,9 @@ import type Player from "../../world/Player.js";
 import type AchievementStore from "../../achievement/AchievementStore.js";
 import type ConfigStore from "../store/ConfigStore.js";
 import type LevelManager from "../../level/LevelManager.js";
-import type ModRegistry from "../mod/ModRegistry.js";
 import type ThemeManager from "../theme/ThemeManager.js";
 import type EventHistory from "../../event/EventHistory.js";
+import ModMonitor from "../mod/ModMonitor.js";
 
 @Scoped(Scope.Container)
 export class ArchiveLoader {
@@ -27,7 +27,7 @@ export class ArchiveLoader {
     achievementStore: AchievementStore,
     configStore: ConfigStore,
     levelManager: LevelManager,
-    modRegistry: ModRegistry,
+    modRegistry: ModMonitor,
     themeManager: ThemeManager,
     eventHistory: EventHistory,
   ): void {

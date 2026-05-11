@@ -3,9 +3,9 @@ import type { Incident, IncidentParameter } from "../../world/Incident.js";
 import type EventTypeRegistry from "./EventTypeRegistry.js";
 import type ConfigStore from "../store/ConfigStore.js";
 import z from "zod";
-import { AlgorithmFactory } from "../../event/AlgorithmRegistry.js";
 import IncidentFilter from "../../event/IncidentFilter.js";
 import TypedEventBus from "../TypedEventBus.js";
+import { AlgorithmFactory } from "../registry/AlgorithmRegistry.js";
 
 // 模组清单（mod.json）。这些字段会被 ModRegistry 读取，目前主要用于信息展示。
 export interface ModManifest {

@@ -1,17 +1,17 @@
 import { useState, useMemo, useCallback } from "react";
 import { Key } from "ink";
 import { container } from "../Container.js";
-import DifficultyRegistry from "../level/registry/DifficultyRegistry.js";
 import LevelManager from "../level/LevelManager.js";
 import Level from "../level/Level.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useSyncExternalStore } from "react";
 import ConfigStore from "../core/store/ConfigStore.js";
 import GeneralPurpose from "../level/conditions/GeneralPurpose.js";
-import LevelCondition from "../level/registry/LevelCondition.js";
 import { PlayerConfigType } from "../types/ConfigType.js";
 import ScreenStore from "../core/store/ScreenStore.js";
 import { SCENES } from "../types/Scenes.js";
+import DifficultyRegistry from "../core/registry/DifficultyRegistry.js";
+import LevelCondition from "../level/LevelCondition.js";
 
 export interface DifficultyItem {
   label: string;
