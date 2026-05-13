@@ -3,11 +3,11 @@ import { container } from "../Container.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
 import LevelManager from "../level/LevelManager.js";
-import GameStatusMap from "../core/GameStatusMap.js";
 import Player from "../world/Player.js";
 import GeneralPurpose from "../level/conditions/GeneralPurpose.js";
 import type { LogEntry } from "../core/store/LogStore.js";
 import LevelCondition from "../level/LevelCondition.js";
+import GameStatusMap from "../core/registry/GameStatusMap.js";
 
 export interface FormattedVictoryCondition {
   description: string;
@@ -75,7 +75,7 @@ export default function useLevelGameScreen(): LevelGameData {
 
   const viewIds: string[] = useMemo(() => {
     const ids: string[] = [];
-    gameStatusMap.getAll().forEach((_, id) => ids.push(id));
+    gameStatusMap.getMap().forEach((_, id) => ids.push(id));
     return ids.length > 0 ? ids : ["attributes"];
   }, [gameStatusMap]);
 
@@ -122,7 +122,7 @@ export default function useLevelGameScreen(): LevelGameData {
   }, [viewCount]);
 
   const renderCurrentView = useCallback((): React.ReactNode => {
-    const renderFn = gameStatusMap.getStatus(currentViewId);
+    const renderFn = gameStatusMap.get(currentViewId);
     return renderFn ? renderFn({ player, t }) : null;
   }, [gameStatusMap, currentViewId, player, t]);
 

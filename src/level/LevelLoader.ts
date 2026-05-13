@@ -107,7 +107,7 @@ export default class LevelLoader {
     );
 
     const conditions = config.nextLevelUnlock.map((each) => {
-      const entry = this.conditionCenter.getCondition(each.type);
+      const entry = this.conditionCenter.get(each.type);
       // 为了不引入复杂的类型体操，况且类型体操也很不灵活
       // 但当前的schema验证也已经够用了，模组开发者只需要确保schema
       // 和构造函数的参数一致，就可以了

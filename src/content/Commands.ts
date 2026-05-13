@@ -1,6 +1,6 @@
 import { container } from "../Container.js";
-import CommandCenter from "../core/console/CommandCenter.js";
 import ConsoleStore from "../core/console/ConsoleStore.js";
+import CommandCenter from "../core/registry/CommandCenter.js";
 import ThemeCenter from "../core/theme/ThemeCenter.js";
 import ThemeManager from "../core/theme/ThemeManager.js";
 
@@ -16,8 +16,8 @@ export default class Commands {
     const themeCenter = container.resolve(ThemeCenter);
     const themeManager = container.resolve(ThemeManager);
 
-    cmdCenter.addCommand("help", () => {
-      const commands = cmdCenter.getAllCommands();
+    cmdCenter.register("help", () => {
+      const commands = cmdCenter.getAll();
       const list = Array.from(commands.keys()).join(", ");
       return {
         key: "console.cmd.help",
@@ -25,7 +25,7 @@ export default class Commands {
       };
     });
 
-    cmdCenter.addCommand("clear", () => {
+    cmdCenter.register("clear", () => {
       consoleStore.clearCommandResults();
       return {
         key: "console.cmd.clear",
@@ -33,7 +33,7 @@ export default class Commands {
     });
 
     for (const each of themeCenter.getAllTheme()) {
-      cmdCenter.addCommand(`theme-${each.id}`, () => {
+      cmdCenter.register(`theme-${each.id}`, () => {
         themeManager.setCurrent(each.id);
         return {
           key: "console.cmd.setTheme",
@@ -42,7 +42,7 @@ export default class Commands {
       });
     }
 
-    cmdCenter.addCommand("themes", () => {
+    cmdCenter.register("themes", () => {
       const list = themeCenter
         .getAllTheme()
         .map((t) => t.id)

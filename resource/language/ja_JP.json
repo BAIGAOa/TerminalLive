@@ -152,5 +152,15 @@
     "themeScreen.title": "テーマ選択",
     "themeScreen.hint": "↑↓ 選択  Enter 切替  D 色確認  Esc 戻る",
     "theme.default": "デフォルト",
-    "theme.default.desc": "クラシック端末配色"
+    "theme.default.desc": "クラシック端末配色",
+    "theme.darkOcean": "暗海",
+    "theme.darkOcean.desc": "深青配色",
+    "theme.forest": "森林",
+    "theme.forest.desc": "緑配色",
+    "theme.sunset": "日没",
+    "theme.sunset.desc": "暖色配色",
+    "theme.mono": "モノ",
+    "theme.mono.desc": "白黒配色",
+    "theme.cyberpunk": "サイバー",
+    "theme.cyberpunk.desc": "ネオン配色"
 }

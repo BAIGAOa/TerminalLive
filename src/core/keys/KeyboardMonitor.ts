@@ -4,9 +4,9 @@ import {
   keysConfigScheme,
 } from "../../types/KeyboardMappingFormat.js";
 import JSONparsing from "../json/JSONparsing.js";
-import KeysCenter from "./KeysCenter.js";
 import ScreenStore from "../store/ScreenStore.js";
 import { container } from "../../Container.js";
+import KeysCenter from "../registry/KeysCenter.js";
 
 export default class KeyboardMonitor {
   private keyMap: Map<string, Map<string, () => any>> = new Map();
@@ -55,7 +55,7 @@ export default class KeyboardMonitor {
       // 从扁平化的 KeysCenter 获取操作函数（不再依赖场景参数）
       let action: () => any;
       try {
-        action = this.keysCenter.getOperation(operate);
+        action = this.keysCenter.get(operate);
       } catch (e) {
         throw new Error(`配置中的操作 "${operate}" 未在 KeysCenter 中注册`);
       }

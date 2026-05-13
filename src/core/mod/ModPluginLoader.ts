@@ -5,15 +5,15 @@ import ConfigStore from "../store/ConfigStore.js";
 import Player from "../../world/Player.js";
 import { Incident, IncidentParameter } from "../../world/Incident.js";
 import { ModContext, ModPlugin, ModEventClassDef } from "./types.js";
-import { ScreenRegistry } from "../store/ScreenRegistry.js";
 import { container } from "../../Container.js";
 import ScreenStore from "../store/ScreenStore.js";
 import TypedEventBus from "../TypedEventBus.js";
-import { SettingRegistry } from "../store/SettingRegistry.js";
 import ModMonitor from "./ModMonitor.js";
 import AlgorithmRegistry from "../registry/AlgorithmRegistry.js";
 import FilterRegistry from "../registry/FilterRegistry.js";
 import LevelConditionRegistry from "../registry/LevelConditionRegistry.js";
+import { ScreenRegistry } from "../registry/ScreenRegistry.js";
+import { SettingRegistry } from "../registry/SettingRegistry.js";
 
 // 每个钩子条目同时存函数和上下文：fireXxx 方法需要把 ctx 传回给模组的钩子函数。
 // 函数用 bind 绑定了 plugin，这样模组作者写 this.xxx 时，this 指向自己的插件对象。
@@ -196,20 +196,19 @@ export default class ModPluginLoader {
       },
       createEventClass: (def: ModEventClassDef) => this.makeEventClass(def),
 
-      registerScreen: (entry) => {
-        this.screenRegistry.register({
-          scene: entry.scene,
+      registerScreen: (key: string, entry) => {
+        this.screenRegistry.register(key, {
           component: entry.component,
           nameKey: entry.nameKey,
           hide: entry.hide,
-          highlightId: entry.highlightId ?? entry.scene,
+          highlightId: entry.highlightId ?? key,
         });
       },
       navigateTo: (scene) => {
         container.resolve(ScreenStore).setScene(scene);
       },
       addCondition: (id, ctor, schema) => {
-        this.conditionReg.addCondition(id, ctor, schema);
+        this.conditionReg.register(id, { ctor, schema });
       },
       addAlgorithm: (name, factory) => {
         this.algoRegister.register(name, factory);
@@ -217,8 +216,8 @@ export default class ModPluginLoader {
       addFilter: (id, filter) => {
         this.filterRegister.register(id, filter);
       },
-      addSetting: (entry) => {
-        this.settingCenter.register(entry);
+      addSetting: (key, entry) => {
+        this.settingCenter.register(key, entry);
       },
     };
   }

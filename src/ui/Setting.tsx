@@ -2,10 +2,10 @@ import React from "react";
 import { Box, Text } from "ink";
 import { useSettingScreen } from "../hooks/useSettingScreen.js";
 import Player from "../world/Player.js";
-import { SettingRegistry } from "../core/store/SettingRegistry.js";
 import { container } from "../Container.js";
 import SelectInput from "../tools/ui/SelectInput.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { SettingRegistry } from "../core/registry/SettingRegistry.js";
 
 interface SettingBoxProps {
   label: string;
@@ -51,7 +51,7 @@ export default function Setting({ onConfigChange, player }: SettingProps) {
   const colors = useThemeColors();
 
   if (data.activeMenu !== "") {
-    const entry = registry.getEntry(data.activeMenu);
+    const entry = registry.get(data.activeMenu);
     if (entry) {
       return (
         <entry.component
@@ -63,9 +63,9 @@ export default function Setting({ onConfigChange, player }: SettingProps) {
     }
   }
 
-  const items = registry.getAll().map((e) => ({
-    label: data.t(e.nameKey),
-    value: e.menu,
+  const items = Array.from(registry.getMap()).map((e) => ({
+    label: data.t(e[1].nameKey),
+    value: e[0],
     highlightColor: colors.highlight,
   }));
 

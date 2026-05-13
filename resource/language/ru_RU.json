@@ -152,5 +152,15 @@
     "themeScreen.title": "Выбор темы",
     "themeScreen.hint": "↑↓ Выбор  Enter Сменить  D Цвета  Esc Назад",
     "theme.default": "По умолчанию",
-    "theme.default.desc": "Классическая цветовая схема терминала"
+    "theme.default.desc": "Классическая цветовая схема терминала",
+    "theme.darkOcean": "Тёмный океан",
+    "theme.darkOcean.desc": "Синяя тема",
+    "theme.forest": "Лес",
+    "theme.forest.desc": "Зелёная тема",
+    "theme.sunset": "Закат",
+    "theme.sunset.desc": "Тёплая тема",
+    "theme.mono": "Моно",
+    "theme.mono.desc": "Чёрно-белая тема",
+    "theme.cyberpunk": "Кибер",
+    "theme.cyberpunk.desc": "Неоновая тема"
 }

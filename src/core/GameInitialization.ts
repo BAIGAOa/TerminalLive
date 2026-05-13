@@ -1,7 +1,6 @@
 import { inject, Scope, Scoped } from "di-wise";
 import Game from "./Game.js";
 import ConfigStore from "./store/ConfigStore.js";
-import KeysCenter from "./keys/KeysCenter.js";
 import KeyboardMonitor from "./keys/KeyboardMonitor.js";
 import Player from "../world/Player.js";
 import Keys from "../content/Keys.js";
@@ -25,6 +24,7 @@ import ThemeManager from "./theme/ThemeManager.js";
 import { VersionProvider } from "./version/VersionProvider.js";
 import Commands from "../content/Commands.js";
 import ModMonitor from "./mod/ModMonitor.js";
+import KeysCenter from "./registry/KeysCenter.js";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {

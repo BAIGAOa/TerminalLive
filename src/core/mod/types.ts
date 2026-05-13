@@ -42,13 +42,15 @@ export interface ModContext {
     def: ModEventClassDef,
   ) => new (params: IncidentParameter) => Incident;
   // 注册自定义 UI 界面，和核心 ScreenRegistry 共享同一张表
-  registerScreen: (entry: {
-    scene: string;
-    component: React.ComponentType<any>;
-    nameKey: string;
-    hide?: boolean;
-    highlightId?: string;
-  }) => void;
+  registerScreen: (
+    key: string,
+    entry: {
+      component: React.ComponentType<any>;
+      nameKey: string;
+      hide?: boolean;
+      highlightId?: string;
+    },
+  ) => void;
   navigateTo: (scene: string) => void;
   addCondition: (
     id: string,
@@ -57,11 +59,13 @@ export interface ModContext {
   ) => void;
   addAlgorithm: (name: string, factory: AlgorithmFactory) => void;
   addFilter: (id: string, filter: () => IncidentFilter) => void;
-  addSetting: (entry: {
-    menu: string;
-    component: React.ComponentType<any>;
-    nameKey: string;
-  }) => void;
+  addSetting: (
+    key: string,
+    entry: {
+      component: React.ComponentType<any>;
+      nameKey: string;
+    },
+  ) => void;
 }
 
 // 模组自定义事件的行为描述。

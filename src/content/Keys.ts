@@ -4,7 +4,6 @@ import Game from "../core/Game.js";
 import Key from "../core/keys/Key.js";
 import HighlightStore from "../core/store/HighlightStore.js";
 import ScreenStore from "../core/store/ScreenStore.js";
-import { SCENES } from "../types/Scenes.js";
 
 export default class Keys {
   private static init: boolean = false;
@@ -35,12 +34,12 @@ export default class Keys {
 
       this.startGame = new Key("start-game", () => {
         highLight.setActive("start");
-        setTimeout(() => screen.setScene(SCENES.levelSelection));
+        setTimeout(() => screen.setScene("levelSelection"));
       });
 
       this.returnToMainInterface = new Key("return-to-mainInterface", () => {
         highLight.setActive("start");
-        screen.setScene(SCENES.menu);
+        screen.setScene("menu");
       });
 
       this.nextRound = new Key("next-round", () => {
@@ -49,17 +48,17 @@ export default class Keys {
 
       this.enterConfig = new Key("enter-config", () => {
         highLight.setActive("config");
-        setTimeout(() => screen.setScene(SCENES.config), 200);
+        setTimeout(() => screen.setScene("config"), 200);
       });
 
       this.languageEnter = new Key("enter-language", () => {
         highLight.setActive("language");
-        setTimeout(() => screen.setScene(SCENES.language), 200);
+        setTimeout(() => screen.setScene("language"), 200);
       });
 
       this.enterAchievement = new Key("enter-achievement", () => {
         highLight.setActive("achievement");
-        setTimeout(() => screen.setScene(SCENES.achievement), 200);
+        setTimeout(() => screen.setScene("achievement"), 200);
       });
 
       this.toggleConsole = new Key("toggle-console", () => {
@@ -68,7 +67,7 @@ export default class Keys {
 
       this.enterArchive = new Key("enter-archive", () => {
         highLight.setActive("archive");
-        setTimeout(() => screen.setScene(SCENES.archive), 200);
+        setTimeout(() => screen.setScene("archive"), 200);
       });
     }
   }

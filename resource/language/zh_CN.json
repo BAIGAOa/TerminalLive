@@ -152,5 +152,15 @@
     "themeScreen.title": "主题选择",
     "themeScreen.hint": "↑↓ 选择  Enter 切换  D 展开颜色预览  Esc 返回",
     "theme.default": "默认",
-    "theme.default.desc": "经典终端配色"
+    "theme.default.desc": "经典终端配色",
+    "theme.darkOcean": "暗海",
+    "theme.darkOcean.desc": "深蓝配色",
+    "theme.forest": "森林",
+    "theme.forest.desc": "绿色配色",
+    "theme.sunset": "日落",
+    "theme.sunset.desc": "暖洋红配色",
+    "theme.mono": "极简",
+    "theme.mono.desc": "黑白灰配色",
+    "theme.cyberpunk": "赛博",
+    "theme.cyberpunk.desc": "霓虹配色"
 }

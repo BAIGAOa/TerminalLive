@@ -1,7 +1,4 @@
 import { container } from "../Container.js";
-import { ScreenRegistry } from "../core/store/ScreenRegistry.js";
-import { SettingRegistry } from "../core/store/SettingRegistry.js";
-import { SCENES } from "../types/Scenes.js";
 import LevelGame from "../ui/LevelGame.js";
 import Setting from "../ui/Setting.js";
 import Language from "../ui/Language.js";
@@ -12,6 +9,8 @@ import ModManager from "../ui/ModManager.js";
 import Archive from "../ui/Archive.js";
 import LevelSelection from "../ui/LevelSelection.js";
 import ThemeScreen from "../ui/ThemeScreen.js";
+import { ScreenRegistry } from "../core/registry/ScreenRegistry.js";
+import { SettingRegistry } from "../core/registry/SettingRegistry.js";
 
 export class Screens {
   private static init = false;
@@ -22,8 +21,7 @@ export class Screens {
 
     const screenReg = container.resolve(ScreenRegistry);
 
-    screenReg.register({
-      scene: SCENES.game,
+    screenReg.register("game", {
       component: LevelGame,
       nameKey: "main.startGame",
       highlightId: "start",
@@ -31,15 +29,13 @@ export class Screens {
       props: (ctx) => ({ player: ctx.player }),
     });
 
-    screenReg.register({
-      scene: SCENES.levelSelection,
+    screenReg.register("levelSelection", {
       component: LevelSelection,
       nameKey: "main.levelSelection",
       highlightId: "levelSelection",
     });
 
-    screenReg.register({
-      scene: SCENES.config,
+    screenReg.register("config", {
       component: Setting,
       nameKey: "main.enterConfig",
       highlightId: "config",
@@ -49,22 +45,19 @@ export class Screens {
       }),
     });
 
-    screenReg.register({
-      scene: SCENES.language,
+    screenReg.register("language", {
       component: Language,
       nameKey: "main.configurationLanguage",
       highlightId: "language",
     });
 
-    screenReg.register({
-      scene: SCENES.achievement,
+    screenReg.register("achievement", {
       component: AchievementScreen,
       nameKey: "main.achievement",
       highlightId: "achievement",
     });
 
-    screenReg.register({
-      scene: SCENES.archive,
+    screenReg.register("archive", {
       component: Archive,
       nameKey: "main.archive",
       highlightId: "archive",
@@ -72,26 +65,22 @@ export class Screens {
 
     const settingReg = container.resolve(SettingRegistry);
 
-    settingReg.register({
-      menu: "keyBoardConfig",
+    settingReg.register("keyBoardConfig", {
       component: Config,
       nameKey: "setting.keyBoardConfig",
     });
 
-    settingReg.register({
-      menu: "playerConfig",
+    settingReg.register("playerConfig", {
       component: PlayerConfig,
       nameKey: "setting.playerConfig",
     });
 
-    settingReg.register({
-      menu: "modManager",
+    settingReg.register("modManager", {
       component: ModManager,
       nameKey: "setting.modManager",
     });
 
-    settingReg.register({
-      menu: "theme",
+    settingReg.register("theme", {
       component: ThemeScreen,
       nameKey: "setting.theme",
     });

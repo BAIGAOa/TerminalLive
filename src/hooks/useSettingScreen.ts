@@ -2,8 +2,8 @@ import { useCallback, useState, useMemo } from "react";
 import { container } from "../Container.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
-import { SettingRegistry } from "../core/store/SettingRegistry.js";
 import KeyboardMonitor from "../core/keys/KeyboardMonitor.js";
+import { SettingRegistry } from "../core/registry/SettingRegistry.js";
 
 export type SettingMenuId = string;
 
@@ -34,10 +34,10 @@ export function useSettingScreen(
 
   const menuItems: SettingItem[] = useMemo(
     () =>
-      registry.getAll().map((entry) => ({
-        label: t(entry.nameKey),
+      Array.from(registry.getMap()).map((entry) => ({
+        label: t(entry[1].nameKey),
         highlightColor: "green",
-        value: entry.menu,
+        value: entry[0],
       })),
     [registry, t],
   );

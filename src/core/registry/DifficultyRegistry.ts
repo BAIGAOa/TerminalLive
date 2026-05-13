@@ -12,7 +12,7 @@ export default class DifficultyRegistry {
     this.map.get(difficulty)!.set(level.id, level);
   }
 
-  public remove(levelId: string): void {
+  public unregister(levelId: string): void {
     for (const inner of this.map.values()) {
       inner.delete(levelId);
     }

@@ -12,11 +12,10 @@ export default class Conditions {
       this.init = true;
       const register = container.resolve(LevelConditionRegistry);
 
-      register.addCondition(
-        "generalPurpose",
-        GeneralPurpose,
-        GeneralPurposeScheme,
-      );
+      register.register("generalPurpose", {
+        ctor: GeneralPurpose,
+        schema: GeneralPurposeScheme,
+      });
     }
   }
 }

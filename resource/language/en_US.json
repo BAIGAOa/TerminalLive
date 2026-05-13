@@ -152,5 +152,15 @@
     "themeScreen.title": "Theme Selection",
     "themeScreen.hint": "↑↓ Navigate  Enter Switch  D Preview Colors  Esc Back",
     "theme.default": "Default",
-    "theme.default.desc": "Classic terminal color scheme"
+    "theme.default.desc": "Classic terminal color scheme",
+    "theme.darkOcean": "Dark Ocean",
+    "theme.darkOcean.desc": "Deep blue theme",
+    "theme.forest": "Forest",
+    "theme.forest.desc": "Green theme",
+    "theme.sunset": "Sunset",
+    "theme.sunset.desc": "Warm magenta theme",
+    "theme.mono": "Mono",
+    "theme.mono.desc": "Monochrome theme",
+    "theme.cyberpunk": "Cyber",
+    "theme.cyberpunk.desc": "Neon theme"
 }

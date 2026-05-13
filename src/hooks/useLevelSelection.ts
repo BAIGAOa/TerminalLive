@@ -9,7 +9,6 @@ import ConfigStore from "../core/store/ConfigStore.js";
 import GeneralPurpose from "../level/conditions/GeneralPurpose.js";
 import { PlayerConfigType } from "../types/ConfigType.js";
 import ScreenStore from "../core/store/ScreenStore.js";
-import { SCENES } from "../types/Scenes.js";
 import DifficultyRegistry from "../core/registry/DifficultyRegistry.js";
 import LevelCondition from "../level/LevelCondition.js";
 
@@ -246,7 +245,7 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
   const onConfirmEnter = useCallback(() => {
     if (!selectedLevel) return;
     levelManager.start(selectedLevel.id);
-    container.resolve(ScreenStore).setScene(SCENES.game);
+    container.resolve(ScreenStore).setScene("game");
   }, [selectedLevel, levelManager]);
 
   const onKeyPress = useCallback(

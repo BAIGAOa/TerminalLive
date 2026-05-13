@@ -1,6 +1,9 @@
 import { Scoped, Scope, inject } from "di-wise";
-import CommandCenter, { Command, CommandResult } from "./CommandCenter.js";
 import ConsoleStore from "./ConsoleStore.js";
+import CommandCenter, {
+  Command,
+  CommandResult,
+} from "../registry/CommandCenter.js";
 
 @Scoped(Scope.Container)
 export default class ConsoleCommandParser {
@@ -14,7 +17,7 @@ export default class ConsoleCommandParser {
 
   private validateInstruction(instructionID: string): Command | null {
     try {
-      return this.center.getCommand(instructionID);
+      return this.center.get(instructionID);
     } catch {
       this.consoleStore.addCommandResult({
         type: "error",

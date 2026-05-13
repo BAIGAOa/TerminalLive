@@ -1,12 +1,10 @@
 import { Scope, Scoped } from "di-wise";
-import { SCENES } from "../../types/Scenes.js";
 
 type Listener = () => void;
 
-
 @Scoped(Scope.Container)
 export default class ScreenStore {
-  private currentScene: string = SCENES.menu;
+  private currentScene: string = "menu";
   private listeners = new Set<Listener>();
 
   public subscribe = (listener: Listener) => {

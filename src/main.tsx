@@ -10,9 +10,9 @@ import { TerminalSizeProvider } from './ui/TerminalSizeContext.js'
 import { useApp } from './hooks/useApp.js'
 import GameInitialization from './core/GameInitialization.js'
 import { container } from './Container.js'
-import { ScreenRegistry } from './core/store/ScreenRegistry.js'
 import { KeyboardManager } from './core/keys/KeyBoardManager.js'
 import { ThemeProvider, useThemeColors } from './hooks/theme/ThematicCommunicator.js'
+import { ScreenRegistry } from './core/registry/ScreenRegistry.js'
 
 
 const app = await container.resolve(GameInitialization).init()
@@ -27,7 +27,10 @@ function App() {
     manager.handle(input, key)
   })
 
-  const entry = registry.getEntry(data.currentScreen)
+  let entry = undefined
+  if (data.currentScreen !== 'menu' && registry.has(data.currentScreen)) {
+    entry = registry.get(data.currentScreen)
+  }
   const ctx = {
     player: app.player,
     setMonitor: (m: any) => { app.monitor = m },
@@ -49,13 +52,13 @@ function App() {
         <Logo marginBottom={2} />
         {registry.getMainMenuEntries().map((e) => (
           <MainInterface
-            key={e.scene}
-            title={data.t(e.nameKey)}
+            key={e[0]}
+            title={data.t(e[1].nameKey)}
             backgroundColor={colors.background}
             width={40}
             height={5}
             marginTop={-3}
-            isHighlighted={data.highlighting === e.highlightId}
+            isHighlighted={data.highlighting === e[1].highlightId}
           />
         ))}
         <MainInterface

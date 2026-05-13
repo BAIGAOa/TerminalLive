@@ -6,8 +6,8 @@ import {
   keysConfigScheme,
 } from "../types/KeyboardMappingFormat.js";
 import KeyboardMonitor from "../core/keys/KeyboardMonitor.js";
-import KeysCenter from "../core/keys/KeysCenter.js";
 import { useI18n } from "../core/language/LanguageContext.js";
+import KeysCenter from "../core/registry/KeysCenter.js";
 
 // ============================================================
 // 类型定义
