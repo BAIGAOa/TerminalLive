@@ -1,9 +1,9 @@
-import { useSyncExternalStore, useCallback, useMemo, useState } from 'react';
-import { container } from '../Container.js';
-import AchievementStore from '../achievement/AchievementStore.js';
-import { AchievementCategory } from '../types/AchievementCategory.js';
-import { useI18n } from '../core/language/LanguageContext.js';
-import { useTerminalSize } from '../ui/TerminalSizeContext.js';
+import { useSyncExternalStore, useCallback, useMemo, useState } from "react";
+import { container } from "../Container.js";
+import { AchievementCategory } from "../types/AchievementCategory.js";
+import { useI18n } from "../core/language/LanguageContext.js";
+import { useTerminalSize } from "../ui/TerminalSizeContext.js";
+import AchievementManager from "../achievement/AchievementManager.js";
 
 export interface CategoryMenuItem {
   label: string;
@@ -11,8 +11,8 @@ export interface CategoryMenuItem {
 }
 
 export interface AchievementScreenData {
-  allAchievements: ReturnType<AchievementStore['getSnapshot']>;
-  filteredAchievements: ReturnType<AchievementStore['getSnapshot']>;
+  allAchievements: ReturnType<AchievementManager["getSnapshot"]>;
+  filteredAchievements: ReturnType<AchievementManager["getSnapshot"]>;
   menuItems: CategoryMenuItem[];
   activeCategory: AchievementCategory;
   totalUnlocked: number;
@@ -24,24 +24,26 @@ export interface AchievementScreenData {
 
 export function useAchievementScreen(): AchievementScreenData {
   const { t } = useI18n();
-  const store = container.resolve(AchievementStore);
-  const allAchievements = useSyncExternalStore(store.subscribe, store.getSnapshot);
+  const manager = container.resolve(AchievementManager);
+  const allAchievements = useSyncExternalStore(
+    manager.subscribe,
+    manager.getSnapshot,
+  );
   const { rows } = useTerminalSize();
 
   const [activeCategory, setActiveCategory] = useState<AchievementCategory>(
     AchievementCategory.base,
   );
 
-  
   const filteredAchievements = useMemo(
-    () => allAchievements.filter(a => a.category === activeCategory),
+    () => allAchievements.filter((a) => a.category === activeCategory),
     [allAchievements, activeCategory],
   );
 
   // 分类菜单
   const menuItems = useMemo(
     () =>
-      Object.values(AchievementCategory).map(cat => ({
+      Object.values(AchievementCategory).map((cat) => ({
         label: t(`achievement.category.${cat}`),
         value: cat,
       })),
@@ -50,12 +52,12 @@ export function useAchievementScreen(): AchievementScreenData {
 
   // 统计
   const totalUnlocked = useMemo(
-    () => allAchievements.filter(a => a.unlocked).length,
+    () => allAchievements.filter((a) => a.unlocked).length,
     [allAchievements],
   );
 
   const categoryUnlocked = useMemo(
-    () => filteredAchievements.filter(a => a.unlocked).length,
+    () => filteredAchievements.filter((a) => a.unlocked).length,
     [filteredAchievements],
   );
 

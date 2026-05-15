@@ -14,6 +14,8 @@ import FilterRegistry from "../registry/FilterRegistry.js";
 import LevelConditionRegistry from "../registry/LevelConditionRegistry.js";
 import { ScreenRegistry } from "../registry/ScreenRegistry.js";
 import { SettingRegistry } from "../registry/SettingRegistry.js";
+import AchievementResolver from "../../achievement/AchievementResolver.js";
+import { Achievement } from "../../achievement/AchievementDefinition.js";
 
 // 每个钩子条目同时存函数和上下文：fireXxx 方法需要把 ctx 传回给模组的钩子函数。
 // 函数用 bind 绑定了 plugin，这样模组作者写 this.xxx 时，this 指向自己的插件对象。
@@ -36,6 +38,7 @@ export default class ModPluginLoader {
   private algoRegister: AlgorithmRegistry;
   private filterRegister: FilterRegistry;
   private settingCenter: SettingRegistry;
+  private achievementResolver: AchievementResolver;
 
   // 玩家引用由外部注入——Player 的生命周期由 GameInitialization 管理，
   // 可能在加载存档时被整体替换，所以这里只存引用而不是持有。
@@ -58,6 +61,7 @@ export default class ModPluginLoader {
     this.algoRegister = inject(AlgorithmRegistry);
     this.filterRegister = inject(FilterRegistry);
     this.settingCenter = inject(SettingRegistry);
+    this.achievementResolver = inject(AchievementResolver);
   }
 
   public setPlayer(p: Player): void {
@@ -70,6 +74,11 @@ export default class ModPluginLoader {
     const enabled = this.configStore.getEnabledMods();
     for (const name of enabled) {
       if (!this.registry.isValid(name)) continue;
+
+      // 扫描模组成就
+      const achPath = this.registry.getModAchievementsPath(name);
+      this.achievementResolver.load(achPath);
+
       this.loadOne(name);
     }
   }
@@ -218,6 +227,9 @@ export default class ModPluginLoader {
       },
       addSetting: (key, entry) => {
         this.settingCenter.register(key, entry);
+      },
+      registerAchievement: (achievement: Achievement) => {
+        this.achievementResolver.registerSingle(achievement);
       },
     };
   }

@@ -4,8 +4,6 @@ import ConfigStore from "./store/ConfigStore.js";
 import KeyboardMonitor from "./keys/KeyboardMonitor.js";
 import Player from "../world/Player.js";
 import Keys from "../content/Keys.js";
-import Achievements from "../content/Achievements.js";
-import AchievementStore from "../achievement/AchievementStore.js";
 import ModLoader from "./mod/ModLoader.js";
 import EventTypes from "./mod/EventTypes.js";
 import ModPluginLoader from "./mod/ModPluginLoader.js";
@@ -25,13 +23,16 @@ import { VersionProvider } from "./version/VersionProvider.js";
 import Commands from "../content/Commands.js";
 import ModMonitor from "./mod/ModMonitor.js";
 import KeysCenter from "./registry/KeysCenter.js";
+import AchievementManager from "../achievement/AchievementManager.js";
+import AchievementResolver from "../achievement/AchievementResolver.js";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
 @Scoped(Scope.Container)
 export default class GameInitialization {
   public configStore: ConfigStore;
   public game: Game;
   public keysCenter: KeysCenter;
-  public achievementStore: AchievementStore;
   public modLoader: ModLoader;
   public modRegistry: ModMonitor;
   public monitor!: KeyboardMonitor;
@@ -46,7 +47,6 @@ export default class GameInitialization {
     this.configStore = inject(ConfigStore);
     this.game = inject(Game);
     this.keysCenter = inject(KeysCenter);
-    this.achievementStore = inject(AchievementStore);
     this.modLoader = inject(ModLoader);
     this.modRegistry = inject(ModMonitor);
     this.eventHistory = inject(EventHistory);
@@ -77,7 +77,6 @@ export default class GameInitialization {
     Conditions.load();
     Screens.load();
     Keys.load();
-    Achievements.load();
     GameStatus.load();
   }
 
@@ -102,8 +101,31 @@ export default class GameInitialization {
   }
 
   private async initAchievementSystem() {
-    this.achievementStore.bindPlayer(this.player);
-    await this.achievementStore.load();
+    const achievementResolver = container.resolve(AchievementResolver);
+    const achievementManager = container.resolve(AchievementManager);
+
+    // 加载内置成就 JSON
+    const builtinAchDir = join(
+      dirname(fileURLToPath(import.meta.url)),
+      "..",
+      "..",
+      "resource",
+      "achievement",
+    );
+    achievementResolver.load(builtinAchDir);
+
+    // 加载所有已启用模组的成就
+    const enabledMods = this.configStore.getEnabledMods();
+    for (const modName of enabledMods) {
+      if (this.modRegistry.isValid(modName)) {
+        const modAchPath = this.modRegistry.getModAchievementsPath(modName);
+        achievementResolver.load(modAchPath);
+      }
+    }
+
+    await achievementManager.load();
+
+    achievementManager.bindPlayer(this.player);
   }
 
   public async init() {

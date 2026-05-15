@@ -6,6 +6,7 @@ import z from "zod";
 import IncidentFilter from "../../event/IncidentFilter.js";
 import TypedEventBus from "../TypedEventBus.js";
 import { AlgorithmFactory } from "../registry/AlgorithmRegistry.js";
+import { Achievement } from "../../achievement/AchievementDefinition.js";
 
 // 模组清单（mod.json）。这些字段会被 ModRegistry 读取，目前主要用于信息展示。
 export interface ModManifest {
@@ -66,6 +67,7 @@ export interface ModContext {
       nameKey: string;
     },
   ) => void;
+  registerAchievement: (achievement: Achievement) => void;
 }
 
 // 模组自定义事件的行为描述。

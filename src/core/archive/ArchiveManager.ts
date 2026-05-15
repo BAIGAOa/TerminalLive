@@ -10,13 +10,13 @@ import { join } from "node:path";
 import { Scope, Scoped, inject } from "di-wise";
 import { ArchiveLoader } from "./ArchiveLoader.js";
 import { SaveMeta } from "./SaveSchema.js";
-import AchievementStore from "../../achievement/AchievementStore.js";
 import ConfigStore from "../store/ConfigStore.js";
 import LevelManager from "../../level/LevelManager.js";
 import ThemeManager from "../theme/ThemeManager.js";
 import EventHistory from "../../event/EventHistory.js";
 import { ArchivingKeeper } from "./ArchiveKeeper.js";
 import ModMonitor from "../mod/ModMonitor.js";
+import AchievementManager from "../../achievement/AchievementManager.js";
 
 type Listener = () => void;
 
@@ -26,7 +26,7 @@ export class ArchiveManager {
 
   private keeper: ArchivingKeeper;
   private loader: ArchiveLoader;
-  private achievementStore: AchievementStore;
+  private achievementManager: AchievementManager;
   private configStore: ConfigStore;
   private levelManager: LevelManager;
   private modRegistry: ModMonitor;
@@ -38,7 +38,7 @@ export class ArchiveManager {
   constructor() {
     this.keeper = inject(ArchivingKeeper);
     this.loader = inject(ArchiveLoader);
-    this.achievementStore = inject(AchievementStore);
+    this.achievementManager = inject(AchievementManager);
     this.configStore = inject(ConfigStore);
     this.levelManager = inject(LevelManager);
     this.modRegistry = inject(ModMonitor);
@@ -90,7 +90,7 @@ export class ArchiveManager {
     this.keeper.save(
       name,
       player,
-      this.achievementStore,
+      this.achievementManager,
       this.configStore,
       this.levelManager,
       this.modRegistry,
@@ -103,7 +103,7 @@ export class ArchiveManager {
     this.loader.load(
       name,
       player,
-      this.achievementStore,
+      this.achievementManager,
       this.configStore,
       this.levelManager,
       this.modRegistry,

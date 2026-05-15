@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import { Achievement } from '../achievement/Achievement.js';
 import { useAchievementScreen, CategoryMenuItem } from '../hooks/useAchievementScreen.js';
 import SelectInput from '../tools/ui/SelectInput.js';
 import { useThemeColors } from '../hooks/theme/ThematicCommunicator.js';
+import { MergedAchievement } from '../achievement/AchievementManager.js';
 
 
 const CategoryMenuBox = (props: CategoryMenuItem & { isSelected?: boolean }) => {
@@ -26,7 +26,7 @@ const AchievementCard = ({
   achievement,
   t,
 }: {
-  achievement: Achievement;
+  achievement: MergedAchievement;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) => {
   const colors = useThemeColors();

@@ -73,4 +73,8 @@ export default class ModMonitor {
       return null;
     }
   }
+
+  public getModAchievementsPath(modName: string): string {
+    return join(this.MOD_ROOT, modName, "achievements");
+  }
 }

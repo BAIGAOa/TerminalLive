@@ -4,11 +4,11 @@ import { join } from "node:path";
 import { inject, Scope, Scoped } from "di-wise";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import type Player from "../../world/Player.js";
-import type AchievementStore from "../../achievement/AchievementStore.js";
 import type ConfigStore from "../store/ConfigStore.js";
 import type LevelManager from "../../level/LevelManager.js";
 import { VersionProvider } from "../version/VersionProvider.js";
 import ModMonitor from "../mod/ModMonitor.js";
+import AchievementManager from "../../achievement/AchievementManager.js";
 
 @Scoped(Scope.Container)
 export class ArchivingKeeper {
@@ -22,7 +22,7 @@ export class ArchivingKeeper {
   public save(
     name: string,
     player: Player,
-    achievementStore: AchievementStore,
+    achievementManager: AchievementManager,
     configStore: ConfigStore,
     levelManager: LevelManager,
     modRegistry: ModMonitor,
@@ -54,10 +54,7 @@ export class ArchivingKeeper {
         blocked: Array.from(currentHistory?.getBlocked() ?? []),
         rangeRecord: this.serializeRangeRecord(currentHistory),
       },
-      achievements: achievementStore
-        .getSnapshot()
-        .filter((a) => a.unlocked)
-        .map((a) => ({ id: a.id, unlockedAt: a.unlockedAt })),
+      achievements: achievementManager.getState(),
       config: {
         language: configStore.getLanguage(),
         theme: configStore.getTheme(),

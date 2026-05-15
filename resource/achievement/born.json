@@ -1,0 +1,12 @@
+{
+  "id": "born",
+  "nameKey": "achievement.born",
+  "descriptionKey": "achievement.born.description",
+  "category": "base",
+  "conditions": [
+    {
+      "type": "incident",
+      "incidentId": "born"
+    }
+  ]
+}

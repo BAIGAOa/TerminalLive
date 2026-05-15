@@ -10,12 +10,12 @@ import { join } from "node:path";
 import { Scope, Scoped } from "di-wise";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import type Player from "../../world/Player.js";
-import type AchievementStore from "../../achievement/AchievementStore.js";
 import type ConfigStore from "../store/ConfigStore.js";
 import type LevelManager from "../../level/LevelManager.js";
 import type ThemeManager from "../theme/ThemeManager.js";
 import type EventHistory from "../../event/EventHistory.js";
 import ModMonitor from "../mod/ModMonitor.js";
+import AchievementManager from "../../achievement/AchievementManager.js";
 
 @Scoped(Scope.Container)
 export class ArchiveLoader {
@@ -24,7 +24,7 @@ export class ArchiveLoader {
   public load(
     name: string,
     player: Player,
-    achievementStore: AchievementStore,
+    achievementManager: AchievementManager,
     configStore: ConfigStore,
     levelManager: LevelManager,
     modRegistry: ModMonitor,
@@ -58,8 +58,8 @@ export class ArchiveLoader {
     eventHistory.restoreFromArchive(data.history);
     eventHistory.save();
 
-    achievementStore.saveFromArchive(data.achievements);
-    achievementStore.persist();
+    achievementManager.setState(data.achievements);
+    achievementManager.persist();
 
     levelManager.initCompletedLevels(data.levels.completedLevels);
 
