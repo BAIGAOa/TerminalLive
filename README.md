@@ -107,6 +107,4 @@ The independent framework [ink-router-kit](https://www.npmjs.com/package/@baigao
 
 ---
 
-<p align="center">
-  <sub>Built with curiosity — not as a product, but as an experiment.</sub>
-</p>
+
