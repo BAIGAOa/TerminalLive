@@ -2,7 +2,6 @@ import { useCallback, useState, useMemo } from "react";
 import { container } from "../Container.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
-import KeyboardMonitor from "../core/keys/KeyboardMonitor.js";
 import { SettingRegistry } from "../core/registry/SettingRegistry.js";
 
 export type SettingMenuId = string;
@@ -20,12 +19,9 @@ export interface SettingScreenData {
   t: (key: string, params?: Record<string, string | number>) => string;
   onSelectMenu: (item: { value: SettingMenuId }) => void;
   onBack: () => void;
-  onConfigChange: (newMonitor: KeyboardMonitor) => void;
 }
 
-export function useSettingScreen(
-  onConfigChange?: (newMonitor: KeyboardMonitor) => void,
-): SettingScreenData {
+export function useSettingScreen(): SettingScreenData {
   const { t } = useI18n();
   const { rows } = useTerminalSize();
   const [activeMenu, setActiveMenu] = useState<SettingMenuId | "">("");
@@ -50,13 +46,6 @@ export function useSettingScreen(
     setActiveMenu("");
   }, []);
 
-  const handleConfigChange = useCallback(
-    (newMonitor: KeyboardMonitor) => {
-      onConfigChange?.(newMonitor);
-    },
-    [onConfigChange],
-  );
-
   return {
     activeMenu,
     menuItems,
@@ -64,6 +53,5 @@ export function useSettingScreen(
     t,
     onSelectMenu,
     onBack,
-    onConfigChange: handleConfigChange,
   };
 }

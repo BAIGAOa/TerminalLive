@@ -1,64 +1,58 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Text } from "ink";
+import { TextInput, useKeyboard } from "@baigao_h/ink-kit";
 import { useArchiveScreen } from "../hooks/useArchiveScreen.js";
-import TextInput from "../tools/ui/TextInput.js";
-import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
 export default function Archive({ onBack }: { onBack?: () => void }) {
   const data = useArchiveScreen(onBack);
   const colors = useThemeColors();
+  const { boundKeyboard } = useKeyboard();
 
-  useKeyboardHandler(
-    (input, key) => {
-      if (data.saveMode) {
-        if (key.escape) {
-          data.handleCancelSave();
-          return true;
-        }
-        return false;
-      }
+  // Escape 始终可用（包括保存模式）
+  useEffect(() => {
+    const unbind = boundKeyboard(["escape"], () => data.handleCancel());
+    return () => unbind();
+  }, [data.handleCancel, boundKeyboard]);
+
+  // 非保存模式下的按键绑定
+  useEffect(() => {
+    if (data.saveMode) return;
+
+    const u1 = boundKeyboard(["up"], () => {
+      data.setSelectedIndex((i) => Math.max(0, i - 1));
+    });
+    const u2 = boundKeyboard(["down"], () => {
+      data.setSelectedIndex((i) =>
+        Math.min(data.saves.length - 1, i + 1),
+      );
+    });
+    const u3 = boundKeyboard(["return"], () => {
       if (data.confirmDelete) {
-        if (key.escape) {
-          data.handleCancel();
-          return true;
-        }
-        if (key.return) {
-          data.handleDelete();
-          return true;
-        }
-        return true;
-      }
-      if (key.upArrow) {
-        data.setSelectedIndex((i) => Math.max(0, i - 1));
-        return true;
-      }
-      if (key.downArrow) {
-        data.setSelectedIndex((i) =>
-          Math.min(data.saves.length - 1, i + 1),
-        );
-        return true;
-      }
-      if (key.return) {
-        data.handleLoad();
-        return true;
-      }
-      if (key.escape) {
-        data.handleCancel();
-        return true;
-      }
-      if (input === "s" || input === "S") {
-        data.handleStartSave();
-        return true;
-      }
-      if (input === "d" || input === "D") {
         data.handleDelete();
-        return true;
+      } else {
+        data.handleLoad();
       }
-      return false;
-    },
-    [data.saveMode, data.confirmDelete, data.saves.length],
-  );
+    });
+    const u4 = boundKeyboard(["s"], () => data.handleStartSave());
+    const u5 = boundKeyboard(["S"], () => data.handleStartSave());
+    const u6 = boundKeyboard(["d"], () => data.handleDelete());
+    const u7 = boundKeyboard(["D"], () => data.handleDelete());
+
+    return () => {
+      u1(); u2(); u3(); u4(); u5(); u6(); u7();
+    };
+  }, [
+    data.saveMode,
+    data.confirmDelete,
+    data.saves.length,
+    data.setSelectedIndex,
+    data.handleLoad,
+    data.handleDelete,
+    data.handleCancel,
+    data.handleStartSave,
+    boundKeyboard,
+  ]);
 
   return (
     <Box flexDirection="column" padding={1} width="100%" height={data.rows}>
@@ -76,6 +70,7 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
               value={data.saveName}
               onChange={data.setSaveName}
               onSubmit={data.handleSubmitSave}
+              focusId="archive-save-name"
             />
           </Box>
           <Text dimColor>{data.t("archive.saveHint")}</Text>
@@ -97,7 +92,10 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
                 marginBottom={1}
                 flexDirection="column"
               >
-                <Text color={isSelected ? colors.highlight : colors.text} bold={isSelected}>
+                <Text
+                  color={isSelected ? colors.highlight : colors.text}
+                  bold={isSelected}
+                >
                   {isSelected ? "▶ " : "  "}
                   {save.name}
                 </Text>
@@ -105,9 +103,9 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
                   {save.timestamp
                     ? new Date(save.timestamp).toLocaleString()
                     : ""}{" "}
- {data.t("archive.playerName")}: {save.playerName}{" "}
- {data.t("archive.age")}: {save.age}{" "}
- v{save.appVersion}
+                  {data.t("archive.playerName")}: {save.playerName}{" "}
+                  {data.t("archive.age")}: {save.age}{" "}
+                  v{save.appVersion}
                 </Text>
               </Box>
             );
@@ -116,7 +114,12 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
       )}
 
       {data.confirmDelete && (
-        <Box marginTop={1} borderStyle="double" borderColor={colors.danger} padding={1}>
+        <Box
+          marginTop={1}
+          borderStyle="double"
+          borderColor={colors.danger}
+          padding={1}
+        >
           <Text color={colors.error}>{data.t("archive.deleteConfirm")}</Text>
         </Box>
       )}

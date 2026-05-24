@@ -1,6 +1,6 @@
 {
   "language": "zh_CN",
-  "theme": "cyberpunk",
+  "theme": "default",
   "player": {
     "playerName": "DefaultName",
     "age": 0,
@@ -16,5 +16,6 @@
   "enabledMods": [],
   "completedLevels": [
     "childhood"
-  ]
+  ],
+  "lastLevelId": "none"
 }

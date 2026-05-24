@@ -17,14 +17,12 @@ export enum PlayerConfigCategory {
 
 
 export interface PlayerAttributeMeta {
-  key: keyof PlayerConfigType; // 对应 PlayerConfigType 中的字段名
-  type: "string" | "number"; // 字段名的类型
+  key: keyof PlayerConfigType;
+  type: "string" | "number";
   min?: number; 
   max?: number;
 }
 
-// 所有分类与其包含属性的映射表
-// 用于后续的输入验证和生成右侧属性列表
 const ATTRIBUTE_META: Record<PlayerConfigCategory, PlayerAttributeMeta[]> = {
   [PlayerConfigCategory.basic]: [{ key: "playerName", type: "string" }],
   [PlayerConfigCategory.physical]: [
@@ -50,9 +48,9 @@ export interface CategoryMenuItem {
 
 
 export interface AttributeItem {
-  label: string; //属性的本地化名称
-  value: string; // 属性的键，也就是PlayerConfig的属性
-  currentValue: string; //当前值的字符串表示
+  label: string;
+  value: string;
+  currentValue: string;
 }
 
 export type FocusPanel = "left" | "right";
@@ -98,7 +96,6 @@ function validateValue(
     return { valid: true, value: raw.trim() };
   }
 
-  // number
   const num = Number(raw);
   if (isNaN(num) || raw.trim() === "") {
     return { valid: false, error: "请输入有效数字" };
@@ -131,7 +128,6 @@ export function usePlayerConfig(
   const [validationError, setValidationError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // 左侧分类菜单
   const leftItems: CategoryMenuItem[] = useMemo(
     () =>
       Object.values(PlayerConfigCategory).map((cat) => ({
@@ -141,7 +137,6 @@ export function usePlayerConfig(
     [t],
   );
 
-  // 右侧属性列表
   const rightItems: AttributeItem[] = useMemo(() => {
     if (!activeCategory) return [];
     const metas = ATTRIBUTE_META[activeCategory] ?? [];
@@ -152,7 +147,6 @@ export function usePlayerConfig(
     }));
   }, [activeCategory, player, t]);
 
-  // 切换分类
   const onSelectCategory = useCallback((item: CategoryMenuItem) => {
     setActiveCategory(item.value);
     setFocus("right");
@@ -161,7 +155,6 @@ export function usePlayerConfig(
     setValidationError(null);
   }, []);
 
-  // 选择属性进入编辑
   const onSelectAttribute = useCallback(
     (item: AttributeItem) => {
       const meta = getAttrMeta(item.value);
@@ -175,13 +168,11 @@ export function usePlayerConfig(
     [player],
   );
 
-  // 编辑值变化
   const onEditChange = useCallback((value: string) => {
     setEditValue(value);
     setValidationError(null);
   }, []);
 
-  // 提交编辑
   const onSubmitEdit = useCallback(async () => {
     if (!editingKey) return;
     const meta = getAttrMeta(editingKey);
@@ -193,11 +184,9 @@ export function usePlayerConfig(
       return;
     }
 
-    
     const partial: Partial<PlayerConfigType> = { [editingKey]: result.value };
     player.applyAttributes(partial as any);
 
-    
     try {
       await configStore.setPlayerConfig(partial);
     } catch (err) {
@@ -209,11 +198,9 @@ export function usePlayerConfig(
     setEditingKey(null);
     setValidationError(null);
 
-    
     setTimeout(() => setSuccessMessage(null), 3000);
   }, [editingKey, editValue, player, configStore, t]);
 
-  
   const onCancelEdit = useCallback(() => {
     if (isEditing) {
       setIsEditing(false);

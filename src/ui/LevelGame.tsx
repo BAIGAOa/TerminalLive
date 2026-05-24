@@ -1,24 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Text, Newline } from "ink";
+import { useKeyboard, useScreenSystem } from "@baigao_h/ink-kit";
 import useLevelGameScreen from "../hooks/useLevelGameScreen.js";
-import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { container } from "../Container.js";
+import Game from "../core/Game.js";
 
 export default function LevelGame() {
   const data = useLevelGameScreen();
   const colors = useThemeColors();
+  const { boundKeyboard } = useKeyboard();
+  const { back } = useScreenSystem();
 
-  useKeyboardHandler((_input, key) => {
-    if (key.leftArrow) {
+  // Enter 推进回合
+  useEffect(() => {
+    const u = boundKeyboard(["return"], () => {
+      container.resolve(Game).update();
+    });
+    return () => u();
+  }, [boundKeyboard]);
+
+  // 左右方向键切换视图
+  useEffect(() => {
+    const u1 = boundKeyboard(["left"], () => {
       data.onPrevView();
-      return true;
-    }
-    if (key.rightArrow) {
+    });
+    const u2 = boundKeyboard(["right"], () => {
       data.onNextView();
-      return true;
-    }
-    return false;
-  });
+    });
+    return () => {
+      u1();
+      u2();
+    };
+  }, [data.onPrevView, data.onNextView, boundKeyboard]);
+
+  // Escape 返回关卡选择
+  useEffect(() => {
+    const u = boundKeyboard(["escape"], () => {
+      back();
+    });
+    return () => u();
+  }, [back, boundKeyboard]);
 
   const availableRows = Math.max(data.rows, 20);
 
@@ -60,11 +82,11 @@ export default function LevelGame() {
         justifyContent="space-between"
       >
         <Box flexDirection="row">
-          <Text color={colors.muted}>◄ </Text>
+          <Text color={colors.muted}>{"◄ "}</Text>
           <Text bold color={colors.text}>
             {data.t(`gameVive.${data.currentViewId}`) || data.currentViewId}
           </Text>
-          <Text color={colors.muted}> ►</Text>
+          <Text color={colors.muted}>{" ►"}</Text>
           <Box marginLeft={2}>
             <Text dimColor>
               ({data.currentViewIndex + 1}/{data.viewCount})
@@ -138,6 +160,12 @@ export default function LevelGame() {
             )}
           </Box>
         )}
+      </Box>
+
+      <Box marginTop={1} justifyContent="center">
+        <Text dimColor>
+          [Enter] {data.t("game.nextRound") || "下一回合"}  [← →] {data.t("game.switchView") || "切换视图"}  [Esc] {data.t("game.back") || "返回"}
+        </Text>
       </Box>
     </Box>
   );

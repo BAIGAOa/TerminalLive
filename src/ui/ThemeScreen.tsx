@@ -1,20 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Text } from "ink";
-import SelectInput from "../tools/ui/SelectInput.js";
+import { SelectInput, useKeyboard, useScreenSystem } from "@baigao_h/ink-kit";
+import type { Item } from "@baigao_h/ink-kit";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
-import {
-  ThemeColors,
-  ThemeColorSchema,
-} from "../core/theme/ThemeDefinition.js";
-import { ThemeItem, useThemeScreen } from "../hooks/theme/useThemeScreen.js";
+import { ThemeColors } from "../core/theme/ThemeDefinition.js";
+import { useThemeScreen } from "../hooks/theme/useThemeScreen.js";
 
-// 从 Schema 中动态提取颜色字段，保证新增字段自动出现在详细预览中
-const ALL_COLOR_KEYS = Object.keys(
-  ThemeColorSchema.shape,
-) as (keyof ThemeColors)[];
 
-const COLS_PER_ROW = 4;
-const COL_WIDTH = 20;
 
 function ColorSwatch({ color }: { color: string }) {
   return <Text color={color}>■</Text>;
@@ -30,55 +22,13 @@ function PreviewSwatches({ colors }: { colors: ThemeColors }) {
   );
 }
 
-function ExpandedColorGrid({ colors }: { colors: ThemeColors }) {
-  const rows: (keyof ThemeColors)[][] = [];
-  for (let i = 0; i < ALL_COLOR_KEYS.length; i += COLS_PER_ROW) {
-    rows.push(ALL_COLOR_KEYS.slice(i, i + COLS_PER_ROW));
-  }
-
-  return (
-    <Box flexDirection="column" marginTop={1} paddingLeft={1}>
-      {rows.map((chunk, rowIdx) => (
-        <Box key={rowIdx} gap={0}>
-          {chunk.map((key) => (
-            <Box key={key} width={COL_WIDTH} marginRight={1}>
-              <ColorSwatch color={colors[key]} />
-              <Text dimColor> {key}:</Text>
-              <Text color={colors[key]}> {colors[key]}</Text>
-            </Box>
-          ))}
-        </Box>
-      ))}
-    </Box>
-  );
-}
-
-interface ThemeItemBoxProps {
-  label: string;
-  value: string;
-  isSelected?: boolean;
-  theme: ThemeItem["theme"];
-  description: string;
-  isCurrent: boolean;
-  expanded: boolean;
-}
-
-function ThemeItemBox({
-  label,
-  isSelected,
-  theme,
-  description,
-  isCurrent,
-  expanded,
-}: ThemeItemBoxProps) {
+function ThemeItem({ label, isSelected, isCurrent }: { label: string; value: string; isSelected: boolean; isCurrent: boolean }) {
   const colors = useThemeColors();
-
   const borderColor = isSelected
     ? colors.highlight
     : isCurrent
       ? colors.success
       : colors.muted;
-
   const textColor = isCurrent
     ? colors.success
     : isSelected
@@ -94,22 +44,28 @@ function ThemeItemBox({
       paddingX={1}
       marginBottom={1}
     >
-      <Box>
+      <Box flexDirection="row" justifyContent="space-between">
         <Text bold color={textColor}>
           {isCurrent ? "✓ " : "  "}
           {label}
         </Text>
       </Box>
-
-      <Box>
-        <Text dimColor>{description || " "}</Text>
-        <PreviewSwatches colors={theme.colors} />
-      </Box>
-
-      {expanded && <ExpandedColorGrid colors={theme.colors} />}
     </Box>
   );
 }
+
+function DefaultIndicator({ isSelected }: { isSelected: boolean }) {
+  const colors = useThemeColors();
+  return (
+    <Box marginRight={1}>
+      <Text color={isSelected ? colors.highlight : undefined}>
+        {isSelected ? '❯' : ' '}
+      </Text>
+    </Box>
+  );
+}
+
+
 
 interface ThemeScreenProps {
   onBack?: () => void;
@@ -118,6 +74,22 @@ interface ThemeScreenProps {
 export default function ThemeScreen({ onBack }: ThemeScreenProps) {
   const data = useThemeScreen(onBack);
   const colors = useThemeColors();
+  const { boundKeyboard } = useKeyboard();
+  const { back } = useScreenSystem();
+
+  useEffect(() => {
+    const u = boundKeyboard(["escape"], () => {
+      if (onBack) onBack();
+      else back();
+    });
+    return () => u();
+  }, [onBack, back, boundKeyboard]);
+
+  const items: (Item<string> & { isCurrent: boolean })[] = data.items.map((item) => ({
+    label: item.label,
+    value: item.value,
+    isCurrent: item.isCurrent,
+  }));
 
   return (
     <Box flexDirection="column" padding={1} width="100%" height={data.rows}>
@@ -136,19 +108,30 @@ export default function ThemeScreen({ onBack }: ThemeScreenProps) {
 
       <Box flexGrow={1} width="100%">
         <SelectInput
-          items={data.items as any}
-          onSelect={(item) => data.handleSelect(item as any)}
-          itemComponent={(props: any) => (
-            <ThemeItemBox
-              {...props}
-              expanded={data.expandedThemeId === (props as any).value}
-            />
-          )}
-          onKeyPress={(input, key, idx) =>
-            data.handleKeyPress(input, key, idx)
-          }
+          items={items}
+          onSelect={(item) => {
+            const theme = data.items.find((t) => t.value === item.value);
+            if (theme) data.handleSelect(theme);
+          }}
+          focusId="theme-list"
+          itemComponent={ThemeItem as any}
+          indicatorComponent={DefaultIndicator}
         />
       </Box>
+
+      {/* 当前主题色块预览 */}
+      {(() => {
+        const currentTheme = data.items.find((t) => t.isCurrent);
+        if (currentTheme) {
+          return (
+            <Box marginTop={1} flexDirection="row" justifyContent="center">
+              <Text dimColor>{data.t("themeScreen.current") || "当前"}: </Text>
+              <PreviewSwatches colors={currentTheme.theme.colors} />
+            </Box>
+          );
+        }
+        return null;
+      })()}
 
       <Box marginTop={1} justifyContent="center">
         <Text dimColor>{data.t("themeScreen.hint")}</Text>

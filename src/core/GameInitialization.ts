@@ -1,28 +1,23 @@
 import { inject, Scope, Scoped } from "di-wise";
 import Game from "./Game.js";
 import ConfigStore from "./store/ConfigStore.js";
-import KeyboardMonitor from "./keys/KeyboardMonitor.js";
 import Player from "../world/Player.js";
-import Keys from "../content/Keys.js";
 import ModLoader from "./mod/ModLoader.js";
 import EventTypes from "./mod/EventTypes.js";
 import ModPluginLoader from "./mod/ModPluginLoader.js";
 import ConsoleStore from "./console/ConsoleStore.js";
 import { container } from "../Container.js";
-import { Screens } from "../content/Screens.js";
 import EventHistory from "../event/EventHistory.js";
 import { ArchiveManager } from "./archive/ArchiveManager.js";
 import { registerBuiltinRegistrations } from "../level/BuiltinRegistrations.js";
 import LevelManager from "../level/LevelManager.js";
 import Conditions from "../content/Conditions.js";
 import GameStatus from "../content/GameStatus.js";
-import { KeyboardManager } from "./keys/KeyBoardManager.js";
 import ThemeParser from "./theme/ThemeParser.js";
 import ThemeManager from "./theme/ThemeManager.js";
 import { VersionProvider } from "./version/VersionProvider.js";
 import Commands from "../content/Commands.js";
 import ModMonitor from "./mod/ModMonitor.js";
-import KeysCenter from "./registry/KeysCenter.js";
 import AchievementManager from "../achievement/AchievementManager.js";
 import AchievementResolver from "../achievement/AchievementResolver.js";
 import { dirname, join } from "path";
@@ -32,28 +27,23 @@ import { fileURLToPath } from "url";
 export default class GameInitialization {
   public configStore: ConfigStore;
   public game: Game;
-  public keysCenter: KeysCenter;
   public modLoader: ModLoader;
   public modRegistry: ModMonitor;
-  public monitor!: KeyboardMonitor;
   public player!: Player;
   public eventHistory: EventHistory;
   public archiveManager: ArchiveManager;
   public modPluginLoader: ModPluginLoader;
   public levelManager: LevelManager;
-  public keyBoardManager: KeyboardManager;
 
   constructor() {
     this.configStore = inject(ConfigStore);
     this.game = inject(Game);
-    this.keysCenter = inject(KeysCenter);
     this.modLoader = inject(ModLoader);
     this.modRegistry = inject(ModMonitor);
     this.eventHistory = inject(EventHistory);
     this.archiveManager = inject(ArchiveManager);
     this.modPluginLoader = inject(ModPluginLoader);
     this.levelManager = inject(LevelManager);
-    this.keyBoardManager = inject(KeyboardManager);
   }
 
   private async configurationInitialization() {
@@ -75,8 +65,6 @@ export default class GameInitialization {
     EventTypes.registerAll();
     this.modLoader.load();
     Conditions.load();
-    Screens.load();
-    Keys.load();
     GameStatus.load();
   }
 
@@ -96,15 +84,10 @@ export default class GameInitialization {
     }
   }
 
-  private async initMonitor(): Promise<void> {
-    this.monitor = await KeyboardMonitor.create("keys.json", this.keysCenter);
-  }
-
   private async initAchievementSystem() {
     const achievementResolver = container.resolve(AchievementResolver);
     const achievementManager = container.resolve(AchievementManager);
 
-    // 加载内置成就 JSON
     const builtinAchDir = join(
       dirname(fileURLToPath(import.meta.url)),
       "..",
@@ -114,7 +97,6 @@ export default class GameInitialization {
     );
     achievementResolver.load(builtinAchDir);
 
-    // 加载所有已启用模组的成就
     const enabledMods = this.configStore.getEnabledMods();
     for (const modName of enabledMods) {
       if (this.modRegistry.isValid(modName)) {
@@ -124,7 +106,6 @@ export default class GameInitialization {
     }
 
     await achievementManager.load();
-
     achievementManager.bindPlayer(this.player);
   }
 
@@ -145,14 +126,7 @@ export default class GameInitialization {
     levelManager.loadAllLevels();
 
     this.initThemes();
-    // 指令的加载需要主题也成功加载
     Commands.load();
-
-    await this.initMonitor();
-
-    this.keyBoardManager.setDefaultHandler((input, key) =>
-      this.monitor.handleInput(input, key),
-    );
 
     await this.initAchievementSystem();
 

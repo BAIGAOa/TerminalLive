@@ -1,10 +1,9 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { container } from "../Container.js";
 import { ArchiveManager } from "../core/archive/ArchiveManager.js";
 import { SaveMeta } from "../core/archive/SaveSchema.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
-import KeyboardMonitor from "../core/keys/KeyboardMonitor.js";
 
 export interface ArchiveScreenData {
   saves: SaveMeta[];
@@ -36,13 +35,6 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [saveMode, setSaveMode] = useState(false);
   const [saveName, setSaveName] = useState("");
-
-  useEffect(() => {
-    KeyboardMonitor.isSuspended = saveMode;
-    return () => {
-      KeyboardMonitor.isSuspended = false;
-    };
-  }, [saveMode]);
 
   const refresh = useCallback(() => {
     setSaves(store.listSaves());

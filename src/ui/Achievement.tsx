@@ -1,26 +1,10 @@
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Box, Text } from 'ink';
-import { useAchievementScreen, CategoryMenuItem } from '../hooks/useAchievementScreen.js';
-import SelectInput from '../tools/ui/SelectInput.js';
+import { SelectInput, useKeyboard, useScreenSystem } from '@baigao_h/ink-kit';
+import type { Item } from '@baigao_h/ink-kit';
+import { useAchievementScreen } from '../hooks/useAchievementScreen.js';
 import { useThemeColors } from '../hooks/theme/ThematicCommunicator.js';
 import { MergedAchievement } from '../achievement/AchievementManager.js';
-
-
-const CategoryMenuBox = (props: CategoryMenuItem & { isSelected?: boolean }) => {
-  const colors = useThemeColors();
-  return (
-    <Box
-      borderStyle="double"
-      width="100%"
-      height={4}
-      borderColor={props.isSelected ? colors.highlight : colors.muted}
-    >
-      <Box justifyContent="center" width="100%" height={4}>
-        <Text bold>{props.label}</Text>
-      </Box>
-    </Box>
-  );
-};
 
 const AchievementCard = ({
   achievement,
@@ -74,10 +58,52 @@ const AchievementCard = ({
   );
 };
 
+function CategoryItem({ label, isSelected }: { label: string; value: string; isSelected: boolean }) {
+  const colors = useThemeColors();
+  return (
+    <Box
+      borderStyle="double"
+      width="100%"
+      height={4}
+      borderColor={isSelected ? colors.highlight : colors.muted}
+    >
+      <Box justifyContent="center" width="100%" height={4}>
+        <Text bold>{label}</Text>
+      </Box>
+    </Box>
+  );
+}
+
+function DefaultIndicator({ isSelected }: { isSelected: boolean }) {
+  const colors = useThemeColors();
+  return (
+    <Box marginRight={1}>
+      <Text color={isSelected ? colors.highlight : undefined}>
+        {isSelected ? '❯' : ' '}
+      </Text>
+    </Box>
+  );
+}
 
 export default function AchievementScreen() {
   const data = useAchievementScreen();
   const colors = useThemeColors();
+  const { boundKeyboard } = useKeyboard();
+  const { back } = useScreenSystem();
+
+  useEffect(() => {
+    const u = boundKeyboard(["escape"], () => back());
+    return () => u();
+  }, [back, boundKeyboard]);
+
+  const categoryItems: Item<string>[] = useMemo(
+    () =>
+      data.menuItems.map((m) => ({
+        label: m.label,
+        value: m.value,
+      })),
+    [data.menuItems],
+  );
 
   return (
     <Box flexDirection="column" width="100%" height={data.rows}>
@@ -93,9 +119,14 @@ export default function AchievementScreen() {
       <Box flexDirection="row" width="100%" flexGrow={1} height="100%">
         <Box borderStyle="bold" width="30%">
           <SelectInput
-            items={data.menuItems}
-            onSelect={data.onSelectCategory as any}
-            itemComponent={CategoryMenuBox as any}
+            items={categoryItems}
+            onSelect={(item) => {
+              const cat = data.menuItems.find((m) => m.value === item.value);
+              if (cat) data.onSelectCategory(cat);
+            }}
+            focusId="achievement-category"
+            itemComponent={CategoryItem as any}
+            indicatorComponent={DefaultIndicator}
           />
         </Box>
 

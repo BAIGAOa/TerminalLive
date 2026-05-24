@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, Text } from "ink";
+import { useKeyboard } from "@baigao_h/ink-kit";
 import { ConsoleNotification } from "../core/console/ConsoleStore.js";
 import { useControlConsole } from "../hooks/useControlConsole.js";
-import { useKeyboardHandler } from "../hooks/key/useKeyBoardHandle.js";
 import { ConsoleCommandResult } from "../core/console/ConsoleStore.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
@@ -77,50 +77,62 @@ const CommandResultItem = ({
 export default function ControlConsole() {
   const data = useControlConsole();
   const colors = useThemeColors();
+  const { boundKeyboard } = useKeyboard();
 
-  useKeyboardHandler(
-    (input, key) => {
-      if (data.inputMode) {
-        if (key.escape) {
-          data.exitInputMode();
-          return true;
-        }
-        if (key.return) {
-          data.submitCommand();
-          return true;
-        }
-        if (key.backspace || key.delete) {
-          data.setInputText(data.inputText.slice(0, -1));
-          return true;
-        }
-        if (
-          input &&
-          input.length === 1 &&
-          !key.ctrl &&
-          !key.meta &&
-          !key.tab
-        ) {
-          data.setInputText(data.inputText + input);
-          return true;
-        }
-        return true;
-      } else {
-        if (key.tab) {
-          data.enterInputMode();
-          return true;
-        }
-        return false;
+  // 用 ref 持有最新值，避免 inputText 变化导致重绑定
+  const inputTextRef = useRef(data.inputText);
+  inputTextRef.current = data.inputText;
+
+  const inputModeRef = useRef(data.inputMode);
+  inputModeRef.current = data.inputMode;
+
+  const exitInputModeRef = useRef(data.exitInputMode);
+  exitInputModeRef.current = data.exitInputMode;
+
+  const submitCommandRef = useRef(data.submitCommand);
+  submitCommandRef.current = data.submitCommand;
+
+  const setInputTextRef = useRef(data.setInputText);
+  setInputTextRef.current = data.setInputText;
+
+  const enterInputModeRef = useRef(data.enterInputMode);
+  enterInputModeRef.current = data.enterInputMode;
+
+  // 特殊键绑定（不依赖 inputText 值）
+  useEffect(() => {
+    const u1 = boundKeyboard(["escape"], () => {
+      if (inputModeRef.current) {
+        exitInputModeRef.current();
       }
-    },
-    [
-      data.inputMode,
-      data.inputText,
-      data.enterInputMode,
-      data.exitInputMode,
-      data.setInputText,
-      data.submitCommand,
-    ],
-  );
+    });
+    const u2 = boundKeyboard(["return"], () => {
+      if (inputModeRef.current) {
+        submitCommandRef.current();
+      }
+    });
+    const u3 = boundKeyboard(["backspace", "delete"], () => {
+      if (inputModeRef.current) {
+        const v = inputTextRef.current;
+        setInputTextRef.current(v.slice(0, -1));
+      }
+    });
+    const u4 = boundKeyboard(["tab"], () => {
+      if (!inputModeRef.current) {
+        enterInputModeRef.current();
+      }
+    });
+    return () => { u1(); u2(); u3(); u4(); };
+  }, [boundKeyboard]);
+
+  // 通配符输入（通过 ref 读取 inputText，避免依赖）
+  useEffect(() => {
+    const u = boundKeyboard(["*"], (input: string) => {
+      if (inputModeRef.current && input && input.length === 1) {
+        setInputTextRef.current(inputTextRef.current + input);
+      }
+    });
+    return () => u();
+  }, [boundKeyboard]);
 
   return (
     <Box

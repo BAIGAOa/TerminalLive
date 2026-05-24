@@ -1,54 +1,60 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Text } from 'ink';
+import { SelectInput, TextInput, useKeyboard } from '@baigao_h/ink-kit';
+import type { Item } from '@baigao_h/ink-kit';
 import Player from '../world/Player.js';
-import {
-  usePlayerConfig,
-  CategoryMenuItem,
-  AttributeItem,
-} from '../hooks/usePlayerConfig.js';
+import { usePlayerConfig } from '../hooks/usePlayerConfig.js';
 import { useTerminalSize } from './TerminalSizeContext.js';
-import { useKeyboardHandler } from '../hooks/key/useKeyBoardHandle.js';
-import SelectInput from '../tools/ui/SelectInput.js';
-import TextInput from '../tools/ui/TextInput.js';
 import { useThemeColors } from '../hooks/theme/ThematicCommunicator.js';
 
 
-const CategoryMenuBox = (props: CategoryMenuItem & { isSelected?: boolean }) => {
+function CategoryItem({ label, isSelected }: { label: string; value: string; isSelected: boolean }) {
   const colors = useThemeColors();
   return (
     <Box
       borderStyle="double"
       width="100%"
       height={4}
-      borderColor={props.isSelected ? colors.highlight : colors.muted}
+      borderColor={isSelected ? colors.highlight : colors.muted}
     >
       <Box justifyContent="center" width="100%" height={4}>
-        <Text bold>{props.label}</Text>
+        <Text bold>{label}</Text>
       </Box>
     </Box>
   );
-};
+}
 
-const AttributeRow = (props: AttributeItem & { isSelected?: boolean }) => {
+function AttributeItem({ label, isSelected, currentValue }: { label: string; value: string; isSelected: boolean; currentValue: string }) {
   const colors = useThemeColors();
   return (
     <Box
       borderStyle="round"
       width="100%"
       height={4}
-      borderColor={props.isSelected ? colors.success : colors.muted}
+      borderColor={isSelected ? colors.success : colors.muted}
       paddingX={1}
       marginBottom={1}
     >
       <Box flexDirection="row" width="100%" justifyContent="space-between">
-        <Text bold color={props.isSelected ? colors.success : colors.text}>
-          {props.label}
+        <Text bold color={isSelected ? colors.success : colors.text}>
+          {label}
         </Text>
-        <Text color={colors.warning}>{props.currentValue}</Text>
+        <Text color={colors.warning}>{currentValue}</Text>
       </Box>
     </Box>
   );
-};
+}
+
+function DefaultIndicator({ isSelected }: { isSelected: boolean }) {
+  const colors = useThemeColors();
+  return (
+    <Box marginRight={1}>
+      <Text color={isSelected ? colors.highlight : undefined}>
+        {isSelected ? '❯' : ' '}
+      </Text>
+    </Box>
+  );
+}
 
 
 interface PlayerConfigProps {
@@ -60,11 +66,25 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
   const data = usePlayerConfig(player, onBack);
   const { rows } = useTerminalSize();
   const colors = useThemeColors();
+  const { boundKeyboard } = useKeyboard();
 
-  useKeyboardHandler((_input, key) => {
-    if (key.escape) { data.onCancelEdit(); return true }
-    return false
-  })
+  useEffect(() => {
+    const unbind = boundKeyboard(['escape'], () => {
+      data.onCancelEdit();
+    });
+    return () => unbind();
+  }, [data.onCancelEdit, boundKeyboard]);
+
+  const leftItems: Item<string>[] = data.leftItems.map((item) => ({
+    label: item.label,
+    value: item.value,
+  }));
+
+  const rightItems: (Item<string> & { currentValue: string })[] = data.rightItems.map((item) => ({
+    label: item.label,
+    value: item.value,
+    currentValue: item.currentValue,
+  }));
 
   return (
     <Box flexDirection="column" padding={1} width="100%" height={rows}>
@@ -75,19 +95,27 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
       </Box>
 
       <Box flexDirection="row" width="100%" flexGrow={1} height="100%">
-        <Box borderStyle="bold" width="30%">
-          <SelectInput
-            items={data.leftItems}
-            onSelect={data.onSelectCategory as any}
-            itemComponent={CategoryMenuBox as any}
-            isFocused={data.isLeftFocused}
-          />
-        </Box>
+        {/* 左侧分类菜单 — 编辑态隐藏 */}
+        {!data.isEditing && (
+          <Box borderStyle="bold" width="30%">
+            <SelectInput
+              items={leftItems}
+              onSelect={(item) => {
+                data.onSelectCategory(
+                  data.leftItems.find((c) => c.value === item.value)!,
+                );
+              }}
+              focusId="player-config-category"
+              itemComponent={CategoryItem as any}
+              indicatorComponent={DefaultIndicator}
+            />
+          </Box>
+        )}
 
         <Box
           flexDirection="column"
           padding={1}
-          width="70%"
+          width={data.isEditing ? "100%" : "70%"}
           borderStyle="single"
           borderColor={colors.info}
         >
@@ -123,6 +151,7 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
                   value={data.editValue}
                   onChange={data.onEditChange}
                   onSubmit={data.onSubmitEdit}
+                  focusId="player-config-edit"
                 />
               </Box>
               <Box>
@@ -132,16 +161,23 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
               </Box>
               {data.validationError && (
                 <Box marginTop={1}>
-                  <Text color={colors.error}>✗ {data.validationError}</Text>
+                  <Text color={colors.error}>
+                    {'✗ '}
+                    {data.validationError}
+                  </Text>
                 </Box>
               )}
             </Box>
           ) : (
             <SelectInput
-              items={data.rightItems}
-              onSelect={data.onSelectAttribute as any}
-              itemComponent={AttributeRow as any}
-              isFocused={data.isRightFocused}
+              items={rightItems}
+              onSelect={(item) => {
+                const attr = data.rightItems.find((a) => a.value === item.value);
+                if (attr) data.onSelectAttribute(attr);
+              }}
+              focusId="player-config-attr"
+              itemComponent={AttributeItem as any}
+              indicatorComponent={DefaultIndicator}
             />
           )}
         </Box>
@@ -149,7 +185,10 @@ export default function PlayerConfig({ player, onBack }: PlayerConfigProps) {
 
       {data.successMessage && (
         <Box marginTop={1} justifyContent="center">
-          <Text color={colors.success}>✓ {data.successMessage}</Text>
+          <Text color={colors.success}>
+            {'✓ '}
+            {data.successMessage}
+          </Text>
         </Box>
       )}
     </Box>

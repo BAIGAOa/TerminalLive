@@ -8,7 +8,6 @@ import { useSyncExternalStore } from "react";
 import ConfigStore from "../core/store/ConfigStore.js";
 import GeneralPurpose from "../level/conditions/GeneralPurpose.js";
 import { PlayerConfigType } from "../types/ConfigType.js";
-import ScreenStore from "../core/store/ScreenStore.js";
 import DifficultyRegistry from "../core/registry/DifficultyRegistry.js";
 import LevelCondition from "../level/LevelCondition.js";
 
@@ -29,13 +28,12 @@ export type FocusPanel = "left" | "right";
 
 /** 格式化后的胜利条件 */
 export interface FormattedCondition {
-  description: string; // 人类可读的条件描述
-  isCustom: boolean; // 是否为自定义条件（无法解析）
-  raw?: Record<string, unknown>; // 原始数据（自定义条件用）
+  description: string;
+  isCustom: boolean;
+  raw?: Record<string, unknown>;
 }
 
 export interface LevelSelectionData {
-  // --- 原有 ---
   leftItems: DifficultyItem[];
   rightItems: LevelItem[];
   focus: FocusPanel;
@@ -46,7 +44,6 @@ export interface LevelSelectionData {
   onSelectDifficulty: (item: DifficultyItem) => void;
   onSelectLevel: (item: LevelItem) => void;
   onKeyPress: (input: string, key: Key) => void;
-  // 详情界面
   showDetail: boolean;
   selectedLevel: Level | null;
   formattedConditions: FormattedCondition[];
@@ -55,7 +52,6 @@ export interface LevelSelectionData {
   onConfirmEnter: () => void;
 }
 
-/** 根据 nextLevel 链排序 */
 function sortLevelsLinearly(levels: Level[]): Level[] {
   if (levels.length === 0) return [];
 
@@ -84,14 +80,10 @@ function sortLevelsLinearly(levels: Level[]): Level[] {
   return ordered;
 }
 
-/**
- * 将 LevelCondition 格式化为人类可读的描述
- */
 function formatSingleCondition(
   condition: LevelCondition,
   t: (key: string, params?: Record<string, string | number>) => string,
 ): FormattedCondition {
-  // 处理内置的 GeneralPurpose 条件
   if (condition instanceof GeneralPurpose) {
     const propName = t(`playerConfig.attr.${condition.prop}`);
     const cmp = condition.cat === "greaterThan" ? ">" : "<";
@@ -101,7 +93,6 @@ function formatSingleCondition(
     };
   }
 
-  // 未知条件类型，尝试展示类型名
   const typeName = (condition as any).constructor?.name || "Unknown";
   return {
     description: t("levelDetail.customCondition", { type: typeName }),
@@ -109,9 +100,6 @@ function formatSingleCondition(
   };
 }
 
-/**
- * 合并全局默认配置与关卡初始属性
- */
 function mergeInitialAttributes(
   globalConfig: PlayerConfigType,
   levelInitial?: Record<string, unknown>,
@@ -148,7 +136,6 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
   const [showDetail, setShowDetail] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
-  // 左侧难度列表
   const leftItems: DifficultyItem[] = useMemo(() => {
     return difficultyRegistry.getDifficulties().map((d) => ({
       label: t(`difficulty.${d}`) || d,
@@ -156,7 +143,6 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
     }));
   }, [difficultyRegistry, t]);
 
-  // 构建 level id → Level 的映射，供 onSelectLevel 使用
   const levelMap = useMemo(() => {
     if (!activeDifficulty) return new Map<string, Level>();
     const levels = difficultyRegistry.getLevels(activeDifficulty);
@@ -214,7 +200,6 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
     );
   }, [selectedLevel, configStore]);
 
-  // 焦点派生
   const isLeftFocused = focus === "left" && !showDetail;
   const isRightFocused =
     focus === "right" && rightItems.length > 0 && !showDetail;
@@ -245,7 +230,6 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
   const onConfirmEnter = useCallback(() => {
     if (!selectedLevel) return;
     levelManager.start(selectedLevel.id);
-    container.resolve(ScreenStore).setScene("game");
   }, [selectedLevel, levelManager]);
 
   const onKeyPress = useCallback(
@@ -268,7 +252,6 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
   );
 
   return {
-    // 原有
     leftItems,
     rightItems,
     focus,
