@@ -1,0 +1,456 @@
+# Mod Development Guide
+
+TerminalLive mods live in `~/.mod_live/`. A mod can add **custom events**, **translations**, **UI screens**, **achievements**, and **arbitrary game logic** — all through a simple plugin API with lifecycle hooks.
+
+---
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Directory Structure](#directory-structure)
+- [Manifest (`mod.json`)](#manifest-modjson)
+- [Adding Events (JSON)](#adding-events-json)
+  - [Event Definition Reference](#event-definition-reference)
+  - [Post-Event Chains](#post-event-chains)
+- [Plugin Entry (`index.js`)](#plugin-entry-indexjs)
+  - [The `ModPlugin` Object](#the-modplugin-object)
+  - [Lifecycle Hooks](#lifecycle-hooks)
+  - [Registering Custom Event Types](#registering-custom-event-types)
+  - [Registering Custom UI Screens](#registering-custom-ui-screens)
+  - [Registering Achievements](#registering-achievements)
+  - [Registering Filters, Algorithms & Conditions](#registering-filters-algorithms--conditions)
+  - [Module-Level Screen Transitions](#module-level-screen-transitions)
+- [The `ModContext` API](#the-modcontext-api)
+- [Translation Files](#translation-files)
+- [Developing with TypeScript](#developing-with-typescript)
+- [Enabling & Testing Your Mod](#enabling--testing-your-mod)
+- [Player Object Reference](#player-object-reference)
+
+---
+
+## Quick Start
+
+```bash
+mkdir -p ~/.mod_live/my-mod
+cd ~/.mod_live/my-mod
+npm init -y
+```
+
+Create a `mod.json` and an `index.js` (see below). That's it — launch the game and enable your mod from **Settings → Mod Manager**.
+
+---
+
+## Directory Structure
+
+```
+~/.mod_live/
+└── my-mod/
+    ├── mod.json          # Required — mod manifest
+    ├── index.js          # Optional — plugin entry (lifecycle hooks & custom logic)
+    ├── events/           # Optional — JSON event definitions
+    │   └── custom.json
+    └── language/         # Optional — translation files
+        ├── en_US.json
+        └── zh_CN.json
+```
+
+---
+
+## Manifest (`mod.json`)
+
+Every mod must have a `mod.json` at its root.
+
+```json
+{
+  "name": "my-mod",
+  "version": "1.0.0",
+  "description": "An example mod",
+  "main": "index.js",
+  "author": "your-name"
+}
+```
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | ✅ | Unique mod identifier. Used in config and logs. |
+| `version` | — | Semantic version, for informational display. |
+| `description` | — | Short description shown in the Mod Manager. |
+| `main` | ✅ | Path to the plugin entry file (relative to mod root). |
+| `author` | — | Displayed in the Mod Manager. |
+
+---
+
+## Adding Events (JSON)
+
+Place `.json` files in `events/`. Each file defines **one event instance**. The game loads them alongside built-in events and feeds them into the same weighted random engine.
+
+### Minimal Example
+
+```json
+{
+  "type": "BirthEvent",
+  "id": "my-custom-event",
+  "nameKey": "events.myEvent",
+  "rangeKey": ["10-50"],
+  "weight": 0.3,
+  "once": false,
+  "predecessorEvent": null,
+  "excludedIds": [],
+  "postEvent": null
+}
+```
+
+### Event Definition Reference
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `type` | `string` | **required** | Event class name. Must be a built-in type (e.g. `BirthEvent`, `AcademicStressEvent`, `AcademicAnger`) or a custom type registered via `registerEventTypes`. |
+| `id` | `string` | **required** | Globally unique event identifier. |
+| `nameKey` | `string` | — | Translation key for the in-game log message. |
+| `rangeKey` | `string[]` | `["0-100"]` | Age ranges where this event can trigger. Format: `"min-max"` (e.g. `["5-12", "18-25"]`). |
+| `weight` | `number` | `0.5` | Relative probability. Higher = more likely to be selected from the candidate pool. |
+| `once` | `boolean \| string[]` | `false` | `true` = fires once globally and never again. `["5-12", "18-25"]` = fires once per listed range. |
+| `predecessorEvent` | `string \| null` | `null` | This event only becomes eligible after the specified predecessor event has been triggered. |
+| `excludedIds` | `string[]` | `[]` | Event IDs that become permanently blocked once this event triggers. |
+| `postEvent` | `string \| object[] \| null` | `null` | Event(s) automatically scheduled after this one. See [Post-Event Chains](#post-event-chains). |
+| `params` | `Record<string, unknown>` | — | Arbitrary key-value data passed to the event's `IncidentParameter`. |
+
+### Post-Event Chains
+
+The `postEvent` field can be a single event ID (string) or an array of post-event objects:
+
+```json
+{
+  "postEvent": [
+    { "incident": "follow-up-event-1", "delay": 0, "weight": 0.5 },
+    { "incident": "follow-up-event-2", "delay": 2, "weight": 0.8 }
+  ]
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `incident` | Event ID to schedule. |
+| `delay` | Number of rounds to wait before the event becomes eligible (default: `0`). |
+| `weight` | Override weight for the scheduled event (uses the event's own weight if omitted). |
+
+---
+
+## Plugin Entry (`index.js`)
+
+The entry file (specified by `main` in `mod.json`) exports a **`ModPlugin`** object. The game calls its methods at specific lifecycle points.
+
+### The `ModPlugin` Object
+
+```javascript
+module.exports = {
+  id: "my-mod",
+
+  // Optional: register custom event types so JSON events can reference them
+  registerEventTypes(registry, ctx) { /* ... */ },
+
+  // Optional: lifecycle hooks
+  hooks: {
+    onInit(ctx) { /* ... */ },
+    onPlayerCreated(player, ctx) { /* ... */ },
+    onPlayerUpdate(player, ctx) { /* ... */ },
+    onIncidentTrigger(incident, player, ctx) { /* ... */ },
+    onIncidentExecuted(incident, player, ctx) { /* ... */ },
+  },
+};
+```
+
+| Property | Required | Description |
+|----------|----------|-------------|
+| `id` | ✅ | Unique mod identifier. Must match `name` in `mod.json`. |
+| `registerEventTypes` | — | Called once during mod loading. Use `registry.register(name, Class)` to register custom event classes. |
+| `hooks` | — | Collection of lifecycle callbacks. All hooks are optional — implement only what you need. |
+
+### Lifecycle Hooks
+
+| Hook | When Called | Use Case |
+|------|-------------|----------|
+| **`onInit(ctx)`** | After mod is loaded, before the game starts. | Initialisation, subscribing to the event bus, registering screens / settings / achievements. |
+| **`onPlayerCreated(player, ctx)`** | After the player object is first created. | Modify initial player state (stats, name, etc.). |
+| **`onPlayerUpdate(player, ctx)`** | Every round, after `player.update()`. | Per-turn side effects, stat monitoring, triggering custom logic based on thresholds. |
+| **`onIncidentTrigger(incident, player, ctx)`** | Before an incident is executed. | Conditionally block events. Return `false` to prevent execution; return nothing (or `true`) to allow it. |
+| **`onIncidentExecuted(incident, player, ctx)`** | After an incident has been executed. | Logging, follow-up actions, chaining custom effects. |
+
+> Hooks are called in mod registration order. There is no priority mechanism — first-loaded mod runs first.
+
+### Registering Custom Event Types
+
+Use `registerEventTypes(registry, ctx)` to define event classes that your JSON events can reference via the `type` field.
+
+```javascript
+registerEventTypes(registry, ctx) {
+  const MyEvent = ctx.createEventClass({
+    apply(player, self) {
+      // self.params contains the params from your JSON definition
+      player.fortune += 100;
+      ctx.logger.info(`Custom event "${self.id}" triggered!`);
+    },
+    getWeight(player, self) {
+      // Dynamic weight based on player state (optional)
+      return player.angerValue > 50 ? 0.6 : 0.1;
+    },
+  });
+
+  registry.register("MyEvent", MyEvent);
+}
+```
+
+`ctx.createEventClass(def)` accepts:
+
+| Method | Required | Signature | Description |
+|--------|----------|-----------|-------------|
+| `apply` | ✅ | `(player: Player, self: Incident) => void` | The effect to apply when the event fires. |
+| `getWeight` | — | `(player: Player, self: Incident) => number` | Override the JSON `weight` with a dynamic value computed from player state. |
+
+The returned constructor can be passed directly to `registry.register()`.
+
+### Registering Custom UI Screens
+
+Mods can add entirely new screens to the game's navigation system.
+
+```javascript
+hooks: {
+  onInit(ctx) {
+    ctx.registerScreen("myModSettings", {
+      component: MySettingsComponent,  // An Ink React component
+      nameKey: "myMod.settingsTitle",  // Translation key for display
+      highlightId: "mySettings",       // Optional: highlight in menu
+      hide: false,                     // Optional: hide from menus (default false)
+    });
+  },
+},
+```
+
+To navigate to your screen programmatically:
+
+```javascript
+ctx.navigateTo("myModSettings");
+```
+
+Built-in scene IDs: `"menu"`, `"game"`, `"config"`, `"language"`, `"achievement"`.
+
+### Registering Achievements
+
+```javascript
+hooks: {
+  onInit(ctx) {
+    ctx.registerAchievement({
+      id: "my-custom-achievement",
+      nameKey: "achievements.myCustom",
+      descriptionKey: "achievements.myCustom.desc",
+      category: "custom",
+      // Unlock condition logic is defined in the Achievement object
+    });
+  },
+},
+```
+
+### Registering Filters, Algorithms & Conditions
+
+The `ModContext` exposes lower-level extension points for advanced mods:
+
+```javascript
+// Add a custom incident filter (decides whether an event can be selected)
+ctx.addFilter("myFilter", () => new MyIncidentFilter());
+
+// Add a custom event algorithm (replaces the default weighted-random selection)
+ctx.addAlgorithm("myAlgorithm", (deps) => new MyAlgorithm(deps));
+
+// Add a custom condition (reusable check for achievements, filters, etc.)
+ctx.addCondition("myCondition", MyConditionClass, myConditionSchema);
+```
+
+---
+
+## The `ModContext` API
+
+The `ctx` object passed to all hooks and `registerEventTypes` is your mod's **only interface to the game**. Mods cannot access the DI container, file system, or internal state directly — this is an intentional design constraint that keeps mods safe and forward-compatible.
+
+| Property / Method | Description |
+|-------------------|-------------|
+| **`ctx.eventBus`** | Global typed event bus. Subscribe with `on(event, callback)`, emit with `emit(event, data)`. Built-in events: `player:updated`, `incident:executed`, `achievement:unlocked`. |
+| **`ctx.configStore`** | Persistent key-value storage. Use `getSnapshot()` to read and `update(partial)` to write. Data survives restarts. |
+| **`ctx.logger`** | Scoped logger with `info(msg)`, `warn(msg)`, `error(msg)`. Output appears in the terminal and the notification console. |
+| **`ctx.getPlayer()`** | Returns the current `Player` instance. Always call this — don't cache the reference, as the Player may be replaced (e.g. when loading a save). |
+| **`ctx.createEventClass(def)`** | Factory that creates an `Incident` subclass from `{ apply, getWeight? }`. Returns a constructor for use with `registry.register()`. |
+| **`ctx.registerScreen(key, entry)`** | Registers a custom UI screen. `entry.component` is an Ink React component. `entry.hide` (default `false`) controls menu visibility. |
+| **`ctx.navigateTo(scene)`** | Programmatic navigation to any registered screen. |
+| **`ctx.registerAchievement(achievement)`** | Registers a custom achievement definition. |
+| **`ctx.addCondition(id, ctor, schema)`** | Registers a reusable condition with a Zod validation schema. |
+| **`ctx.addAlgorithm(name, factory)`** | Registers a custom event selection algorithm. |
+| **`ctx.addFilter(id, filter)`** | Registers a custom incident filter for the selection pipeline. |
+| **`ctx.addSetting(key, entry)`** | Adds a custom settings panel (Ink component) to the Settings screen. |
+
+### Event Bus
+
+```javascript
+hooks: {
+  onInit(ctx) {
+    // Subscribe to built-in events
+    ctx.eventBus.on("player:updated", (player) => {
+      ctx.logger.info(`Player updated: ${player.playerName}`);
+    });
+
+    ctx.eventBus.on("incident:executed", (incident) => {
+      if (incident.id === "some-event") {
+        // React to a specific event being executed
+      }
+    });
+
+    ctx.eventBus.on("achievement:unlocked", (achievement) => {
+      ctx.logger.info(`Achievement unlocked: ${achievement.id}`);
+    });
+  },
+},
+```
+
+### Config Store
+
+```javascript
+// Read
+const snapshot = ctx.configStore.getSnapshot();
+const myData = snapshot.myModData;
+
+// Write (shallow-merged with existing config)
+ctx.configStore.update({ myModData: { counter: 42 } });
+```
+
+---
+
+## Translation Files
+
+Place JSON files in `language/` named by locale code (e.g. `en_US.json`, `zh_CN.json`, `ja_JP.json`, `ru_RU.json`).
+
+```json
+{
+  "events.myEvent": "Something extraordinary happened!",
+  "events.myEvent.desc": "A mysterious force changes your fate.",
+  "myMod.settingsTitle": "My Mod Settings",
+  "achievements.myCustom": "Custom Champion",
+  "achievements.myCustom.desc": "Unlocked by my custom mod."
+}
+```
+
+Translation keys are namespaced — use a prefix unique to your mod to avoid collisions.
+
+The game automatically merges mod translations with built-in ones. If a key exists in both, the mod's value takes precedence (last-loaded wins).
+
+---
+
+## Developing with TypeScript
+
+Install `@baigao_h/terminal-live` as a dev dependency to get full type definitions:
+
+```bash
+cd ~/.mod_live/my-mod
+npm install --save-dev typescript @baigao_h/terminal-live
+```
+
+Create a minimal `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2022",
+    "outDir": ".",
+    "strict": true
+  },
+  "files": ["index.ts"]
+}
+```
+
+Then write your plugin with full type safety:
+
+```typescript
+import type { ModPlugin, ModContext, Player, Incident } from "@baigao_h/terminal-live";
+
+const plugin: ModPlugin = {
+  id: "my-mod",
+
+  registerEventTypes(registry, ctx: ModContext) {
+    const MyEvent = ctx.createEventClass({
+      apply(player: Player, self: Incident) {
+        player.fortune += 100;
+      },
+    });
+    registry.register("MyEvent", MyEvent);
+  },
+
+  hooks: {
+    onInit(ctx: ModContext) {
+      ctx.logger.info("Mod initialised!");
+    },
+    onPlayerUpdate(player: Player, ctx: ModContext) {
+      if (player.health < 30) {
+        ctx.logger.warn(`${player.playerName} is in critical condition!`);
+      }
+    },
+    onIncidentTrigger(incident: Incident, player: Player, ctx: ModContext) {
+      if (incident.id === "academic-stress" && player.angerValue > 80) {
+        return false; // block
+      }
+    },
+  },
+};
+
+export default plugin;
+```
+
+Compile:
+
+```bash
+npx tsc
+```
+
+Make sure `mod.json` points to the compiled output (e.g. `"main": "index.js"`).
+
+---
+
+## Enabling & Testing Your Mod
+
+1. Place your mod directory in `~/.mod_live/`.
+2. Launch the game: `terminal-live`.
+3. Go to **Settings → Mod Manager**.
+4. Find your mod in the list and press `Enter` to toggle it on.
+5. Restart the game.
+
+Enabled mods are persisted in `resource/config.json` under `enabledMods`. The Mod Manager also shows load errors — check the notification console (`P`) for diagnostics if your mod fails to load.
+
+---
+
+## Player Object Reference
+
+The `Player` instance passed to hooks has these properties:
+
+| Property | Type | Range | Description |
+|----------|------|-------|-------------|
+| `playerName` | `string` | — | The character's name. |
+| `age` | `number` | 0–150 | Current age. Increments each round. |
+| `health` | `number` | 0–100 | Health points. Reaching 0 may trigger game-over events. |
+| `height` | `number` | 0.5–3.0 | Height in metres. |
+| `weight` | `number` | 1–500 | Weight in kilograms. |
+| `angerValue` | `number` | 0–100 | Anger emotion level. High values trigger anger-related status effects. |
+| `excitationValue` | `number` | 0–100 | Excitement emotion level. |
+| `depressionValue` | `number` | 0–100 | Depression emotion level. |
+| `weakValue` | `number` | 0–100 | Weakness / fatigue level. |
+| `fortune` | `number` | ≥ 0 | Fortune / luck stat. Modifies event outcomes. |
+
+The dominant emotion (highest among anger, excitement, depression, weak) determines the active **status effect**, which applies periodic buffs or debuffs to health and other attributes.
+
+All properties are mutable — mods can freely read and write them in hooks. Be mindful of balance.
+
+---
+
+## Best Practices
+
+- **Namespace your IDs.** Use a mod-specific prefix for event IDs, translation keys, screen keys, and achievement IDs to avoid collisions with other mods and built-in content.
+- **Don't cache `ctx.getPlayer()`.** The Player reference may change (e.g. save/load). Always call `getPlayer()` when you need the current instance.
+- **Keep `apply` deterministic.** Event effects should derive only from `player` and `self.params`. Don't rely on external mutable state inside `apply`.
+- **Use `ctx.configStore` for persistence.** It survives game restarts and is the only sanctioned way for mods to store data across sessions.
+- **Check `onIncidentTrigger` carefully.** Returning `false` from one mod blocks the event for all mods. Use this power sparingly.
