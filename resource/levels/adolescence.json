@@ -1,19 +1,18 @@
 {
-  "id": "adulthood",
-  "nameKey": "level.adulthood",
-  "descriptionKey": "level.adulthood.desc",
-  "nextLevel": "none",
+  "id": "adolescence",
+  "nameKey": "level.adolescence",
+  "descriptionKey": "level.adolescence.desc",
+  "nextLevel": "youth",
   "difficultyIdentification": "normal",
   "algorithm": "default",
   "extraFilters": [],
+  "onEnter": {
+    "setPlayer": { "age": 13 }
+  },
   "nextLevelUnlock": [
     {
       "type": "generalPurpose",
       "params": { "prop": "age", "num": 18, "cat": "greaterThan" }
-    },
-    {
-      "type": "generalPurpose",
-      "params": { "prop": "health", "num": 50, "cat": "greaterThan" }
     }
   ]
 }

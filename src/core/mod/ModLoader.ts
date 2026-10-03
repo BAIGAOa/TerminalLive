@@ -1,7 +1,7 @@
+import { inject } from "../../Container.js";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, extname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Scope, Scoped, inject } from "di-wise";
 import EventTypeRegistry from "./EventTypeRegistry.js";
 import EventCenter from "../../event/EventCenter.js";
 import { IncidentParameter } from "../../world/Incident.js";
@@ -13,7 +13,6 @@ const _dirname = dirname(_filename);
 // 从磁盘加载 JSON 事件定义，把它们变成真正的 Incident 实例并注册到 EventCenter。
 // JSON 里的 type 字段决定用哪个事件类，ModLoader 自己不管事件逻辑，
 // 只管把数据和类拼在一起。模组的 events/ 目录也是走 loadFromDir 这条路径。
-@Scoped(Scope.Container)
 export default class ModLoader {
   private registry: EventTypeRegistry;
   private eventCenter: EventCenter;

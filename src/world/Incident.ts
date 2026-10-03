@@ -1,9 +1,27 @@
 import Player from "./Player.js";
+import { ChoiceDef } from "./choices.js";
+import type { WorldGate } from "./chronicle/WorldFilter.js";
+import type { PressureGate, PressureBias } from "./pressures/PressureFilter.js";
+import type { WeatherGate, WeatherBias } from "./weather/WeatherFilter.js";
 
 export interface IncidentParameter {
   id?: string;
   rangeKey?: string[];
   nameKey?: string;
+  /** Narrative text shown with the event / its choice prompt. */
+  textKey?: string;
+  /** When present the event pauses and offers the player these branches. */
+  choices?: ChoiceDef[];
+  /** Only eligible when the world state satisfies this gate. */
+  worldGate?: WorldGate | null;
+  /** Only eligible when the hidden-score axes satisfy this gate. */
+  pressureGate?: PressureGate | null;
+  /** Soft weight multipliers for the hidden-score axes. */
+  pressureBias?: PressureBias[] | null;
+  /** Only eligible under this weather. */
+  weatherGate?: WeatherGate | null;
+  /** Soft weight multipliers for the weather. */
+  weatherBias?: WeatherBias[] | null;
   weight?: number;
   predecessorEvent?: string;
   excludedIds?: string[];
@@ -28,6 +46,20 @@ export abstract class Incident {
   public rangeKey: string[] = ["0-100"];
   /** 语言包里对应的翻译键值*/
   public nameKey: string | null = null;
+  /** 事件的叙述文本键 */
+  public textKey: string | null = null;
+  /** 事件提供的抉择分支（存在时暂停并等待玩家选择） */
+  public choices: ChoiceDef[] | null = null;
+  /** 世界状态门槛（时代/地域/势力）；不满足时不参与抽取 */
+  public worldGate: WorldGate | null = null;
+  /** 隐藏分门槛（不满足时不参与抽取） */
+  public pressureGate: PressureGate | null = null;
+  /** 隐藏分软权重（满足条件的轴会放大/缩小出现概率） */
+  public pressureBias: PressureBias[] | null = null;
+  /** 天气门槛（仅在特定天气下可触发） */
+  public weatherGate: WeatherGate | null = null;
+  /** 天气软权重 */
+  public weatherBias: WeatherBias[] | null = null;
   /** 出现概率权重，数值越高概率越大 */
   public weight: number = 0.5;
   /** 事件触发时的具体影响逻辑 */
@@ -68,6 +100,18 @@ export abstract class Incident {
     this.once = parameter.once ?? this.once;
     this.postEvent = parameter.postEvent ?? this.postEvent;
     this.nameKey = parameter.nameKey ?? this.nameKey;
+    this.textKey = parameter.textKey ?? this.textKey;
+    this.choices = parameter.choices ?? this.choices;
+    this.worldGate = parameter.worldGate ?? this.worldGate;
+    this.pressureGate = parameter.pressureGate ?? this.pressureGate;
+    this.pressureBias = parameter.pressureBias ?? this.pressureBias;
+    this.weatherGate = parameter.weatherGate ?? this.weatherGate;
+    this.weatherBias = parameter.weatherBias ?? this.weatherBias;
+  }
+
+  /** Whether this incident offers player choices. */
+  public hasChoices(): boolean {
+    return !!this.choices && this.choices.length > 0;
   }
 
   /**

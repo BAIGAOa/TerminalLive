@@ -6,11 +6,16 @@ export const DEFAULT_PLAYER_CONFIG = {
   health: 100,
   height: 1.55,
   weight: 45,
+  money: 0,
+  intelligence: 10,
+  social: 10,
+  fitness: 10,
+  happiness: 60,
+  reputation: 0,
   angerValue: 0,
   excitationValue: 0,
   depressionValue: 0,
   weakValue: 0,
-  fortune: 0,
 } as const;
 
 const PlayerConfigSchema = z.object({
@@ -19,6 +24,12 @@ const PlayerConfigSchema = z.object({
   health: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.health),
   height: z.number().min(0.5).max(3).default(DEFAULT_PLAYER_CONFIG.height),
   weight: z.number().min(1).max(500).default(DEFAULT_PLAYER_CONFIG.weight),
+  money: z.number().min(0).default(DEFAULT_PLAYER_CONFIG.money),
+  intelligence: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.intelligence),
+  social: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.social),
+  fitness: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.fitness),
+  happiness: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.happiness),
+  reputation: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.reputation),
   angerValue: z
     .number()
     .min(0)
@@ -39,7 +50,17 @@ const PlayerConfigSchema = z.object({
     .min(0)
     .max(100)
     .default(DEFAULT_PLAYER_CONFIG.weakValue),
-  fortune: z.number().min(0).default(DEFAULT_PLAYER_CONFIG.fortune),
+  // Transient state carried through config persistence so a loaded save keeps
+  // items, relationships, flags and effects (they'd otherwise be stripped).
+  effects: z
+    .array(z.object({ id: z.string(), remaining: z.number(), stacks: z.number() }))
+    .optional(),
+  inventory: z
+    .array(z.object({ id: z.string(), count: z.number() }))
+    .optional(),
+  relationships: z.record(z.string(), z.number()).optional(),
+  flags: z.array(z.string()).optional(),
+  actionPoints: z.number().optional(),
 });
 
 const ConfigSchema = z.object({
@@ -49,6 +70,8 @@ const ConfigSchema = z.object({
   enabledMods: z.array(z.string()).default([]),
   lastLevelId: z.string().optional(),
   completedLevels: z.array(z.string()).default([]),
+  keyBindings: z.record(z.string(), z.string()).default({}),
+  traits: z.array(z.string()).default([]),
 });
 
 export type ConfigType = z.infer<typeof ConfigSchema>;

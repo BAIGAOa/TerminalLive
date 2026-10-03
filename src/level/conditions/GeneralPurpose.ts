@@ -1,6 +1,7 @@
 import Player from "../../world/Player.js";
 import z from "zod";
 import LevelCondition from "../LevelCondition.js";
+import { STAT_KEYS, StatKey } from "../../world/stats.js";
 
 export const GeneralPurposeScheme = z.object({
   prop: z.string(),
@@ -20,19 +21,8 @@ export default class GeneralPurpose extends LevelCondition {
     this.cat = cat;
   }
 
-  private isKeyOfPlayer(key: string): key is keyof Player {
-    const keys: string[] = [
-      "age",
-      "health",
-      "height",
-      "weight",
-      "angerValue",
-      "excitationValue",
-      "depressionValue",
-      "weakValue",
-      "fortune",
-    ];
-    return keys.includes(key);
+  private isKeyOfPlayer(key: string): key is StatKey {
+    return (STAT_KEYS as string[]).includes(key);
   }
 
   public customsClearance(player: Player): boolean {

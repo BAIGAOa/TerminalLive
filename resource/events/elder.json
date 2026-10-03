@@ -1,0 +1,136 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_retire",
+    "nameKey": "ev.retire",
+    "textKey": "ev.retire.text",
+    "rangeKey": ["60-72"],
+    "weight": 3,
+    "once": true,
+    "choices": [
+      {
+        "id": "travel",
+        "labelKey": "ev.retire.opt.travel",
+        "effects": { "money": -200, "happiness": 18 },
+        "noteKey": "ev.retire.note.travel"
+      },
+      {
+        "id": "grandkids",
+        "labelKey": "ev.retire.opt.grandkids",
+        "effects": { "happiness": 12 },
+        "relationship": { "npc": "npc_child", "delta": 10 },
+        "noteKey": "ev.retire.note.grandkids"
+      },
+      {
+        "id": "work",
+        "labelKey": "ev.retire.opt.work",
+        "effects": { "money": 150, "health": -6 },
+        "noteKey": "ev.retire.note.work"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_health_scare",
+    "nameKey": "ev.health_scare",
+    "textKey": "ev.health_scare.text",
+    "rangeKey": ["65-100"],
+    "weight": 1.5,
+    "choices": [
+      {
+        "id": "surgery",
+        "labelKey": "ev.health_scare.opt.surgery",
+        "require": [{ "prop": "money", "gte": 200 }],
+        "effects": { "money": -200, "health": 20 },
+        "noteKey": "ev.health_scare.note.surgery"
+      },
+      {
+        "id": "conservative",
+        "labelKey": "ev.health_scare.opt.conservative",
+        "effects": { "health": -12, "happiness": -6 },
+        "buff": { "id": "fx_sick", "turns": 3 },
+        "noteKey": "ev.health_scare.note.conservative"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_legacy",
+    "nameKey": "ev.legacy",
+    "textKey": "ev.legacy.text",
+    "rangeKey": ["70-115"],
+    "weight": 1.2,
+    "once": true,
+    "choices": [
+      {
+        "id": "memoir",
+        "labelKey": "ev.legacy.opt.memoir",
+        "effects": { "intelligence": 4, "happiness": 10 },
+        "flag": "wrote_memoir",
+        "noteKey": "ev.legacy.note.memoir"
+      },
+      {
+        "id": "mentor",
+        "labelKey": "ev.legacy.opt.mentor",
+        "effects": { "social": 5, "happiness": 8 },
+        "flag": "mentored",
+        "noteKey": "ev.legacy.note.mentor"
+      },
+      {
+        "id": "donate_all",
+        "labelKey": "ev.legacy.opt.donate_all",
+        "effects": { "money": -300, "happiness": 12 },
+        "flag": "philanthropist",
+        "noteKey": "ev.legacy.note.donate_all"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_grandchild",
+    "nameKey": "ev.grandchild",
+    "textKey": "ev.grandchild.text",
+    "rangeKey": ["63-105"],
+    "weight": 1.2,
+    "choices": [
+      {
+        "id": "spoil",
+        "labelKey": "ev.grandchild.opt.spoil",
+        "effects": { "money": -60, "happiness": 12 },
+        "relationship": { "npc": "npc_child", "delta": 10 },
+        "noteKey": "ev.grandchild.note.spoil"
+      },
+      {
+        "id": "teach",
+        "labelKey": "ev.grandchild.opt.teach",
+        "effects": { "happiness": 6, "intelligence": 2 },
+        "relationship": { "npc": "npc_child", "delta": 6 },
+        "noteKey": "ev.grandchild.note.teach"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_friend_passing",
+    "nameKey": "ev.friend_passing",
+    "textKey": "ev.friend_passing.text",
+    "rangeKey": ["70-110"],
+    "weight": 0.9,
+    "params": {
+      "effects": { "depressionValue": 12, "happiness": -6 },
+      "buff": { "id": "fx_gloom", "turns": 3 },
+      "relationship": { "npc": "npc_friend", "delta": -5 }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_gentle_years",
+    "nameKey": "ev.gentle_years",
+    "textKey": "ev.gentle_years.text",
+    "rangeKey": ["60-115"],
+    "weight": 0.7,
+    "params": {
+      "effects": { "happiness": 4, "depressionValue": -3 }
+    }
+  }
+]

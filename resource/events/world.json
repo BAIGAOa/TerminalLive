@@ -1,0 +1,190 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_iron_forge",
+    "nameKey": "ev.iron_forge",
+    "textKey": "ev.iron_forge.text",
+    "rangeKey": ["20-100"],
+    "weight": 1,
+    "worldGate": { "era": "era_iron" },
+    "choices": [
+      {
+        "id": "forge",
+        "labelKey": "ev.iron_forge.opt.forge",
+        "effects": { "intelligence": 3, "fitness": 2, "happiness": -1 },
+        "karma": { "wisdom": 4 },
+        "noteKey": "ev.iron_forge.note.forge"
+      },
+      {
+        "id": "watch",
+        "labelKey": "ev.iron_forge.opt.watch",
+        "effects": { "happiness": 1 },
+        "noteKey": "ev.iron_forge.note.watch"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_steam_machine",
+    "nameKey": "ev.steam_machine",
+    "textKey": "ev.steam_machine.text",
+    "rangeKey": ["40-100"],
+    "weight": 1,
+    "worldGate": { "era": "era_steam" },
+    "choices": [
+      {
+        "id": "invest",
+        "labelKey": "ev.steam_machine.opt.invest",
+        "effects": { "money": 120, "fitness": -2 },
+        "karma": { "ambition": 5 },
+        "noteKey": "ev.steam_machine.note.invest"
+      },
+      {
+        "id": "hands",
+        "labelKey": "ev.steam_machine.opt.hands",
+        "effects": { "intelligence": 2, "happiness": 1 },
+        "noteKey": "ev.steam_machine.note.hands"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_electric_night",
+    "nameKey": "ev.electric_night",
+    "textKey": "ev.electric_night.text",
+    "rangeKey": ["60-100"],
+    "weight": 1.2,
+    "worldGate": { "era": "era_electric" },
+    "params": { "effects": { "happiness": 4 } }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_star_port",
+    "nameKey": "ev.star_port",
+    "textKey": "ev.star_port.text",
+    "rangeKey": ["85-120"],
+    "weight": 1.5,
+    "once": true,
+    "worldGate": { "era": "era_star" },
+    "choices": [
+      {
+        "id": "voyage",
+        "labelKey": "ev.star_port.opt.voyage",
+        "effects": { "happiness": 10, "reputation": 8 },
+        "karma": { "wisdom": 6 },
+        "flag": "star_voyage",
+        "noteKey": "ev.star_port.note.voyage"
+      },
+      {
+        "id": "stay",
+        "labelKey": "ev.star_port.opt.stay",
+        "effects": { "happiness": 2 },
+        "noteKey": "ev.star_port.note.stay"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_scholars_offer",
+    "nameKey": "ev.scholars_offer",
+    "textKey": "ev.scholars_offer.text",
+    "rangeKey": ["16-100"],
+    "weight": 1.2,
+    "worldGate": { "faction": "fac_scholars", "minStanding": 30 },
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "ev.scholars_offer.opt.join",
+        "effects": { "intelligence": 6 },
+        "karma": { "wisdom": 6 },
+        "faction": { "id": "fac_scholars", "delta": 10 },
+        "noteKey": "ev.scholars_offer.note.join"
+      },
+      {
+        "id": "decline",
+        "labelKey": "ev.scholars_offer.opt.decline",
+        "effects": { "happiness": 1 },
+        "faction": { "id": "fac_scholars", "delta": -5 },
+        "noteKey": "ev.scholars_offer.note.decline"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_merchants_deal",
+    "nameKey": "ev.merchants_deal",
+    "textKey": "ev.merchants_deal.text",
+    "rangeKey": ["18-100"],
+    "weight": 1.2,
+    "worldGate": { "faction": "fac_merchants", "minStanding": 30 },
+    "choices": [
+      {
+        "id": "sign",
+        "labelKey": "ev.merchants_deal.opt.sign",
+        "effects": { "money": 200, "happiness": -1 },
+        "karma": { "ambition": 6 },
+        "faction": { "id": "fac_merchants", "delta": 10 },
+        "noteKey": "ev.merchants_deal.note.sign"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "ev.merchants_deal.opt.refuse",
+        "effects": { "happiness": 1 },
+        "faction": { "id": "fac_merchants", "delta": -5 },
+        "noteKey": "ev.merchants_deal.note.refuse"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_wardens_duty",
+    "nameKey": "ev.wardens_duty",
+    "textKey": "ev.wardens_duty.text",
+    "rangeKey": ["18-100"],
+    "weight": 1.2,
+    "worldGate": { "faction": "fac_wardens", "minStanding": 30 },
+    "choices": [
+      {
+        "id": "accept",
+        "labelKey": "ev.wardens_duty.opt.accept",
+        "effects": { "reputation": 8, "health": -4, "happiness": 2 },
+        "karma": { "benevolence": 8 },
+        "faction": { "id": "fac_wardens", "delta": 10 },
+        "noteKey": "ev.wardens_duty.note.accept"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "ev.wardens_duty.opt.refuse",
+        "effects": { "happiness": -1 },
+        "faction": { "id": "fac_wardens", "delta": -5 },
+        "noteKey": "ev.wardens_duty.note.refuse"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_shadows_offer",
+    "nameKey": "ev.shadows_offer",
+    "textKey": "ev.shadows_offer.text",
+    "rangeKey": ["18-100"],
+    "weight": 1.2,
+    "worldGate": { "faction": "fac_shadows", "minStanding": 30 },
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "ev.shadows_offer.opt.join",
+        "effects": { "money": 150, "reputation": -6 },
+        "karma": { "rebellion": 8 },
+        "faction": { "id": "fac_shadows", "delta": 10 },
+        "noteKey": "ev.shadows_offer.note.join"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "ev.shadows_offer.opt.refuse",
+        "effects": { "happiness": 2 },
+        "faction": { "id": "fac_shadows", "delta": -5 },
+        "noteKey": "ev.shadows_offer.note.refuse"
+      }
+    ]
+  }
+]

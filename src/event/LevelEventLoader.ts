@@ -38,15 +38,18 @@ export class LevelEventLoader {
             console.error(`解析事件文件 ${filePath} 失败:`, (err as Error).message);
             return;
         }
-        const parsed = modEventSchema.safeParse(raw);
-        if (!parsed.success) {
-            console.error(
-                `校验事件文件 ${filePath} 失败:`,
-                parsed.error.issues.map((i: { message: string }) => i.message).join(", "),
-            );
-            return;
+        const entries = Array.isArray(raw) ? raw : [raw];
+        for (const entry of entries) {
+            const parsed = modEventSchema.safeParse(entry);
+            if (!parsed.success) {
+                console.error(
+                    `校验事件文件 ${filePath} 失败:`,
+                    parsed.error.issues.map((i: { message: string }) => i.message).join(", "),
+                );
+                continue;
+            }
+            this.registerEvent(parsed.data);
         }
-        this.registerEvent(parsed.data);
     }
 
     /** 直接注册已解析的事件定义 */
@@ -58,6 +61,13 @@ export class LevelEventLoader {
         const params: IncidentParameter = {
             id: def.id,
             nameKey: def.nameKey,
+            textKey: def.textKey,
+            choices: def.choices,
+            worldGate: def.worldGate,
+            pressureGate: def.pressureGate,
+            pressureBias: def.pressureBias,
+            weatherGate: def.weatherGate,
+            weatherBias: def.weatherBias,
             rangeKey: def.rangeKey,
             weight: def.weight,
             predecessorEvent: def.predecessorEvent ?? undefined,

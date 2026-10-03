@@ -7,6 +7,20 @@
   "algorithm": "default",
   "extraFilters": [],
   "onEnter": {
-    "setPlayer": { "age": 0 }
-  }
+    "setPlayer": {
+      "age": 3,
+      "health": 80,
+      "happiness": 65,
+      "intelligence": 10,
+      "social": 10,
+      "fitness": 12,
+      "money": 0
+    }
+  },
+  "nextLevelUnlock": [
+    {
+      "type": "generalPurpose",
+      "params": { "prop": "age", "num": 12, "cat": "greaterThan" }
+    }
+  ]
 }

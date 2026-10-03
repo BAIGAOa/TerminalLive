@@ -1,36 +1,9 @@
 import React, { useEffect } from "react";
 import { Box, Text } from "ink";
-import { SelectInput, useKeyboard, useScreenSystem } from "@baigao_h/ink-kit";
-import type { Item } from "@baigao_h/ink-kit";
+import { useKeyboard, useScreenSystem } from "ink-cartridge";
+import { MenuList } from "./kit/index.js";
 import { useLanguageScreen } from "../hooks/useLanguageScreen.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
-
-function LanguageItem({ label, isSelected }: { label: string; value: string; isSelected: boolean }) {
-  const colors = useThemeColors();
-  return (
-    <Box
-      width="100%"
-      height={3}
-      borderStyle="double"
-      borderColor={isSelected ? colors.highlight : "blue"}
-    >
-      <Box justifyContent="center" width="100%">
-        <Text color={isSelected ? colors.highlight : "white"}>{label}</Text>
-      </Box>
-    </Box>
-  );
-}
-
-function DefaultIndicator({ isSelected }: { isSelected: boolean }) {
-  const colors = useThemeColors();
-  return (
-    <Box marginRight={1}>
-      <Text color={isSelected ? colors.highlight : undefined}>
-        {isSelected ? '❯' : ' '}
-      </Text>
-    </Box>
-  );
-}
 
 export default function Language() {
   const data = useLanguageScreen();
@@ -43,9 +16,9 @@ export default function Language() {
     return () => u();
   }, [back, boundKeyboard]);
 
-  const items: Item<string>[] = data.items.map((item) => ({
-    label: item.label,
+  const items = data.items.map((item) => ({
     value: item.value,
+    label: item.label,
   }));
 
   return (
@@ -56,16 +29,27 @@ export default function Language() {
         </Text>
       </Box>
       <Box marginTop={1} flexDirection="column">
-        <SelectInput
+        <MenuList
+          focusId="language-list"
           items={items}
           onSelect={(item) => data.onSelectLanguage(item)}
-          focusId="language-list"
-          itemComponent={LanguageItem as any}
-          indicatorComponent={DefaultIndicator}
+          renderItem={(item, state) => (
+            <Box
+              flexGrow={1}
+              borderStyle="double"
+              borderColor={state.selected ? colors.highlight : colors.muted}
+              paddingX={1}
+              justifyContent="center"
+            >
+              <Text color={state.selected ? colors.highlight : colors.text}>
+                {item.label}
+              </Text>
+            </Box>
+          )}
         />
       </Box>
       <Box marginTop={1} justifyContent="center">
-        <Text dimColor>[Esc] 返回</Text>
+        <Text dimColor>[Esc] {data.t("game.hint.back")}</Text>
       </Box>
     </Box>
   );

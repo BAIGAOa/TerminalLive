@@ -6,7 +6,25 @@ const EventBasedUnlocking = z.object({
   incidentId: z.string(),
 });
 
-const AchievementUnlockedCondition = z.union([EventBasedUnlocking]);
+/**当某项属性达到阈值时解锁*/
+const StatBasedUnlocking = z.object({
+  type: z.literal("stat"),
+  prop: z.string(),
+  gte: z.number().optional(),
+  lte: z.number().optional(),
+});
+
+/**当玩家获得某个标记时解锁（用于"结婚""毕业"等里程碑）*/
+const FlagBasedUnlocking = z.object({
+  type: z.literal("flag"),
+  flag: z.string(),
+});
+
+const AchievementUnlockedCondition = z.union([
+  EventBasedUnlocking,
+  StatBasedUnlocking,
+  FlagBasedUnlocking,
+]);
 
 export const AchievementSchema = z.object({
   /**成就的id必须要有一个长度的字符串不能为空*/

@@ -2,31 +2,66 @@
 
 <p align="center">
   <b>A text-based life simulator that runs in your terminal.</b><br>
-  Built with <a href="https://github.com/vadimdemedes/ink">Ink</a> + React, powered by <a href="https://www.npmjs.com/package/@baigao_h/ink-kit">ink-router-kit</a>.
+  Built with <a href="https://github.com/vadimdemedes/ink">Ink</a> + React, powered by <a href="https://www.npmjs.com/package/ink-cartridge">ink-cartridge</a>.
 </p>
 
 ---
 
-> **Status:** Early development — game content is not yet complete, but all core systems are functional and extensible.
+> **Status:** Playable end-to-end. Guide a character from childhood to old age through
+> action-point years, branching events, skills, items and relationships.
 
 ---
 
 ## What is TerminalLive?
 
-TerminalLive is a **terminal-based life simulation game** where you guide a character from birth through the ages, facing random events, making choices, and watching your stats shift under the influence of emotions, fortune, and circumstance.
+TerminalLive is a **terminal-based life simulation game**. Each year you spend **action
+points** on choices like studying, working, exercising or socialising, then the world
+responds — random events fire, many of them pausing for a **branching decision** that
+ripples through your stats, money, skills, possessions and the people around you.
 
-It began as a personal experiment — an exploration of how far a text-based interactive experience could go inside a command-line environment. It is also a living playground for ideas around **event-driven architecture**, **dependency injection**, and **composable terminal UIs**.
+It is also a showcase for [`ink-cartridge`](https://github.com/BAIGAOa/ink-cartridge):
+screen trees, floating layers, **modal dialogs**, a layered keyboard engine, a focus
+system and full **mouse** support (hover, click, wheel and drag) are all exercised by the
+game itself.
 
 ---
 
 ## Features
 
-- 🎲 **Event Engine** — weighted random events, age-range filtering, predecessor / block / once logic, and post-event chains.
-- 🧩 **Mod Support** — install mods into `~/.mod_live/`; each can add events, translations, custom logic, and even custom UI screens.
-- 🏆 **Achievements** — unlock conditions based on event history, stat thresholds, or custom checks.
-- ⌨️ **Fully Keyboard-Driven** — every key binding is configurable through an in-game editor.
-- 🌐 **Multi-Language** — English, 中文, 日本語, Русский included; mods can supply additional languages.
-- 🎨 **Terminal UI** — 256-colour support, responsive resizing, built with [Ink](https://github.com/vadimdemedes/ink).
+- 🎯 **Action-point turns** — every year you get action points to spend on age-appropriate
+  actions (play, study, exercise, socialise, work, invest, meditate, …).
+- 🔀 **Branching events** — events offer 2–4 choices with different outcomes; pick with the
+  number keys, the arrow keys, or the **mouse**. Choices can gate on your stats.
+- 📈 **Skills & growth** — intelligence, social and fitness grow into tiers; happiness and
+  health track your wellbeing.
+- ⏳ **Timed status effects** — buffs and debuffs (focus, energy, sickness, gloom, …) tick
+  down year by year; high anger/excitement/depression spawn their own effects.
+- 🎒 **Inventory & items** — earn books, medicine, coffee, keepsakes and more; use them from
+  the inventory panel.
+- 💞 **Relationships** — build affinity with family, friends, a partner and a child; your
+  bonds shape the life you lead.
+- 🪜 **Ages** — childhood → adolescence → youth → midlife → old age, each with its own
+  goals, events and content.
+- 🌍 **Chronicle of Fate** — a living world you are embedded in: it passes through **eras**
+  (Dawn → Iron → Steam → Electric → Stars), you are born into a **region**, you earn or
+  lose **faction standing** (Scholars · Merchants · Wardens · Shadows), every choice writes
+  to a **karma** ledger (benevolence / ambition / wisdom / rebellion), and matching states
+  awaken **fate arcs** that bias your future events. Events can be gated on the world.
+- 📖 **Codex** — world lore unlocks as the world and your karma change; read it from the
+  main menu.
+- 🎴 **Traits & perks** — pick up to two birth traits; a perks panel tracks the milestones
+  your stats and bonds have earned.
+- 🏪 **Shop** — spend your money on items.
+- 🏆 **Achievements** — unlocked via events, stat thresholds or milestones (marriage,
+  parenthood, home ownership, …).
+- 🎲 **Event engine** — weighted random events, age-range and world gating, predecessor /
+  block / once logic, delayed post-event chains and mod-defined event types.
+- 🧩 **Mod support** — install mods into `~/.mod_live/` to add events, levels, items, NPCs,
+  translations, achievements and UI screens. Mods run **sandboxed** (`node:vm`, restricted
+  `require`) and support **hot-reload** via the `mods-watch` console command.
+- 🌐 **Multi-language** — English, 中文, 日本語, Русский included.
+- 🖱 **Mouse-driven UI** — hover to focus, click to select, wheel to scroll, drag modal
+  windows; the keyboard always works too, and focus is shared between them.
 
 ---
 
@@ -35,20 +70,30 @@ It began as a personal experiment — an exploration of how far a text-based int
 | Layer | Technology |
 |-------|------------|
 | **UI Runtime** | [Ink](https://github.com/vadimdemedes/ink) (React for the terminal) |
-| **Screen & Keyboard** | [`ink-router-kit`](https://www.npmjs.com/package/@baigao_h/ink-kit) — an independent framework for Ink screen management & layered keyboard handling |
-| **Dependency Injection** | [`di-wise`](https://www.npmjs.com/package/di-wise) |
+| **Screen, Layers & Input** | [`ink-cartridge`](https://www.npmjs.com/package/ink-cartridge) — screen tree, floating/modal layers, the layered keyboard engine, focus system and mouse regions |
+| **Dependency Injection** | a tiny built-in lazy singleton container (`src/Container.ts`) — no decorators, so the source runs unchanged under `tsc`, `tsx` and vitest |
 | **Schema Validation** | [`zod`](https://zod.dev) |
 | **Language** | TypeScript |
 
-### About ink-router-kit
+### About ink-cartridge
 
-[`ink-router-kit`](https://www.npmjs.com/package/@baigao_h/ink-kit) (`@baigao_h/ink-kit`) is a **standalone, MIT-licensed framework** developed by the same author. It solves two hard problems in complex Ink applications:
+[`ink-cartridge`](https://www.npmjs.com/package/ink-cartridge) is a standalone, MIT-licensed
+framework by the same author. It enhances Ink with the primitives a complex TUI needs:
 
-1. **Screen Management** — every React component is treated as a "screen", registered into a **screen tree**. Navigation uses `skip` / `back` / `gotoScreen` / `overlay` instead of hand-written conditional rendering. These primitives work both inside components (as hooks) and as **module-level imports**, so non-UI layers (game engines, state machines, etc.) can trigger screen transitions directly.
+1. **Screen tree** — every component can be a screen, registered into a tree and navigated
+   with `skip` / `back` / `gotoScreen`, from components *or* from plain module code.
+2. **Floating & modal layers** — `openLayer` / `applyElement` for persistent panels and
+   toasts, `openModalLayer` / `applyElementToModalLayer` for dialogs that own the keyboard
+   and mouse while open. Layers can be raised, restored, activated and deactivated.
+3. **Layered keyboard engine** — a 9-stage pipeline resolves conflicts between modal
+   layers, regular layers, global keys, sequences and the screen stack. Bindings are scoped
+   to focus targets so several controls can coexist; modes, conditions, composition and
+   custom processors are all supported.
+4. **Mouse regions** — hover, click, wheel and drag, with automatic mouse↔keyboard focus
+   convergence and hit priority matching the keyboard.
 
-2. **Layered Keyboard Events** — instead of a single global `useInput` handler, key bindings are scoped **per screen layer**. Events bubble from top to bottom through the screen stack, with `blockedKey` (pass through), `stop` (halt propagation), and `globalKeys` (stack-independent shortcuts). A built-in **focus system** resolves key-binding conflicts within the same layer.
-
-> ink-router-kit can be used independently of TerminalLive in any Ink-based project. See its [github page](https://github.com/BAIGAOa/ink-router-kit) for full documentation.
+> ink-cartridge is useful independently of TerminalLive. See its
+> [github page](https://github.com/BAIGAOa/ink-cartridge) for the full API.
 
 ---
 
@@ -56,8 +101,12 @@ It began as a personal experiment — an exploration of how far a text-based int
 
 ### Requirements
 
-- **Node.js** >= 18
-- A terminal with Unicode support and 256 colours
+- **Node.js** >= 22
+- **`ink` >= 7.1.1** — pinned in `package.json`; mouse regions rely on
+  `measureElement()` returning `x`/`y`, which older ink versions omit (regions
+  silently become unhittable on ink <= 7.0.x).
+- A terminal with Unicode support, 256 colours and mouse reporting
+  (mouse needs a real TTY; without one the game falls back to keyboard-only)
 
 ### Install & Run
 
@@ -66,20 +115,44 @@ npm install -g @baigao_h/terminal-live
 terminal-live
 ```
 
+---
+
+## Gameplay & Controls
+
+Spend your action points on the left, watch your status on the right, and end the year to
+age up and let events unfold. Some events pause for a decision.
+
+| Key | Action |
+|-----|--------|
+| `↑` `↓` `⏎` / click | Choose an action / event option |
+| `Tab` / click | Move focus between panels |
+| `←` `→` | Cycle the status view (attributes, skills, effects, inventory, relationships) |
+| `E` | End the current year |
+| `P` | Toggle the developer console |
+| `?` | Help |
+| `Q` | Back to the main menu |
+
+Mouse: hover a list to focus it, click to select, scroll the journal with the wheel, and
+drag modal windows (choices, console, help) to move them. Every key binding above is
+re-bindable from **Settings → Key bindings**.
+
+---
+
 ## Documentation
 
 | Document | Contents |
 |----------|----------|
-| **[README_mod.md](./README_mod.md)** | Mod development guide — directory structure, manifest format, plugin API, lifecycle hooks, TypeScript support, and the full `ModContext` API reference. |
-| **[ink-router-kit](https://github.com/BAIGAOa/ink-router-kit)** | Full API reference for the independent ink-router-kit framework (screen management, keyboard system, focus system, built-in components). |
+| **[README_mod.md](./README_mod.md)** | Mod development guide — directory structure, manifest format, plugin API, lifecycle hooks, and the event/choice/item schema. |
+| **[ink-cartridge](https://github.com/BAIGAOa/ink-cartridge)** | Full API reference for the framework (screens, layers, keyboard, focus, mouse). |
 
 ---
 
 ## Configuration & Saves
 
-- **Config files** live in `resource/` inside the installation directory (`config.json`, `keys.json`, `achievement/unlocked.json`).
-- **Saves** are stored in `~/.archive_live/` as timestamped JSON snapshots. Each save captures your full game state — player attributes, event history, achievements, and configuration.
-- Use **Save Management** from the main menu to save (`S`), load (`Enter`), or delete (`D`) saves.
+- **Config files** live in `resource/` (`config.json`, `achievement/unlocked.json`).
+- **Saves** are stored in `~/.archive_live/` as timestamped snapshots capturing the full game
+  state — player stats, skills, effects, inventory, relationships, flags, event history and
+  achievements. Use **Save Management** from the main menu.
 
 ---
 
@@ -89,22 +162,21 @@ terminal-live
 git clone https://github.com/BAIGAOa/TerminalLive
 cd TerminalLive
 npm install
-npm run dev      # build & run
-npm run watch    # watch mode (auto-rebuild on changes)
-npm test         # run tests
+npm run dev          # build & run
+npm run watch        # watch mode (auto-rebuild on changes)
+npm test             # unit tests (UI kit, filters)
+npm run test:engine  # build + headless engine/content integration check
 ```
 
-New services are registered automatically via `di-wise`: decorate them with `@Scoped(Scope.Container)` and they will be discovered by the DI container.
+New services are registered automatically via `di-wise`: decorate them with
+`@Scoped(Scope.Container)` and the DI container discovers them.
 
 ---
 
 ## License
 
-This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.  
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
 See [LICENSE](./LICENSE) for the full text.
 
-The independent framework [ink-router-kit](https://www.npmjs.com/package/@baigao_h/ink-kit) (`@baigao_h/ink-kit`) is licensed separately under the **MIT License**.
-
----
-
-
+The independent framework [`ink-cartridge`](https://www.npmjs.com/package/ink-cartridge)
+is licensed separately under the **MIT License**.

@@ -23,6 +23,7 @@ TerminalLive mods live in `~/.mod_live/`. A mod can add **custom events**, **tra
 - [The `ModContext` API](#the-modcontext-api)
 - [Translation Files](#translation-files)
 - [Developing with TypeScript](#developing-with-typescript)
+- [Sandbox & Hot-Reload](#sandbox--hot-reload)
 - [Enabling & Testing Your Mod](#enabling--testing-your-mod)
 - [Player Object Reference](#player-object-reference)
 
@@ -62,27 +63,36 @@ Every mod must have a `mod.json` at its root.
 
 ```json
 {
-  "name": "my-mod",
+  "id": "my-mod",
+  "name": "My Mod",
   "version": "1.0.0",
+  "apiVersion": 1,
   "description": "An example mod",
   "main": "index.js",
-  "author": "your-name"
+  "author": "your-name",
+  "dependencies": { "other-mod": "^1.0.0" }
 }
 ```
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `name` | ✅ | Unique mod identifier. Used in config and logs. |
-| `version` | — | Semantic version, for informational display. |
+| `id` | — | Stable id used in `dependencies`; defaults to the folder name. |
+| `name` | ✅ | Display name (Mod Manager, logs). |
+| `version` | — | Semantic version; informational. Defaults to `0.0.0`. |
+| `apiVersion` | — | Game mod API version this mod targets. Defaults to `1`. |
 | `description` | — | Short description shown in the Mod Manager. |
-| `main` | ✅ | Path to the plugin entry file (relative to mod root). |
+| `main` | — | Plugin entry file (relative to mod root). Defaults to `index.js`. |
 | `author` | — | Displayed in the Mod Manager. |
+| `dependencies` | — | `{ "modId": "semver-range" }`. Dependencies load first; a mod whose dependency is **missing** (or that sits on a **dependency cycle**) is skipped with a warning instead of crashing the game. |
+
+A mod is valid if it ships a `mod.json`, an `index.js`, or any resource pack directory
+(`events/`, `items/`, `npcs/`, `levels/`, `achievements/`, `pressures/`, `language/`).
 
 ---
 
 ## Adding Events (JSON)
 
-Place `.json` files in `events/`. Each file defines **one event instance**. The game loads them alongside built-in events and feeds them into the same weighted random engine.
+Place `.json` files in `events/`. Each file defines **one event instance** — or an **array** of them. The game loads them alongside built-in events and feeds them into the same weighted random engine.
 
 ### Minimal Example
 
@@ -104,9 +114,11 @@ Place `.json` files in `events/`. Each file defines **one event instance**. The 
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `type` | `string` | **required** | Event class name. Must be a built-in type (e.g. `BirthEvent`, `AcademicStressEvent`, `AcademicAnger`) or a custom type registered via `registerEventTypes`. |
+| `type` | `string` | **required** | Event class name. Built-ins: `BirthEvent`, `ChoiceEvent` (branching), `EffectEvent` (declarative effects), `AcademicStressEvent`, `AcademicAnger` — or a custom type registered via `registerEventTypes`. |
 | `id` | `string` | **required** | Globally unique event identifier. |
 | `nameKey` | `string` | — | Translation key for the in-game log message. |
+| `textKey` | `string` | — | Translation key for the narrative text shown with the event / its choice prompt. |
+| `choices` | `object[]` | — | Branching options. When present the event pauses and the player picks one. See [Choices](#choices). |
 | `rangeKey` | `string[]` | `["0-100"]` | Age ranges where this event can trigger. Format: `"min-max"` (e.g. `["5-12", "18-25"]`). |
 | `weight` | `number` | `0.5` | Relative probability. Higher = more likely to be selected from the candidate pool. |
 | `once` | `boolean \| string[]` | `false` | `true` = fires once globally and never again. `["5-12", "18-25"]` = fires once per listed range. |
@@ -133,6 +145,121 @@ The `postEvent` field can be a single event ID (string) or an array of post-even
 | `incident` | Event ID to schedule. |
 | `delay` | Number of rounds to wait before the event becomes eligible (default: `0`). |
 | `weight` | Override weight for the scheduled event (uses the event's own weight if omitted). |
+
+### Choices
+
+An event with `choices` (usually `type: "ChoiceEvent"`) pauses the turn and opens a modal
+dialog. Each option can gate on stats, change stats, grant or remove items, adjust a
+relationship, apply a timed effect, set a flag, and schedule a post-event.
+
+```json
+{
+  "type": "ChoiceEvent",
+  "id": "my-choice",
+  "nameKey": "ev.myChoice",
+  "textKey": "ev.myChoice.text",
+  "rangeKey": ["14-40"],
+  "weight": 1,
+  "once": true,
+  "choices": [
+    {
+      "id": "bold",
+      "labelKey": "ev.myChoice.opt.bold",
+      "require": [{ "prop": "money", "gte": 200 }],
+      "effects": { "money": -200, "happiness": 10 },
+      "items": ["item_ring"],
+      "relationship": { "npc": "npc_partner", "delta": 15 },
+      "buff": { "id": "fx_blessed", "turns": 5 },
+      "flag": "did_something",
+      "postEvent": [
+        { "incident": "follow-up-a", "weight": 1 },
+        { "incident": "follow-up-b", "weight": 1 }
+      ],
+      "noteKey": "ev.myChoice.note.bold"
+    },
+    {
+      "id": "safe",
+      "labelKey": "ev.myChoice.opt.safe",
+      "effects": { "happiness": 2 }
+    }
+  ]
+}
+```
+
+| Choice field | Description |
+|--------------|-------------|
+| `id` | Unique id within the event (the player's pick is identified by it). |
+| `labelKey` | Translation key for the option text. |
+| `require` | Array of `{ prop, gte?, lte? }` gates. Unmet non-`hidden` options show as locked; `"hidden": true` omits them entirely. |
+| `effects` | Stat deltas (`health`, `money`, `intelligence`, `social`, `fitness`, `happiness`, `angerValue`, …). |
+| `items` / `removeItems` | Item ids to grant / remove. |
+| `relationship` | `{ "npc": "<npcId>", "delta": <number> }`. |
+| `buff` | `{ "id": "<effectId>", "turns": <number> }`. |
+| `flag` | Sets a life flag (used by achievements and other gates). |
+| `postEvent` | Post-event spec (same shape as the event-level `postEvent`). |
+| `noteKey` | Translation key for the outcome line echoed to the journal. |
+
+### Declarative effect events
+
+`type: "EffectEvent"` runs no code — it applies an effect payload from `params`. Use it for
+simple events that just move the numbers:
+
+```json
+{
+  "type": "EffectEvent",
+  "id": "found-money",
+  "nameKey": "ev.foundMoney",
+  "rangeKey": ["16-70"],
+  "weight": 0.8,
+  "params": {
+    "effects": { "money": 50, "happiness": 2 },
+    "relationship": { "npc": "npc_friend", "delta": 3 },
+    "buff": { "id": "fx_blessed", "turns": 4 },
+    "items": ["item_snack"],
+    "flag": "lucky_find"
+  }
+}
+```
+
+### Post-only events
+
+Events meant only to be scheduled (never rolled randomly) can use an unreachable age range
+such as `["200-201"]`, since the player's age never reaches it directly.
+
+---
+
+## Items & NPCs (JSON)
+
+Drop `items/*.json` and `npcs/*.json` files in your mod (each file an object or array) to add
+items and relationship characters.
+
+```json
+// items/tea.json
+{
+  "id": "item_tea",
+  "labelKey": "item.tea",
+  "descKey": "item.tea.desc",
+  "icon": "🍵",
+  "usable": true,
+  "consumable": true,
+  "effects": { "happiness": 4 },
+  "buff": { "id": "fx_focus", "turns": 2 }
+}
+```
+
+```json
+// npcs/neighbor.json
+{
+  "id": "npc_neighbor",
+  "labelKey": "npc.neighbor",
+  "descKey": "npc.neighbor.desc",
+  "roleKey": "npc.role.friend",
+  "initial": 25
+}
+```
+
+Items and NPCs referenced by events (via `items` / `relationship`) must be registered here
+(or shipped as built-ins).
 
 ---
 
@@ -170,13 +297,15 @@ module.exports = {
 
 | Hook | When Called | Use Case |
 |------|-------------|----------|
-| **`onInit(ctx)`** | After mod is loaded, before the game starts. | Initialisation, subscribing to the event bus, registering screens / settings / achievements. |
+| **`onInit(ctx)`** | After mod is loaded, before the game starts. | Initialisation, subscribing to the event bus, registering screens / settings / achievements / world content. |
 | **`onPlayerCreated(player, ctx)`** | After the player object is first created. | Modify initial player state (stats, name, etc.). |
-| **`onPlayerUpdate(player, ctx)`** | Every round, after `player.update()`. | Per-turn side effects, stat monitoring, triggering custom logic based on thresholds. |
+| **`onPlayerUpdate(player, ctx)`** | Every round, after the player ticks. | Per-turn side effects, stat monitoring, threshold logic. |
+| **`onYear(player, ctx)`** | End of each year (after events resolve). | Yearly bookkeeping, custom economy/weather reactions. |
+| **`onChoice(incident, optionId, player, ctx)`** | When the player resolves a choice. | React to specific branches, track decisions. |
 | **`onIncidentTrigger(incident, player, ctx)`** | Before an incident is executed. | Conditionally block events. Return `false` to prevent execution; return nothing (or `true`) to allow it. |
 | **`onIncidentExecuted(incident, player, ctx)`** | After an incident has been executed. | Logging, follow-up actions, chaining custom effects. |
 
-> Hooks are called in mod registration order. There is no priority mechanism — first-loaded mod runs first.
+> Hooks run in **dependency order** (dependencies first), then alphabetical among independent mods. Every hook call is **error-isolated**: a mod that throws is logged and skipped without taking down the game.
 
 ### Registering Custom Event Types
 
@@ -278,13 +407,33 @@ The `ctx` object passed to all hooks and `registerEventTypes` is your mod's **on
 | **`ctx.logger`** | Scoped logger with `info(msg)`, `warn(msg)`, `error(msg)`. Output appears in the terminal and the notification console. |
 | **`ctx.getPlayer()`** | Returns the current `Player` instance. Always call this — don't cache the reference, as the Player may be replaced (e.g. when loading a save). |
 | **`ctx.createEventClass(def)`** | Factory that creates an `Incident` subclass from `{ apply, getWeight? }`. Returns a constructor for use with `registry.register()`. |
-| **`ctx.registerScreen(key, entry)`** | Registers a custom UI screen. `entry.component` is an Ink React component. `entry.hide` (default `false`) controls menu visibility. |
-| **`ctx.navigateTo(scene)`** | Programmatic navigation to any registered screen. |
+| **`ctx.registerScreen(key, entry)`** | Registers a custom UI screen. `entry.component` is an Ink React component; pass `entry.parent` to place it under an existing screen, `entry.hide` controls menu visibility. |
+| **`ctx.navigateTo(scene)`** | Programmatic navigation to any registered screen (by its `registerScreen` key). |
 | **`ctx.registerAchievement(achievement)`** | Registers a custom achievement definition. |
 | **`ctx.addCondition(id, ctor, schema)`** | Registers a reusable condition with a Zod validation schema. |
 | **`ctx.addAlgorithm(name, factory)`** | Registers a custom event selection algorithm. |
 | **`ctx.addFilter(id, filter)`** | Registers a custom incident filter for the selection pipeline. |
 | **`ctx.addSetting(key, entry)`** | Adds a custom settings panel (Ink component) to the Settings screen. |
+| **`ctx.addPressureAxis(def)`** | Adds a hidden-score axis to the world's pressure web. |
+| **`ctx.addPressureRule(rule)`** | Adds a coupling rule between two hidden-score axes. |
+| **`ctx.addLore(def)`** | Adds a codex entry (with an unlock condition). |
+| **`ctx.addFateArc(def)`** | Adds a fate arc (condition → weight bias + buff). |
+| **`ctx.addWorldEvent(def)`** | Adds a scripted world event at a given year. |
+| **`ctx.addTrait(def)`** | Adds a starting trait. |
+
+### Resource packs
+
+Besides JSON events, a mod may ship any of these directories at its root — they are
+merged with the built-ins (built-ins win on id clashes):
+
+```
+events/        items/     npcs/      levels/
+achievements/  pressures/ language/
+```
+
+`pressures/` may contain `axes.json` and `rules.json`. Events support `worldGate`,
+`pressureGate`/`pressureBias`, and `weatherGate`/`weatherBias`, so a mod's events can
+key off the era, region, faction standing, hidden scores, or weather.
 
 ### Event Bus
 
@@ -412,13 +561,54 @@ Make sure `mod.json` points to the compiled output (e.g. `"main": "index.js"`).
 
 ---
 
+## Sandbox & Hot-Reload
+
+Your `index.js` is evaluated inside an isolated V8 context (`node:vm`), not
+`require`d from Node. Inside it:
+
+- `process`, `global`, `Buffer`, timers and every Node module are **undefined**.
+- `require(...)` works only for `react`, `ink`, and `ink-cartridge`. Anything
+  else throws.
+- `module` / `exports` / `console` / `__filename` / `__dirname` are provided.
+
+Everything else you need arrives through the `ModContext` your hooks receive —
+there is no need to import game internals.
+
+> This is defence-in-depth for a single-player game, **not a security
+> boundary**. Only install mods you trust.
+
+### Hot-reload
+
+Iterate without restarting. Open the in-game console (`P`) and run:
+
+| Command | Effect |
+|---------|--------|
+| `mods` | List loaded mods and which are enabled |
+| `mods-list` | List every installed mod folder |
+| `mods-reload` | Re-read and reload all enabled mods now |
+| `mods-watch` | Toggle the file watcher (edits auto-reload, debounced) |
+| `mods-example` | Install the bundled example mod into `~/.mod_live/example_mod` |
+
+With `mods-watch` on, saving any `*.js` or `*.json` under `~/.mod_live/` reloads
+the plugins automatically. Resource JSON (events, items, language…) is read at
+startup, so restart for those.
+
+### Example mod
+
+A complete, commented template ships at `resource/example-mod/`. Run
+`mods-example` to copy it into your mod folder, then enable it in **Settings →
+Mod Manager**. It demonstrates a custom event type, a hidden-score axis, a lore
+entry, an `onYear` hook, and translation files.
+
+---
+
 ## Enabling & Testing Your Mod
 
 1. Place your mod directory in `~/.mod_live/`.
 2. Launch the game: `terminal-live`.
 3. Go to **Settings → Mod Manager**.
 4. Find your mod in the list and press `Enter` to toggle it on.
-5. Restart the game.
+5. Restart the game (or run `mods-reload` in the console `P`).
 
 Enabled mods are persisted in `resource/config.json` under `enabledMods`. The Mod Manager also shows load errors — check the notification console (`P`) for diagnostics if your mod fails to load.
 

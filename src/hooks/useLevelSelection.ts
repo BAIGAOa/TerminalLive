@@ -1,10 +1,8 @@
-import { useState, useMemo, useCallback } from "react";
-import { Key } from "ink";
+import { useState, useMemo, useCallback, useSyncExternalStore } from "react";
 import { container } from "../Container.js";
 import LevelManager from "../level/LevelManager.js";
 import Level from "../level/Level.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import { useSyncExternalStore } from "react";
 import ConfigStore from "../core/store/ConfigStore.js";
 import GeneralPurpose from "../level/conditions/GeneralPurpose.js";
 import { PlayerConfigType } from "../types/ConfigType.js";
@@ -24,9 +22,6 @@ export interface LevelItem {
   status: LevelStatus;
 }
 
-export type FocusPanel = "left" | "right";
-
-/** 格式化后的胜利条件 */
 export interface FormattedCondition {
   description: string;
   isCustom: boolean;
@@ -36,14 +31,10 @@ export interface FormattedCondition {
 export interface LevelSelectionData {
   leftItems: DifficultyItem[];
   rightItems: LevelItem[];
-  focus: FocusPanel;
   activeDifficulty: string | null;
-  isLeftFocused: boolean;
-  isRightFocused: boolean;
   t: (key: string, params?: Record<string, string | number>) => string;
   onSelectDifficulty: (item: DifficultyItem) => void;
   onSelectLevel: (item: LevelItem) => void;
-  onKeyPress: (input: string, key: Key) => void;
   showDetail: boolean;
   selectedLevel: Level | null;
   formattedConditions: FormattedCondition[];
@@ -54,28 +45,22 @@ export interface LevelSelectionData {
 
 function sortLevelsLinearly(levels: Level[]): Level[] {
   if (levels.length === 0) return [];
-
   const idMap = new Map<string, Level>();
   const childSet = new Set<string>();
-
   for (const l of levels) {
     idMap.set(l.id, l);
-    if (l.nextLevel !== "none") {
-      childSet.add(l.nextLevel);
-    }
+    if (l.nextLevel !== "none") childSet.add(l.nextLevel);
   }
-
   const root = levels.find((l) => !childSet.has(l.id));
-  if (!root) {
-    return [...levels].sort((a, b) => a.id.localeCompare(b.id));
-  }
-
+  if (!root) return [...levels].sort((a, b) => a.id.localeCompare(b.id));
   const ordered: Level[] = [];
+  const seen = new Set<string>();
   let current: Level | undefined = root;
-  while (current) {
+  // `seen` guards against a cyclic nextLevel chain (e.g. a bad mod).
+  while (current && !seen.has(current.id)) {
+    seen.add(current.id);
     ordered.push(current);
-    current =
-      current.nextLevel === "none" ? undefined : idMap.get(current.nextLevel);
+    current = current.nextLevel === "none" ? undefined : idMap.get(current.nextLevel);
   }
   return ordered;
 }
@@ -87,12 +72,8 @@ function formatSingleCondition(
   if (condition instanceof GeneralPurpose) {
     const propName = t(`playerConfig.attr.${condition.prop}`);
     const cmp = condition.cat === "greaterThan" ? ">" : "<";
-    return {
-      description: `${propName} ${cmp} ${condition.num}`,
-      isCustom: false,
-    };
+    return { description: `${propName} ${cmp} ${condition.num}`, isCustom: false };
   }
-
   const typeName = (condition as any).constructor?.name || "Unknown";
   return {
     description: t("levelDetail.customCondition", { type: typeName }),
@@ -104,8 +85,12 @@ function mergeInitialAttributes(
   globalConfig: PlayerConfigType,
   levelInitial?: Record<string, unknown>,
 ): Record<string, string | number> {
-  const result: Record<string, string | number> = { ...globalConfig };
-
+  const result: Record<string, string | number> = {};
+  for (const [key, value] of Object.entries(globalConfig)) {
+    if (typeof value === "string" || typeof value === "number") {
+      result[key] = value;
+    }
+  }
   if (levelInitial) {
     for (const [key, value] of Object.entries(levelInitial)) {
       if (
@@ -116,11 +101,10 @@ function mergeInitialAttributes(
       }
     }
   }
-
   return result;
 }
 
-export function useLevelSelection(onBack?: () => void): LevelSelectionData {
+export function useLevelSelection(): LevelSelectionData {
   const { t } = useI18n();
   const difficultyRegistry = container.resolve(DifficultyRegistry);
   const levelManager = container.resolve(LevelManager);
@@ -130,9 +114,7 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
     levelManager.getSnapshot(),
   );
 
-  const [focus, setFocus] = useState<FocusPanel>("left");
   const [activeDifficulty, setActiveDifficulty] = useState<string | null>(null);
-
   const [showDetail, setShowDetail] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
@@ -147,9 +129,7 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
     if (!activeDifficulty) return new Map<string, Level>();
     const levels = difficultyRegistry.getLevels(activeDifficulty);
     const map = new Map<string, Level>();
-    for (const l of levels) {
-      map.set(l.id, l);
-    }
+    for (const l of levels) map.set(l.id, l);
     return map;
   }, [activeDifficulty, difficultyRegistry, version]);
 
@@ -158,30 +138,23 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
     const levels = Array.from(levelMap.values());
     const sorted = sortLevelsLinearly(levels);
 
+    // Chain progression: a level is unlocked only when the previous one in the
+    // chain is completed; everything after the first incomplete level is locked.
     let prevCompleted = true;
     const result: LevelItem[] = [];
-
     for (const level of sorted) {
+      const completed = levelManager.isLevelCompleted(level.id);
       let status: LevelStatus;
-      if (levelManager.isLevelCompleted(level.id)) {
-        status = "completed";
-      } else if (prevCompleted) {
-        if (levelManager.determineWhetherCheckpointPassed(level)) {
-          status = "completed";
-        } else {
-          status = "unlocked";
-        }
-      } else {
-        status = "locked";
-      }
-
+      if (completed) status = "completed";
+      else if (prevCompleted) status = "unlocked";
+      else status = "locked";
       result.push({
         label: t(level.nameKey) || level.nameKey,
         value: level.id,
         status,
       });
+      prevCompleted = completed;
     }
-
     return result;
   }, [activeDifficulty, levelMap, levelManager, t, version]);
 
@@ -194,25 +167,18 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
 
   const initialAttributes: Record<string, string | number> = useMemo(() => {
     const globalConfig = configStore.getPlayerConfig();
-    return mergeInitialAttributes(
-      globalConfig,
-      selectedLevel?.initialPlayerAttributes,
-    );
+    return mergeInitialAttributes(globalConfig, selectedLevel?.initialPlayerAttributes);
   }, [selectedLevel, configStore]);
-
-  const isLeftFocused = focus === "left" && !showDetail;
-  const isRightFocused =
-    focus === "right" && rightItems.length > 0 && !showDetail;
 
   const onSelectDifficulty = useCallback((item: DifficultyItem) => {
     setActiveDifficulty(item.value);
-    setFocus("right");
     setShowDetail(false);
     setSelectedLevel(null);
   }, []);
 
   const onSelectLevel = useCallback(
     (item: LevelItem) => {
+      if (item.status === "locked") return; // locked levels cannot be started
       const level = levelMap.get(item.value);
       if (level) {
         setSelectedLevel(level);
@@ -232,36 +198,13 @@ export function useLevelSelection(onBack?: () => void): LevelSelectionData {
     levelManager.start(selectedLevel.id);
   }, [selectedLevel, levelManager]);
 
-  const onKeyPress = useCallback(
-    (_input: string, key: Key) => {
-      if (key.return && showDetail) {
-        onConfirmEnter();
-        return;
-      }
-      if (key.escape) {
-        if (showDetail) {
-          onBackFromDetail();
-        } else if (focus === "right") {
-          setFocus("left");
-        } else {
-          onBack?.();
-        }
-      }
-    },
-    [focus, onBack, showDetail, onBackFromDetail, onConfirmEnter],
-  );
-
   return {
     leftItems,
     rightItems,
-    focus,
     activeDifficulty,
-    isLeftFocused,
-    isRightFocused,
     t,
     onSelectDifficulty,
     onSelectLevel,
-    onKeyPress,
     showDetail,
     selectedLevel,
     formattedConditions,

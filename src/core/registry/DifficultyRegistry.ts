@@ -1,7 +1,5 @@
-import { Scope, Scoped } from "di-wise";
 import Level from "../../level/Level.js";
 
-@Scoped(Scope.Container)
 export default class DifficultyRegistry {
   private readonly map = new Map<string, Map<string, Level>>();
 

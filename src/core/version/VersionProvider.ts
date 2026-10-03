@@ -1,14 +1,12 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Scope, Scoped } from "di-wise";
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 // dist/core/archive → 向上三级到项目根目录
 const ROOT = join(_dirname, "..", "..", "..");
 
-@Scoped(Scope.Container)
 export class VersionProvider {
   public readonly version: string;
 

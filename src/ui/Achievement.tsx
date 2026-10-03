@@ -1,85 +1,54 @@
-import React, { useMemo, useEffect } from 'react';
-import { Box, Text } from 'ink';
-import { SelectInput, useKeyboard, useScreenSystem } from '@baigao_h/ink-kit';
-import type { Item } from '@baigao_h/ink-kit';
-import { useAchievementScreen } from '../hooks/useAchievementScreen.js';
-import { useThemeColors } from '../hooks/theme/ThematicCommunicator.js';
-import { MergedAchievement } from '../achievement/AchievementManager.js';
+import React, { useEffect, useMemo } from "react";
+import { Box, Text } from "ink";
+import { useKeyboard, useScreenSystem } from "ink-cartridge";
+import { MenuList, ScrollList } from "./kit/index.js";
+import { useAchievementScreen } from "../hooks/useAchievementScreen.js";
+import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { MergedAchievement } from "../achievement/AchievementManager.js";
 
-const AchievementCard = ({
+/** Every card is exactly this many lines: top border, title, desc, bottom border. */
+const CARD_HEIGHT = 4;
+
+function AchievementCard({
   achievement,
+  selected,
   t,
+  colors,
 }: {
   achievement: MergedAchievement;
+  selected: boolean;
   t: (key: string, params?: Record<string, string | number>) => string;
-}) => {
-  const colors = useThemeColors();
+  colors: ReturnType<typeof useThemeColors>;
+}) {
   const isUnlocked = achievement.unlocked;
+  const hidden = !isUnlocked && achievement.hidden;
 
-  if (!isUnlocked && achievement.hidden) {
-    return (
-      <Box
-        width="100%"
-        borderStyle="round"
-        borderColor={colors.muted}
-        paddingX={1}
-        marginBottom={1}
-      >
-        <Box flexDirection="column">
-          <Text color={colors.muted} bold>???</Text>
-          <Text dimColor>{t('achievement.hidden')}</Text>
-        </Box>
-      </Box>
-    );
-  }
+  const accent = hidden
+    ? colors.muted
+    : isUnlocked
+      ? colors.achievement
+      : colors.achievementLocked;
 
   return (
     <Box
-      width="100%"
+      height={CARD_HEIGHT}
       borderStyle="round"
-      borderColor={isUnlocked ? colors.achievement : colors.achievementLocked}
+      borderColor={selected ? colors.highlight : accent}
       paddingX={1}
-      marginBottom={1}
+      flexDirection="column"
     >
-      <Box flexDirection="column">
-        <Text color={isUnlocked ? colors.achievement : colors.achievementLocked} bold>
-          {isUnlocked ? '✓' : '○'} {t(achievement.nameKey)}
+      <Box flexDirection="row" justifyContent="space-between" width="100%">
+        <Text bold color={isUnlocked ? colors.achievement : accent}>
+          {hidden ? "???" : `${isUnlocked ? "✓" : "○"} ${t(achievement.nameKey)}`}
         </Text>
-        <Text dimColor={!isUnlocked}>
-          {t(achievement.descriptionKey)}
-        </Text>
-        {isUnlocked && achievement.unlockedAt !== null && (
+        {isUnlocked && achievement.unlockedAt !== null ? (
           <Text dimColor>
-            {t('achievement.unlockedAt', { age: achievement.unlockedAt })}
+            {t("achievement.unlockedAt", { age: achievement.unlockedAt })}
           </Text>
-        )}
+        ) : null}
       </Box>
-    </Box>
-  );
-};
-
-function CategoryItem({ label, isSelected }: { label: string; value: string; isSelected: boolean }) {
-  const colors = useThemeColors();
-  return (
-    <Box
-      borderStyle="double"
-      width="100%"
-      height={4}
-      borderColor={isSelected ? colors.highlight : colors.muted}
-    >
-      <Box justifyContent="center" width="100%" height={4}>
-        <Text bold>{label}</Text>
-      </Box>
-    </Box>
-  );
-}
-
-function DefaultIndicator({ isSelected }: { isSelected: boolean }) {
-  const colors = useThemeColors();
-  return (
-    <Box marginRight={1}>
-      <Text color={isSelected ? colors.highlight : undefined}>
-        {isSelected ? '❯' : ' '}
+      <Text dimColor={!isUnlocked}>
+        {hidden ? t("achievement.hidden") : t(achievement.descriptionKey)}
       </Text>
     </Box>
   );
@@ -96,63 +65,92 @@ export default function AchievementScreen() {
     return () => u();
   }, [back, boundKeyboard]);
 
-  const categoryItems: Item<string>[] = useMemo(
-    () =>
-      data.menuItems.map((m) => ({
-        label: m.label,
-        value: m.value,
-      })),
-    [data.menuItems],
-  );
+  const catItems = data.menuItems.map((m) => ({
+    value: m.value,
+    label: m.label,
+  }));
+
+  const byId = useMemo(() => {
+    const map = new Map<string, MergedAchievement>();
+    for (const a of data.filteredAchievements) map.set(a.id, a);
+    return map;
+  }, [data.filteredAchievements]);
+
+  const cardItems = data.filteredAchievements.map((a) => ({
+    value: a.id,
+    label: a.nameKey,
+  }));
 
   return (
-    <Box flexDirection="column" width="100%" height={data.rows}>
+    <Box flexDirection="column" width="100%" height={data.rows} padding={1}>
       <Box justifyContent="center" marginBottom={1}>
         <Text color={colors.menuTitle} bold>
-          {data.t('achievement.title', {
+          {data.t("achievement.title", {
             unlocked: data.totalUnlocked,
             total: data.allAchievements.length,
           })}
         </Text>
       </Box>
 
-      <Box flexDirection="row" width="100%" flexGrow={1} height="100%">
-        <Box borderStyle="bold" width="30%">
-          <SelectInput
-            items={categoryItems}
+      <Box flexDirection="row" width="100%" flexGrow={1}>
+        <Box width="28%" marginRight={1}>
+          <MenuList
+            focusId="achievement-category"
+            items={catItems}
             onSelect={(item) => {
               const cat = data.menuItems.find((m) => m.value === item.value);
               if (cat) data.onSelectCategory(cat);
             }}
-            focusId="achievement-category"
-            itemComponent={CategoryItem as any}
-            indicatorComponent={DefaultIndicator}
+            renderItem={(item, state) => (
+              <Box
+                borderStyle="double"
+                borderColor={state.selected ? colors.highlight : colors.muted}
+                paddingX={1}
+                justifyContent="center"
+              >
+                <Text bold={state.selected}>{item.label}</Text>
+              </Box>
+            )}
           />
         </Box>
 
         <Box
           flexDirection="column"
-          padding={1}
-          width="70%"
+          width="72%"
           borderStyle="single"
           borderColor={colors.info}
+          paddingX={1}
         >
           <Box marginBottom={1}>
             <Text dimColor>
-              {data.t('achievement.categoryCount', {
+              {data.t("achievement.categoryCount", {
                 category: data.t(`achievement.category.${data.activeCategory}`),
                 unlocked: data.categoryUnlocked,
                 total: data.filteredAchievements.length,
               })}
             </Text>
           </Box>
-
           {data.filteredAchievements.length === 0 ? (
-            <Text dimColor>{data.t('achievement.empty')}</Text>
+            <Text dimColor>{data.t("achievement.empty")}</Text>
           ) : (
-            data.filteredAchievements.map(a => (
-              <AchievementCard key={a.id} achievement={a} t={data.t} />
-            ))
+            <ScrollList
+              focusId="achievement-list"
+              itemHeight={CARD_HEIGHT}
+              height={Math.max(CARD_HEIGHT, data.rows - data.menuItems.length - 6)}
+              items={cardItems}
+              renderItem={(item, state) => {
+                const a = byId.get(item.value);
+                if (!a) return <Box height={CARD_HEIGHT} />;
+                return (
+                  <AchievementCard
+                    achievement={a}
+                    selected={state.selected}
+                    t={data.t}
+                    colors={colors}
+                  />
+                );
+              }}
+            />
           )}
         </Box>
       </Box>

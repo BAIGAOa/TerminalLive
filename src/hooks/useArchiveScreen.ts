@@ -8,7 +8,7 @@ import { useTerminalSize } from "../ui/TerminalSizeContext.js";
 export interface ArchiveScreenData {
   saves: SaveMeta[];
   selectedIndex: number;
-  setSelectedIndex: (fn: (i: number) => number) => void;
+  setSelectedIndex: (i: number) => void;
   message: string | null;
   confirmDelete: boolean;
   saveMode: boolean;
@@ -19,7 +19,7 @@ export interface ArchiveScreenData {
   handleStartSave: () => void;
   handleSubmitSave: () => void;
   handleCancelSave: () => void;
-  handleLoad: () => void;
+  loadByName: (name: string) => void;
   handleDelete: () => void;
   handleCancel: () => void;
 }
@@ -30,7 +30,7 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
   const store = container.resolve(ArchiveManager);
 
   const [saves, setSaves] = useState<SaveMeta[]>(() => store.listSaves());
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndexState] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [saveMode, setSaveMode] = useState(false);
@@ -38,11 +38,16 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
 
   const refresh = useCallback(() => {
     setSaves(store.listSaves());
-    setSelectedIndex(0);
+    setSelectedIndexState(0);
     setConfirmDelete(false);
     setSaveMode(false);
     setSaveName("");
   }, [store]);
+
+  const flash = useCallback((msg: string) => {
+    setMessage(msg);
+    setTimeout(() => setMessage(null), 3000);
+  }, []);
 
   const handleStartSave = useCallback(() => {
     setSaveMode(true);
@@ -52,35 +57,34 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
   const handleSubmitSave = useCallback(() => {
     const trimmed = saveName.trim();
     if (!trimmed) {
-      setMessage(t("archive.emptyNameError"));
+      flash(t("archive.emptyNameError"));
       return;
     }
     try {
       store.save(trimmed);
-      setMessage(t("archive.saveSuccess"));
+      flash(t("archive.saveSuccess"));
       refresh();
     } catch (err) {
-      setMessage((err as Error).message);
+      flash((err as Error).message);
     }
-    setTimeout(() => setMessage(null), 3000);
-  }, [saveName, store, t, refresh]);
+  }, [saveName, store, t, refresh, flash]);
 
   const handleCancelSave = useCallback(() => {
     setSaveMode(false);
     setSaveName("");
   }, []);
 
-  const handleLoad = useCallback(() => {
-    if (saves.length === 0) return;
-    const name = saves[selectedIndex].name;
-    try {
-      store.load(name);
-      setMessage(t("archive.loadSuccess"));
-    } catch {
-      setMessage(t("archive.incompatible"));
-      setTimeout(() => setMessage(null), 3000);
-    }
-  }, [saves, selectedIndex, store, t]);
+  const loadByName = useCallback(
+    (name: string) => {
+      try {
+        store.load(name);
+        setMessage(t("archive.loadSuccess"));
+      } catch {
+        flash(t("archive.incompatible"));
+      }
+    },
+    [store, t, flash],
+  );
 
   const handleDelete = useCallback(() => {
     if (saves.length === 0) return;
@@ -102,6 +106,11 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
     }
   }, [saveMode, confirmDelete, handleCancelSave, onBack]);
 
+  const setSelectedIndex = useCallback((i: number) => {
+    setSelectedIndexState(i);
+    setConfirmDelete(false);
+  }, []);
+
   return {
     saves,
     selectedIndex,
@@ -116,7 +125,7 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
     handleStartSave,
     handleSubmitSave,
     handleCancelSave,
-    handleLoad,
+    loadByName,
     handleDelete,
     handleCancel,
   };

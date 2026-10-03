@@ -2,5 +2,21 @@
   {
     "id": "born",
     "unlockedAt": 1
+  },
+  {
+    "id": "infamous",
+    "unlockedAt": 14
+  },
+  {
+    "id": "scholar",
+    "unlockedAt": 23
+  },
+  {
+    "id": "explorer",
+    "unlockedAt": 24
+  },
+  {
+    "id": "blissful",
+    "unlockedAt": 24
   }
 ]

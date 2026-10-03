@@ -1,10 +1,8 @@
-import { Scope, Scoped } from "di-wise";
 import { Incident, IncidentParameter } from "../../world/Incident.js";
 
 
 export type IncidentConstructor = new (params: IncidentParameter) => Incident;
 
-@Scoped(Scope.Container)
 export default class EventTypeRegistry {
   private readonly types = new Map<string, IncidentConstructor>();
 

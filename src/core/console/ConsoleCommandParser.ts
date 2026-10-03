@@ -1,11 +1,10 @@
-import { Scoped, Scope, inject } from "di-wise";
+import { inject } from "../../Container.js";
 import ConsoleStore from "./ConsoleStore.js";
 import CommandCenter, {
   Command,
   CommandResult,
 } from "../registry/CommandCenter.js";
 
-@Scoped(Scope.Container)
 export default class ConsoleCommandParser {
   private center: CommandCenter;
   private consoleStore: ConsoleStore;

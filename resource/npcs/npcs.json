@@ -1,0 +1,72 @@
+[
+  {
+    "id": "npc_mom",
+    "labelKey": "npc.mom",
+    "descKey": "npc.mom.desc",
+    "roleKey": "npc.role.family",
+    "initial": 70
+  },
+  {
+    "id": "npc_dad",
+    "labelKey": "npc.dad",
+    "descKey": "npc.dad.desc",
+    "roleKey": "npc.role.family",
+    "initial": 65
+  },
+  {
+    "id": "npc_friend",
+    "labelKey": "npc.friend",
+    "descKey": "npc.friend.desc",
+    "roleKey": "npc.role.friend",
+    "initial": 40
+  },
+  {
+    "id": "npc_teacher",
+    "labelKey": "npc.teacher",
+    "descKey": "npc.teacher.desc",
+    "roleKey": "npc.role.mentor",
+    "initial": 30
+  },
+  {
+    "id": "npc_partner",
+    "labelKey": "npc.partner",
+    "descKey": "npc.partner.desc",
+    "roleKey": "npc.role.partner",
+    "initial": 0
+  },
+  {
+    "id": "npc_boss",
+    "labelKey": "npc.boss",
+    "descKey": "npc.boss.desc",
+    "roleKey": "npc.role.work",
+    "initial": 20
+  },
+  {
+    "id": "npc_child",
+    "labelKey": "npc.child",
+    "descKey": "npc.child.desc",
+    "roleKey": "npc.role.family",
+    "initial": 0
+  },
+  {
+    "id": "npc_colleague",
+    "labelKey": "npc.colleague",
+    "descKey": "npc.colleague.desc",
+    "roleKey": "npc.role.work",
+    "initial": 25
+  },
+  {
+    "id": "npc_neighbor",
+    "labelKey": "npc.neighbor",
+    "descKey": "npc.neighbor.desc",
+    "roleKey": "npc.role.friend",
+    "initial": 20
+  },
+  {
+    "id": "npc_pet",
+    "labelKey": "npc.pet",
+    "descKey": "npc.pet.desc",
+    "roleKey": "npc.role.pet",
+    "initial": 0
+  }
+]

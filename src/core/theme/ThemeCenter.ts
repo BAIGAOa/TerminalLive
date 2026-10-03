@@ -1,7 +1,5 @@
-import { Scope, Scoped } from "di-wise";
 import { Theme } from "./ThemeDefinition.js";
 
-@Scoped(Scope.Container)
 export default class ThemeCenter {
   private themes: Map<string, Theme> = new Map();
 

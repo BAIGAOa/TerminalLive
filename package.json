@@ -26,7 +26,9 @@
         "clean": "rm -rf dist",
         "runtsc": "npx tsx src/main.tsx",
         "test": "vitest run",
-        "test:watch": "vitest"
+        "test:watch": "vitest",
+        "test:engine": "npm run build && node dist/dev/validate.js",
+        "test:ui": "npm run build && node scripts/ui-smoke.mjs"
     },
     "keywords": [
         "terminal",
@@ -52,13 +54,13 @@
         "@types/lodash-es": "^4.17.12",
         "@types/node": "^20.19.39",
         "@types/react": "^19.2.14",
+        "ink-testing-library": "^4.0.0",
         "typescript": "^5.9.3",
         "vitest": "^4.1.5"
     },
     "dependencies": {
-        "@baigao_h/ink-kit": "^0.5.0",
-        "di-wise": "^0.2.8",
-        "ink": "^7.0.1",
+        "ink": "^7.1.1",
+        "ink-cartridge": "^5.5.1",
         "lodash-es": "^4.18.1",
         "os-locale": "^8.0.0",
         "react": "^19.2.4",

@@ -1,4 +1,4 @@
-import { Scope, Scoped, inject } from "di-wise";
+import { inject } from "../Container.js";
 import Level from "./Level.js";
 import LevelLoader from "./LevelLoader.js";
 import Player from "../world/Player.js";
@@ -10,10 +10,14 @@ import { fileURLToPath } from "node:url";
 import TypedEventBus from "../core/TypedEventBus.js";
 import ModMonitor from "../core/mod/ModMonitor.js";
 import DifficultyRegistry from "../core/registry/DifficultyRegistry.js";
+import TraitRegistry from "../world/traits/TraitRegistry.js";
+import NpcRegistry from "../world/relationships/NpcRegistry.js";
+import WorldState from "../world/chronicle/WorldState.js";
+import PressureState from "../world/pressures/PressureState.js";
+import WeatherState from "../world/weather/WeatherState.js";
 
 type Listener = () => void;
 
-@Scoped(Scope.Container)
 export default class LevelManager {
   private levelLoader: LevelLoader;
   private modPluginLoader: ModPluginLoader;
@@ -24,6 +28,13 @@ export default class LevelManager {
   private levels: Map<string, Level> = new Map();
   private completedLevels = new Set<string>();
   private _current: Level | null = null;
+  /** Levels that no other level points to as `nextLevel` (the life's start). */
+  private rootLevelIds = new Set<string>();
+  private traitRegistry: TraitRegistry;
+  private npcRegistry: NpcRegistry;
+  private world: WorldState;
+  private pressures: PressureState;
+  private weather: WeatherState;
 
   public lastPlayedLevelId: string | null = null;
 
@@ -41,6 +52,11 @@ export default class LevelManager {
     this.configStore = inject(ConfigStore);
     this.eventBus = inject(TypedEventBus);
     this.difficultyRegistry = inject(DifficultyRegistry);
+    this.traitRegistry = inject(TraitRegistry);
+    this.npcRegistry = inject(NpcRegistry);
+    this.world = inject(WorldState);
+    this.pressures = inject(PressureState);
+    this.weather = inject(WeatherState);
   }
 
   public subscribe = (listener: Listener) => {
@@ -110,6 +126,16 @@ export default class LevelManager {
         this.difficultyRegistry.register(level.difficultyIdentification, level);
       }
     }
+
+    // Roots = levels no other level points to. Traits apply when a life starts
+    // on a root level.
+    const referenced = new Set<string>();
+    for (const level of this.levels.values()) {
+      if (level.nextLevel !== "none") referenced.add(level.nextLevel);
+    }
+    this.rootLevelIds = new Set(
+      [...this.levels.keys()].filter((id) => !referenced.has(id)),
+    );
   }
 
   public start(id: string): void {
@@ -122,21 +148,86 @@ export default class LevelManager {
 
     this._current = level;
 
+    const isRoot = this.rootLevelIds.has(id);
+    if (isRoot) {
+      // A root level starts a brand-new life: reset the shared player (clears
+      // items/relationships/flags/effects carried over), re-seed NPC affinities,
+      // clear the completion set, then apply the level's start state + traits.
+      level.player.resetForNewLife((level.initialPlayerAttributes ?? {}) as never);
+      level.player.seedRelationships(this.npcRegistry.getAll());
+      // A new life resets the world too (region, karma, era, lore, fates).
+      this.world.begin();
+      this.pressures.reset();
+      this.weather.reset();
+      this.completedLevels.clear();
+      this.configStore.update({ completedLevels: [] });
+    } else if (level.initialPlayerAttributes) {
+      // Mid-chain level: carry the player over, applying only the level's
+      // start state (e.g. the age of that stage) — see LevelLoader.buildLevel.
+      level.player.applyAttributes(level.initialPlayerAttributes as never);
+    }
+
+    if (isRoot) {
+      this.applyTraits(level.player);
+    }
+
     // 加载事件到当前关卡
     this.loadEventsFor(level);
 
     this.modPluginLoader.setPlayer(level.player);
     this.eventBus.emit("level:started", { levelId: id });
-    this.lastPlayedLevelId = null;
-    this.configStore.update({ lastLevelId: undefined });
+    this.lastPlayedLevelId = id;
+    this.configStore.update({ lastLevelId: id });
 
     this.notify();
   }
 
+  /** Whether a life is currently active (a level has been started/restored). */
+  public hasActiveLevel(): boolean {
+    return this._current !== null;
+  }
+
+  /** Apply the config-selected traits to the player (once, at life start). */
+  private applyTraits(player: Player): void {
+    for (const id of this.configStore.getTraits()) {
+      const def = this.traitRegistry.get(id);
+      if (!def) continue;
+      if (def.start) player.applyDelta(def.start);
+      if (def.buff) player.addEffect(def.buff.id, def.buff.turns);
+    }
+    player.notify();
+  }
+
   public update(): void {
-    this.current.update();
+    this.current.endTurn();
+    // Let mods observe the player and the year.
+    this.modPluginLoader.firePlayerUpdate(this.current.player);
+    this.modPluginLoader.fireYear(this.current.player);
     this.eventBus.emit("player:updated");
     this.notify();
+  }
+
+  public hasPendingChoice(): boolean {
+    return this._current?.hasPendingChoice() ?? false;
+  }
+
+  public getPendingChoice() {
+    return this._current?.getPendingChoice() ?? null;
+  }
+
+  public resolveChoice(optionId: string): boolean {
+    const ok = this._current?.resolveChoice(optionId) ?? false;
+    if (ok) {
+      this.eventBus.emit("player:updated");
+      this.notify();
+    }
+    return ok;
+  }
+
+  /** Whether the current level's pass conditions are met. */
+  public isCurrentCleared(): boolean {
+    if (!this._current) return false;
+    return this.determineWhetherCheckpointPassed(this._current);
   }
 
   public getCurrentEventHistory(): EventHistory | null {
@@ -165,8 +256,17 @@ export default class LevelManager {
     const nextId = this._current.nextLevel;
     if (nextId === "none") return false;
     if (!this.levels.has(nextId)) return false;
+    // Record the level we are leaving as completed, and persist it so progress
+    // survives a restart.
+    this.completedLevels.add(this._current.id);
+    this.configStore.update({ completedLevels: [...this.completedLevels] });
     this.start(nextId);
     return true;
+  }
+
+  /** IDs of levels the player has actually finished this run. */
+  public getCompletedLevelIds(): string[] {
+    return [...this.completedLevels];
   }
 
   private loadEventsFor(level: Level): void {
@@ -189,15 +289,15 @@ export default class LevelManager {
 
   // 判断这个关卡是否通过
   public determineWhetherCheckpointPassed(level: Level) {
-    const p = this.player;
+    const p = level.player ?? this.player;
 
     if (!p) throw new Error(`玩家未加载无法判断关卡${level.id}是否通过`);
 
-    const pass = level.nextLevelUnlock.every((each) =>
-      each.customsClearance(p),
-    );
+    // A level with no explicit conditions is NOT automatically "passed"
+    // (previously `every()` returned true for an empty list).
+    if (level.nextLevelUnlock.length === 0) return false;
 
-    return pass;
+    return level.nextLevelUnlock.every((each) => each.customsClearance(p));
   }
 
   public getSnapshot = (): number => this.version;
@@ -219,6 +319,7 @@ export default class LevelManager {
       this.loadEventsFor(level);
     }
     this.modPluginLoader.setPlayer(player);
+    this.lastPlayedLevelId = levelId;
     this.eventBus.emit("level:started", { levelId });
     this.notify();
   }

@@ -1,0 +1,18 @@
+{
+  "id": "elder",
+  "nameKey": "level.elder",
+  "descriptionKey": "level.elder.desc",
+  "nextLevel": "none",
+  "difficultyIdentification": "expert",
+  "algorithm": "default",
+  "extraFilters": [],
+  "onEnter": {
+    "setPlayer": { "age": 60 }
+  },
+  "nextLevelUnlock": [
+    {
+      "type": "generalPurpose",
+      "params": { "prop": "age", "num": 99, "cat": "greaterThan" }
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { inject } from "../../Container.js";
 import {
   existsSync,
   readdirSync,
@@ -7,7 +8,6 @@ import {
 } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { Scope, Scoped, inject } from "di-wise";
 import { ArchiveLoader } from "./ArchiveLoader.js";
 import { SaveMeta } from "./SaveSchema.js";
 import ConfigStore from "../store/ConfigStore.js";
@@ -20,7 +20,6 @@ import AchievementManager from "../../achievement/AchievementManager.js";
 
 type Listener = () => void;
 
-@Scoped(Scope.Container)
 export class ArchiveManager {
   private readonly ARCHIVE_ROOT = join(homedir(), ".archive_live");
 

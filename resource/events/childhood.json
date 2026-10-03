@@ -1,0 +1,218 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_kindergarten_show",
+    "nameKey": "ev.kindergarten_show",
+    "textKey": "ev.kindergarten_show.text",
+    "rangeKey": ["3-6"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "perform",
+        "labelKey": "ev.kindergarten_show.opt.perform",
+        "effects": { "social": 6, "happiness": 8 },
+        "relationship": { "npc": "npc_mom", "delta": 5 },
+        "noteKey": "ev.kindergarten_show.note.perform"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "ev.kindergarten_show.opt.refuse",
+        "effects": { "happiness": -3, "depressionValue": 4 },
+        "noteKey": "ev.kindergarten_show.note.refuse"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_toy_broken",
+    "nameKey": "ev.toy_broken",
+    "textKey": "ev.toy_broken.text",
+    "rangeKey": ["3-8"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "fix",
+        "labelKey": "ev.toy_broken.opt.fix",
+        "effects": { "intelligence": 4, "happiness": 2 },
+        "items": ["item_toy"],
+        "noteKey": "ev.toy_broken.note.fix"
+      },
+      {
+        "id": "cry",
+        "labelKey": "ev.toy_broken.opt.cry",
+        "effects": { "happiness": -5, "angerValue": 6 },
+        "relationship": { "npc": "npc_mom", "delta": -3 },
+        "noteKey": "ev.toy_broken.note.cry"
+      },
+      {
+        "id": "accept",
+        "labelKey": "ev.toy_broken.opt.accept",
+        "effects": { "happiness": -1 },
+        "noteKey": "ev.toy_broken.note.accept"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_stray_cat",
+    "nameKey": "ev.stray_cat",
+    "textKey": "ev.stray_cat.text",
+    "rangeKey": ["5-12"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "adopt",
+        "labelKey": "ev.stray_cat.opt.adopt",
+        "effects": { "happiness": 10, "money": -10 },
+        "buff": { "id": "fx_blessed", "turns": 5 },
+        "flag": "cat_owner",
+        "noteKey": "ev.stray_cat.note.adopt"
+      },
+      {
+        "id": "feed",
+        "labelKey": "ev.stray_cat.opt.feed",
+        "effects": { "happiness": 4 },
+        "noteKey": "ev.stray_cat.note.feed"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "ev.stray_cat.opt.ignore",
+        "effects": { "happiness": -2 },
+        "noteKey": "ev.stray_cat.note.ignore"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_school_bully",
+    "nameKey": "ev.school_bully",
+    "textKey": "ev.school_bully.text",
+    "rangeKey": ["7-12"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "fight",
+        "labelKey": "ev.school_bully.opt.fight",
+        "effects": { "fitness": 5, "angerValue": 10, "health": -6 },
+        "noteKey": "ev.school_bully.note.fight"
+      },
+      {
+        "id": "teacher",
+        "labelKey": "ev.school_bully.opt.teacher",
+        "effects": { "social": 3, "happiness": 2 },
+        "relationship": { "npc": "npc_teacher", "delta": 8 },
+        "noteKey": "ev.school_bully.note.teacher"
+      },
+      {
+        "id": "endure",
+        "labelKey": "ev.school_bully.opt.endure",
+        "effects": { "depressionValue": 12, "happiness": -6 },
+        "noteKey": "ev.school_bully.note.endure"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_school_contest",
+    "nameKey": "ev.school_contest",
+    "textKey": "ev.school_contest.text",
+    "rangeKey": ["7-12"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "ev.school_contest.opt.join",
+        "effects": { "intelligence": 6, "happiness": 4 },
+        "items": ["item_book"],
+        "noteKey": "ev.school_contest.note.join"
+      },
+      {
+        "id": "skip",
+        "labelKey": "ev.school_contest.opt.skip",
+        "effects": { "happiness": 1 },
+        "noteKey": "ev.school_contest.note.skip"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_pocket_money",
+    "nameKey": "ev.pocket_money",
+    "textKey": "ev.pocket_money.text",
+    "rangeKey": ["6-12"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "save",
+        "labelKey": "ev.pocket_money.opt.save",
+        "effects": { "money": 15, "intelligence": 1 },
+        "noteKey": "ev.pocket_money.note.save"
+      },
+      {
+        "id": "snack",
+        "labelKey": "ev.pocket_money.opt.snack",
+        "effects": { "happiness": 6 },
+        "items": ["item_snack"],
+        "noteKey": "ev.pocket_money.note.snack"
+      },
+      {
+        "id": "book",
+        "labelKey": "ev.pocket_money.opt.book",
+        "effects": { "intelligence": 3 },
+        "items": ["item_book"],
+        "noteKey": "ev.pocket_money.note.book"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_first_friend",
+    "nameKey": "ev.first_friend",
+    "textKey": "ev.first_friend.text",
+    "rangeKey": ["5-10"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "approach",
+        "labelKey": "ev.first_friend.opt.approach",
+        "effects": { "social": 8, "happiness": 6 },
+        "relationship": { "npc": "npc_friend", "delta": 15 },
+        "flag": "has_friend",
+        "noteKey": "ev.first_friend.note.approach"
+      },
+      {
+        "id": "alone",
+        "labelKey": "ev.first_friend.opt.alone",
+        "effects": { "intelligence": 3, "happiness": -2 },
+        "noteKey": "ev.first_friend.note.alone"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_family_trip",
+    "nameKey": "ev.family_trip",
+    "textKey": "ev.family_trip.text",
+    "rangeKey": ["4-12"],
+    "weight": 0.6,
+    "params": {
+      "effects": { "happiness": 7 },
+      "relationship": { "npc": "npc_mom", "delta": 3 }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_child_sick",
+    "nameKey": "ev.child_sick",
+    "textKey": "ev.child_sick.text",
+    "rangeKey": ["3-10"],
+    "weight": 0.8,
+    "params": {
+      "effects": { "health": -6 },
+      "buff": { "id": "fx_sick", "turns": 2 }
+    }
+  }
+]

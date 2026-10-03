@@ -1,0 +1,198 @@
+[
+  {
+    "id": "item_toy",
+    "labelKey": "item.toy",
+    "descKey": "item.toy.desc",
+    "icon": "🧸",
+    "usable": true,
+    "consumable": false,
+    "effects": { "happiness": 8 },
+    "price": 30,
+    "tags": ["childhood"]
+  },
+  {
+    "id": "item_book",
+    "labelKey": "item.book",
+    "descKey": "item.book.desc",
+    "icon": "📕",
+    "usable": true,
+    "consumable": true,
+    "effects": { "intelligence": 6 },
+    "price": 40
+  },
+  {
+    "id": "item_snack",
+    "labelKey": "item.snack",
+    "descKey": "item.snack.desc",
+    "icon": "🍪",
+    "usable": true,
+    "consumable": true,
+    "effects": { "happiness": 5 },
+    "price": 10
+  },
+  {
+    "id": "item_coffee",
+    "labelKey": "item.coffee",
+    "descKey": "item.coffee.desc",
+    "icon": "☕",
+    "usable": true,
+    "consumable": true,
+    "effects": { "happiness": 3 },
+    "buff": { "id": "fx_focus", "turns": 3 },
+    "price": 15
+  },
+  {
+    "id": "item_tea",
+    "labelKey": "item.tea",
+    "descKey": "item.tea.desc",
+    "icon": "🍵",
+    "usable": true,
+    "consumable": true,
+    "effects": { "happiness": 4, "angerValue": -4 },
+    "buff": { "id": "fx_focus", "turns": 2 },
+    "price": 12
+  },
+  {
+    "id": "item_medicine",
+    "labelKey": "item.medicine",
+    "descKey": "item.medicine.desc",
+    "icon": "💊",
+    "usable": true,
+    "consumable": true,
+    "effects": { "health": 18 },
+    "price": 60
+  },
+  {
+    "id": "item_vitamin",
+    "labelKey": "item.vitamin",
+    "descKey": "item.vitamin.desc",
+    "icon": "🧴",
+    "usable": true,
+    "consumable": true,
+    "effects": { "health": 6, "fitness": 2 },
+    "price": 40
+  },
+  {
+    "id": "item_textbook",
+    "labelKey": "item.textbook",
+    "descKey": "item.textbook.desc",
+    "icon": "📘",
+    "usable": true,
+    "consumable": true,
+    "effects": { "intelligence": 8 },
+    "price": 80
+  },
+  {
+    "id": "item_perfume",
+    "labelKey": "item.perfume",
+    "descKey": "item.perfume.desc",
+    "icon": "🌸",
+    "usable": true,
+    "consumable": true,
+    "effects": { "social": 3 },
+    "buff": { "id": "fx_charm", "turns": 3 },
+    "price": 90
+  },
+  {
+    "id": "item_gympass",
+    "labelKey": "item.gympass",
+    "descKey": "item.gympass.desc",
+    "icon": "🎟",
+    "usable": true,
+    "consumable": true,
+    "effects": { "fitness": 6 },
+    "buff": { "id": "fx_energy", "turns": 3 },
+    "price": 100
+  },
+  {
+    "id": "item_bike",
+    "labelKey": "item.bike",
+    "descKey": "item.bike.desc",
+    "icon": "🚲",
+    "usable": true,
+    "consumable": false,
+    "effects": { "fitness": 4 },
+    "price": 120,
+    "tags": ["childhood"]
+  },
+  {
+    "id": "item_guitar",
+    "labelKey": "item.guitar",
+    "descKey": "item.guitar.desc",
+    "icon": "🎸",
+    "usable": true,
+    "consumable": false,
+    "effects": { "happiness": 4, "social": 2 },
+    "buff": { "id": "fx_charm", "turns": 3 },
+    "price": 200
+  },
+  {
+    "id": "item_laptop",
+    "labelKey": "item.laptop",
+    "descKey": "item.laptop.desc",
+    "icon": "💻",
+    "usable": true,
+    "consumable": false,
+    "effects": { "intelligence": 4 },
+    "buff": { "id": "fx_focus", "turns": 3 },
+    "price": 400
+  },
+  {
+    "id": "item_car",
+    "labelKey": "item.car",
+    "descKey": "item.car.desc",
+    "icon": "🚗",
+    "usable": true,
+    "consumable": false,
+    "effects": { "happiness": 5 },
+    "price": 800
+  },
+  {
+    "id": "item_gift",
+    "labelKey": "item.gift",
+    "descKey": "item.gift.desc",
+    "icon": "🎁",
+    "usable": false,
+    "consumable": true,
+    "price": 50,
+    "tags": ["social"]
+  },
+  {
+    "id": "item_watch",
+    "labelKey": "item.watch",
+    "descKey": "item.watch.desc",
+    "icon": "⌚",
+    "usable": false,
+    "consumable": false,
+    "price": 150,
+    "tags": ["keepsake"]
+  },
+  {
+    "id": "item_lottery",
+    "labelKey": "item.lottery",
+    "descKey": "item.lottery.desc",
+    "icon": "🎫",
+    "usable": true,
+    "consumable": true,
+    "effects": { "money": 120, "happiness": 3 },
+    "price": 20
+  },
+  {
+    "id": "item_diploma",
+    "labelKey": "item.diploma",
+    "descKey": "item.diploma.desc",
+    "icon": "🎓",
+    "usable": false,
+    "consumable": false,
+    "tags": ["keepsake"]
+  },
+  {
+    "id": "item_ring",
+    "labelKey": "item.ring",
+    "descKey": "item.ring.desc",
+    "icon": "💍",
+    "usable": false,
+    "consumable": false,
+    "tags": ["keepsake"]
+  }
+]

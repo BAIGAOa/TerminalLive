@@ -1,10 +1,9 @@
+import { inject } from "../Container.js";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, extname } from "node:path";
-import { Scope, Scoped, inject } from "di-wise";
 import AchievementRegistry from "../core/registry/AchievementRegistry.js";
 import { Achievement, AchievementSchema } from "./AchievementDefinition.js";
 
-@Scoped(Scope.Container)
 export default class AchievementResolver {
   private registry: AchievementRegistry;
 
@@ -12,13 +11,14 @@ export default class AchievementResolver {
     this.registry = inject(AchievementRegistry);
   }
 
-  private parseFile(path: string): Achievement | null {
+  private parseFile(path: string): Achievement[] {
     try {
       const raw = JSON.parse(readFileSync(path, "utf-8"));
-      return AchievementSchema.parse(raw);
+      const entries = Array.isArray(raw) ? raw : [raw];
+      return entries.map((e) => AchievementSchema.parse(e));
     } catch (err) {
       console.error(`解析成就文件 ${path} 失败:`, (err as Error).message);
-      return null;
+      return [];
     }
   }
 
@@ -26,14 +26,16 @@ export default class AchievementResolver {
     const result: Achievement[] = [];
     let files: string[];
     try {
-      files = readdirSync(dir).filter((f) => extname(f) === ".json");
+      // unlocked.json holds save state, not achievement definitions.
+      files = readdirSync(dir).filter(
+        (f) => extname(f) === ".json" && f !== "unlocked.json",
+      );
     } catch {
       console.warn(`成就目录 ${dir} 不存在或无法读取`);
       return result;
     }
     for (const file of files) {
-      const ach = this.parseFile(join(dir, file));
-      if (ach) result.push(ach);
+      result.push(...this.parseFile(join(dir, file)));
     }
     return result;
   }

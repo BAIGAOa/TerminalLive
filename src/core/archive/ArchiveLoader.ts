@@ -7,7 +7,6 @@ import {
 } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { Scope, Scoped } from "di-wise";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import type Player from "../../world/Player.js";
 import type ConfigStore from "../store/ConfigStore.js";
@@ -16,8 +15,11 @@ import type ThemeManager from "../theme/ThemeManager.js";
 import type EventHistory from "../../event/EventHistory.js";
 import ModMonitor from "../mod/ModMonitor.js";
 import AchievementManager from "../../achievement/AchievementManager.js";
+import WorldState from "../../world/chronicle/WorldState.js";
+import PressureState from "../../world/pressures/PressureState.js";
+import WeatherState from "../../world/weather/WeatherState.js";
+import { container } from "../../Container.js";
 
-@Scoped(Scope.Container)
 export class ArchiveLoader {
   private readonly ARCHIVE_ROOT = join(homedir(), ".archive_live");
 
@@ -40,6 +42,7 @@ export class ArchiveLoader {
       language: data.config.language,
       theme: data.config.theme ?? "default",
       enabledMods: data.config.enabledMods,
+      traits: data.config.traits,
       player: data.player,
       lastLevelId: data.levels.currentLevel,
       completedLevels: data.levels.completedLevels,
@@ -54,6 +57,20 @@ export class ArchiveLoader {
     }
 
     player.applyAttributes(data.player);
+    player.activeEffects = data.player.effects.map((e) => ({ ...e }));
+    player.inventory = data.player.inventory.map((s) => ({ ...s }));
+    player.relationships = new Map(Object.entries(data.player.relationships));
+    player.flags = new Set(data.player.flags);
+    player.actionPoints = data.player.actionPoints;
+    // Derive life status from health so a 0-HP save doesn't reload as alive.
+    player.alive = player.health > 0;
+
+    // Restore the living world (era, region, karma, standing, lore, fates).
+    container.resolve(WorldState).restore(data.world, player.flags);
+    // Restore the hidden-score web.
+    container.resolve(PressureState).restore(data.pressures);
+    // Restore the weather.
+    container.resolve(WeatherState).restore(data.weather);
 
     eventHistory.restoreFromArchive(data.history);
     eventHistory.save();

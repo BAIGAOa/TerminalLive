@@ -6,20 +6,18 @@ import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
 import { PlayerConfigType } from "../types/ConfigType.js";
 
-
-
 export enum PlayerConfigCategory {
   basic = "basic",
   physical = "physical",
+  skills = "skills",
   psychological = "psychological",
   wealth = "wealth",
 }
 
-
 export interface PlayerAttributeMeta {
   key: keyof PlayerConfigType;
   type: "string" | "number";
-  min?: number; 
+  min?: number;
   max?: number;
 }
 
@@ -31,21 +29,26 @@ const ATTRIBUTE_META: Record<PlayerConfigCategory, PlayerAttributeMeta[]> = {
     { key: "height", type: "number", min: 0.5, max: 3 },
     { key: "weight", type: "number", min: 1, max: 500 },
   ],
+  [PlayerConfigCategory.skills]: [
+    { key: "intelligence", type: "number", min: 0, max: 100 },
+    { key: "social", type: "number", min: 0, max: 100 },
+    { key: "fitness", type: "number", min: 0, max: 100 },
+    { key: "happiness", type: "number", min: 0, max: 100 },
+    { key: "reputation", type: "number", min: 0, max: 100 },
+  ],
   [PlayerConfigCategory.psychological]: [
     { key: "angerValue", type: "number", min: 0, max: 100 },
     { key: "excitationValue", type: "number", min: 0, max: 100 },
     { key: "depressionValue", type: "number", min: 0, max: 100 },
     { key: "weakValue", type: "number", min: 0, max: 100 },
   ],
-  [PlayerConfigCategory.wealth]: [{ key: "fortune", type: "number", min: 0 }],
+  [PlayerConfigCategory.wealth]: [{ key: "money", type: "number", min: 0 }],
 };
-
 
 export interface CategoryMenuItem {
   label: string;
   value: PlayerConfigCategory;
 }
-
 
 export interface AttributeItem {
   label: string;
@@ -56,12 +59,10 @@ export interface AttributeItem {
 export type FocusPanel = "left" | "right";
 
 export interface PlayerConfigData {
-  leftItems: CategoryMenuItem[]; 
+  leftItems: CategoryMenuItem[];
   rightItems: AttributeItem[];
   focus: FocusPanel;
   activeCategory: PlayerConfigCategory | null;
-  isLeftFocused: boolean;
-  isRightFocused: boolean;
   isEditing: boolean;
   editingKey: string | null;
   editingLabel: string;
@@ -76,8 +77,6 @@ export interface PlayerConfigData {
   onSubmitEdit: () => void;
   onCancelEdit: () => void;
 }
-
-
 
 function getAttrMeta(key: string): PlayerAttributeMeta | undefined {
   for (const list of Object.values(ATTRIBUTE_META)) {
@@ -95,7 +94,6 @@ function validateValue(
     if (!raw.trim()) return { valid: false, error: "不能为空" };
     return { valid: true, value: raw.trim() };
   }
-
   const num = Number(raw);
   if (isNaN(num) || raw.trim() === "") {
     return { valid: false, error: "请输入有效数字" };
@@ -108,8 +106,6 @@ function validateValue(
   }
   return { valid: true, value: num };
 }
-
-
 
 export function usePlayerConfig(
   player: Player,
@@ -186,7 +182,6 @@ export function usePlayerConfig(
 
     const partial: Partial<PlayerConfigType> = { [editingKey]: result.value };
     player.applyAttributes(partial as any);
-
     try {
       await configStore.setPlayerConfig(partial);
     } catch (err) {
@@ -197,7 +192,6 @@ export function usePlayerConfig(
     setIsEditing(false);
     setEditingKey(null);
     setValidationError(null);
-
     setTimeout(() => setSuccessMessage(null), 3000);
   }, [editingKey, editValue, player, configStore, t]);
 
@@ -220,8 +214,6 @@ export function usePlayerConfig(
     rightItems,
     focus,
     activeCategory,
-    isLeftFocused: focus === "left",
-    isRightFocused: focus === "right" && !isEditing,
     isEditing,
     editingKey,
     editingLabel,

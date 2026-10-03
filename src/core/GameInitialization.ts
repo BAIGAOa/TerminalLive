@@ -1,4 +1,4 @@
-import { inject, Scope, Scoped } from "di-wise";
+import { inject } from "../Container.js";
 import Game from "./Game.js";
 import ConfigStore from "./store/ConfigStore.js";
 import Player from "../world/Player.js";
@@ -17,13 +17,21 @@ import ThemeParser from "./theme/ThemeParser.js";
 import ThemeManager from "./theme/ThemeManager.js";
 import { VersionProvider } from "./version/VersionProvider.js";
 import Commands from "../content/Commands.js";
+import Effects from "../content/Effects.js";
+import Actions from "../content/Actions.js";
+import Traits from "../content/Traits.js";
+import World from "../content/World.js";
+import Weather from "../content/Weather.js";
+import PressureLoader from "../world/pressures/PressureLoader.js";
+import ItemLoader from "../world/items/ItemLoader.js";
+import NpcLoader from "../world/relationships/NpcLoader.js";
+import NpcRegistry from "../world/relationships/NpcRegistry.js";
 import ModMonitor from "./mod/ModMonitor.js";
 import AchievementManager from "../achievement/AchievementManager.js";
 import AchievementResolver from "../achievement/AchievementResolver.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
-@Scoped(Scope.Container)
 export default class GameInitialization {
   public configStore: ConfigStore;
   public game: Game;
@@ -52,8 +60,14 @@ export default class GameInitialization {
 
   private restoreLevelProgress() {
     const lastLevelId = this.configStore.getSnapshot().lastLevelId;
-    if (lastLevelId && lastLevelId !== "none") {
-      this.levelManager.lastPlayedLevelId = lastLevelId;
+    if (
+      lastLevelId &&
+      lastLevelId !== "none" &&
+      this.levelManager.getAllLevels().has(lastLevelId)
+    ) {
+      // Resume the saved life on its level WITHOUT re-applying onEnter
+      // (restoreLevel skips it), so the player's saved state is kept.
+      this.levelManager.restoreLevel(lastLevelId, this.player);
     }
   }
 
@@ -63,9 +77,31 @@ export default class GameInitialization {
 
   private loadContent(): void {
     EventTypes.registerAll();
-    this.modLoader.load();
+    // Events are loaded per-level by LevelManager.loadEventsFor (built-in +
+    // enabled mods), so the global ModLoader pass is intentionally skipped.
     Conditions.load();
     GameStatus.load();
+    Effects.load();
+    Actions.load();
+    Traits.load();
+    World.load();
+    Weather.load();
+    container.resolve(PressureLoader).loadBuiltin();
+
+    const itemLoader = container.resolve(ItemLoader);
+    const npcLoader = container.resolve(NpcLoader);
+    itemLoader.loadBuiltin();
+    npcLoader.loadBuiltin();
+
+    // Enabled mods may ship extra items / npcs / hidden-score axes+rules.
+    const pressureLoader = container.resolve(PressureLoader);
+    for (const modName of this.configStore.getEnabledMods()) {
+      if (!this.modRegistry.isValid(modName)) continue;
+      const dir = this.modRegistry.getModPath(modName);
+      itemLoader.loadDir(join(dir, "items"));
+      npcLoader.loadDir(join(dir, "npcs"));
+      pressureLoader.loadModDir(dir);
+    }
   }
 
   private initThemes(): void {
@@ -117,12 +153,18 @@ export default class GameInitialization {
     this.eventHistory.load();
     this.loadContent();
 
+    // Seed starting relationship affinities now that NPCs are loaded (the
+    // player is constructed before content, so this can't happen in the ctor).
+    this.player.seedRelationships(container.resolve(NpcRegistry).getAll());
+
     registerBuiltinRegistrations();
     const levelManager = container.resolve(LevelManager);
     levelManager.setPlayer(this.player);
 
     this.modPluginLoader.setPlayer(this.player);
     this.modPluginLoader.loadEnabled();
+    // Let plugins react to the player being created (after they've loaded).
+    this.modPluginLoader.firePlayerCreated(this.player);
     levelManager.loadAllLevels();
 
     this.initThemes();

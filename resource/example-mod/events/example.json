@@ -1,0 +1,9 @@
+[
+  {
+    "type": "ExampleKindness",
+    "id": "ev_example_kindness",
+    "nameKey": "example.ev.kindness",
+    "rangeKey": ["3-12"],
+    "weight": 1
+  }
+]

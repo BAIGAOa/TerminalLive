@@ -63,9 +63,22 @@ export default class Level {
     this.initialPlayerAttributes = initialPlayerAttributes;
   }
 
-  public update(): void {
-    this.player.update();
+  /** End the current turn: age the player a year and roll for an event. */
+  public endTurn(): void {
+    this.player.tickYear();
     this.algorithm.trigger(this.player);
+  }
+
+  public hasPendingChoice(): boolean {
+    return this.algorithm.hasPendingChoice?.() ?? false;
+  }
+
+  public getPendingChoice() {
+    return this.algorithm.getPendingChoice?.() ?? null;
+  }
+
+  public resolveChoice(optionId: string): boolean {
+    return this.algorithm.resolveChoice?.(optionId, this.player) ?? false;
   }
 
   public reset(): void {

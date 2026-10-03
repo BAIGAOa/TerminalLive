@@ -1,4 +1,3 @@
-import { Scope, Scoped } from "di-wise";
 import JSONparsing from "../json/JSONparsing.js";
 import ConfigSchema, {
   ConfigType,
@@ -8,7 +7,6 @@ import ConfigSchema, {
 
 type Listener = () => void;
 
-@Scoped(Scope.Container)
 export default class ConfigStore {
   private config: ConfigType = {
     language: "en_US",
@@ -16,6 +14,8 @@ export default class ConfigStore {
     player: { ...DEFAULT_PLAYER_CONFIG },
     enabledMods: [],
     completedLevels: [],
+    keyBindings: {},
+    traits: [],
   };
   private listeners: Set<Listener> = new Set();
   private jsonParser = new JSONparsing("config.json");
@@ -94,6 +94,29 @@ export default class ConfigStore {
 
   public async setEnabledMods(mods: string[]): Promise<void> {
     this.config = { ...this.config, enabledMods: mods };
+    await this.persist();
+    this.emitChange();
+  }
+
+  public getKeyBindings(): Record<string, string> {
+    return this.config.keyBindings ?? {};
+  }
+
+  public async setKeyBinding(action: string, key: string): Promise<void> {
+    this.config = {
+      ...this.config,
+      keyBindings: { ...this.getKeyBindings(), [action]: key },
+    };
+    await this.persist();
+    this.emitChange();
+  }
+
+  public getTraits(): string[] {
+    return this.config.traits ?? [];
+  }
+
+  public async setTraits(traits: string[]): Promise<void> {
+    this.config = { ...this.config, traits };
     await this.persist();
     this.emitChange();
   }

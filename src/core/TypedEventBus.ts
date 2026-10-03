@@ -1,9 +1,7 @@
-import { Scope, Scoped } from "di-wise";
 
 // 条件事件处理器：void 事件对应无参回调
 type EventHandler<T> = T extends void ? () => void : (payload: T) => void;
 
-@Scoped(Scope.Container)
 export default class TypedEventBus {
   private listeners = new Map<string, Set<Function>>();
 

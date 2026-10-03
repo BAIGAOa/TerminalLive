@@ -1,0 +1,280 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_interview",
+    "nameKey": "ev.interview",
+    "textKey": "ev.interview.text",
+    "rangeKey": ["19-30"],
+    "weight": 2.5,
+    "once": true,
+    "choices": [
+      {
+        "id": "corp",
+        "labelKey": "ev.interview.opt.corp",
+        "effects": { "money": 200, "happiness": -4 },
+        "relationship": { "npc": "npc_boss", "delta": 10 },
+        "flag": "employed",
+        "noteKey": "ev.interview.note.corp"
+      },
+      {
+        "id": "startup",
+        "labelKey": "ev.interview.opt.startup",
+        "effects": { "money": -100, "happiness": 6, "intelligence": 3 },
+        "flag": "founder",
+        "noteKey": "ev.interview.note.startup"
+      },
+      {
+        "id": "study",
+        "labelKey": "ev.interview.opt.study",
+        "effects": { "intelligence": 8, "money": -30 },
+        "noteKey": "ev.interview.note.study"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_promotion",
+    "nameKey": "ev.promotion",
+    "textKey": "ev.promotion.text",
+    "rangeKey": ["22-55"],
+    "weight": 1.2,
+    "choices": [
+      {
+        "id": "accept",
+        "labelKey": "ev.promotion.opt.accept",
+        "effects": { "money": 250, "health": -6, "happiness": -5 },
+        "buff": { "id": "fx_fatigue", "turns": 2 },
+        "noteKey": "ev.promotion.note.accept"
+      },
+      {
+        "id": "negotiate",
+        "labelKey": "ev.promotion.opt.negotiate",
+        "require": [{ "prop": "social", "gte": 50 }],
+        "effects": { "money": 180, "happiness": 4 },
+        "noteKey": "ev.promotion.note.negotiate"
+      },
+      {
+        "id": "decline",
+        "labelKey": "ev.promotion.opt.decline",
+        "effects": { "happiness": 5, "health": 2 },
+        "noteKey": "ev.promotion.note.decline"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_marriage",
+    "nameKey": "ev.marriage",
+    "textKey": "ev.marriage.text",
+    "rangeKey": ["22-45"],
+    "weight": 1.4,
+    "once": true,
+    "choices": [
+      {
+        "id": "propose",
+        "labelKey": "ev.marriage.opt.propose",
+        "effects": { "money": -150, "happiness": 20 },
+        "items": ["item_ring"],
+        "relationship": { "npc": "npc_partner", "delta": 25 },
+        "flag": "married",
+        "noteKey": "ev.marriage.note.propose"
+      },
+      {
+        "id": "wait",
+        "labelKey": "ev.marriage.opt.wait",
+        "effects": { "happiness": -2 },
+        "noteKey": "ev.marriage.note.wait"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_house",
+    "nameKey": "ev.house",
+    "textKey": "ev.house.text",
+    "rangeKey": ["25-50"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "buy",
+        "labelKey": "ev.house.opt.buy",
+        "require": [{ "prop": "money", "gte": 300 }],
+        "effects": { "money": -300, "happiness": 15 },
+        "flag": "homeowner",
+        "noteKey": "ev.house.note.buy"
+      },
+      {
+        "id": "rent",
+        "labelKey": "ev.house.opt.rent",
+        "effects": { "money": -50, "happiness": 3 },
+        "noteKey": "ev.house.note.rent"
+      },
+      {
+        "id": "parents",
+        "labelKey": "ev.house.opt.parents",
+        "effects": { "money": 40, "happiness": -2 },
+        "relationship": { "npc": "npc_mom", "delta": -4 },
+        "noteKey": "ev.house.note.parents"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_child",
+    "nameKey": "ev.child",
+    "textKey": "ev.child.text",
+    "rangeKey": ["25-45"],
+    "weight": 1.2,
+    "once": true,
+    "choices": [
+      {
+        "id": "have",
+        "labelKey": "ev.child.opt.have",
+        "effects": { "money": -100, "happiness": 18 },
+        "relationship": { "npc": "npc_child", "delta": 45 },
+        "flag": "had_child",
+        "noteKey": "ev.child.note.have"
+      },
+      {
+        "id": "later",
+        "labelKey": "ev.child.opt.later",
+        "effects": { "happiness": -1 },
+        "noteKey": "ev.child.note.later"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_invest",
+    "nameKey": "ev.invest",
+    "textKey": "ev.invest.text",
+    "rangeKey": ["22-60"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "risky",
+        "labelKey": "ev.invest.opt.risky",
+        "require": [{ "prop": "money", "gte": 200 }],
+        "effects": { "money": -200 },
+        "postEvent": [
+          { "incident": "ev_invest_win", "weight": 1 },
+          { "incident": "ev_invest_lose", "weight": 1 }
+        ],
+        "noteKey": "ev.invest.note.risky"
+      },
+      {
+        "id": "safe",
+        "labelKey": "ev.invest.opt.safe",
+        "effects": { "money": 30, "happiness": 1 },
+        "noteKey": "ev.invest.note.safe"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_layoff",
+    "nameKey": "ev.layoff",
+    "textKey": "ev.layoff.text",
+    "rangeKey": ["25-58"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "retrain",
+        "labelKey": "ev.layoff.opt.retrain",
+        "effects": { "intelligence": 6, "money": -80 },
+        "noteKey": "ev.layoff.note.retrain"
+      },
+      {
+        "id": "hunt",
+        "labelKey": "ev.layoff.opt.hunt",
+        "effects": { "money": 60, "social": 2 },
+        "noteKey": "ev.layoff.note.hunt"
+      },
+      {
+        "id": "rest",
+        "labelKey": "ev.layoff.opt.rest",
+        "effects": { "health": 8, "money": -40, "happiness": 3 },
+        "noteKey": "ev.layoff.note.rest"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_charity",
+    "nameKey": "ev.charity",
+    "textKey": "ev.charity.text",
+    "rangeKey": ["22-70"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "donate",
+        "labelKey": "ev.charity.opt.donate",
+        "require": [{ "prop": "money", "gte": 100 }],
+        "effects": { "money": -100, "happiness": 9 },
+        "flag": "donated",
+        "noteKey": "ev.charity.note.donate"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "ev.charity.opt.refuse",
+        "effects": { "money": 0, "happiness": -1 },
+        "noteKey": "ev.charity.note.refuse"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_old_friend",
+    "nameKey": "ev.old_friend",
+    "textKey": "ev.old_friend.text",
+    "rangeKey": ["25-70"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "reunite",
+        "labelKey": "ev.old_friend.opt.reunite",
+        "effects": { "social": 4, "happiness": 6 },
+        "relationship": { "npc": "npc_friend", "delta": 8 },
+        "noteKey": "ev.old_friend.note.reunite"
+      },
+      {
+        "id": "decline",
+        "labelKey": "ev.old_friend.opt.decline",
+        "effects": { "happiness": -2 },
+        "relationship": { "npc": "npc_friend", "delta": -4 },
+        "noteKey": "ev.old_friend.note.decline"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_burnout",
+    "nameKey": "ev.burnout",
+    "textKey": "ev.burnout.text",
+    "rangeKey": ["25-58"],
+    "weight": 0.9,
+    "params": {
+      "effects": { "health": -6, "happiness": -8 },
+      "buff": { "id": "fx_fatigue", "turns": 3 }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_invest_win",
+    "nameKey": "ev.invest_win",
+    "textKey": "ev.invest_win.text",
+    "rangeKey": ["200-201"],
+    "weight": 1,
+    "params": { "effects": { "money": 600, "happiness": 6 } }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_invest_lose",
+    "nameKey": "ev.invest_lose",
+    "textKey": "ev.invest_lose.text",
+    "rangeKey": ["200-201"],
+    "weight": 1,
+    "params": { "effects": { "happiness": -8, "depressionValue": 6 } }
+  }
+]

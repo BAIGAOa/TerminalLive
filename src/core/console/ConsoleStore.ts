@@ -1,4 +1,3 @@
-import { Scope, Scoped } from "di-wise";
 import { container } from "../../Container.js";
 import TypedEventBus from "../TypedEventBus.js";
 
@@ -6,8 +5,9 @@ type Listener = () => void;
 
 export interface ConsoleNotification {
   id: string;
-  type: "achievement" | "mod" | "archive" | "catalogCreation";
+  type: "achievement" | "mod" | "modReload" | "archive" | "catalogCreation";
   messageKey: string;
+  messageParams?: Record<string, string | number>;
   timestamp: string;
 }
 
@@ -31,7 +31,6 @@ export interface ConsoleSnapshot {
   readonly commandResults: readonly ConsoleCommandResult[];
 }
 
-@Scoped(Scope.Container)
 export default class ConsoleStore {
   private notifications: ConsoleNotification[] = [];
   private commandResults: ConsoleCommandResult[] = [];
@@ -66,6 +65,16 @@ export default class ConsoleStore {
         id: data.modName,
         type: "mod",
         messageKey: data.modName,
+        timestamp: new Date().toLocaleString(),
+      });
+    });
+
+    eventBus.on("moder:reloaded", (data: { count: number }) => {
+      this.addNotification({
+        id: "modreload",
+        type: "modReload",
+        messageKey: "mod.message.reloaded",
+        messageParams: { count: data.count },
         timestamp: new Date().toLocaleString(),
       });
     });

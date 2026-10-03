@@ -1,0 +1,265 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_exam_cram",
+    "nameKey": "ev.exam_cram",
+    "textKey": "ev.exam_cram.text",
+    "rangeKey": ["13-18"],
+    "weight": 1.2,
+    "choices": [
+      {
+        "id": "cram",
+        "labelKey": "ev.exam_cram.opt.cram",
+        "effects": { "intelligence": 7, "health": -5, "happiness": -3 },
+        "buff": { "id": "fx_fatigue", "turns": 2 },
+        "noteKey": "ev.exam_cram.note.cram"
+      },
+      {
+        "id": "sleep",
+        "labelKey": "ev.exam_cram.opt.sleep",
+        "effects": { "health": 3, "happiness": 2 },
+        "noteKey": "ev.exam_cram.note.sleep"
+      },
+      {
+        "id": "cheat",
+        "labelKey": "ev.exam_cram.opt.cheat",
+        "effects": { "intelligence": 3, "happiness": -6 },
+        "flag": "cheated",
+        "noteKey": "ev.exam_cram.note.cheat"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_first_love",
+    "nameKey": "ev.first_love",
+    "textKey": "ev.first_love.text",
+    "rangeKey": ["13-18"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "confess",
+        "labelKey": "ev.first_love.opt.confess",
+        "effects": { "happiness": 8 },
+        "relationship": { "npc": "npc_partner", "delta": 20 },
+        "postEvent": [
+          { "incident": "ev_love_yes", "weight": 1 },
+          { "incident": "ev_love_no", "weight": 1 }
+        ],
+        "noteKey": "ev.first_love.note.confess"
+      },
+      {
+        "id": "secret",
+        "labelKey": "ev.first_love.opt.secret",
+        "effects": { "depressionValue": 6 },
+        "relationship": { "npc": "npc_partner", "delta": 5 },
+        "noteKey": "ev.first_love.note.secret"
+      },
+      {
+        "id": "study",
+        "labelKey": "ev.first_love.opt.study",
+        "effects": { "intelligence": 4 },
+        "noteKey": "ev.first_love.note.study"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_club",
+    "nameKey": "ev.club",
+    "textKey": "ev.club.text",
+    "rangeKey": ["13-17"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "sport",
+        "labelKey": "ev.club.opt.sport",
+        "effects": { "fitness": 8, "social": 3 },
+        "noteKey": "ev.club.note.sport"
+      },
+      {
+        "id": "literature",
+        "labelKey": "ev.club.opt.literature",
+        "effects": { "intelligence": 6, "happiness": 2 },
+        "noteKey": "ev.club.note.literature"
+      },
+      {
+        "id": "none",
+        "labelKey": "ev.club.opt.none",
+        "effects": { "happiness": -3 },
+        "noteKey": "ev.club.note.none"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_peer_pressure",
+    "nameKey": "ev.peer_pressure",
+    "textKey": "ev.peer_pressure.text",
+    "rangeKey": ["14-18"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "indulge",
+        "labelKey": "ev.peer_pressure.opt.indulge",
+        "effects": { "social": 4, "health": -8 },
+        "buff": { "id": "fx_sick", "turns": 2 },
+        "noteKey": "ev.peer_pressure.note.indulge"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "ev.peer_pressure.opt.refuse",
+        "effects": { "social": -3, "happiness": 4 },
+        "noteKey": "ev.peer_pressure.note.refuse"
+      },
+      {
+        "id": "report",
+        "labelKey": "ev.peer_pressure.opt.report",
+        "effects": { "social": -5 },
+        "relationship": { "npc": "npc_teacher", "delta": 6 },
+        "noteKey": "ev.peer_pressure.note.report"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_math_olympiad",
+    "nameKey": "ev.math_olympiad",
+    "textKey": "ev.math_olympiad.text",
+    "rangeKey": ["14-18"],
+    "weight": 0.9,
+    "once": true,
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "ev.math_olympiad.opt.join",
+        "effects": { "intelligence": 9, "happiness": -2 },
+        "noteKey": "ev.math_olympiad.note.join"
+      },
+      {
+        "id": "skip",
+        "labelKey": "ev.math_olympiad.opt.skip",
+        "effects": { "happiness": 2 },
+        "noteKey": "ev.math_olympiad.note.skip"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_family_fight",
+    "nameKey": "ev.family_fight",
+    "textKey": "ev.family_fight.text",
+    "rangeKey": ["13-18"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "argue",
+        "labelKey": "ev.family_fight.opt.argue",
+        "effects": { "angerValue": 12, "happiness": -4 },
+        "relationship": { "npc": "npc_dad", "delta": -6 },
+        "noteKey": "ev.family_fight.note.argue"
+      },
+      {
+        "id": "talk",
+        "labelKey": "ev.family_fight.opt.talk",
+        "effects": { "social": 3, "happiness": 3 },
+        "relationship": { "npc": "npc_dad", "delta": 6 },
+        "noteKey": "ev.family_fight.note.talk"
+      },
+      {
+        "id": "cold",
+        "labelKey": "ev.family_fight.opt.cold",
+        "effects": { "depressionValue": 10 },
+        "relationship": { "npc": "npc_dad", "delta": -3 },
+        "noteKey": "ev.family_fight.note.cold"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_graduation",
+    "nameKey": "ev.graduation",
+    "textKey": "ev.graduation.text",
+    "rangeKey": ["17-18"],
+    "weight": 3,
+    "once": true,
+    "choices": [
+      {
+        "id": "university",
+        "labelKey": "ev.graduation.opt.university",
+        "effects": { "intelligence": 5, "money": -50 },
+        "items": ["item_diploma"],
+        "flag": "going_college",
+        "noteKey": "ev.graduation.note.university"
+      },
+      {
+        "id": "work",
+        "labelKey": "ev.graduation.opt.work",
+        "effects": { "money": 120, "social": 2 },
+        "flag": "working_early",
+        "noteKey": "ev.graduation.note.work"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_heartbreak",
+    "nameKey": "ev.heartbreak",
+    "textKey": "ev.heartbreak.text",
+    "rangeKey": ["15-18"],
+    "weight": 0.7,
+    "params": {
+      "effects": { "depressionValue": 14, "happiness": -8 },
+      "buff": { "id": "fx_gloom", "turns": 3 }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_love_yes",
+    "nameKey": "ev.love_yes",
+    "textKey": "ev.love_yes.text",
+    "rangeKey": ["200-201"],
+    "weight": 1,
+    "params": {
+      "effects": { "happiness": 12 },
+      "relationship": { "npc": "npc_partner", "delta": 15 },
+      "flag": "first_love_ok"
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_love_no",
+    "nameKey": "ev.love_no",
+    "textKey": "ev.love_no.text",
+    "rangeKey": ["200-201"],
+    "weight": 1,
+    "params": {
+      "effects": { "happiness": -8, "depressionValue": 8 },
+      "relationship": { "npc": "npc_partner", "delta": -10 }
+    }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_parttime",
+    "nameKey": "ev.parttime",
+    "textKey": "ev.parttime.text",
+    "rangeKey": ["15-18"],
+    "weight": 0.9,
+    "choices": [
+      {
+        "id": "take",
+        "labelKey": "ev.parttime.opt.take",
+        "effects": { "money": 90, "social": 3, "fitness": -2 },
+        "noteKey": "ev.parttime.note.take"
+      },
+      {
+        "id": "decline",
+        "labelKey": "ev.parttime.opt.decline",
+        "effects": { "intelligence": 3, "happiness": 2 },
+        "noteKey": "ev.parttime.note.decline"
+      }
+    ]
+  }
+]

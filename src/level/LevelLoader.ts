@@ -1,7 +1,7 @@
+import { container, inject } from "../Container.js";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, extname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Scope, Scoped, inject } from "di-wise";
 import Level, { LevelConfig } from "./Level.js";
 import Player from "../world/Player.js";
 import EventCenter from "../event/EventCenter.js";
@@ -15,11 +15,13 @@ import IncidentFilter from "../event/IncidentFilter.js";
 import AlgorithmRegistry from "../core/registry/AlgorithmRegistry.js";
 import FilterRegistry from "../core/registry/FilterRegistry.js";
 import LevelConditionRegistry from "../core/registry/LevelConditionRegistry.js";
+import WorldState from "../world/chronicle/WorldState.js";
+import PressureState from "../world/pressures/PressureState.js";
+import WeatherState from "../world/weather/WeatherState.js";
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
-@Scoped(Scope.Container)
 export default class LevelLoader {
   private algorithmRegistry: AlgorithmRegistry;
   private filterRegistry: FilterRegistry;
@@ -75,10 +77,9 @@ export default class LevelLoader {
   }
 
   private buildLevel(config: LevelJsonConfig, player: Player): Level {
-    if (config.onEnter?.setPlayer) {
-      player.applyAttributes(config.onEnter.setPlayer as any);
-    }
-
+    // `onEnter.setPlayer` is deliberately NOT applied here — levels share one
+    // player instance, so applying at load time would let the last-loaded
+    // level's start state win. It is applied in LevelManager.start instead.
     const eventCenter = new EventCenter();
     const eventHistory = new EventHistory();
     const logStore = new LogStore();
@@ -98,6 +99,9 @@ export default class LevelLoader {
       eventHistory,
       modPluginLoader: this.modPluginLoader,
       filters,
+      world: container.resolve(WorldState),
+      pressures: container.resolve(PressureState),
+      weather: container.resolve(WeatherState),
     });
 
     // 构建事件加载器

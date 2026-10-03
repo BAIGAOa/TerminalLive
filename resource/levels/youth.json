@@ -1,0 +1,18 @@
+{
+  "id": "youth",
+  "nameKey": "level.youth",
+  "descriptionKey": "level.youth.desc",
+  "nextLevel": "midlife",
+  "difficultyIdentification": "normal",
+  "algorithm": "default",
+  "extraFilters": [],
+  "onEnter": {
+    "setPlayer": { "age": 19 }
+  },
+  "nextLevelUnlock": [
+    {
+      "type": "generalPurpose",
+      "params": { "prop": "age", "num": 34, "cat": "greaterThan" }
+    }
+  ]
+}

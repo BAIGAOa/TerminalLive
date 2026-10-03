@@ -1,8 +1,6 @@
-import { Scope, Scoped } from "di-wise";
 import BaseRegistry from "./BaseRegistry.js";
 import { Achievement } from "../../achievement/AchievementDefinition.js";
 
-@Scoped(Scope.Container)
 export default class AchievementRegistry extends BaseRegistry<Map<string, Achievement>> {
   private readonly allIds = new Set<string>();
 

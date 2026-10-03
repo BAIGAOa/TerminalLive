@@ -1,36 +1,9 @@
 import React, { useEffect } from "react";
 import { Box, Text } from "ink";
-import { SelectInput, useKeyboard } from "@baigao_h/ink-kit";
-import type { Item } from "@baigao_h/ink-kit";
+import { useKeyboard } from "ink-cartridge";
+import { MenuList } from "./kit/index.js";
 import { useModScreen } from "../hooks/useModScreen.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
-
-function ModItem({ label, isSelected }: { label: string; value: string; isSelected: boolean }) {
-  const colors = useThemeColors();
-  return (
-    <Box
-      borderStyle="round"
-      borderColor={isSelected ? colors.highlight : colors.muted}
-      paddingX={1}
-      marginBottom={1}
-    >
-      <Text color={isSelected ? colors.highlight : colors.text} bold={isSelected}>
-        {label}
-      </Text>
-    </Box>
-  );
-}
-
-function DefaultIndicator({ isSelected }: { isSelected: boolean }) {
-  const colors = useThemeColors();
-  return (
-    <Box marginRight={1}>
-      <Text color={isSelected ? colors.highlight : undefined}>
-        {isSelected ? '❯' : ' '}
-      </Text>
-    </Box>
-  );
-}
 
 export default function ModManager({ onBack }: { onBack?: () => void }) {
   const { mods, toggleMod, rows, t } = useModScreen();
@@ -38,13 +11,13 @@ export default function ModManager({ onBack }: { onBack?: () => void }) {
   const { boundKeyboard } = useKeyboard();
 
   useEffect(() => {
-    const unbind = boundKeyboard(["escape"], () => onBack?.());
-    return () => unbind();
+    const u = boundKeyboard(["escape"], () => onBack?.());
+    return () => u();
   }, [onBack, boundKeyboard]);
 
-  const items: Item<string>[] = mods.map((mod) => ({
-    label: `${mod.enabled ? "[✓]" : "[ ]"} ${mod.name}`,
+  const items = mods.map((mod) => ({
     value: mod.name,
+    label: `${mod.enabled ? "[✓]" : "[ ]"} ${mod.name}`,
   }));
 
   return (
@@ -60,15 +33,25 @@ export default function ModManager({ onBack }: { onBack?: () => void }) {
           <Text dimColor>{t("mod.noMods")}</Text>
         </Box>
       ) : (
-        <Box flexDirection="column" flexGrow={1}>
-          <SelectInput
-            items={items}
-            onSelect={(item) => toggleMod(item.value)}
-            focusId="mod-list"
-            itemComponent={ModItem as any}
-            indicatorComponent={DefaultIndicator}
-          />
-        </Box>
+        <MenuList
+          focusId="mod-list"
+          items={items}
+          onSelect={(item) => toggleMod(item.value)}
+          renderItem={(item, state) => (
+            <Box
+              borderStyle="round"
+              borderColor={state.selected ? colors.highlight : colors.muted}
+              paddingX={1}
+            >
+              <Text
+                color={state.selected ? colors.highlight : colors.text}
+                bold={state.selected}
+              >
+                {item.label}
+              </Text>
+            </Box>
+          )}
+        />
       )}
 
       <Box marginTop={1}>

@@ -1,7 +1,7 @@
+import { container, inject } from "../../Container.js";
 import { existsSync, mkdirSync, writeFileSync, cpSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { inject, Scope, Scoped } from "di-wise";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import type Player from "../../world/Player.js";
 import type ConfigStore from "../store/ConfigStore.js";
@@ -9,8 +9,10 @@ import type LevelManager from "../../level/LevelManager.js";
 import { VersionProvider } from "../version/VersionProvider.js";
 import ModMonitor from "../mod/ModMonitor.js";
 import AchievementManager from "../../achievement/AchievementManager.js";
+import WorldState from "../../world/chronicle/WorldState.js";
+import PressureState from "../../world/pressures/PressureState.js";
+import WeatherState from "../../world/weather/WeatherState.js";
 
-@Scoped(Scope.Container)
 export class ArchivingKeeper {
   private readonly ARCHIVE_ROOT = join(homedir(), ".archive_live");
   private versionProvider: VersionProvider;
@@ -34,7 +36,7 @@ export class ArchivingKeeper {
     const now = new Date().toISOString();
     const currentHistory = levelManager.getCurrentEventHistory();
     const data: SaveData = {
-      version: 3,
+      version: 4,
       appVersion: this.versionProvider.version,
       timestamp: now,
       player: {
@@ -43,11 +45,21 @@ export class ArchivingKeeper {
         health: player.health,
         height: player.height,
         weight: player.weight,
+        money: player.money,
+        intelligence: player.intelligence,
+        social: player.social,
+        fitness: player.fitness,
+        happiness: player.happiness,
+        reputation: player.reputation,
         angerValue: player.angerValue,
         excitationValue: player.excitationValue,
         depressionValue: player.depressionValue,
         weakValue: player.weakValue,
-        fortune: player.fortune,
+        effects: player.activeEffects.map((e) => ({ ...e })),
+        inventory: player.inventory.map((s) => ({ ...s })),
+        relationships: Object.fromEntries(player.relationships),
+        flags: Array.from(player.flags),
+        actionPoints: player.actionPoints,
       },
       history: {
         triggered: Array.from(currentHistory?.getTriggered() ?? []),
@@ -59,15 +71,16 @@ export class ArchivingKeeper {
         language: configStore.getLanguage(),
         theme: configStore.getTheme(),
         enabledMods: modNames,
+        traits: configStore.getTraits(),
       },
       levels: {
         currentLevel: levelManager.getCurrentLevelId() ?? "none",
-        completedLevels: [...levelManager.getAllLevels().entries()]
-          .filter(([, level]) =>
-            levelManager.determineWhetherCheckpointPassed(level),
-          )
-          .map(([id]) => id),
+        // Actual completion history, not re-derived from current stats.
+        completedLevels: levelManager.getCompletedLevelIds(),
       },
+      world: container.resolve(WorldState).toSnapshot(),
+      pressures: container.resolve(PressureState).snapshot(),
+      weather: container.resolve(WeatherState).snapshot(),
     };
 
     saveDataSchema.parse(data);

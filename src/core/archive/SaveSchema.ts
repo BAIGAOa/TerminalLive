@@ -10,11 +10,31 @@ export const saveDataSchema = z.object({
     health: z.number(),
     height: z.number(),
     weight: z.number(),
+    money: z.number().default(0),
+    intelligence: z.number().default(0),
+    social: z.number().default(0),
+    fitness: z.number().default(0),
+    happiness: z.number().default(50),
+    reputation: z.number().default(0),
     angerValue: z.number(),
     excitationValue: z.number(),
     depressionValue: z.number(),
     weakValue: z.number(),
-    fortune: z.number(),
+    effects: z
+      .array(
+        z.object({
+          id: z.string(),
+          remaining: z.number(),
+          stacks: z.number(),
+        }),
+      )
+      .default([]),
+    inventory: z
+      .array(z.object({ id: z.string(), count: z.number() }))
+      .default([]),
+    relationships: z.record(z.string(), z.number()).default({}),
+    flags: z.array(z.string()).default([]),
+    actionPoints: z.number().default(0),
   }),
   history: z.object({
     triggered: z.array(z.string()),
@@ -31,11 +51,35 @@ export const saveDataSchema = z.object({
     language: z.string(),
     theme: z.string().default("default"),
     enabledMods: z.array(z.string()),
+    traits: z.array(z.string()).default([]),
   }),
   levels: z.object({
     currentLevel: z.string(),
     completedLevels: z.array(z.string()),
   }),
+  world: z
+    .object({
+      year: z.number().default(0),
+      eraId: z.string().default(""),
+      regionId: z.string().default(""),
+      karma: z.record(z.string(), z.number()).default({}),
+      standing: z.record(z.string(), z.number()).default({}),
+      unlockedLore: z.array(z.string()).default([]),
+      activeFates: z.array(z.string()).default([]),
+      firedWorldEvents: z.array(z.string()).default([]),
+    })
+    .default({
+      year: 0,
+      eraId: "",
+      regionId: "",
+      karma: {},
+      standing: {},
+      unlockedLore: [],
+      activeFates: [],
+      firedWorldEvents: [],
+    }),
+  pressures: z.record(z.string(), z.number()).default({}),
+  weather: z.string().default("weather_clear"),
 });
 
 export type SaveData = z.infer<typeof saveDataSchema>;

@@ -1,34 +1,7 @@
 import React from "react";
-import { Box, Text, Newline } from "ink";
+import { Box, Text } from "ink";
 import Player from "../../world/Player.js";
-
-const ProgressBar = ({
-  label,
-  value,
-  color,
-  width = 20,
-}: {
-  label: string;
-  value: number;
-  color: string;
-  width?: number;
-}) => {
-  const clamped = Math.max(0, Math.min(100, value));
-  const filled = Math.max(0, Math.min(width, Math.floor((clamped / 100) * width)));
-  const empty = Math.max(0, width - filled);
-  return (
-    <Box flexDirection="row">
-      <Box width={14}>
-        <Text>{label}: </Text>
-      </Box>
-      <Text color={color}>
-        {"█".repeat(filled)}
-        <Text color="gray">{"░".repeat(empty)}</Text>
-      </Text>
-      <Text> {Math.round(clamped)}%</Text>
-    </Box>
-  );
-};
+import { StatBar } from "./common.js";
 
 export default function AttributesView({
   player,
@@ -38,7 +11,7 @@ export default function AttributesView({
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
   return (
-    <Box flexDirection="column" flexGrow={1}>
+    <Box flexDirection="column">
       <Box flexDirection="row" justifyContent="space-between" marginBottom={1}>
         <Text bold color="yellow">
           {t("game.player")}: {player.playerName}
@@ -48,35 +21,34 @@ export default function AttributesView({
         </Text>
       </Box>
 
-      <Newline />
-
-      <ProgressBar
+      <StatBar
         label={t("player.health")}
         value={player.health}
         color={player.health < 30 ? "red" : "green"}
-        width={30}
+        width={24}
+      />
+      <StatBar
+        label={t("player.happiness")}
+        value={player.happiness}
+        color="magenta"
+        width={24}
+      />
+      <StatBar
+        label={t("player.reputation")}
+        value={player.reputation}
+        color="cyan"
+        width={24}
       />
 
-      <Newline />
-
-      <Box flexDirection="row" marginBottom={1}>
+      <Box marginTop={1} flexDirection="row">
         <Text color="gray">
           {t("playerConfig.attr.height")}: {player.height}m |{" "}
           {t("playerConfig.attr.weight")}: {player.weight}kg
         </Text>
       </Box>
-
-      <Box flexDirection="column" marginBottom={1}>
-        <Text color="gray">--- {t("game.text.psychologicalIndex")} ---</Text>
-        <ProgressBar label={t("player.anger")} value={player.angerValue} color="red" />
-        <ProgressBar label={t("player.excitement")} value={player.excitationValue} color="yellow" />
-        <ProgressBar label={t("player.depression")} value={player.depressionValue} color="blue" />
-        <ProgressBar label={t("player.weak")} value={player.weakValue} color="white" />
-      </Box>
-
       <Box flexDirection="row">
         <Text color="yellow">
-          {t("player.money")}: {player.fortune}
+          {t("player.money")}: ${player.money}
         </Text>
       </Box>
     </Box>

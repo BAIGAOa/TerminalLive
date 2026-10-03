@@ -1,14 +1,13 @@
+import { inject } from "../../Container.js";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, extname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Scope, Scoped, inject } from "di-wise";
 import ThemeCenter from "./ThemeCenter.js";
 import { ThemeSchema, Theme } from "./ThemeDefinition.js";
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
-@Scoped(Scope.Container)
 export default class ThemeParser {
   private themeCenter: ThemeCenter;
 

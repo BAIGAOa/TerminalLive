@@ -1,0 +1,39 @@
+[
+  { "id": "pr_temp", "labelKey": "pressure.temp", "class": "nature", "icon": "🌡" },
+  { "id": "pr_moist", "labelKey": "pressure.moist", "class": "nature", "icon": "💧" },
+  { "id": "pr_vitality", "labelKey": "pressure.vitality", "class": "nature", "icon": "🌱" },
+  { "id": "pr_calamity", "labelKey": "pressure.calamity", "class": "nature", "icon": "🌪" },
+  { "id": "pr_plague", "labelKey": "pressure.plague", "class": "nature", "icon": "☠" },
+  { "id": "pr_harvest", "labelKey": "pressure.harvest", "class": "nature", "icon": "🌾" },
+
+  { "id": "pr_order", "labelKey": "pressure.order", "class": "society", "icon": "⚖" },
+  { "id": "pr_unrest", "labelKey": "pressure.unrest", "class": "society", "icon": "🔥" },
+  { "id": "pr_morale", "labelKey": "pressure.morale", "class": "society", "icon": "🤝" },
+  { "id": "pr_crime", "labelKey": "pressure.crime", "class": "society", "icon": "🗡" },
+  { "id": "pr_faith", "labelKey": "pressure.faith", "class": "society", "icon": "🕯" },
+  { "id": "pr_tension", "labelKey": "pressure.tension", "class": "society", "icon": "⚔" },
+  { "id": "pr_welfare", "labelKey": "pressure.welfare", "class": "society", "icon": "🏛" },
+
+  { "id": "pr_prosperity", "labelKey": "pressure.prosperity", "class": "economy", "icon": "💰" },
+  { "id": "pr_inflation", "labelKey": "pressure.inflation", "class": "economy", "icon": "📈" },
+  { "id": "pr_trade", "labelKey": "pressure.trade", "class": "economy", "icon": "🚚" },
+  { "id": "pr_scarcity", "labelKey": "pressure.scarcity", "class": "economy", "icon": "🍞" },
+  { "id": "pr_employment", "labelKey": "pressure.employment", "class": "economy", "icon": "🔧" },
+  { "id": "pr_craft", "labelKey": "pressure.craft", "class": "economy", "icon": "⚙" },
+
+  { "id": "pr_literacy", "labelKey": "pressure.literacy", "class": "culture", "icon": "📚" },
+  { "id": "pr_innovation", "labelKey": "pressure.innovation", "class": "culture", "icon": "💡" },
+  { "id": "pr_tradition", "labelKey": "pressure.tradition", "class": "culture", "icon": "🏮" },
+  { "id": "pr_arts", "labelKey": "pressure.arts", "class": "culture", "icon": "🎭" },
+  { "id": "pr_etiquette", "labelKey": "pressure.etiquette", "class": "culture", "icon": "🎎" },
+  { "id": "pr_curiosity", "labelKey": "pressure.curiosity", "class": "culture", "icon": "🔍" },
+
+  { "id": "pr_fortune", "labelKey": "pressure.fortune", "class": "supernatural", "icon": "🍀" },
+  { "id": "pr_mystery", "labelKey": "pressure.mystery", "class": "supernatural", "icon": "🌫" },
+  { "id": "pr_omen", "labelKey": "pressure.omen", "class": "supernatural", "icon": "🔮" },
+  { "id": "pr_fate", "labelKey": "pressure.fate", "class": "supernatural", "icon": "🕸" },
+  { "id": "pr_otherworld", "labelKey": "pressure.otherworld", "class": "supernatural", "icon": "🌌" },
+
+  { "id": "pr_hope", "labelKey": "pressure.hope", "class": "meta", "icon": "✨" },
+  { "id": "pr_despair", "labelKey": "pressure.despair", "class": "meta", "icon": "🕳" }
+]

@@ -1,41 +1,11 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Box, Text } from "ink";
-import { SelectInput, useKeyboard } from "@baigao_h/ink-kit";
-import type { Item } from "@baigao_h/ink-kit";
+import { useKeyboard } from "ink-cartridge";
+import { MenuList } from "./kit/index.js";
 import { useSettingScreen } from "../hooks/useSettingScreen.js";
 import { container } from "../Container.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { SettingRegistry } from "../core/registry/SettingRegistry.js";
-
-function SettingItem({ label, isSelected }: { label: string; value: string; isSelected: boolean }) {
-  const colors = useThemeColors();
-  return (
-    <Box
-      width={40}
-      borderStyle="round"
-      borderColor={isSelected ? colors.highlight : colors.muted}
-      paddingX={1}
-      marginBottom={1}
-    >
-      <Box justifyContent="center" width="100%">
-        <Text color={isSelected ? colors.highlight : colors.text} bold={isSelected}>
-          {label}
-        </Text>
-      </Box>
-    </Box>
-  );
-}
-
-function DefaultIndicator({ isSelected }: { isSelected: boolean }) {
-  const colors = useThemeColors();
-  return (
-    <Box marginRight={1}>
-      <Text color={isSelected ? colors.highlight : undefined}>
-        {isSelected ? '❯' : ' '}
-      </Text>
-    </Box>
-  );
-}
 
 export default function Setting() {
   const data = useSettingScreen();
@@ -43,35 +13,22 @@ export default function Setting() {
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
 
-  // 所有 hooks 在 early return 之前
-
   useEffect(() => {
     if (data.activeMenu !== "") {
-      const unbind = boundKeyboard(["escape"], () => data.onBack());
-      return () => unbind();
+      const u = boundKeyboard(["escape"], () => data.onBack());
+      return () => u();
     }
     return;
   }, [data.activeMenu, data.onBack, boundKeyboard]);
 
-  const items: Item<string>[] = data.menuItems.map((m) => ({
-    label: m.label,
-    value: m.value,
-  }));
-
-  const handleSelect = useCallback(
-    (item: Item<string>) => {
-      data.onSelectMenu(item);
-    },
-    [data.onSelectMenu],
-  );
-
-  // early return 在所有 hooks 之后
   if (data.activeMenu !== "") {
     const entry = registry.get(data.activeMenu);
     if (!entry) return null;
     const Component = entry.component;
     return React.createElement(Component, { onBack: data.onBack });
   }
+
+  const items = data.menuItems.map((m) => ({ value: m.value, label: m.label }));
 
   return (
     <Box
@@ -81,26 +38,38 @@ export default function Setting() {
       alignItems="center"
       height={data.rows}
     >
-      <Box
-        width="100%"
-        height={3}
-        borderColor={colors.text}
-        borderStyle="round"
-      >
+      <Box width="100%" height={3} borderColor={colors.text} borderStyle="round">
         <Box justifyContent="center" width="100%">
           <Text color={colors.settingTitle} bold>
             {data.t("setting.title")}
           </Text>
         </Box>
       </Box>
-      <Box marginTop={1}>
-        <SelectInput
-          items={items}
-          onSelect={handleSelect}
+      <Box marginTop={1} width={44}>
+        <MenuList
           focusId="setting-menu"
-          itemComponent={SettingItem as any}
-          indicatorComponent={DefaultIndicator}
+          items={items}
+          onSelect={(item) => data.onSelectMenu(item)}
+          renderItem={(item, state) => (
+            <Box
+              flexGrow={1}
+              borderStyle="round"
+              borderColor={state.selected ? colors.highlight : colors.muted}
+              paddingX={1}
+              justifyContent="center"
+            >
+              <Text
+                bold={state.selected}
+                color={state.selected ? colors.highlight : colors.text}
+              >
+                {item.label}
+              </Text>
+            </Box>
+          )}
         />
+      </Box>
+      <Box marginTop={1}>
+        <Text dimColor>[Esc] {data.t("game.hint.back")}</Text>
       </Box>
     </Box>
   );

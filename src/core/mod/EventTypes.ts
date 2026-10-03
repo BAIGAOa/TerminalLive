@@ -1,6 +1,8 @@
 import AcademicAnger from "../../world/events/Academic/AcademicAnger.js";
 import AcademicStressEvent from "../../world/events/Academic/AcademicStressEvent.js";
 import BirthEvent from "../../world/events/BirthEvent.js";
+import ChoiceEvent from "../../world/events/ChoiceEvent.js";
+import EffectEvent from "../../world/events/EffectEvent.js";
 import { container } from "../../Container.js";
 import EventTypeRegistry from "./EventTypeRegistry.js";
 export default class EventTypes {
@@ -13,6 +15,8 @@ export default class EventTypes {
     const registry = container.resolve(EventTypeRegistry);
 
     registry.register("BirthEvent", BirthEvent);
+    registry.register("ChoiceEvent", ChoiceEvent);
+    registry.register("EffectEvent", EffectEvent);
     registry.register("AcademicStressEvent", AcademicStressEvent);
     registry.register("AcademicAnger", AcademicAnger);
 

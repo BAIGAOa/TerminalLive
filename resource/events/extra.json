@@ -1,0 +1,384 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_new_job_offer",
+    "nameKey": "ev.new_job_offer",
+    "textKey": "ev.new_job_offer.text",
+    "rangeKey": ["19-30"],
+    "weight": 1.5,
+    "once": true,
+    "choices": [
+      {
+        "id": "accept",
+        "labelKey": "ev.new_job_offer.opt.accept",
+        "effects": { "money": 150, "happiness": -3 },
+        "flag": "employed",
+        "noteKey": "ev.new_job_offer.note.accept"
+      },
+      {
+        "id": "decline",
+        "labelKey": "ev.new_job_offer.opt.decline",
+        "effects": { "happiness": 3, "intelligence": 2 },
+        "noteKey": "ev.new_job_offer.note.decline"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_hobby",
+    "nameKey": "ev.hobby",
+    "textKey": "ev.hobby.text",
+    "rangeKey": ["18-45"],
+    "weight": 1.2,
+    "once": true,
+    "choices": [
+      {
+        "id": "music",
+        "labelKey": "ev.hobby.opt.music",
+        "effects": { "happiness": 5, "money": -200 },
+        "items": ["item_guitar"],
+        "noteKey": "ev.hobby.note.music"
+      },
+      {
+        "id": "sport",
+        "labelKey": "ev.hobby.opt.sport",
+        "effects": { "fitness": 6, "happiness": 3 },
+        "buff": { "id": "fx_energy", "turns": 3 },
+        "noteKey": "ev.hobby.note.sport"
+      },
+      {
+        "id": "reading",
+        "labelKey": "ev.hobby.opt.reading",
+        "effects": { "intelligence": 5, "happiness": 3 },
+        "items": ["item_book"],
+        "noteKey": "ev.hobby.note.reading"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_pet",
+    "nameKey": "ev.pet",
+    "textKey": "ev.pet.text",
+    "rangeKey": ["15-70"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "adopt",
+        "labelKey": "ev.pet.opt.adopt",
+        "effects": { "happiness": 8, "money": -60 },
+        "relationship": { "npc": "npc_pet", "delta": 40 },
+        "flag": "pet_owner",
+        "noteKey": "ev.pet.note.adopt"
+      },
+      {
+        "id": "no",
+        "labelKey": "ev.pet.opt.no",
+        "effects": { "happiness": -1 },
+        "noteKey": "ev.pet.note.no"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_neighbor_help",
+    "nameKey": "ev.neighbor_help",
+    "textKey": "ev.neighbor_help.text",
+    "rangeKey": ["19-70"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "help",
+        "labelKey": "ev.neighbor_help.opt.help",
+        "effects": { "happiness": 4, "fitness": 1 },
+        "relationship": { "npc": "npc_neighbor", "delta": 8 },
+        "noteKey": "ev.neighbor_help.note.help"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "ev.neighbor_help.opt.refuse",
+        "effects": { "happiness": -1 },
+        "relationship": { "npc": "npc_neighbor", "delta": -3 },
+        "noteKey": "ev.neighbor_help.note.refuse"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_travel",
+    "nameKey": "ev.travel",
+    "textKey": "ev.travel.text",
+    "rangeKey": ["22-75"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "ev.travel.opt.go",
+        "effects": { "money": -200, "happiness": 12 },
+        "buff": { "id": "fx_wisdom", "turns": 5 },
+        "flag": "traveled",
+        "noteKey": "ev.travel.note.go"
+      },
+      {
+        "id": "stay",
+        "labelKey": "ev.travel.opt.stay",
+        "effects": { "happiness": 2 },
+        "noteKey": "ev.travel.note.stay"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_side_hustle",
+    "nameKey": "ev.side_hustle",
+    "textKey": "ev.side_hustle.text",
+    "rangeKey": ["20-45"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "do",
+        "labelKey": "ev.side_hustle.opt.do",
+        "effects": { "money": 120, "fitness": -2, "happiness": -2 },
+        "buff": { "id": "fx_fatigue", "turns": 2 },
+        "noteKey": "ev.side_hustle.note.do"
+      },
+      {
+        "id": "focus",
+        "labelKey": "ev.side_hustle.opt.focus",
+        "effects": { "intelligence": 3 },
+        "noteKey": "ev.side_hustle.note.focus"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_breakup",
+    "nameKey": "ev.breakup",
+    "textKey": "ev.breakup.text",
+    "rangeKey": ["20-40"],
+    "weight": 0.7,
+    "params": {
+      "effects": { "happiness": -8, "depressionValue": 8 },
+      "relationship": { "npc": "npc_partner", "delta": -20 },
+      "buff": { "id": "fx_heartache", "turns": 3 }
+    }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_matchmaking",
+    "nameKey": "ev.matchmaking",
+    "textKey": "ev.matchmaking.text",
+    "rangeKey": ["25-45"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "ev.matchmaking.opt.go",
+        "effects": { "happiness": 5, "money": -30 },
+        "relationship": { "npc": "npc_partner", "delta": 15 },
+        "noteKey": "ev.matchmaking.note.go"
+      },
+      {
+        "id": "skip",
+        "labelKey": "ev.matchmaking.opt.skip",
+        "effects": { "happiness": -1 },
+        "noteKey": "ev.matchmaking.note.skip"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_accident",
+    "nameKey": "ev.accident",
+    "textKey": "ev.accident.text",
+    "rangeKey": ["18-75"],
+    "weight": 0.5,
+    "params": {
+      "effects": { "health": -15 },
+      "buff": { "id": "fx_sick", "turns": 3 }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_lottery_win",
+    "nameKey": "ev.lottery_win",
+    "textKey": "ev.lottery_win.text",
+    "rangeKey": ["18-85"],
+    "weight": 0.25,
+    "params": {
+      "effects": { "money": 500, "happiness": 10 },
+      "buff": { "id": "fx_fortune", "turns": 3 }
+    }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_low_mood",
+    "nameKey": "ev.low_mood",
+    "textKey": "ev.low_mood.text",
+    "rangeKey": ["25-60"],
+    "weight": 1,
+    "choices": [
+      {
+        "id": "doctor",
+        "labelKey": "ev.low_mood.opt.doctor",
+        "require": [{ "prop": "money", "gte": 80 }],
+        "effects": { "money": -80, "depressionValue": -15, "happiness": 4 },
+        "buff": { "id": "fx_calm", "turns": 3 },
+        "noteKey": "ev.low_mood.note.doctor"
+      },
+      {
+        "id": "endure",
+        "labelKey": "ev.low_mood.opt.endure",
+        "effects": { "depressionValue": 10 },
+        "buff": { "id": "fx_lonely", "turns": 3 },
+        "noteKey": "ev.low_mood.note.endure"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_mentor",
+    "nameKey": "ev.mentor",
+    "textKey": "ev.mentor.text",
+    "rangeKey": ["30-58"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "guide",
+        "labelKey": "ev.mentor.opt.guide",
+        "effects": { "social": 4, "happiness": 3 },
+        "relationship": { "npc": "npc_colleague", "delta": 10 },
+        "noteKey": "ev.mentor.note.guide"
+      },
+      {
+        "id": "self",
+        "labelKey": "ev.mentor.opt.self",
+        "effects": { "intelligence": 4 },
+        "noteKey": "ev.mentor.note.self"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_family_dinner",
+    "nameKey": "ev.family_dinner",
+    "textKey": "ev.family_dinner.text",
+    "rangeKey": ["19-75"],
+    "weight": 1.2,
+    "choices": [
+      {
+        "id": "attend",
+        "labelKey": "ev.family_dinner.opt.attend",
+        "effects": { "happiness": 5 },
+        "relationship": { "npc": "npc_mom", "delta": 6 },
+        "noteKey": "ev.family_dinner.note.attend"
+      },
+      {
+        "id": "absent",
+        "labelKey": "ev.family_dinner.opt.absent",
+        "effects": { "happiness": -1 },
+        "relationship": { "npc": "npc_mom", "delta": -4 },
+        "noteKey": "ev.family_dinner.note.absent"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_midlife_crisis",
+    "nameKey": "ev.midlife_crisis",
+    "textKey": "ev.midlife_crisis.text",
+    "rangeKey": ["40-59"],
+    "weight": 1.2,
+    "once": true,
+    "choices": [
+      {
+        "id": "change",
+        "labelKey": "ev.midlife_crisis.opt.change",
+        "effects": { "intelligence": 6, "money": -100, "happiness": 5 },
+        "noteKey": "ev.midlife_crisis.note.change"
+      },
+      {
+        "id": "keep",
+        "labelKey": "ev.midlife_crisis.opt.keep",
+        "effects": { "happiness": 2, "money": 50 },
+        "noteKey": "ev.midlife_crisis.note.keep"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_health_warning",
+    "nameKey": "ev.health_warning",
+    "textKey": "ev.health_warning.text",
+    "rangeKey": ["40-62"],
+    "weight": 0.9,
+    "params": {
+      "effects": { "health": -8, "happiness": -3 },
+      "buff": { "id": "fx_sick", "turns": 2 }
+    }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_adventure_1",
+    "nameKey": "ev.adventure_1",
+    "textKey": "ev.adventure_1.text",
+    "rangeKey": ["12-15"],
+    "weight": 0.8,
+    "once": true,
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "ev.adventure_1.opt.go",
+        "effects": { "happiness": 3 },
+        "postEvent": [{ "incident": "ev_adventure_2", "delay": 2 }],
+        "noteKey": "ev.adventure_1.note.go"
+      },
+      {
+        "id": "home",
+        "labelKey": "ev.adventure_1.opt.home",
+        "effects": { "happiness": 2 },
+        "noteKey": "ev.adventure_1.note.home"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_adventure_2",
+    "nameKey": "ev.adventure_2",
+    "textKey": "ev.adventure_2.text",
+    "rangeKey": ["200-201"],
+    "weight": 1,
+    "postEvent": "ev_adventure_3",
+    "params": {
+      "effects": { "intelligence": 4, "fitness": 3 },
+      "buff": { "id": "fx_wisdom", "turns": 3 }
+    }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_adventure_3",
+    "nameKey": "ev.adventure_3",
+    "textKey": "ev.adventure_3.text",
+    "rangeKey": ["200-201"],
+    "weight": 1,
+    "once": true,
+    "choices": [
+      {
+        "id": "persist",
+        "labelKey": "ev.adventure_3.opt.persist",
+        "effects": { "happiness": 8, "social": 3 },
+        "flag": "adventure_done",
+        "noteKey": "ev.adventure_3.note.persist"
+      },
+      {
+        "id": "give_up",
+        "labelKey": "ev.adventure_3.opt.give_up",
+        "effects": { "happiness": -2 },
+        "noteKey": "ev.adventure_3.note.give_up"
+      }
+    ]
+  }
+]

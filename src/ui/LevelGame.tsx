@@ -1,170 +1,186 @@
 import React, { useEffect } from "react";
-import { Box, Text, Newline } from "ink";
-import { useKeyboard, useScreenSystem } from "@baigao_h/ink-kit";
+import { Box, Text } from "ink";
+import { gotoScreen, useKeyboard } from "ink-cartridge";
 import useLevelGameScreen from "../hooks/useLevelGameScreen.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { container } from "../Container.js";
-import Game from "../core/Game.js";
+import AchievementManager from "../achievement/AchievementManager.js";
+import { ActionPanel } from "./ActionPanel.js";
+import { ScrollPanel } from "./kit/index.js";
+import { ChoiceModal } from "./ChoiceModal.js";
+import { GameOver } from "./GameOver.js";
+import { dismissModal, presentModal } from "./layers/modalBus.js";
+import useNarrative from "../hooks/useNarrative.js";
+import MainMenu from "./MainMenu.js";
+import ConfigStore from "../core/store/ConfigStore.js";
+import { computeLifeScore } from "../game/score.js";
+import { resolveKeymap } from "./keymap.js";
 
 export default function LevelGame() {
   const data = useLevelGameScreen();
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
-  const { back } = useScreenSystem();
+  const narrative = useNarrative().join(" ");
+  const endTurnKey = resolveKeymap(
+    container.resolve(ConfigStore).getKeyBindings(),
+  ).endTurn;
 
-  // Enter 推进回合
+  // End the current year, and switch the status view with ← / →.
   useEffect(() => {
-    const u = boundKeyboard(["return"], () => {
-      container.resolve(Game).update();
+    const uEnd = boundKeyboard([endTurnKey], () => {
+      if (data.status === "playing" && !data.pendingChoice) data.endTurn();
     });
-    return () => u();
-  }, [boundKeyboard]);
-
-  // 左右方向键切换视图
-  useEffect(() => {
-    const u1 = boundKeyboard(["left"], () => {
-      data.onPrevView();
-    });
-    const u2 = boundKeyboard(["right"], () => {
-      data.onNextView();
-    });
+    const uLeft = boundKeyboard(["left"], () => data.onPrevView());
+    const uRight = boundKeyboard(["right"], () => data.onNextView());
     return () => {
-      u1();
-      u2();
+      uEnd();
+      uLeft();
+      uRight();
     };
-  }, [data.onPrevView, data.onNextView, boundKeyboard]);
+  }, [boundKeyboard, endTurnKey, data.status, data.pendingChoice, data.endTurn, data.onPrevView, data.onNextView]);
 
-  // Escape 返回关卡选择
+  // Choice dialog (modal layer — owns input while open).
   useEffect(() => {
-    const u = boundKeyboard(["escape"], () => {
-      back();
-    });
-    return () => u();
-  }, [back, boundKeyboard]);
+    if (data.pendingChoice) {
+      presentModal("choice-modal", ChoiceModal, {
+        choice: data.pendingChoice,
+        onResolve: data.resolveChoice,
+      });
+    } else {
+      dismissModal("choice-modal");
+    }
+    return () => dismissModal("choice-modal");
+  }, [data.pendingChoice, data.resolveChoice]);
 
-  const availableRows = Math.max(data.rows, 20);
+  // Game-over / level-complete dialog.
+  useEffect(() => {
+    if (data.status === "playing") {
+      dismissModal("gameover-modal");
+      return;
+    }
+    const achievements = container
+      .resolve(AchievementManager)
+      .getSnapshot()
+      .filter((a) => a.unlocked).length;
+    const { score, rankKey } = computeLifeScore(data.player, achievements);
+    presentModal("gameover-modal", GameOver, {
+      info: {
+        reason: data.status === "dead" ? "death" : "complete",
+        age: Math.floor(data.player.age),
+        playerName: data.player.playerName,
+        money: data.player.money,
+        achievements,
+        score,
+        rankKey,
+        hasNext: data.status === "cleared" && data.hasNextLevel,
+      },
+      onNext: () => {
+        dismissModal("gameover-modal");
+        data.continueNextLevel();
+      },
+      onMenu: () => {
+        dismissModal("gameover-modal");
+        gotoScreen(MainMenu, {});
+      },
+    });
+    return () => dismissModal("gameover-modal");
+  }, [data.status, data.hasNextLevel]);
+
+  const rows = Math.max(data.rows, 24);
 
   return (
-    <Box flexDirection="column" width="100%" height={availableRows} padding={1}>
-      <Box
-        flexDirection="column"
-        borderStyle="single"
-        borderColor={colors.warning}
-        paddingX={1}
-        paddingY={0}
-        marginBottom={1}
-      >
-        <Text bold color={colors.warning}>
-          {data.t("levelDetail.victoryConditions")}
-          {data.levelName ? ` — ${data.levelName}` : ""}
-        </Text>
-        {data.victoryConditions.length === 0 ? (
-          <Text dimColor>  {data.t("levelDetail.noConditions")}</Text>
-        ) : (
-          data.victoryConditions.map((cond, i) => (
-            <Text
-              key={i}
-              color={cond.isMet ? colors.success : colors.muted}
-            >
-              {cond.isMet ? "  ✓" : "  ○"} {cond.description}
-            </Text>
-          ))
-        )}
-      </Box>
-
+    <Box flexDirection="column" width="100%" height={rows} padding={1}>
+      {/* header */}
       <Box
         flexDirection="row"
+        justifyContent="space-between"
         borderStyle="single"
         borderColor={colors.info}
         paddingX={1}
-        paddingY={0}
-        marginBottom={1}
-        justifyContent="space-between"
       >
-        <Box flexDirection="row">
-          <Text color={colors.muted}>{"◄ "}</Text>
-          <Text bold color={colors.text}>
-            {data.t(`gameVive.${data.currentViewId}`) || data.currentViewId}
+        <Text bold color={colors.menuTitle}>
+          {data.levelName}
+        </Text>
+        <Text>
+          {data.t("game.age")}: <Text color="yellow">{Math.floor(data.player.age)}</Text>
+          {"   "}
+          {data.t("game.actions.apShort")}: <Text color="cyan">{data.actionPoints}/{data.maxActionPoints}</Text>
+          {"   "}
+          {data.t("player.money")}: <Text color="yellow">${data.player.money}</Text>
+          {"   "}
+          {data.t("player.health")}:{" "}
+          <Text color={data.player.health < 30 ? "red" : "green"}>
+            {Math.round(data.player.health)}
           </Text>
-          <Text color={colors.muted}>{" ►"}</Text>
-          <Box marginLeft={2}>
+        </Text>
+      </Box>
+
+      <Box flexDirection="row" width="100%" flexGrow={1} marginTop={1}>
+        {/* actions */}
+        <Box width="34%" flexDirection="column" borderStyle="round" borderColor={colors.success} paddingX={1} marginRight={1}>
+          <ActionPanel data={data} />
+        </Box>
+
+        {/* status carousel */}
+        <Box flexDirection="column" flexGrow={1} borderStyle="round" borderColor={colors.info} paddingX={1}>
+          <Box flexDirection="row" justifyContent="space-between" marginBottom={1}>
+            <Text color={colors.muted}>{"◄ "}</Text>
+            <Text bold color={colors.text}>
+              {data.t(`gameVive.${data.currentViewId}`) || data.currentViewId}
+            </Text>
+            <Text color={colors.muted}>{" ►"}</Text>
             <Text dimColor>
               ({data.currentViewIndex + 1}/{data.viewCount})
             </Text>
           </Box>
-        </Box>
-        <Box>
-          <Text>
-            {data.t("game.age")}:{" "}
-            <Text color={colors.warning} bold>
-              {Math.floor(data.player.age)}
-            </Text>
-          </Text>
-        </Box>
-      </Box>
-
-      <Box
-        flexDirection="column"
-        borderStyle="single"
-        borderColor={colors.success}
-        padding={1}
-        marginBottom={1}
-        flexGrow={3}
-      >
-        {data.renderCurrentView() ?? (
-          <Box flexGrow={1} justifyContent="center" alignItems="center">
-            <Text dimColor>{data.t("game.status.none")}</Text>
+          <Box flexDirection="column" flexGrow={1}>
+            {data.renderCurrentView()}
           </Box>
-        )}
+          {/* victory conditions */}
+          <Box flexDirection="column" marginTop={1}>
+            {data.victoryConditions.map((cond, i) => (
+              <Text key={i} color={cond.isMet ? colors.success : colors.muted}>
+                {cond.isMet ? "  ✓" : "  ○"} {cond.description}
+              </Text>
+            ))}
+          </Box>
+        </Box>
       </Box>
 
-      <Box
-        flexDirection="column"
-        borderStyle="single"
-        borderColor="magenta"
-        padding={1}
-        flexGrow={2}
-      >
+      {/* journal — a prose scene, then the recent events */}
+      <Box flexDirection="column" borderStyle="round" borderColor="magenta" paddingX={1} marginTop={1} height={11}>
         <Box flexDirection="row" justifyContent="space-between">
           <Text bold color="magenta">
             {data.t("game.journal.title", { logsLength: data.logs.length })}
           </Text>
-          {data.logs.length > 0 && (
-            <Text dimColor>
-              {data.t("game.age")}: {Math.floor(data.player.age)}
-            </Text>
-          )}
+          <Text dimColor>{data.t("game.journal.wheel")}</Text>
         </Box>
-
-        <Newline />
-
+        <Box height={2} overflowY="hidden">
+          <Text color={colors.text}>
+            <Text dimColor>{data.t("game.scene")}: </Text>
+            {narrative}
+          </Text>
+        </Box>
         {data.logs.length === 0 ? (
-          <Box flexGrow={1} justifyContent="center" alignItems="center">
-            <Text dimColor>{data.t("game.journal.noEvent")}</Text>
-          </Box>
+          <Text dimColor>{data.t("game.journal.noEvent")}</Text>
         ) : (
-          <Box flexDirection="column">
-            {data.logs.slice(0, 8).map((entry, index) => (
-              <Text
-                key={index}
-                color={entry.isLatest ? colors.text : colors.muted}
-              >
+          <ScrollPanel
+            height={6}
+            lines={data.logs.map((entry, i) => (
+              <Text key={i} color={entry.isLatest ? colors.text : colors.muted}>
                 {entry.isLatest ? "▶" : " "}
                 <Text color={colors.info}>{entry.timestamp}</Text>
                 {" : "}
                 {entry.eventName}
               </Text>
             ))}
-            {data.logs.length > 8 && (
-              <Text dimColor>... +{data.logs.length - 8}</Text>
-            )}
-          </Box>
+          />
         )}
       </Box>
 
       <Box marginTop={1} justifyContent="center">
         <Text dimColor>
-          [Enter] {data.t("game.nextRound") || "下一回合"}  [← →] {data.t("game.switchView") || "切换视图"}  [Esc] {data.t("game.back") || "返回"}
+          [↑↓⏎] {data.t("game.hint.actions")}  [E] {data.t("game.hint.endTurn")}  [←→] {data.t("game.hint.view")}  [Tab] {data.t("game.hint.focus")}  [P] {data.t("console.title")}  [Q] {data.t("game.hint.menu")}
         </Text>
       </Box>
     </Box>

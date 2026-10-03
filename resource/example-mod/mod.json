@@ -1,0 +1,10 @@
+{
+  "id": "example_mod",
+  "name": "Example Mod",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "description": "A tiny example mod showing the sandboxed plugin API: custom events, hidden-score axes, lore, and hot-reload.",
+  "author": "you",
+  "main": "index.js",
+  "dependencies": {}
+}

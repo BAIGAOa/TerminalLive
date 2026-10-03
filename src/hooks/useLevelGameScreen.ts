@@ -8,6 +8,8 @@ import GeneralPurpose from "../level/conditions/GeneralPurpose.js";
 import type { LogEntry } from "../core/store/LogStore.js";
 import LevelCondition from "../level/LevelCondition.js";
 import GameStatusMap from "../core/registry/GameStatusMap.js";
+import Game, { ActionView, GameStatusKind } from "../core/Game.js";
+import { PendingChoice } from "../event/PendingChoice.js";
 
 export interface FormattedVictoryCondition {
   description: string;
@@ -20,20 +22,30 @@ export interface LogDisplayEntry {
   isLatest: boolean;
 }
 
-export interface LevelGameData {
+export interface GameScreenData {
   player: Player;
   levelName: string;
   victoryConditions: FormattedVictoryCondition[];
-  currentViewId: string;
   viewIds: string[];
+  currentViewId: string;
   currentViewIndex: number;
   viewCount: number;
+  actionViews: ActionView[];
+  actionPoints: number;
+  maxActionPoints: number;
+  status: GameStatusKind;
+  pendingChoice: PendingChoice | null;
+  hasNextLevel: boolean;
   logs: LogDisplayEntry[];
   rows: number;
   t: (key: string, params?: Record<string, string | number>) => string;
   langCode: string;
   onPrevView: () => void;
   onNextView: () => void;
+  performAction: (id: string) => void;
+  endTurn: () => void;
+  resolveChoice: (id: string) => void;
+  continueNextLevel: () => void;
   renderCurrentView: () => React.ReactNode;
 }
 
@@ -50,19 +62,37 @@ function formatCondition(
   return `[${typeName}]`;
 }
 
-export default function useLevelGameScreen(): LevelGameData {
+export default function useLevelGameScreen(): GameScreenData {
   const { t, langCode } = useI18n();
   const { rows } = useTerminalSize();
 
   const levelManager = container.resolve(LevelManager);
+  const game = container.resolve(Game);
   const gameStatusMap = container.resolve(GameStatusMap);
 
   const player = levelManager.getPlayer();
+
+  // Re-render on any player change relevant to the screen.
   useSyncExternalStore(
     player.subscribe,
     () =>
-      `${player.age}|${player.health}|${player.angerValue}|${player.currentStatus}`,
+      [
+        player.age,
+        player.health,
+        player.happiness,
+        player.money,
+        player.actionPoints,
+        player.intelligence,
+        player.social,
+        player.fitness,
+        player.activeEffects.length,
+        player.inventory.length,
+        player.relationships.size,
+      ].join("|"),
   );
+
+  // Re-render on level state changes (turn, choices).
+  useSyncExternalStore(levelManager.subscribe, levelManager.getSnapshot);
 
   const logStore = levelManager.getCurrentLogStore();
   const rawLogs: LogEntry[] = useSyncExternalStore(
@@ -101,7 +131,19 @@ export default function useLevelGameScreen(): LevelGameData {
       description: formatCondition(cond, t),
       isMet: cond.customsClearance(player),
     }));
-  }, [level, player, t]);
+  }, [
+    level,
+    player,
+    t,
+    player.age,
+    player.health,
+    player.money,
+    player.reputation,
+    player.intelligence,
+    player.social,
+    player.fitness,
+    player.happiness,
+  ]);
 
   const logs: LogDisplayEntry[] = useMemo(() => {
     if (!rawLogs?.length) return [];
@@ -126,20 +168,72 @@ export default function useLevelGameScreen(): LevelGameData {
     return renderFn ? renderFn({ player, t }) : null;
   }, [gameStatusMap, currentViewId, player, t]);
 
+  // Stable callbacks — keeping these referentially stable stops effects that
+  // depend on them (e.g. the modal-opening effect in LevelGame) from re-running
+  // on every render, which would otherwise re-apply layer elements in a loop.
+  const performActionStable = useCallback(
+    (id: string) => {
+      game.performAction(id);
+    },
+    [game],
+  );
+  const endTurnStable = useCallback(() => {
+    game.endTurn();
+  }, [game]);
+  const resolveChoiceStable = useCallback(
+    (id: string) => {
+      game.resolveChoice(id);
+    },
+    [game],
+  );
+  const continueNextLevelStable = useCallback(() => {
+    game.goToNextLevel();
+  }, [game]);
+
+  const actionViews = useMemo(
+    () => game.getActionViews(),
+    [
+      game,
+      player.age,
+      player.actionPoints,
+      player.money,
+      player.intelligence,
+      player.social,
+      player.fitness,
+      player.reputation,
+      player.flags.size,
+      // Map identity changes on adjustRelationship, so NPC-gated actions refresh.
+      player.relationships,
+    ],
+  );
+
+  const status = game.getStatus();
+  const pendingChoice = game.getPendingChoice();
+
   return {
     player,
     levelName,
     victoryConditions,
-    currentViewId,
     viewIds,
+    currentViewId,
     currentViewIndex: safeIndex,
     viewCount,
+    actionViews,
+    actionPoints: player.actionPoints,
+    maxActionPoints: player.maxActionPoints(),
+    status,
+    pendingChoice,
+    hasNextLevel: game.hasNextLevel(),
     logs,
     rows,
     t,
     langCode,
     onPrevView,
     onNextView,
+    performAction: performActionStable,
+    endTurn: endTurnStable,
+    resolveChoice: resolveChoiceStable,
+    continueNextLevel: continueNextLevelStable,
     renderCurrentView,
   };
 }

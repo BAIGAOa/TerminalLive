@@ -1,0 +1,18 @@
+{
+  "id": "midlife",
+  "nameKey": "level.midlife",
+  "descriptionKey": "level.midlife.desc",
+  "nextLevel": "elder",
+  "difficultyIdentification": "hard",
+  "algorithm": "default",
+  "extraFilters": [],
+  "onEnter": {
+    "setPlayer": { "age": 35 }
+  },
+  "nextLevelUnlock": [
+    {
+      "type": "generalPurpose",
+      "params": { "prop": "age", "num": 59, "cat": "greaterThan" }
+    }
+  ]
+}

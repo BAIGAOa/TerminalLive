@@ -1,10 +1,9 @@
-import { Scope, Scoped, inject } from "di-wise";
+import { inject } from "../../Container.js";
 import ThemeCenter from "./ThemeCenter.js";
 import { Theme } from "./ThemeDefinition.js";
 
 type Listener = () => void;
 
-@Scoped(Scope.Container)
 export default class ThemeManager {
   private themeCenter: ThemeCenter;
   private currentThemeId: string | null = null;

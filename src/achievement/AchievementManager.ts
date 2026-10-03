@@ -1,4 +1,4 @@
-import { inject, Scope, Scoped } from "di-wise";
+import { inject } from "../Container.js";
 import AchievementRegistry from "../core/registry/AchievementRegistry.js";
 import AchievementPersistence from "./AchievementPersistence.js";
 import TypedEventBus from "../core/TypedEventBus.js";
@@ -13,7 +13,6 @@ export interface MergedAchievement extends Achievement {
   unlockedAt: number | null;
 }
 
-@Scoped(Scope.Container)
 export default class AchievementManager {
   private registry: AchievementRegistry;
   private persistence: AchievementPersistence;
@@ -149,9 +148,18 @@ export default class AchievementManager {
     cond: Achievement["conditions"][number],
     triggeredEvents: Set<string>,
   ): boolean {
+    if (!this.player) return false;
     switch (cond.type) {
       case "incident":
         return triggeredEvents.has(cond.incidentId);
+      case "flag":
+        return this.player.hasFlag(cond.flag);
+      case "stat": {
+        const value = this.player.getStat(cond.prop as never);
+        if (cond.gte !== undefined && value < cond.gte) return false;
+        if (cond.lte !== undefined && value > cond.lte) return false;
+        return true;
+      }
       default:
         return false;
     }
