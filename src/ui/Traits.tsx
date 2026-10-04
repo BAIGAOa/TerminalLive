@@ -7,6 +7,8 @@ import ConfigStore from "../core/store/ConfigStore.js";
 import TraitRegistry from "../world/traits/TraitRegistry.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { useTerminalSize } from "./TerminalSizeContext.js";
+import { clampWidth } from "./kit/viewport.js";
 
 const MAX_TRAITS = 2;
 
@@ -16,6 +18,7 @@ export default function Traits() {
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
   const { back } = useScreenSystem();
+  const { columns } = useTerminalSize();
   const configStore = container.resolve(ConfigStore);
   const reg = container.resolve(TraitRegistry);
 
@@ -60,7 +63,7 @@ export default function Traits() {
         <Text dimColor>{t("traits.hint", { max: MAX_TRAITS })}</Text>
       </Box>
 
-      <Box width={62} flexDirection="column" marginTop={1}>
+      <Box width={clampWidth(columns, 62)} flexDirection="column" marginTop={1}>
         <MenuList
           focusId="traits-list"
           items={items}

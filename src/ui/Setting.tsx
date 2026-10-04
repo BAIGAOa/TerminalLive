@@ -1,25 +1,29 @@
 import React, { useEffect } from "react";
 import { Box, Text } from "ink";
-import { useKeyboard } from "ink-cartridge";
+import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { MenuList } from "./kit/index.js";
 import { useSettingScreen } from "../hooks/useSettingScreen.js";
 import { container } from "../Container.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { SettingRegistry } from "../core/registry/SettingRegistry.js";
+import { useTerminalSize } from "./TerminalSizeContext.js";
+import { clampWidth } from "./kit/viewport.js";
 
 export default function Setting() {
   const data = useSettingScreen();
   const registry = container.resolve(SettingRegistry);
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
+  const { columns } = useTerminalSize();
+  const { back } = useScreenSystem();
 
+  // Root screen: Esc leaves settings (as the footer promises). Sub-screens bind
+  // their own Esc to return to this list.
   useEffect(() => {
-    if (data.activeMenu !== "") {
-      const u = boundKeyboard(["escape"], () => data.onBack());
-      return () => u();
-    }
-    return;
-  }, [data.activeMenu, data.onBack, boundKeyboard]);
+    if (data.activeMenu !== "") return;
+    const u = boundKeyboard(["escape"], () => back());
+    return () => u();
+  }, [data.activeMenu, back, boundKeyboard]);
 
   if (data.activeMenu !== "") {
     const entry = registry.get(data.activeMenu);
@@ -36,40 +40,43 @@ export default function Setting() {
       padding={1}
       width="100%"
       alignItems="center"
+      justifyContent="center"
       height={data.rows}
     >
-      <Box width="100%" height={3} borderColor={colors.text} borderStyle="round">
-        <Box justifyContent="center" width="100%">
-          <Text color={colors.settingTitle} bold>
-            {data.t("setting.title")}
-          </Text>
+      <Box width={clampWidth(columns, 44)} flexDirection="column">
+        <Box height={3} borderColor={colors.text} borderStyle="round">
+          <Box justifyContent="center" width="100%">
+            <Text color={colors.settingTitle} bold>
+              {data.t("setting.title")}
+            </Text>
+          </Box>
         </Box>
-      </Box>
-      <Box marginTop={1} width={44}>
-        <MenuList
-          focusId="setting-menu"
-          items={items}
-          onSelect={(item) => data.onSelectMenu(item)}
-          renderItem={(item, state) => (
-            <Box
-              flexGrow={1}
-              borderStyle="round"
-              borderColor={state.selected ? colors.highlight : colors.muted}
-              paddingX={1}
-              justifyContent="center"
-            >
-              <Text
-                bold={state.selected}
-                color={state.selected ? colors.highlight : colors.text}
+        <Box marginTop={1} flexDirection="column">
+          <MenuList
+            focusId="setting-menu"
+            items={items}
+            onSelect={(item) => data.onSelectMenu(item)}
+            renderItem={(item, state) => (
+              <Box
+                flexGrow={1}
+                borderStyle="round"
+                borderColor={state.selected ? colors.highlight : colors.muted}
+                paddingX={1}
+                justifyContent="center"
               >
-                {item.label}
-              </Text>
-            </Box>
-          )}
-        />
-      </Box>
-      <Box marginTop={1}>
-        <Text dimColor>[Esc] {data.t("game.hint.back")}</Text>
+                <Text
+                  bold={state.selected}
+                  color={state.selected ? colors.highlight : colors.text}
+                >
+                  {item.label}
+                </Text>
+              </Box>
+            )}
+          />
+        </Box>
+        <Box marginTop={1} justifyContent="center">
+          <Text dimColor>[Esc] {data.t("game.hint.back")}</Text>
+        </Box>
       </Box>
     </Box>
   );

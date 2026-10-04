@@ -17,6 +17,12 @@ declare global {
     /** 玩家完成抉择 */
     "choice:resolved": { incidentId: string; optionId: string };
 
+    /** 玩家与某个 NPC 互动 */
+    "npc:interaction": { npcId: string; interactionId: string };
+
+    /** 某个 NPC 自主做了某件事 */
+    "npc:acted": { npcId: string; autonomyId: string };
+
     /** 玩家执行了一个行动 */
     "action:performed": { actionId: string };
 

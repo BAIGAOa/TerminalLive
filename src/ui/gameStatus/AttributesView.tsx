@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Text } from "ink";
 import Player from "../../world/Player.js";
 import { StatBar } from "./common.js";
+import { useTerminalSize } from "../TerminalSizeContext.js";
 
 export default function AttributesView({
   player,
@@ -10,6 +11,8 @@ export default function AttributesView({
   player: Player;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
+  const { columns } = useTerminalSize();
+  const barW = Math.max(8, Math.min(20, Math.floor(columns * 0.22)));
   return (
     <Box flexDirection="column">
       <Box flexDirection="row" justifyContent="space-between" marginBottom={1}>
@@ -25,19 +28,19 @@ export default function AttributesView({
         label={t("player.health")}
         value={player.health}
         color={player.health < 30 ? "red" : "green"}
-        width={24}
+        width={barW}
       />
       <StatBar
         label={t("player.happiness")}
         value={player.happiness}
         color="magenta"
-        width={24}
+        width={barW}
       />
       <StatBar
         label={t("player.reputation")}
         value={player.reputation}
         color="cyan"
-        width={24}
+        width={barW}
       />
 
       <Box marginTop={1} flexDirection="row">

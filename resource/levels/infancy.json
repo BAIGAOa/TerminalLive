@@ -1,0 +1,26 @@
+{
+  "id": "infancy",
+  "nameKey": "level.infancy",
+  "descriptionKey": "level.infancy.desc",
+  "nextLevel": "childhood",
+  "difficultyIdentification": "easy",
+  "algorithm": "default",
+  "extraFilters": [],
+  "onEnter": {
+    "setPlayer": {
+      "age": 0,
+      "health": 100,
+      "happiness": 70,
+      "intelligence": 6,
+      "social": 6,
+      "fitness": 10,
+      "money": 0
+    }
+  },
+  "nextLevelUnlock": [
+    {
+      "type": "generalPurpose",
+      "params": { "prop": "age", "num": 2, "cat": "greaterThan" }
+    }
+  ]
+}

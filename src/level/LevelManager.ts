@@ -2,6 +2,7 @@ import { inject } from "../Container.js";
 import Level from "./Level.js";
 import LevelLoader from "./LevelLoader.js";
 import Player from "../world/Player.js";
+import { Incident } from "../world/Incident.js";
 import EventHistory from "../event/EventHistory.js";
 import ModPluginLoader from "../core/mod/ModPluginLoader.js";
 import ConfigStore from "../core/store/ConfigStore.js";
@@ -75,6 +76,15 @@ export default class LevelManager {
 
   public getAllLevels() {
     return this.levels;
+  }
+
+  public getLevel(id: string): Level | undefined {
+    return this.levels.get(id);
+  }
+
+  /** Ids of the levels that start a new life (no other level points to them). */
+  public getRootLevelIds(): string[] {
+    return [...this.rootLevelIds];
   }
 
   public get current(): Level {
@@ -222,6 +232,21 @@ export default class LevelManager {
       this.notify();
     }
     return ok;
+  }
+
+  /** Re-offer a pending choice saved before the last quit (after a reload). */
+  public restorePendingChoice(incidentId: string, rangeKey: string): void {
+    if (!this._current || !this.player) return;
+    this._current.restorePendingChoice(incidentId, rangeKey, this.player);
+    this.notify();
+  }
+
+  /** Offer an NPC-initiated choice (skipped when one is already pending). */
+  public offerNpcChoice(incident: Incident): void {
+    if (!this._current || !this.player) return;
+    if (this._current.hasPendingChoice()) return;
+    this._current.offerExternalChoice(incident, this.player);
+    this.notify();
   }
 
   /** Whether the current level's pass conditions are met. */

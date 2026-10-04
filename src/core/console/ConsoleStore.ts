@@ -1,5 +1,6 @@
 import { container } from "../../Container.js";
 import TypedEventBus from "../TypedEventBus.js";
+import { replInput } from "../repl/replInputState.js";
 
 type Listener = () => void;
 
@@ -129,6 +130,7 @@ export default class ConsoleStore {
       // 关闭控制台时退出输入模式
       this.inputMode = false;
       this.inputText = "";
+      replInput.set(false);
     }
     this.emitChange();
   }
@@ -152,12 +154,15 @@ export default class ConsoleStore {
     if (!this.visible) return;
     this.inputMode = true;
     this.inputText = "";
+    // Suppress the app's letter global-keys so they can be typed here.
+    replInput.set(true);
     this.emitChange();
   }
 
   public exitInputMode(): void {
     this.inputMode = false;
     this.inputText = "";
+    replInput.set(false);
     this.emitChange();
   }
 

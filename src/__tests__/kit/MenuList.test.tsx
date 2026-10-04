@@ -85,3 +85,65 @@ describe("MenuList (ink-cartridge integration)", () => {
     expect(highlights).toContain("b");
   });
 });
+
+describe("MenuList grid mode", () => {
+  function GridScreen() {
+    return (
+      <MenuList
+        focusId="grid-menu"
+        columns={2}
+        columnWidth={10}
+        indicator={null}
+        items={[
+          { value: "a", label: "Alpha" },
+          { value: "b", label: "Beta" },
+          { value: "c", label: "Gamma" },
+          { value: "d", label: "Delta" },
+        ]}
+        onSelect={(it) => picks.push(it.value)}
+        onChange={(it) => highlights.push(it.value)}
+      />
+    );
+  }
+
+  function mountGrid() {
+    return render(
+      <ScenarioManagementProvider defaultScreen={GridScreen}>
+        <KeyboardProvider mouse>
+          <CurrentScreen />
+        </KeyboardProvider>
+      </ScenarioManagementProvider>,
+    );
+  }
+
+  beforeEach(() => {
+    clearRegistry();
+    registerComponent(GridScreen, {});
+    picks = [];
+    highlights = [];
+  });
+
+  it("renders every label without the ❯ marker", async () => {
+    const { lastFrame } = mountGrid();
+    await tick();
+    const frame = lastFrame() ?? "";
+    for (const label of ["Alpha", "Beta", "Gamma", "Delta"]) {
+      expect(frame).toContain(label);
+    }
+    expect(frame).not.toContain("❯");
+  });
+
+  it("right/left move by one, up/down move by a row", async () => {
+    const { stdin } = mountGrid();
+    await tick();
+    stdin.write("\u001B[C"); // right -> b
+    await tick();
+    expect(highlights.at(-1)).toBe("b");
+    stdin.write("\u001B[B"); // down -> d (b + 2)
+    await tick();
+    expect(highlights.at(-1)).toBe("d");
+    stdin.write("\u001B[A"); // up -> b (d - 2)
+    await tick();
+    expect(highlights.at(-1)).toBe("b");
+  });
+});

@@ -31,6 +31,8 @@ export interface PlayerAttributes {
   relationships?: Record<string, number>;
   flags?: string[];
   actionPoints?: number;
+  careerId?: string | null;
+  careerRank?: number;
 }
 
 export interface ActiveEffect {
@@ -82,6 +84,10 @@ export default class Player {
   public relationships = new Map<string, number>();
   public flags = new Set<string>();
 
+  /** Current job track and rank (see CareerSystem). */
+  public careerId: string | null = null;
+  public careerRank = 0;
+
   private listeners = new Set<() => void>();
 
   constructor(attrs: PlayerAttributes) {
@@ -110,6 +116,8 @@ export default class Player {
       this.relationships = new Map(Object.entries(attrs.relationships));
     }
     if (attrs.flags) this.flags = new Set(attrs.flags);
+    if (attrs.careerId !== undefined) this.careerId = attrs.careerId;
+    if (attrs.careerRank !== undefined) this.careerRank = attrs.careerRank;
 
     this.recomputeActionPoints();
     if (attrs.actionPoints !== undefined) this.actionPoints = attrs.actionPoints;
@@ -141,6 +149,8 @@ export default class Player {
     this.inventory = [];
     this.relationships = new Map();
     this.flags = new Set();
+    this.careerId = null;
+    this.careerRank = 0;
 
     this.recomputeActionPoints();
     this.alive = this.health > 0;

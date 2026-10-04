@@ -1,10 +1,15 @@
-import { useSyncExternalStore, useCallback } from "react";
+import { useSyncExternalStore, useCallback, useMemo, useRef } from "react";
 import { container } from "../Container.js";
 import ConsoleStore, {
   ConsoleNotification,
   ConsoleCommandResult,
 } from "../core/console/ConsoleStore.js";
-import ConsoleCommandParser from "../core/console/ConsoleCommandParser.js";
+import ReplRegistry from "../core/repl/ReplRegistry.js";
+import ReplRunner from "../core/repl/ReplRunner.js";
+import ReplHistory from "../core/repl/ReplHistory.js";
+import { applyCompletion, complete } from "../core/repl/ReplCompleter.js";
+import { registerReplCommands } from "../core/repl/commands/index.js";
+import { ReplSink } from "../core/repl/types.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 
 export interface ControlConsoleData {
@@ -14,20 +19,47 @@ export interface ControlConsoleData {
   inputMode: boolean;
   inputText: string;
   unreadCount: number;
+  /** Live completion candidates for the current input. */
+  completions: string[];
   t: (key: string, params?: Record<string, string | number>) => string;
   enterInputMode: () => void;
   exitInputMode: () => void;
   setInputText: (text: string) => void;
   submitCommand: () => void;
   clearResults: () => void;
+  /** Tab: complete the current token to the first candidate. */
+  acceptCompletion: () => void;
+  /** ↑ / ↓: walk the command history. */
+  historyPrev: () => void;
+  historyNext: () => void;
 }
 
 export function useControlConsole(): ControlConsoleData {
   const { t } = useI18n();
   const store = container.resolve(ConsoleStore);
-  const parser = container.resolve(ConsoleCommandParser);
+  const runner = container.resolve(ReplRunner);
+  const registry = container.resolve(ReplRegistry);
 
   const snapshot = useSyncExternalStore(store.subscribe, store.getSnapshot);
+
+  // Make the command table available and keep the translator fresh.
+  registerReplCommands(registry);
+  runner.setTranslator(t);
+
+  // Commands print into the console's result list instead of a scrollback.
+  const sink: ReplSink = useMemo(
+    () => ({
+      print: (text, kind) =>
+        store.addCommandResult({
+          type:
+            kind === "error" ? "error" : kind === "success" ? "success" : "info",
+          message: text,
+        }),
+      clear: () => store.clearCommandResults(),
+      close: () => store.toggle(),
+    }),
+    [store],
+  );
 
   const enterInputMode = useCallback(() => {
     store.enterInputMode();
@@ -47,17 +79,40 @@ export function useControlConsole(): ControlConsoleData {
   const submitCommand = useCallback(() => {
     const text = snapshot.inputText;
     if (!text.trim()) return;
-    // 先添加一条 info 记录表示用户输入了什么
-    store.addCommandResult({
-      type: "info",
-      message: `> ${text}`,
-    });
-    parser.load(text);
+    historyRef.current.push(text);
+    store.addCommandResult({ type: "info", message: `> ${text}` });
+    // echo:false — we just echoed the input ourselves.
+    runner.execute(text, { sink, echo: false });
     store.setInputText("");
-  }, [snapshot.inputText, store, parser]);
+  }, [snapshot.inputText, store, runner, sink]);
 
   const clearResults = useCallback(() => {
     store.clearCommandResults();
+  }, [store]);
+
+  const historyRef = useRef(new ReplHistory());
+  const completions = useMemo(
+    () =>
+      snapshot.inputText.trim()
+        ? complete(snapshot.inputText, registry).candidates.slice(0, 4)
+        : [],
+    [snapshot.inputText, registry],
+  );
+
+  const acceptCompletion = useCallback(() => {
+    const text = snapshot.inputText;
+    const { candidates } = complete(text, registry);
+    if (candidates.length === 0) return;
+    store.setInputText(applyCompletion(text, candidates));
+  }, [snapshot.inputText, registry, store]);
+
+  const historyPrev = useCallback(() => {
+    const prev = historyRef.current.prev();
+    if (prev !== null) store.setInputText(prev);
+  }, [store]);
+
+  const historyNext = useCallback(() => {
+    store.setInputText(historyRef.current.next() ?? "");
   }, [store]);
 
   return {
@@ -67,11 +122,15 @@ export function useControlConsole(): ControlConsoleData {
     inputMode: snapshot.inputMode,
     inputText: snapshot.inputText,
     unreadCount: snapshot.unreadCount,
+    completions,
     t,
     enterInputMode,
     exitInputMode,
     setInputText,
     submitCommand,
     clearResults,
+    acceptCompletion,
+    historyPrev,
+    historyNext,
   };
 }

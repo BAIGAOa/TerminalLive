@@ -5,6 +5,7 @@ import SkillsView from "../ui/gameStatus/SkillsView.js";
 import EffectsView from "../ui/gameStatus/EffectsView.js";
 import InventoryView from "../ui/gameStatus/InventoryView.js";
 import RelationshipsView from "../ui/gameStatus/RelationshipsView.js";
+import CareerView from "../ui/gameStatus/CareerView.js";
 import PerksView from "../ui/gameStatus/PerksView.js";
 import WorldView from "../ui/gameStatus/WorldView.js";
 import PressuresView from "../ui/gameStatus/PressuresView.js";
@@ -33,6 +34,9 @@ export default class GameStatus {
     );
     map.register("relationships", (props?: any) =>
       React.createElement(RelationshipsView, props),
+    );
+    map.register("career", (props?: any) =>
+      React.createElement(CareerView, props),
     );
     map.register("perks", (props?: any) =>
       React.createElement(PerksView, props),

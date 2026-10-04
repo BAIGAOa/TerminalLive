@@ -6,9 +6,13 @@
     "icon": "🧸",
     "usable": true,
     "consumable": false,
-    "effects": { "happiness": 8 },
+    "effects": {
+      "happiness": 8
+    },
     "price": 30,
-    "tags": ["childhood"]
+    "tags": [
+      "childhood"
+    ]
   },
   {
     "id": "item_book",
@@ -17,7 +21,9 @@
     "icon": "📕",
     "usable": true,
     "consumable": true,
-    "effects": { "intelligence": 6 },
+    "effects": {
+      "intelligence": 6
+    },
     "price": 40
   },
   {
@@ -27,7 +33,9 @@
     "icon": "🍪",
     "usable": true,
     "consumable": true,
-    "effects": { "happiness": 5 },
+    "effects": {
+      "happiness": 5
+    },
     "price": 10
   },
   {
@@ -37,8 +45,13 @@
     "icon": "☕",
     "usable": true,
     "consumable": true,
-    "effects": { "happiness": 3 },
-    "buff": { "id": "fx_focus", "turns": 3 },
+    "effects": {
+      "happiness": 3
+    },
+    "buff": {
+      "id": "fx_focus",
+      "turns": 3
+    },
     "price": 15
   },
   {
@@ -48,8 +61,14 @@
     "icon": "🍵",
     "usable": true,
     "consumable": true,
-    "effects": { "happiness": 4, "angerValue": -4 },
-    "buff": { "id": "fx_focus", "turns": 2 },
+    "effects": {
+      "happiness": 4,
+      "angerValue": -4
+    },
+    "buff": {
+      "id": "fx_focus",
+      "turns": 2
+    },
     "price": 12
   },
   {
@@ -59,7 +78,9 @@
     "icon": "💊",
     "usable": true,
     "consumable": true,
-    "effects": { "health": 18 },
+    "effects": {
+      "health": 18
+    },
     "price": 60
   },
   {
@@ -69,7 +90,10 @@
     "icon": "🧴",
     "usable": true,
     "consumable": true,
-    "effects": { "health": 6, "fitness": 2 },
+    "effects": {
+      "health": 6,
+      "fitness": 2
+    },
     "price": 40
   },
   {
@@ -79,7 +103,9 @@
     "icon": "📘",
     "usable": true,
     "consumable": true,
-    "effects": { "intelligence": 8 },
+    "effects": {
+      "intelligence": 8
+    },
     "price": 80
   },
   {
@@ -89,8 +115,13 @@
     "icon": "🌸",
     "usable": true,
     "consumable": true,
-    "effects": { "social": 3 },
-    "buff": { "id": "fx_charm", "turns": 3 },
+    "effects": {
+      "social": 3
+    },
+    "buff": {
+      "id": "fx_charm",
+      "turns": 3
+    },
     "price": 90
   },
   {
@@ -100,8 +131,13 @@
     "icon": "🎟",
     "usable": true,
     "consumable": true,
-    "effects": { "fitness": 6 },
-    "buff": { "id": "fx_energy", "turns": 3 },
+    "effects": {
+      "fitness": 6
+    },
+    "buff": {
+      "id": "fx_energy",
+      "turns": 3
+    },
     "price": 100
   },
   {
@@ -111,9 +147,13 @@
     "icon": "🚲",
     "usable": true,
     "consumable": false,
-    "effects": { "fitness": 4 },
+    "effects": {
+      "fitness": 4
+    },
     "price": 120,
-    "tags": ["childhood"]
+    "tags": [
+      "childhood"
+    ]
   },
   {
     "id": "item_guitar",
@@ -122,8 +162,14 @@
     "icon": "🎸",
     "usable": true,
     "consumable": false,
-    "effects": { "happiness": 4, "social": 2 },
-    "buff": { "id": "fx_charm", "turns": 3 },
+    "effects": {
+      "happiness": 4,
+      "social": 2
+    },
+    "buff": {
+      "id": "fx_charm",
+      "turns": 3
+    },
     "price": 200
   },
   {
@@ -133,8 +179,13 @@
     "icon": "💻",
     "usable": true,
     "consumable": false,
-    "effects": { "intelligence": 4 },
-    "buff": { "id": "fx_focus", "turns": 3 },
+    "effects": {
+      "intelligence": 4
+    },
+    "buff": {
+      "id": "fx_focus",
+      "turns": 3
+    },
     "price": 400
   },
   {
@@ -144,7 +195,9 @@
     "icon": "🚗",
     "usable": true,
     "consumable": false,
-    "effects": { "happiness": 5 },
+    "effects": {
+      "happiness": 5
+    },
     "price": 800
   },
   {
@@ -155,7 +208,9 @@
     "usable": false,
     "consumable": true,
     "price": 50,
-    "tags": ["social"]
+    "tags": [
+      "social"
+    ]
   },
   {
     "id": "item_watch",
@@ -165,7 +220,9 @@
     "usable": false,
     "consumable": false,
     "price": 150,
-    "tags": ["keepsake"]
+    "tags": [
+      "keepsake"
+    ]
   },
   {
     "id": "item_lottery",
@@ -174,7 +231,10 @@
     "icon": "🎫",
     "usable": true,
     "consumable": true,
-    "effects": { "money": 120, "happiness": 3 },
+    "effects": {
+      "money": 120,
+      "happiness": 3
+    },
     "price": 20
   },
   {
@@ -184,7 +244,9 @@
     "icon": "🎓",
     "usable": false,
     "consumable": false,
-    "tags": ["keepsake"]
+    "tags": [
+      "keepsake"
+    ]
   },
   {
     "id": "item_ring",
@@ -193,6 +255,40 @@
     "icon": "💍",
     "usable": false,
     "consumable": false,
-    "tags": ["keepsake"]
+    "tags": [
+      "keepsake"
+    ]
+  },
+  {
+    "id": "item_bicycle",
+    "labelKey": "item.bicycle",
+    "descKey": "item.bicycle.desc",
+    "icon": "🚲",
+    "usable": true,
+    "consumable": false,
+    "effects": {
+      "fitness": 4,
+      "happiness": 3
+    },
+    "tags": [
+      "active"
+    ],
+    "price": 200
+  },
+  {
+    "id": "item_photo",
+    "labelKey": "item.photo",
+    "descKey": "item.photo.desc",
+    "icon": "📷",
+    "usable": true,
+    "consumable": false,
+    "effects": {
+      "happiness": 4,
+      "depressionValue": -3
+    },
+    "tags": [
+      "keepsake"
+    ],
+    "price": 90
   }
 ]

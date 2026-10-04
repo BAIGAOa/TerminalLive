@@ -1,84 +1,24 @@
-import {
-  existsSync,
-  readdirSync,
-  readFileSync,
-  mkdirSync,
-  cpSync,
-} from "node:fs";
+import { existsSync, readdirSync, readFileSync, mkdirSync, cpSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { SaveData, saveDataSchema } from "./SaveSchema.js";
-import type Player from "../../world/Player.js";
-import type ConfigStore from "../store/ConfigStore.js";
-import type LevelManager from "../../level/LevelManager.js";
-import type ThemeManager from "../theme/ThemeManager.js";
-import type EventHistory from "../../event/EventHistory.js";
-import ModMonitor from "../mod/ModMonitor.js";
-import AchievementManager from "../../achievement/AchievementManager.js";
-import WorldState from "../../world/chronicle/WorldState.js";
-import PressureState from "../../world/pressures/PressureState.js";
-import WeatherState from "../../world/weather/WeatherState.js";
 import { container } from "../../Container.js";
+import { SaveData, saveDataSchema } from "./SaveSchema.js";
+import { applySaveData } from "./SaveCodec.js";
+import ModMonitor from "../mod/ModMonitor.js";
+import AutoSave from "./AutoSave.js";
 
 export class ArchiveLoader {
   private readonly ARCHIVE_ROOT = join(homedir(), ".archive_live");
 
-  public load(
-    name: string,
-    player: Player,
-    achievementManager: AchievementManager,
-    configStore: ConfigStore,
-    levelManager: LevelManager,
-    modRegistry: ModMonitor,
-    themeManager: ThemeManager,
-    eventHistory: EventHistory,
-  ): void {
+  public load(name: string): void {
     const archiveDir = join(this.ARCHIVE_ROOT, name);
     const data = this.readArchiveData(archiveDir);
 
-    this.loadMod(archiveDir, modRegistry.MOD_ROOT);
+    this.loadMod(archiveDir, container.resolve(ModMonitor).MOD_ROOT);
+    applySaveData(data);
 
-    configStore.update({
-      language: data.config.language,
-      theme: data.config.theme ?? "default",
-      enabledMods: data.config.enabledMods,
-      traits: data.config.traits,
-      player: data.player,
-      lastLevelId: data.levels.currentLevel,
-      completedLevels: data.levels.completedLevels,
-    });
-
-    if (data.config.theme) {
-      try {
-        themeManager.setCurrent(data.config.theme);
-      } catch {
-        themeManager.setCurrent("default");
-      }
-    }
-
-    player.applyAttributes(data.player);
-    player.activeEffects = data.player.effects.map((e) => ({ ...e }));
-    player.inventory = data.player.inventory.map((s) => ({ ...s }));
-    player.relationships = new Map(Object.entries(data.player.relationships));
-    player.flags = new Set(data.player.flags);
-    player.actionPoints = data.player.actionPoints;
-    // Derive life status from health so a 0-HP save doesn't reload as alive.
-    player.alive = player.health > 0;
-
-    // Restore the living world (era, region, karma, standing, lore, fates).
-    container.resolve(WorldState).restore(data.world, player.flags);
-    // Restore the hidden-score web.
-    container.resolve(PressureState).restore(data.pressures);
-    // Restore the weather.
-    container.resolve(WeatherState).restore(data.weather);
-
-    eventHistory.restoreFromArchive(data.history);
-    eventHistory.save();
-
-    achievementManager.setState(data.achievements);
-    achievementManager.persist();
-
-    levelManager.initCompletedLevels(data.levels.completedLevels);
+    // Make this the life the next launch resumes, so the reload lands on it.
+    container.resolve(AutoSave).writeData(data);
 
     console.log("存档已加载，游戏即将重启…… Archive loaded, restarting...");
     setTimeout(() => process.exit(0), 1500);
@@ -115,7 +55,7 @@ export class ArchiveLoader {
     const raw = readFileSync(join(archiveDir, "archive.json"), "utf-8");
     try {
       return saveDataSchema.parse(JSON.parse(raw));
-    } catch (err) {
+    } catch {
       throw new Error(
         "存档不兼容，无法加载。 Archive is incompatible and cannot be loaded.",
       );

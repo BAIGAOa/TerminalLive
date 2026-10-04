@@ -23,10 +23,20 @@ export interface MenuListProps {
   /** Fired whenever the highlighted row changes (keyboard or mouse). */
   onChange?: (item: MenuEntry, index: number) => void;
   renderItem?: (item: MenuEntry, state: MenuRenderState) => React.ReactNode;
-  indicator?: (state: MenuRenderState) => React.ReactNode;
+  /** Pass `null` to render no marker at all. */
+  indicator?: ((state: MenuRenderState) => React.ReactNode) | null;
   initialIndex?: number;
   wrap?: boolean;
   rowGap?: number;
+  /** Grid columns. `1` (default) = a plain vertical list. */
+  columns?: number;
+  /**
+   * Fixed width of each grid cell. Set it to lay items out in a centered,
+   * uniform-width grid; leave unset to fill the parent (vertical list).
+   */
+  columnWidth?: number;
+  /** Horizontal gap between grid cells (default 1). */
+  colGap?: number;
 }
 
 function firstEnabled(items: MenuEntry[], from = 0): number {
@@ -43,20 +53,17 @@ function lastEnabled(items: MenuEntry[]): number {
 function seek(
   items: MenuEntry[],
   from: number,
-  dir: 1 | -1,
+  step: number,
   wrap: boolean,
 ): number {
   const n = items.length;
-  if (n === 0) return from;
+  if (n === 0 || step === 0) return from;
   let i = from;
   for (let c = 0; c < n; c++) {
-    i += dir;
-    if (i < 0) {
+    i += step;
+    if (i < 0 || i >= n) {
       if (!wrap) return from;
-      i = n - 1;
-    } else if (i >= n) {
-      if (!wrap) return from;
-      i = 0;
+      i = ((i % n) + n) % n;
     }
     if (!items[i]?.disabled) return i;
   }
@@ -79,7 +86,7 @@ function MenuRow({
   onHover: (index: number) => void;
   onActivate: (index: number) => void;
   renderItem?: (item: MenuEntry, state: MenuRenderState) => React.ReactNode;
-  indicator?: (state: MenuRenderState) => React.ReactNode;
+  indicator?: ((state: MenuRenderState) => React.ReactNode) | null;
   rowGap: number;
 }) {
   // Hover/click drive the shared focus target so keyboard and mouse converge.
@@ -91,23 +98,19 @@ function MenuRow({
     { priority: 1 },
   );
 
-  const marker = indicator ? (
-    indicator(state)
-  ) : (
-    <Box marginRight={1}>
-      <Text
-        color={
-          state.focused && state.selected
-            ? "greenBright"
-            : state.selected
-              ? "green"
-              : undefined
-        }
-      >
-        {state.selected ? "❯" : " "}
-      </Text>
-    </Box>
-  );
+  // The default marker only shows while this list actually owns the keyboard,
+  // so an unfocused list does not look "selected".
+  const active = state.focused && state.selected;
+  const marker =
+    indicator === null ? null : indicator ? (
+      indicator(state)
+    ) : (
+      <Box marginRight={1}>
+        <Text color={active ? "greenBright" : undefined}>
+          {active ? "❯" : " "}
+        </Text>
+      </Box>
+    );
 
   return (
     <Box ref={ref} marginBottom={rowGap}>
@@ -143,8 +146,11 @@ export function MenuList({
   initialIndex,
   wrap = true,
   rowGap = 0,
+  columns = 1,
+  columnWidth,
+  colGap = 1,
 }: MenuListProps) {
-  const { boundKeyboard, focusSet } = useKeyboard();
+  const { boundKeyboard, focusSet, focusUnregister } = useKeyboard();
   const focused = useFocusState(focusId, group);
 
   const [index, setIndex] = useState(() => firstEnabled(items, initialIndex ?? 0));
@@ -165,6 +171,19 @@ export function MenuList({
     [group, focusId],
   );
 
+  // Remove the focus target on unmount so a hidden list (e.g. a status view you
+  // navigated away from) can't linger in the engine's focus order. Safe when the
+  // target isn't on the current layer — the engine no-ops.
+  useEffect(() => {
+    return () => {
+      try {
+        focusUnregister(focusId, group);
+      } catch {
+        /* target not registered on this layer */
+      }
+    };
+  }, [focusUnregister, focusId, group]);
+
   // Keep the highlight on a valid (enabled) row when the item set changes.
   useEffect(() => {
     setIndex((prev) => {
@@ -180,8 +199,8 @@ export function MenuList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
-  const move = useCallback((dir: 1 | -1) => {
-    setIndex((prev) => seek(itemsRef.current, prev, dir, wrapRef.current));
+  const move = useCallback((step: number) => {
+    setIndex((prev) => seek(itemsRef.current, prev, step, wrapRef.current));
   }, []);
 
   const activate = useCallback((i: number) => {
@@ -204,9 +223,10 @@ export function MenuList({
   );
 
   useEffect(() => {
+    const vertical = columnWidth != null && columns > 1 ? columns : 1;
     const unbinds = [
-      boundKeyboard(["up"], () => move(-1), { focusId: focusOpt }),
-      boundKeyboard(["down"], () => move(1), { focusId: focusOpt }),
+      boundKeyboard(["up"], () => move(-vertical), { focusId: focusOpt }),
+      boundKeyboard(["down"], () => move(vertical), { focusId: focusOpt }),
       boundKeyboard(
         ["home"],
         () => setIndex(firstEnabled(itemsRef.current, 0)),
@@ -221,34 +241,69 @@ export function MenuList({
         focusId: focusOpt,
       }),
     ];
+    if (columnWidth != null && columns > 1) {
+      unbinds.push(
+        boundKeyboard(["left"], () => move(-1), { focusId: focusOpt }),
+        boundKeyboard(["right"], () => move(1), { focusId: focusOpt }),
+      );
+    }
     return () => unbinds.forEach((u) => u());
-  }, [boundKeyboard, focusOpt, move, activate]);
+  }, [boundKeyboard, focusOpt, move, activate, columns, columnWidth]);
 
+  const renderRow = (item: MenuEntry, i: number, gap: number) => {
+    const state: MenuRenderState = {
+      selected: i === index,
+      focused,
+      index: i,
+    };
+    return (
+      <MenuRow
+        key={item.value}
+        item={item}
+        index={i}
+        state={state}
+        onHover={hover}
+        onActivate={(j) => {
+          hover(j);
+          activate(j);
+        }}
+        renderItem={renderItem}
+        indicator={indicator}
+        rowGap={gap}
+      />
+    );
+  };
+
+  if (columnWidth == null) {
+    return (
+      <Box flexDirection="column">
+        {items.map((item, i) => renderRow(item, i, rowGap))}
+      </Box>
+    );
+  }
+
+  // Centered, uniform-width grid: each cell is a fixed-width box so buttons
+  // align regardless of label length, and every row is centered as a whole.
+  const rows: MenuEntry[][] = [];
+  for (let i = 0; i < items.length; i += columns) {
+    rows.push(items.slice(i, i + columns));
+  }
   return (
     <Box flexDirection="column">
-      {items.map((item, i) => {
-        const state: MenuRenderState = {
-          selected: i === index,
-          focused,
-          index: i,
-        };
-        return (
-          <MenuRow
-            key={item.value}
-            item={item}
-            index={i}
-            state={state}
-            onHover={hover}
-            onActivate={(j) => {
-              hover(j);
-              activate(j);
-            }}
-            renderItem={renderItem}
-            indicator={indicator}
-            rowGap={rowGap}
-          />
-        );
-      })}
+      {rows.map((row, r) => (
+        <Box key={r} flexDirection="row" justifyContent="center">
+          {row.map((item, c) => (
+            <Box
+              key={item.value}
+              width={columnWidth}
+              flexDirection="column"
+              marginRight={c < row.length - 1 ? colGap : 0}
+            >
+              {renderRow(item, r * columns + c, rowGap)}
+            </Box>
+          ))}
+        </Box>
+      ))}
     </Box>
   );
 }

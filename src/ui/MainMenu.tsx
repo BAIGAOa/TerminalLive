@@ -5,6 +5,8 @@ import { MenuList } from "./kit/index.js";
 import Logo from "./Logo.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { useTerminalSize } from "./TerminalSizeContext.js";
+import { computeMenuLayout } from "./menuLayout.js";
 import { container } from "../Container.js";
 import LevelManager from "../level/LevelManager.js";
 import LevelSelection from "./LevelSelection.js";
@@ -21,8 +23,13 @@ export default function MainMenu() {
   const { t } = useI18n();
   const colors = useThemeColors();
   const { skip } = useScreenSystem();
+  const { columns: termCols, rows: termRows } = useTerminalSize();
 
   const hasActiveLife = container.resolve(LevelManager).hasActiveLevel();
+
+  // Responsive grid: buttons stay a uniform width and fan out into fewer
+  // columns (3 → 2 → 1) as the terminal narrows, staying centered and on-screen.
+  const GAP = 2;
 
   const items = [
     ...(hasActiveLife
@@ -38,6 +45,12 @@ export default function MainMenu() {
     { value: "archive", label: t("main.archive") },
     { value: "exit", label: t("main.exit") },
   ];
+
+  const { cols, btnW, showLogo } = computeMenuLayout(
+    termCols,
+    termRows,
+    items.length,
+  );
 
   const handleSelect = useCallback(
     (item: { value: string }) => {
@@ -85,30 +98,42 @@ export default function MainMenu() {
       flexDirection="column"
       padding={1}
     >
-      <Logo marginBottom={2} />
-      <Box width={44}>
-        <MenuList
-          focusId="main-menu"
-          items={items}
-          onSelect={handleSelect}
-          renderItem={(item, state) => (
-            <Box
-              flexGrow={1}
-              borderStyle="round"
-              borderColor={state.selected ? colors.highlight : colors.muted}
-              paddingX={1}
-              justifyContent="center"
+      {showLogo ? (
+        <Logo marginBottom={2} />
+      ) : (
+        <Box marginBottom={1}>
+          <Text bold color={colors.logoTerm}>
+            TERMINAL LIVE
+          </Text>
+        </Box>
+      )}
+      <MenuList
+        focusId="main-menu"
+        items={items}
+        onSelect={handleSelect}
+        columns={cols}
+        columnWidth={btnW}
+        colGap={GAP}
+        rowGap={0}
+        indicator={null}
+        renderItem={(item, state) => (
+          <Box
+            flexGrow={1}
+            borderStyle="round"
+           
+            borderColor={state.selected ? colors.highlight : colors.muted}
+            paddingX={1}
+            justifyContent="center"
+          >
+            <Text
+              bold={state.selected}
+              color={state.selected ? colors.highlight : colors.text}
             >
-              <Text
-                bold={state.selected}
-                color={state.selected ? colors.highlight : colors.text}
-              >
-                {item.label}
-              </Text>
-            </Box>
-          )}
-        />
-      </Box>
+              {item.label}
+            </Text>
+          </Box>
+        )}
+      />
     </Box>
   );
 }

@@ -16,6 +16,46 @@ export interface ScrollListProps {
   /** Rendered inside a fixed-height, clipped row — draw up to `itemHeight` lines. */
   renderItem: (item: MenuEntry, state: MenuRenderState) => React.ReactNode;
   wrap?: boolean;
+  /** Bind PageUp/PageDown to page the list (set false to leave them to a parent). */
+  pageKeys?: boolean;
+}
+
+/** First selectable index at or after `from` (wraps). */
+function firstEnabled(items: MenuEntry[], from = 0): number {
+  const n = items.length;
+  for (let i = from; i < n; i++) if (!items[i]?.disabled) return i;
+  for (let i = 0; i < n; i++) if (!items[i]?.disabled) return i;
+  return 0;
+}
+
+/** Last selectable index (or 0). */
+function lastEnabled(items: MenuEntry[]): number {
+  for (let i = items.length - 1; i >= 0; i--) if (!items[i]?.disabled) return i;
+  return 0;
+}
+
+/** Step `dir` from `from`, skipping disabled rows. */
+function seekEnabled(
+  items: MenuEntry[],
+  from: number,
+  dir: 1 | -1,
+  wrap: boolean,
+): number {
+  const n = items.length;
+  if (n === 0) return from;
+  let i = from;
+  for (let c = 0; c < n; c++) {
+    i += dir;
+    if (i < 0) {
+      if (!wrap) return from;
+      i = n - 1;
+    } else if (i >= n) {
+      if (!wrap) return from;
+      i = 0;
+    }
+    if (!items[i]?.disabled) return i;
+  }
+  return from;
 }
 
 function ScrollRow({
@@ -76,14 +116,27 @@ export function ScrollList({
   onChange,
   renderItem,
   wrap = true,
+  pageKeys = true,
 }: ScrollListProps) {
-  const { boundKeyboard, focusSet } = useKeyboard();
+  const { boundKeyboard, focusSet, focusUnregister } = useKeyboard();
   const focused = useFocusState(focusId ?? "", group);
+
+  // Drop the focus target on unmount so a hidden view can't leave a dead target.
+  useEffect(() => {
+    if (!focusId) return;
+    return () => {
+      try {
+        focusUnregister(focusId, group);
+      } catch {
+        /* target not registered on this layer */
+      }
+    };
+  }, [focusUnregister, focusId, group]);
 
   const rows = height ? Math.max(1, Math.floor(height / itemHeight)) : items.length;
   const maxOffset = Math.max(0, items.length - rows);
 
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() => firstEnabled(items, 0));
   const [offset, setOffset] = useState(0);
 
   const indexRef = useRef(index);
@@ -105,7 +158,11 @@ export function ScrollList({
   }, [index, rows, maxOffset]);
 
   useEffect(() => {
-    setIndex((p) => Math.min(Math.max(0, p), Math.max(0, items.length - 1)));
+    setIndex((p) =>
+      p < items.length && items[p] && !items[p].disabled
+        ? p
+        : firstEnabled(items, p),
+    );
   }, [items]);
 
   useEffect(() => {
@@ -114,16 +171,27 @@ export function ScrollList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
-  const step = useCallback((delta: number) => {
-    setIndex((prev) => {
-      const n = itemsRef.current.length;
-      if (n === 0) return 0;
-      let next = prev + delta;
-      if (next < 0) next = wrap ? n - 1 : 0;
-      if (next >= n) next = wrap ? 0 : n - 1;
-      return next;
-    });
-  }, [wrap]);
+  // Move by `delta`, stepping over disabled rows (like MenuList).
+  const step = useCallback(
+    (delta: number) => {
+      setIndex((prev) => {
+        const list = itemsRef.current;
+        const n = list.length;
+        if (n === 0) return 0;
+        if (Math.abs(delta) <= 1) {
+          return seekEnabled(list, prev, delta >= 0 ? 1 : -1, wrap);
+        }
+        let target = prev + delta;
+        if (target < 0) target = wrap ? n - 1 : 0;
+        if (target >= n) target = wrap ? 0 : n - 1;
+        if (list[target]?.disabled) {
+          return seekEnabled(list, prev, delta > 0 ? 1 : -1, wrap);
+        }
+        return target;
+      });
+    },
+    [wrap],
+  );
 
   const scroll = useCallback((delta: number) => {
     setOffset((o) => Math.max(0, Math.min(maxOffset, o + delta)));
@@ -131,11 +199,13 @@ export function ScrollList({
 
   const activate = useCallback((i: number) => {
     const it = itemsRef.current[i];
-    if (it) onSelectRef.current?.(it, i);
+    if (!it || it.disabled) return;
+    onSelectRef.current?.(it, i);
   }, []);
 
   const hover = useCallback(
     (i: number) => {
+      if (itemsRef.current[i]?.disabled) return;
       if (focusId) {
         try {
           focusSet(focusId, group);
@@ -154,14 +224,20 @@ export function ScrollList({
     const unbinds = [
       boundKeyboard(["up"], () => step(-1), { focusId: fo }),
       boundKeyboard(["down"], () => step(1), { focusId: fo }),
-      boundKeyboard(["pageup"], () => step(-rows), { focusId: fo }),
-      boundKeyboard(["pagedown"], () => step(rows), { focusId: fo }),
-      boundKeyboard(["home"], () => setIndex(0), { focusId: fo }),
-      boundKeyboard(["end"], () => setIndex(Math.max(0, itemsRef.current.length - 1)), { focusId: fo }),
+      boundKeyboard(["home"], () => setIndex(firstEnabled(itemsRef.current, 0)), { focusId: fo }),
+      boundKeyboard(["end"], () => setIndex(lastEnabled(itemsRef.current)), {
+        focusId: fo,
+      }),
       boundKeyboard(["return"], () => activate(indexRef.current), { focusId: fo }),
     ];
+    if (pageKeys) {
+      unbinds.push(
+        boundKeyboard(["pageup"], () => step(-rows), { focusId: fo }),
+        boundKeyboard(["pagedown"], () => step(rows), { focusId: fo }),
+      );
+    }
     return () => unbinds.forEach((u) => u());
-  }, [boundKeyboard, focusId, group, step, rows, activate]);
+  }, [boundKeyboard, focusId, group, step, rows, activate, pageKeys]);
 
   const visible = items.slice(offset, offset + rows);
 

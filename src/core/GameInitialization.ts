@@ -9,6 +9,7 @@ import ConsoleStore from "./console/ConsoleStore.js";
 import { container } from "../Container.js";
 import EventHistory from "../event/EventHistory.js";
 import { ArchiveManager } from "./archive/ArchiveManager.js";
+import AutoSave from "./archive/AutoSave.js";
 import { registerBuiltinRegistrations } from "../level/BuiltinRegistrations.js";
 import LevelManager from "../level/LevelManager.js";
 import Conditions from "../content/Conditions.js";
@@ -22,9 +23,11 @@ import Actions from "../content/Actions.js";
 import Traits from "../content/Traits.js";
 import World from "../content/World.js";
 import Weather from "../content/Weather.js";
+import RelationshipContent from "../content/RelationshipContent.js";
 import PressureLoader from "../world/pressures/PressureLoader.js";
 import ItemLoader from "../world/items/ItemLoader.js";
 import NpcLoader from "../world/relationships/NpcLoader.js";
+import CareerLoader from "../world/careers/CareerLoader.js";
 import NpcRegistry from "../world/relationships/NpcRegistry.js";
 import ModMonitor from "./mod/ModMonitor.js";
 import AchievementManager from "../achievement/AchievementManager.js";
@@ -71,6 +74,15 @@ export default class GameInitialization {
     }
   }
 
+  /**
+   * Load the auto-saved life in place (full player + world + history state).
+   * Returns the pending choice to re-offer once the level is re-entered.
+   */
+  private restoreAutoSave(): { incidentId: string; rangeKey: string } | null {
+    const data = container.resolve(AutoSave).load();
+    return data?.pendingChoice ?? null;
+  }
+
   private loadPlayer(): void {
     this.player = new Player(this.configStore.getPlayerConfig());
   }
@@ -86,12 +98,14 @@ export default class GameInitialization {
     Traits.load();
     World.load();
     Weather.load();
+    container.resolve(RelationshipContent).load();
     container.resolve(PressureLoader).loadBuiltin();
 
     const itemLoader = container.resolve(ItemLoader);
     const npcLoader = container.resolve(NpcLoader);
     itemLoader.loadBuiltin();
     npcLoader.loadBuiltin();
+    container.resolve(CareerLoader).loadBuiltin();
 
     // Enabled mods may ship extra items / npcs / hidden-score axes+rules.
     const pressureLoader = container.resolve(PressureLoader);
@@ -172,7 +186,17 @@ export default class GameInitialization {
 
     await this.initAchievementSystem();
 
+    // Resume a life in progress: apply the full auto-save first (it sets the
+    // current level + player + world), then re-enter that level, then re-offer
+    // any choice that was awaiting a decision at quit time.
+    const pendingChoice = this.restoreAutoSave();
     this.restoreLevelProgress();
+    if (pendingChoice) {
+      this.levelManager.restorePendingChoice(
+        pendingChoice.incidentId,
+        pendingChoice.rangeKey,
+      );
+    }
     this.levelManager.initCompletedLevels(
       this.configStore.getSnapshot().completedLevels,
     );

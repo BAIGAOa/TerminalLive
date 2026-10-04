@@ -13,11 +13,16 @@ export interface ScrollPanelProps {
   /** Show a right-edge scrollbar. */
   showBar?: boolean;
   barColor?: string;
+  /** Controlled offset. When set, the panel stops managing its own state. */
+  offset?: number;
+  /** Called with the clamped offset on any scroll (wheel or keys). */
+  onOffsetChange?: (next: number) => void;
 }
 
 /**
  * Fixed-height scrollable viewport. The mouse wheel scrolls it (via a mouse
- * region); PageUp/PageDown/Up/Down scroll it while its focus target is active.
+ * region); with a `focusId`, PageUp/PageDown/Up/Down scroll it while focused.
+ * A parent may instead control the offset and bind its own scroll keys.
  */
 export function ScrollPanel({
   lines,
@@ -27,28 +32,37 @@ export function ScrollPanel({
   stickToEnd = false,
   showBar = true,
   barColor = "gray",
+  offset: controlledOffset,
+  onOffsetChange,
 }: ScrollPanelProps) {
   const { boundKeyboard } = useKeyboard();
-  const [offset, setOffset] = useState(0);
+  const [internal, setInternal] = useState(0);
 
   const maxOffset = Math.max(0, lines.length - height);
-  const offsetRef = useRef(offset);
-  offsetRef.current = offset;
   const maxRef = useRef(maxOffset);
   maxRef.current = maxOffset;
 
-  const clamp = (v: number) => Math.max(0, Math.min(maxRef.current, v));
+  const controlled = controlledOffset !== undefined;
+  const offset = Math.min(controlled ? controlledOffset : internal, maxOffset);
 
-  // Follow the tail when asked (e.g. a live journal).
+  const clamp = (v: number) => Math.max(0, Math.min(maxRef.current, v));
+  const commit = (next: number) => {
+    const v = clamp(next);
+    if (controlled) onOffsetChange?.(v);
+    else setInternal(v);
+  };
+
+  // Follow the tail when asked (uncontrolled live journals only).
   useEffect(() => {
-    if (stickToEnd) setOffset(maxOffset);
-  }, [stickToEnd, maxOffset, lines.length]);
+    if (!stickToEnd || controlled) return;
+    setInternal(maxOffset);
+  }, [stickToEnd, controlled, maxOffset, lines.length]);
 
   const ref = useMouseRegion(
     {
       onWheel: (event) => {
         const dir = event.button === "wheel-up" ? -1 : 1;
-        setOffset((o) => clamp(o + dir));
+        commit(offset + dir);
       },
     },
     { priority: 1 },
@@ -59,15 +73,15 @@ export function ScrollPanel({
     const focusOpt = group ? { group, focusId } : focusId;
     const page = Math.max(1, height - 1);
     const unbinds = [
-      boundKeyboard(["up"], () => setOffset((o) => clamp(o - 1)), { focusId: focusOpt }),
-      boundKeyboard(["down"], () => setOffset((o) => clamp(o + 1)), { focusId: focusOpt }),
-      boundKeyboard(["pageup"], () => setOffset((o) => clamp(o - page)), { focusId: focusOpt }),
-      boundKeyboard(["pagedown"], () => setOffset((o) => clamp(o + page)), { focusId: focusOpt }),
-      boundKeyboard(["home"], () => setOffset(0), { focusId: focusOpt }),
-      boundKeyboard(["end"], () => setOffset(maxRef.current), { focusId: focusOpt }),
+      boundKeyboard(["up"], () => commit(offset - 1), { focusId: focusOpt }),
+      boundKeyboard(["down"], () => commit(offset + 1), { focusId: focusOpt }),
+      boundKeyboard(["pageup"], () => commit(offset - page), { focusId: focusOpt }),
+      boundKeyboard(["pagedown"], () => commit(offset + page), { focusId: focusOpt }),
+      boundKeyboard(["home"], () => commit(0), { focusId: focusOpt }),
+      boundKeyboard(["end"], () => commit(maxRef.current), { focusId: focusOpt }),
     ];
     return () => unbinds.forEach((u) => u());
-  }, [boundKeyboard, focusId, group, height]);
+  }, [boundKeyboard, focusId, group, height, offset, controlled, onOffsetChange]);
 
   const visible = lines.slice(offset, offset + height);
   const thumbTop = maxOffset === 0 ? 0 : Math.round((offset / maxOffset) * (height - 1));

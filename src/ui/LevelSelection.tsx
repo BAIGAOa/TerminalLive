@@ -4,7 +4,6 @@ import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { MenuList } from "./kit/index.js";
 import { useLevelSelection } from "../hooks/useLevelSelection.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
-import LevelDetail from "./LevelDetail.js";
 import LevelGame from "./LevelGame.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
@@ -16,31 +15,13 @@ export default function LevelSelection() {
   const { skip, back } = useScreenSystem();
 
   useEffect(() => {
-    const u = boundKeyboard(["escape"], () => {
-      if (data.showDetail) data.onBackFromDetail();
-      else back();
-    });
+    const u = boundKeyboard(["escape"], () => back());
     return () => u();
-  }, [data.showDetail, data.onBackFromDetail, back, boundKeyboard]);
-
-  // Confirm from the detail view. Registered here (page level) as well as in
-  // LevelDetail so it does not depend on the child effect having run first.
-  useEffect(() => {
-    if (!data.showDetail) return;
-    const u = boundKeyboard(
-      ["return"],
-      () => {
-        data.onConfirmEnter();
-        skip(LevelGame, {});
-      },
-      { when: () => data.showDetail },
-    );
-    return () => u();
-  }, [data.showDetail, data.onConfirmEnter, skip, boundKeyboard]);
+  }, [back, boundKeyboard]);
 
   // Once a difficulty is chosen, move focus onto the level list.
   useEffect(() => {
-    if (data.activeDifficulty === null || data.showDetail) return;
+    if (data.activeDifficulty === null) return;
     const timer = setTimeout(() => {
       try {
         focusSet("level-list");
@@ -49,23 +30,7 @@ export default function LevelSelection() {
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, [data.activeDifficulty, data.showDetail, focusSet]);
-
-  if (data.showDetail && data.selectedLevel) {
-    return (
-      <LevelDetail
-        level={data.selectedLevel}
-        formattedConditions={data.formattedConditions}
-        initialAttributes={data.initialAttributes}
-        t={data.t}
-        onBack={data.onBackFromDetail}
-        onConfirm={() => {
-          data.onConfirmEnter();
-          skip(LevelGame, {});
-        }}
-      />
-    );
-  }
+  }, [data.activeDifficulty, focusSet]);
 
   const diffItems = data.leftItems.map((d) => ({ value: d.value, label: d.label }));
   const levelItems = data.rightItems.map((l) => ({
@@ -121,9 +86,16 @@ export default function LevelSelection() {
             <MenuList
               focusId="level-list"
               items={levelItems}
+              onChange={(item) => {
+                const lvl = data.rightItems.find((l) => l.value === item.value);
+                if (lvl) data.onHighlightLevel(lvl);
+              }}
               onSelect={(item) => {
                 const lvl = data.rightItems.find((l) => l.value === item.value);
-                if (lvl) data.onSelectLevel(lvl);
+                if (!lvl) return;
+                if (lvl.status === "locked") return; // locked: no start (footer explains)
+                data.onStartLevel(lvl);
+                skip(LevelGame, {});
               }}
               renderItem={(item, state) => {
                 const lvl = data.rightItems.find((l) => l.value === item.value);
@@ -154,7 +126,36 @@ export default function LevelSelection() {
         </Box>
       </Box>
 
-      <Box marginTop={1}>
+      {/* inline detail for the highlighted level (replaces a second screen) */}
+      <Box
+        flexDirection="column"
+        borderStyle="round"
+        borderColor={colors.info}
+        paddingX={1}
+        marginTop={1}
+      >
+        {data.highlightedDescKey ? (
+          <>
+            <Text color={colors.text}>{data.t(data.highlightedDescKey)}</Text>
+            <Box flexDirection="row" marginTop={1}>
+              <Text dimColor>{data.t("levelDetail.victoryConditions")}: </Text>
+              {data.highlightedConditions.length === 0 ? (
+                <Text dimColor>{data.t("levelDetail.noConditions")}</Text>
+              ) : (
+                <Text color={colors.success}>
+                  {data.highlightedConditions
+                    .map((c) => c.description)
+                    .join("  ·  ")}
+                </Text>
+              )}
+            </Box>
+          </>
+        ) : (
+          <Text dimColor>{data.t("levelSelection.hintSelectDifficulty")}</Text>
+        )}
+      </Box>
+
+      <Box marginTop={1} justifyContent="center">
         <Text dimColor>{data.t("levelSelection.hint")}</Text>
       </Box>
     </Box>

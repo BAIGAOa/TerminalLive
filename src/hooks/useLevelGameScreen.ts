@@ -46,7 +46,8 @@ export interface GameScreenData {
   endTurn: () => void;
   resolveChoice: (id: string) => void;
   continueNextLevel: () => void;
-  renderCurrentView: () => React.ReactNode;
+  /** Render the active status view, told how many rows it may occupy. */
+  renderCurrentView: (height: number) => React.ReactNode;
 }
 
 function formatCondition(
@@ -163,10 +164,13 @@ export default function useLevelGameScreen(): GameScreenData {
     setCurrentViewIndex((prev) => (prev + 1) % viewCount);
   }, [viewCount]);
 
-  const renderCurrentView = useCallback((): React.ReactNode => {
-    const renderFn = gameStatusMap.get(currentViewId);
-    return renderFn ? renderFn({ player, t }) : null;
-  }, [gameStatusMap, currentViewId, player, t]);
+  const renderCurrentView = useCallback(
+    (height: number): React.ReactNode => {
+      const renderFn = gameStatusMap.get(currentViewId);
+      return renderFn ? renderFn({ player, t, height }) : null;
+    },
+    [gameStatusMap, currentViewId, player, t],
+  );
 
   // Stable callbacks — keeping these referentially stable stops effects that
   // depend on them (e.g. the modal-opening effect in LevelGame) from re-running

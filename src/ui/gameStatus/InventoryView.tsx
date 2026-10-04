@@ -45,6 +45,7 @@ export default function InventoryView({
       </Box>
       <MenuList
         focusId="inventory-list"
+        group="status-views"
         items={entries.map((e) => ({
           value: e.value,
           label: e.label,

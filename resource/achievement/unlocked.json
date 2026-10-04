@@ -18,5 +18,9 @@
   {
     "id": "blissful",
     "unlockedAt": 24
+  },
+  {
+    "id": "founder",
+    "unlockedAt": 20
   }
 ]

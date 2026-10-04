@@ -41,6 +41,7 @@ import { ToastHost } from "./ui/ToastHost.js";
 import { HelpModal } from "./ui/HelpModal.js";
 import { dismissModal, presentModal } from "./ui/layers/modalBus.js";
 import { toggleConsole } from "./ui/layers/consoleLayer.js";
+import { replInput } from "./core/repl/replInputState.js";
 
 // ── 初始化游戏核心 ──
 await container.resolve(GameInitialization).init();
@@ -108,8 +109,19 @@ function App() {
     JSON.stringify(configStore.getKeyBindings()),
   );
   const keymap = resolveKeymap(JSON.parse(keymapJson));
+  // While the pseudo-terminal is capturing input, the letter shortcuts must not
+  // steal keystrokes from the prompt.
+  const typing = useSyncExternalStore(
+    replInput.subscribe,
+    replInput.isTyping,
+  );
 
   useEffect(() => {
+    if (typing) {
+      globalKeys([], { mode: "replace" });
+      globalSequence([], { mode: "replace" });
+      return;
+    }
     globalKeys([
       {
         key: keymap.console,
@@ -139,10 +151,21 @@ function App() {
     globalSequence([
       { keys: ["g", "o"], operate: () => toggleConsole(), category: "*" },
     ]);
-  }, [globalKeys, globalSequence, keymap.console, keymap.help, keymap.menu]);
+  }, [
+    globalKeys,
+    globalSequence,
+    keymap.console,
+    keymap.help,
+    keymap.menu,
+    typing,
+  ]);
 
   return (
-    <Box flexDirection="column" width="100%" height="100%">
+    <Box
+      flexDirection="column"
+      width="100%"
+      height="100%"
+    >
       <ToastHost />
       <Box flexGrow={1}>
         <CurrentScreen />

@@ -132,7 +132,8 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     const option = pending.options.find((o) => o.def.id === optionId);
     if (!option || option.disabled) return false;
 
-    const incident = this.eventCenter.getIncidentById(pending.incidentId);
+    const incident =
+      pending.incident ?? this.eventCenter.getIncidentById(pending.incidentId);
     this.pendingChoice = null;
     if (!incident) return false;
 
@@ -143,6 +144,30 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
       optionId,
     });
     return true;
+  }
+
+  /** Re-offer a saved choice after a load (options re-derived from live state). */
+  public restorePendingChoice(
+    incidentId: string,
+    rangeKey: string,
+    player: Player,
+  ): void {
+    const incident = this.eventCenter.getIncidentById(incidentId);
+    if (!incident || !incident.hasChoices()) return;
+    this.offerChoice(incident, rangeKey, player);
+  }
+
+  /**
+   * Offer a choice that is not part of the event pool (e.g. an NPC-initiated
+   * offer). The incident instance is stored on the pending choice so it can be
+   * resolved without an EventCenter lookup.
+   */
+  public offerExternalChoice(
+    incident: Incident,
+    rangeKey: string,
+    player: Player,
+  ): void {
+    this.offerChoice(incident, rangeKey, player);
   }
 
   // ── post events ────────────────────────────────────────────────
@@ -282,6 +307,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
       textKey: incident.textKey,
       rangeKey,
       options,
+      incident,
     };
     this.eventBus.emit("choice:offered", { incidentId: incident.id });
   }

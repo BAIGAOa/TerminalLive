@@ -1,88 +1,26 @@
-import { container, inject } from "../../Container.js";
+import { inject } from "../../Container.js";
 import { existsSync, mkdirSync, writeFileSync, cpSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { SaveData, saveDataSchema } from "./SaveSchema.js";
-import type Player from "../../world/Player.js";
+import { saveDataSchema } from "./SaveSchema.js";
+import { captureSaveData } from "./SaveCodec.js";
 import type ConfigStore from "../store/ConfigStore.js";
-import type LevelManager from "../../level/LevelManager.js";
-import { VersionProvider } from "../version/VersionProvider.js";
 import ModMonitor from "../mod/ModMonitor.js";
-import AchievementManager from "../../achievement/AchievementManager.js";
-import WorldState from "../../world/chronicle/WorldState.js";
-import PressureState from "../../world/pressures/PressureState.js";
-import WeatherState from "../../world/weather/WeatherState.js";
 
 export class ArchivingKeeper {
   private readonly ARCHIVE_ROOT = join(homedir(), ".archive_live");
-  private versionProvider: VersionProvider;
+  private modRegistry: ModMonitor;
 
   constructor() {
-    this.versionProvider = inject(VersionProvider);
+    this.modRegistry = inject(ModMonitor);
   }
 
-  public save(
-    name: string,
-    player: Player,
-    achievementManager: AchievementManager,
-    configStore: ConfigStore,
-    levelManager: LevelManager,
-    modRegistry: ModMonitor,
-  ): void {
+  public save(name: string, configStore: ConfigStore): void {
     const archiveDir = this.ensureDir(name);
     const modNames = configStore.getEnabledMods();
-    this.saveMod(archiveDir, modNames, modRegistry.MOD_ROOT);
+    this.saveMod(archiveDir, modNames);
 
-    const now = new Date().toISOString();
-    const currentHistory = levelManager.getCurrentEventHistory();
-    const data: SaveData = {
-      version: 4,
-      appVersion: this.versionProvider.version,
-      timestamp: now,
-      player: {
-        playerName: player.playerName,
-        age: player.age,
-        health: player.health,
-        height: player.height,
-        weight: player.weight,
-        money: player.money,
-        intelligence: player.intelligence,
-        social: player.social,
-        fitness: player.fitness,
-        happiness: player.happiness,
-        reputation: player.reputation,
-        angerValue: player.angerValue,
-        excitationValue: player.excitationValue,
-        depressionValue: player.depressionValue,
-        weakValue: player.weakValue,
-        effects: player.activeEffects.map((e) => ({ ...e })),
-        inventory: player.inventory.map((s) => ({ ...s })),
-        relationships: Object.fromEntries(player.relationships),
-        flags: Array.from(player.flags),
-        actionPoints: player.actionPoints,
-      },
-      history: {
-        triggered: Array.from(currentHistory?.getTriggered() ?? []),
-        blocked: Array.from(currentHistory?.getBlocked() ?? []),
-        rangeRecord: this.serializeRangeRecord(currentHistory),
-      },
-      achievements: achievementManager.getState(),
-      config: {
-        language: configStore.getLanguage(),
-        theme: configStore.getTheme(),
-        enabledMods: modNames,
-        traits: configStore.getTraits(),
-      },
-      levels: {
-        currentLevel: levelManager.getCurrentLevelId() ?? "none",
-        // Actual completion history, not re-derived from current stats.
-        completedLevels: levelManager.getCompletedLevelIds(),
-      },
-      world: container.resolve(WorldState).toSnapshot(),
-      pressures: container.resolve(PressureState).snapshot(),
-      weather: container.resolve(WeatherState).snapshot(),
-    };
-
+    const data = captureSaveData();
     saveDataSchema.parse(data);
     writeFileSync(
       join(archiveDir, "archive.json"),
@@ -91,16 +29,12 @@ export class ArchivingKeeper {
     );
   }
 
-  private saveMod(
-    archiveDir: string,
-    modNames: string[],
-    modRootPath: string,
-  ): void {
+  private saveMod(archiveDir: string, modNames: string[]): void {
     if (modNames.length === 0) return;
     const modDest = join(archiveDir, "mods");
     mkdirSync(modDest, { recursive: true });
     for (const modName of modNames) {
-      const src = join(modRootPath, modName);
+      const src = join(this.modRegistry.MOD_ROOT, modName);
       if (existsSync(src)) {
         cpSync(src, join(modDest, modName), { recursive: true, force: true });
       }
@@ -111,18 +45,5 @@ export class ArchivingKeeper {
     const dir = join(this.ARCHIVE_ROOT, name);
     mkdirSync(dir, { recursive: true });
     return dir;
-  }
-
-  private serializeRangeRecord(
-    history: ReturnType<LevelManager["getCurrentEventHistory"]>,
-  ): Record<string, string[]> {
-    const record = history?.getRangeKeyRecord();
-    const result: Record<string, string[]> = {};
-    if (record) {
-      for (const [key, set] of record) {
-        result[key] = Array.from(set);
-      }
-    }
-    return result;
   }
 }

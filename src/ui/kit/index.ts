@@ -14,3 +14,4 @@ export { ScrollList } from "./ScrollList.js";
 export type { ScrollListProps } from "./ScrollList.js";
 export { ModalFrame } from "./ModalFrame.js";
 export type { ModalFrameProps } from "./ModalFrame.js";
+export { clampWidth, clampHeight } from "./viewport.js";

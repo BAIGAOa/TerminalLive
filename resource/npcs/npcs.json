@@ -4,69 +4,131 @@
     "labelKey": "npc.mom",
     "descKey": "npc.mom.desc",
     "roleKey": "npc.role.family",
-    "initial": 70
+    "initial": 70,
+    "temperamentKey": "npc.temperament.warm",
+    "dialogueKeys": [
+      "npc.mom.line1",
+      "npc.mom.line2"
+    ]
   },
   {
     "id": "npc_dad",
     "labelKey": "npc.dad",
     "descKey": "npc.dad.desc",
     "roleKey": "npc.role.family",
-    "initial": 65
+    "initial": 65,
+    "temperamentKey": "npc.temperament.strict",
+    "dialogueKeys": [
+      "npc.dad.line1",
+      "npc.dad.line2"
+    ]
   },
   {
     "id": "npc_friend",
     "labelKey": "npc.friend",
     "descKey": "npc.friend.desc",
     "roleKey": "npc.role.friend",
-    "initial": 40
+    "initial": 40,
+    "temperamentKey": "npc.temperament.lively",
+    "dialogueKeys": [
+      "npc.friend.line1",
+      "npc.friend.line2"
+    ]
   },
   {
     "id": "npc_teacher",
     "labelKey": "npc.teacher",
     "descKey": "npc.teacher.desc",
     "roleKey": "npc.role.mentor",
-    "initial": 30
+    "initial": 30,
+    "temperamentKey": "npc.temperament.diligent",
+    "dialogueKeys": [
+      "npc.teacher.line1",
+      "npc.teacher.line2"
+    ]
   },
   {
     "id": "npc_partner",
     "labelKey": "npc.partner",
     "descKey": "npc.partner.desc",
     "roleKey": "npc.role.partner",
-    "initial": 0
+    "initial": 0,
+    "temperamentKey": "npc.temperament.gentle",
+    "dialogueKeys": [
+      "npc.partner.line1",
+      "npc.partner.line2"
+    ]
   },
   {
     "id": "npc_boss",
     "labelKey": "npc.boss",
     "descKey": "npc.boss.desc",
     "roleKey": "npc.role.work",
-    "initial": 20
+    "initial": 20,
+    "temperamentKey": "npc.temperament.ambitious",
+    "dialogueKeys": [
+      "npc.boss.line1",
+      "npc.boss.line2"
+    ]
   },
   {
     "id": "npc_child",
     "labelKey": "npc.child",
     "descKey": "npc.child.desc",
     "roleKey": "npc.role.family",
-    "initial": 0
+    "initial": 0,
+    "temperamentKey": "npc.temperament.curious",
+    "dialogueKeys": [
+      "npc.child.line1",
+      "npc.child.line2"
+    ]
   },
   {
     "id": "npc_colleague",
     "labelKey": "npc.colleague",
     "descKey": "npc.colleague.desc",
     "roleKey": "npc.role.work",
-    "initial": 25
+    "initial": 25,
+    "temperamentKey": "npc.temperament.loyal",
+    "dialogueKeys": [
+      "npc.colleague.line1",
+      "npc.colleague.line2"
+    ]
   },
   {
     "id": "npc_neighbor",
     "labelKey": "npc.neighbor",
     "descKey": "npc.neighbor.desc",
     "roleKey": "npc.role.friend",
-    "initial": 20
+    "initial": 20,
+    "temperamentKey": "npc.temperament.playful",
+    "dialogueKeys": [
+      "npc.neighbor.line1",
+      "npc.neighbor.line2"
+    ]
   },
   {
     "id": "npc_pet",
     "labelKey": "npc.pet",
     "descKey": "npc.pet.desc",
     "roleKey": "npc.role.pet",
-    "initial": 0
+    "initial": 0,
+    "temperamentKey": "npc.temperament.gentle",
+    "dialogueKeys": [
+      "npc.pet.line1",
+      "npc.pet.line2"
+    ]
+  },
+  {
+    "id": "npc_rival",
+    "labelKey": "npc.rival",
+    "descKey": "npc.rival.desc",
+    "roleKey": "npc.role.rival",
+    "initial": 10,
+    "temperamentKey": "npc.temperament.ambitious",
+    "dialogueKeys": [
+      "npc.rival.line1",
+      "npc.rival.line2"
+    ]
   }
 ]

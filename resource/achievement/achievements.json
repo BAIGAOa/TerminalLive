@@ -4,77 +4,138 @@
     "nameKey": "achievement.scholar",
     "descriptionKey": "achievement.scholar.description",
     "category": "base",
-    "conditions": [{ "type": "stat", "prop": "intelligence", "gte": 80 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "intelligence",
+        "gte": 80
+      }
+    ]
   },
   {
     "id": "athlete",
     "nameKey": "achievement.athlete",
     "descriptionKey": "achievement.athlete.description",
     "category": "base",
-    "conditions": [{ "type": "stat", "prop": "fitness", "gte": 80 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "fitness",
+        "gte": 80
+      }
+    ]
   },
   {
     "id": "socialite",
     "nameKey": "achievement.socialite",
     "descriptionKey": "achievement.socialite.description",
     "category": "base",
-    "conditions": [{ "type": "stat", "prop": "social", "gte": 80 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "social",
+        "gte": 80
+      }
+    ]
   },
   {
     "id": "wealthy",
     "nameKey": "achievement.wealthy",
     "descriptionKey": "achievement.wealthy.description",
     "category": "intermediate-level",
-    "conditions": [{ "type": "stat", "prop": "money", "gte": 1000 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "money",
+        "gte": 1000
+      }
+    ]
   },
   {
     "id": "blissful",
     "nameKey": "achievement.blissful",
     "descriptionKey": "achievement.blissful.description",
     "category": "intermediate-level",
-    "conditions": [{ "type": "stat", "prop": "happiness", "gte": 90 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "happiness",
+        "gte": 90
+      }
+    ]
   },
   {
     "id": "married",
     "nameKey": "achievement.married",
     "descriptionKey": "achievement.married.description",
     "category": "base",
-    "conditions": [{ "type": "flag", "flag": "married" }]
+    "conditions": [
+      {
+        "type": "flag",
+        "flag": "married"
+      }
+    ]
   },
   {
     "id": "parent",
     "nameKey": "achievement.parent",
     "descriptionKey": "achievement.parent.description",
     "category": "base",
-    "conditions": [{ "type": "flag", "flag": "had_child" }]
+    "conditions": [
+      {
+        "type": "flag",
+        "flag": "had_child"
+      }
+    ]
   },
   {
     "id": "homeowner",
     "nameKey": "achievement.homeowner",
     "descriptionKey": "achievement.homeowner.description",
     "category": "intermediate-level",
-    "conditions": [{ "type": "flag", "flag": "homeowner" }]
+    "conditions": [
+      {
+        "type": "flag",
+        "flag": "homeowner"
+      }
+    ]
   },
   {
     "id": "founder",
     "nameKey": "achievement.founder",
     "descriptionKey": "achievement.founder.description",
     "category": "intermediate-level",
-    "conditions": [{ "type": "flag", "flag": "founder" }]
+    "conditions": [
+      {
+        "type": "flag",
+        "flag": "founder"
+      }
+    ]
   },
   {
     "id": "philanthropist",
     "nameKey": "achievement.philanthropist",
     "descriptionKey": "achievement.philanthropist.description",
     "category": "intermediate-level",
-    "conditions": [{ "type": "flag", "flag": "philanthropist" }]
+    "conditions": [
+      {
+        "type": "flag",
+        "flag": "philanthropist"
+      }
+    ]
   },
   {
     "id": "long_life",
     "nameKey": "achievement.long_life",
     "descriptionKey": "achievement.long_life.description",
     "category": "intermediate-level",
-    "conditions": [{ "type": "stat", "prop": "age", "gte": 90 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "age",
+        "gte": 90
+      }
+    ]
   },
   {
     "id": "polymath",
@@ -82,8 +143,16 @@
     "descriptionKey": "achievement.polymath.description",
     "category": "intermediate-level",
     "conditions": [
-      { "type": "stat", "prop": "intelligence", "gte": 90 },
-      { "type": "stat", "prop": "social", "gte": 90 }
+      {
+        "type": "stat",
+        "prop": "intelligence",
+        "gte": 90
+      },
+      {
+        "type": "stat",
+        "prop": "social",
+        "gte": 90
+      }
     ]
   },
   {
@@ -91,7 +160,13 @@
     "nameKey": "achievement.tycoon",
     "descriptionKey": "achievement.tycoon.description",
     "category": "intermediate-level",
-    "conditions": [{ "type": "stat", "prop": "money", "gte": 3000 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "money",
+        "gte": 3000
+      }
+    ]
   },
   {
     "id": "devoted",
@@ -99,8 +174,14 @@
     "descriptionKey": "achievement.devoted.description",
     "category": "base",
     "conditions": [
-      { "type": "flag", "flag": "married" },
-      { "type": "flag", "flag": "had_child" }
+      {
+        "type": "flag",
+        "flag": "married"
+      },
+      {
+        "type": "flag",
+        "flag": "had_child"
+      }
     ]
   },
   {
@@ -108,34 +189,74 @@
     "nameKey": "achievement.centenarian",
     "descriptionKey": "achievement.centenarian.description",
     "category": "intermediate-level",
-    "conditions": [{ "type": "stat", "prop": "age", "gte": 100 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "age",
+        "gte": 100
+      }
+    ]
   },
   {
     "id": "explorer",
     "nameKey": "achievement.explorer",
     "descriptionKey": "achievement.explorer.description",
     "category": "base",
-    "conditions": [{ "type": "flag", "flag": "traveled" }]
+    "conditions": [
+      {
+        "type": "flag",
+        "flag": "traveled"
+      }
+    ]
   },
   {
     "id": "animal_lover",
     "nameKey": "achievement.animal_lover",
     "descriptionKey": "achievement.animal_lover.description",
     "category": "base",
-    "conditions": [{ "type": "flag", "flag": "pet_owner" }]
+    "conditions": [
+      {
+        "type": "flag",
+        "flag": "pet_owner"
+      }
+    ]
   },
   {
     "id": "famous_person",
     "nameKey": "achievement.famous_person",
     "descriptionKey": "achievement.famous_person.description",
     "category": "intermediate-level",
-    "conditions": [{ "type": "stat", "prop": "reputation", "gte": 80 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "reputation",
+        "gte": 80
+      }
+    ]
   },
   {
     "id": "infamous",
     "nameKey": "achievement.infamous",
     "descriptionKey": "achievement.infamous.description",
     "category": "base",
-    "conditions": [{ "type": "stat", "prop": "reputation", "lte": 10 }]
+    "conditions": [
+      {
+        "type": "stat",
+        "prop": "reputation",
+        "lte": 10
+      }
+    ]
+  },
+  {
+    "id": "kind_soul",
+    "nameKey": "achievement.kind_soul",
+    "descriptionKey": "achievement.kind_soul.description",
+    "category": "base",
+    "conditions": [
+      {
+        "type": "flag",
+        "flag": "donated"
+      }
+    ]
   }
 ]

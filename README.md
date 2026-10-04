@@ -49,11 +49,20 @@ game itself.
   awaken **fate arcs** that bias your future events. Events can be gated on the world.
 - 📖 **Codex** — world lore unlocks as the world and your karma change; read it from the
   main menu.
+- 🧑🤝🧑 **People, not bar charts** — each NPC is a **card** you can select and **interact**
+  with (talk · gift · help · confide · quarrel · reconcile · go out), and they **act on their
+  own**: quiet favours and pleas, and now-and-then an **offer** that pops a real choice
+  ("@friend wants a weekend trip — go?"). The relationship cards share a focus group with the
+  action panel, so **Tab** switches between them, and leaving the page returns focus to the
+  actions.
 - 🎴 **Traits & perks** — pick up to two birth traits; a perks panel tracks the milestones
   your stats and bonds have earned.
 - 🏪 **Shop** — spend your money on items.
 - 🏆 **Achievements** — unlocked via events, stat thresholds or milestones (marriage,
   parenthood, home ownership, …).
+- 💾 **Auto-save & resume** — the current life (player, inventory, relationships, world,
+  weather, history) is saved continuously; quit any time and **Continue** from the main
+  menu later. A finished life clears the slot. Named save slots are also available.
 - 🎲 **Event engine** — weighted random events, age-range and world gating, predecessor /
   block / once logic, delayed post-event chains and mod-defined event types.
 - 🧩 **Mod support** — install mods into `~/.mod_live/` to add events, levels, items, NPCs,

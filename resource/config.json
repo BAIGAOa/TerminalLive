@@ -3,29 +3,61 @@
   "theme": "default",
   "player": {
     "playerName": "Mike",
-    "age": 0,
-    "health": 100,
+    "age": 20,
+    "health": 65,
     "height": 1.55,
     "weight": 45,
-    "money": 0,
-    "intelligence": 10,
-    "social": 10,
-    "fitness": 10,
-    "happiness": 60,
+    "money": 50,
+    "intelligence": 32,
+    "social": 31,
+    "fitness": 21,
+    "happiness": 89.50000000000001,
     "reputation": 0,
     "angerValue": 0,
     "excitationValue": 0,
     "depressionValue": 0,
-    "weakValue": 0
+    "weakValue": 0,
+    "effects": [
+      {
+        "id": "fx_blessed",
+        "remaining": 1,
+        "stacks": 1
+      },
+      {
+        "id": "fx_sick",
+        "remaining": 1,
+        "stacks": 1
+      }
+    ],
+    "inventory": [],
+    "relationships": {
+      "npc_mom": 70,
+      "npc_dad": 67,
+      "npc_friend": 40,
+      "npc_teacher": 30,
+      "npc_partner": 21,
+      "npc_boss": 20,
+      "npc_child": 0,
+      "npc_colleague": 25,
+      "npc_neighbor": 20,
+      "npc_pet": 0,
+      "npc_rival": 10
+    },
+    "flags": [
+      "founder"
+    ],
+    "actionPoints": 3,
+    "careerId": null,
+    "careerRank": 0
   },
   "enabledMods": [],
+  "lastLevelId": "youth",
   "completedLevels": [
     "adolescence"
   ],
   "keyBindings": {},
   "traits": [
-    "trait_healthy",
-    "trait_charming"
-  ],
-  "lastLevelId": "youth"
+    "trait_charming",
+    "trait_lucky"
+  ]
 }

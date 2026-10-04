@@ -1,4 +1,5 @@
 import Player from "../world/Player.js";
+import { Incident } from "../world/Incident.js";
 import EventCenter from "../event/EventCenter.js";
 import EventHistory from "../event/EventHistory.js";
 import { IEventAlgorithm } from "../event/IEventAlgorithm.js";
@@ -79,6 +80,20 @@ export default class Level {
 
   public resolveChoice(optionId: string): boolean {
     return this.algorithm.resolveChoice?.(optionId, this.player) ?? false;
+  }
+
+  /** Re-offer a pending choice restored from a save. */
+  public restorePendingChoice(
+    incidentId: string,
+    rangeKey: string,
+    player: Player,
+  ): void {
+    this.algorithm.restorePendingChoice?.(incidentId, rangeKey, player);
+  }
+
+  /** Offer a choice from outside the event pool (e.g. an NPC-initiated offer). */
+  public offerExternalChoice(incident: Incident, player: Player): void {
+    this.algorithm.offerExternalChoice?.(incident, "npc", player);
   }
 
   public reset(): void {

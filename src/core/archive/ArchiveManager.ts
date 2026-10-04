@@ -11,12 +11,7 @@ import { join } from "node:path";
 import { ArchiveLoader } from "./ArchiveLoader.js";
 import { SaveMeta } from "./SaveSchema.js";
 import ConfigStore from "../store/ConfigStore.js";
-import LevelManager from "../../level/LevelManager.js";
-import ThemeManager from "../theme/ThemeManager.js";
-import EventHistory from "../../event/EventHistory.js";
 import { ArchivingKeeper } from "./ArchiveKeeper.js";
-import ModMonitor from "../mod/ModMonitor.js";
-import AchievementManager from "../../achievement/AchievementManager.js";
 
 type Listener = () => void;
 
@@ -25,24 +20,14 @@ export class ArchiveManager {
 
   private keeper: ArchivingKeeper;
   private loader: ArchiveLoader;
-  private achievementManager: AchievementManager;
   private configStore: ConfigStore;
-  private levelManager: LevelManager;
-  private modRegistry: ModMonitor;
-  private themeManager: ThemeManager;
-  private eventHistory: EventHistory;
 
   private listeners = new Set<Listener>();
 
   constructor() {
     this.keeper = inject(ArchivingKeeper);
     this.loader = inject(ArchiveLoader);
-    this.achievementManager = inject(AchievementManager);
     this.configStore = inject(ConfigStore);
-    this.levelManager = inject(LevelManager);
-    this.modRegistry = inject(ModMonitor);
-    this.themeManager = inject(ThemeManager);
-    this.eventHistory = inject(EventHistory);
   }
 
   public listSaves(): SaveMeta[] {
@@ -85,30 +70,12 @@ export class ArchiveManager {
   }
 
   public save(name: string): void {
-    const player = this.levelManager.getPlayer();
-    this.keeper.save(
-      name,
-      player,
-      this.achievementManager,
-      this.configStore,
-      this.levelManager,
-      this.modRegistry,
-    );
+    this.keeper.save(name, this.configStore);
     this.emitChange();
   }
 
   public load(name: string): void {
-    const player = this.levelManager.getPlayer();
-    this.loader.load(
-      name,
-      player,
-      this.achievementManager,
-      this.configStore,
-      this.levelManager,
-      this.modRegistry,
-      this.themeManager,
-      this.eventHistory,
-    );
+    this.loader.load(name);
   }
 
   public delete(name: string): void {

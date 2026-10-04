@@ -34,6 +34,8 @@ export interface ActionDefinition {
   /** Faction standing this action shifts. */
   faction?: { id: string; delta: number };
   flag?: string;
+  /** Take a job in this career track. */
+  career?: string;
 }
 
 export const actionSchema = z.object({
@@ -53,6 +55,7 @@ export const actionSchema = z.object({
   karma: karmaDeltaSchema.optional(),
   faction: factionDeltaSchema.optional(),
   flag: z.string().optional(),
+  career: z.string().optional(),
 });
 
 export type ActionJson = z.infer<typeof actionSchema>;

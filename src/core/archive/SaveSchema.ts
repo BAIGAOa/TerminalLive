@@ -35,6 +35,8 @@ export const saveDataSchema = z.object({
     relationships: z.record(z.string(), z.number()).default({}),
     flags: z.array(z.string()).default([]),
     actionPoints: z.number().default(0),
+    careerId: z.string().nullable().default(null),
+    careerRank: z.number().default(0),
   }),
   history: z.object({
     triggered: z.array(z.string()),
@@ -80,6 +82,11 @@ export const saveDataSchema = z.object({
     }),
   pressures: z.record(z.string(), z.number()).default({}),
   weather: z.string().default("weather_clear"),
+  /** A choice event awaiting the player's pick when the save was taken. */
+  pendingChoice: z
+    .object({ incidentId: z.string(), rangeKey: z.string() })
+    .nullable()
+    .default(null),
 });
 
 export type SaveData = z.infer<typeof saveDataSchema>;

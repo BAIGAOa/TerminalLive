@@ -11,6 +11,8 @@ import WorldState from "../world/chronicle/WorldState.js";
 import WorldRegistry from "../world/chronicle/WorldRegistry.js";
 import PressureState from "../world/pressures/PressureState.js";
 import WeatherState from "../world/weather/WeatherState.js";
+import RelationshipSystem from "../world/relationships/RelationshipSystem.js";
+import CareerSystem from "../world/careers/CareerSystem.js";
 
 export type ActionUnavailableReason = "ap" | "age" | "require" | "once";
 
@@ -33,6 +35,8 @@ export default class Game {
   private worldRegistry: WorldRegistry;
   private pressures: PressureState;
   private weather: WeatherState;
+  private relationships: RelationshipSystem;
+  private careers: CareerSystem;
 
   constructor() {
     this.levelManager = inject(LevelManager);
@@ -42,6 +46,8 @@ export default class Game {
     this.worldRegistry = inject(WorldRegistry);
     this.pressures = inject(PressureState);
     this.weather = inject(WeatherState);
+    this.relationships = inject(RelationshipSystem);
+    this.careers = inject(CareerSystem);
   }
 
   public get player(): Player {
@@ -105,6 +111,7 @@ export default class Game {
         flag: def.flag,
         karma: def.karma,
         faction: def.faction,
+        career: def.career,
       },
       this.world,
     );
@@ -114,10 +121,29 @@ export default class Game {
     return true;
   }
 
+  // ── npc interaction ────────────────────────────────────────────
+  /** Perform a relationship interaction (talk / gift / …) with an NPC. */
+  public interactWithNpc(npcId: string, interactionId: string): boolean {
+    const ok = this.relationships.interact(npcId, interactionId);
+    if (ok) {
+      this.eventBus.emit("action:performed", {
+        actionId: `npc:${npcId}:${interactionId}`,
+      });
+      this.eventBus.emit("player:updated");
+    }
+    return ok;
+  }
+
   // ── turn ───────────────────────────────────────────────────────
   public endTurn(): void {
     this.levelManager.update();
     this.advanceWorld();
+    // Let the NPCs act — unless an event already paused the turn on a choice.
+    if (!this.levelManager.hasPendingChoice()) {
+      this.relationships.tickYear(this.player);
+    }
+    // Pay the salary and consider a promotion.
+    this.careers.tickYear(this.player);
     this.eventBus.emit("turn:ended", { age: this.player.age });
   }
 

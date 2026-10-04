@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Box, Text } from "ink";
 import { useMouseRegion } from "ink-cartridge";
 import { useTerminalSize } from "../TerminalSizeContext.js";
+import { clampHeight, clampWidth } from "./viewport.js";
 
 export interface ModalFrameProps {
   width: number;
@@ -37,12 +38,17 @@ export function ModalFrame({
 }: ModalFrameProps) {
   const { columns, rows } = useTerminalSize();
 
+  // Never let a modal overflow the terminal — narrow terminals used to wrap and
+  // shred the frame. Leave a 2-cell margin on each axis.
+  const w = clampWidth(columns, width, 24);
+  const h = height !== undefined ? clampHeight(rows, height, 6) : undefined;
+
   const centered = useMemo(
     () => ({
-      top: Math.max(0, Math.floor((rows - (height ?? 12)) / 2)),
-      left: Math.max(0, Math.floor((columns - width) / 2)),
+      top: Math.max(0, Math.floor((rows - (h ?? 12)) / 2)),
+      left: Math.max(0, Math.floor((columns - w) / 2)),
     }),
-    [rows, columns, height, width],
+    [rows, columns, h, w],
   );
 
   const [pos, setPos] = useState(centered);
@@ -89,8 +95,8 @@ export function ModalFrame({
       position="absolute"
       top={pos.top}
       left={pos.left}
-      width={width}
-      height={height}
+      width={w}
+      height={h}
       borderStyle="round"
       borderColor={borderColor}
       backgroundColor={backgroundColor}

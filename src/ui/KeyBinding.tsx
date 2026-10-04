@@ -6,6 +6,8 @@ import { container } from "../Container.js";
 import ConfigStore from "../core/store/ConfigStore.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { useTerminalSize } from "./TerminalSizeContext.js";
+import { clampWidth } from "./kit/viewport.js";
 import { KEY_ACTIONS, resolveKeymap } from "./keymap.js";
 
 const CAPTURABLE_SPECIAL = [
@@ -28,6 +30,7 @@ export default function KeyBinding({ onBack }: { onBack?: () => void }) {
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
   const configStore = container.resolve(ConfigStore);
+  const { columns } = useTerminalSize();
 
   const savedJson = useSyncExternalStore(configStore.subscribe, () =>
     JSON.stringify(configStore.getKeyBindings()),
@@ -79,7 +82,7 @@ export default function KeyBinding({ onBack }: { onBack?: () => void }) {
         </Text>
       </Box>
 
-      <Box width={56} flexDirection="column">
+      <Box width={clampWidth(columns, 56)} flexDirection="column">
         <MenuList
           focusId="keybinding-list"
           items={items}

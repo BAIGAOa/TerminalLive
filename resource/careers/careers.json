@@ -1,0 +1,53 @@
+[
+  {
+    "id": "career_clerk",
+    "labelKey": "career.clerk",
+    "descKey": "career.clerk.desc",
+    "ranks": [
+      { "titleKey": "career.clerk.r0", "salary": 30, "requires": [] },
+      { "titleKey": "career.clerk.r1", "salary": 65, "requires": [{ "prop": "intelligence", "gte": 30 }] },
+      { "titleKey": "career.clerk.r2", "salary": 120, "requires": [{ "prop": "intelligence", "gte": 50 }, { "prop": "reputation", "gte": 15 }] },
+      { "titleKey": "career.clerk.r3", "salary": 220, "requires": [{ "prop": "intelligence", "gte": 70 }, { "prop": "reputation", "gte": 35 }] }
+    ]
+  },
+  {
+    "id": "career_teacher",
+    "labelKey": "career.teacher",
+    "descKey": "career.teacher.desc",
+    "ranks": [
+      { "titleKey": "career.teacher.r0", "salary": 28, "requires": [] },
+      { "titleKey": "career.teacher.r1", "salary": 60, "requires": [{ "prop": "intelligence", "gte": 35 }] },
+      { "titleKey": "career.teacher.r2", "salary": 130, "requires": [{ "prop": "intelligence", "gte": 60 }, { "prop": "reputation", "gte": 25 }] }
+    ]
+  },
+  {
+    "id": "career_artist",
+    "labelKey": "career.artist",
+    "descKey": "career.artist.desc",
+    "ranks": [
+      { "titleKey": "career.artist.r0", "salary": 18, "requires": [] },
+      { "titleKey": "career.artist.r1", "salary": 70, "requires": [{ "prop": "happiness", "gte": 50 }] },
+      { "titleKey": "career.artist.r2", "salary": 190, "requires": [{ "prop": "reputation", "gte": 45 }] }
+    ]
+  },
+  {
+    "id": "career_trader",
+    "labelKey": "career.trader",
+    "descKey": "career.trader.desc",
+    "ranks": [
+      { "titleKey": "career.trader.r0", "salary": 35, "requires": [] },
+      { "titleKey": "career.trader.r1", "salary": 85, "requires": [{ "prop": "money", "gte": 300 }] },
+      { "titleKey": "career.trader.r2", "salary": 240, "requires": [{ "prop": "money", "gte": 2000 }, { "prop": "reputation", "gte": 30 }] }
+    ]
+  },
+  {
+    "id": "career_engineer",
+    "labelKey": "career.engineer",
+    "descKey": "career.engineer.desc",
+    "ranks": [
+      { "titleKey": "career.engineer.r0", "salary": 32, "requires": [] },
+      { "titleKey": "career.engineer.r1", "salary": 78, "requires": [{ "prop": "intelligence", "gte": 45 }] },
+      { "titleKey": "career.engineer.r2", "salary": 200, "requires": [{ "prop": "intelligence", "gte": 65 }, { "prop": "reputation", "gte": 30 }] }
+    ]
+  }
+]

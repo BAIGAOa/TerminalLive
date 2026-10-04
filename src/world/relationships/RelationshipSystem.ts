@@ -1,0 +1,234 @@
+import { inject } from "../../Container.js";
+import Player from "../Player.js";
+import NpcRegistry from "./NpcRegistry.js";
+import RelationshipContent from "../../content/RelationshipContent.js";
+import {
+  InteractionView,
+  NpcInteractionDef,
+} from "./NpcInteraction.js";
+import { NpcAutonomyDef } from "./NpcAutonomy.js";
+import { NpcLogIncident } from "./NpcLogIncident.js";
+import { NpcOfferIncident } from "./NpcOfferIncident.js";
+import { applyEffectPayload } from "../effects/applyEffects.js";
+import { meetsRequirements } from "../requirements.js";
+import LevelManager from "../../level/LevelManager.js";
+import WorldState from "../chronicle/WorldState.js";
+import TypedEventBus from "../../core/TypedEventBus.js";
+
+/** Odds/limits for the once-a-year NPC agency pass. */
+const PASSIVE_CHANCE = 0.45;
+const MAX_PASSIVES = 2;
+const OFFER_CHANCE = 0.15;
+
+export interface NpcDetail {
+  npcId: string;
+  labelKey: string;
+  descKey: string;
+  temperamentKey?: string;
+  affinity: number;
+  availableInteractions: number;
+  totalInteractions: number;
+}
+
+/**
+ * The player↔NPC layer: which interactions an NPC offers, resolving them, and
+ * the yearly pass where NPCs act on their own (quiet effects, or an offer that
+ * pops the choice modal).
+ */
+export default class RelationshipSystem {
+  private registry: NpcRegistry;
+  private content: RelationshipContent;
+  private levelManager: LevelManager;
+  private world: WorldState;
+  private eventBus: TypedEventBus;
+
+  private logSeq = 0;
+  /** Offers awaiting an answer, so we can narrate the chosen outcome. */
+  private pendingOffers = new Map<string, { npcId: string; def: NpcAutonomyDef }>();
+
+  constructor() {
+    this.registry = inject(NpcRegistry);
+    this.content = inject(RelationshipContent);
+    this.levelManager = inject(LevelManager);
+    this.world = inject(WorldState);
+    this.eventBus = inject(TypedEventBus);
+
+    this.eventBus.on("choice:resolved", ({ incidentId, optionId }) => {
+      const rec = this.pendingOffers.get(incidentId);
+      if (!rec) return;
+      this.pendingOffers.delete(incidentId);
+      const opt = rec.def.options?.find((o) => o.id === optionId);
+      if (opt?.resultKey) this.log(opt.resultKey);
+    });
+  }
+
+  // ── lookups ────────────────────────────────────────────────────
+  private resolvedInteractions(npcId: string): NpcInteractionDef[] {
+    const npc = this.registry.get(npcId);
+    if (!npc) return [];
+    return npc.interactions && npc.interactions.length > 0
+      ? npc.interactions
+      : this.content.interactionsForRole(npc.roleKey);
+  }
+
+  private resolvedAutonomy(npcId: string, kind: "passive" | "offer"): NpcAutonomyDef[] {
+    const npc = this.registry.get(npcId);
+    if (!npc) return [];
+    const base =
+      npc.autonomy && npc.autonomy.length > 0
+        ? npc.autonomy
+        : this.content.autonomyForRole(npc.roleKey);
+    return base.filter((d) => d.kind === kind);
+  }
+
+  public getInteractionsFor(npcId: string): InteractionView[] {
+    const player = this.levelManager.getPlayer();
+    return this.resolvedInteractions(npcId).map((def) => {
+      let reason: InteractionView["reason"];
+      const aff = player.getRelationship(npcId);
+      if (def.minAge !== undefined && player.age < def.minAge) reason = "age";
+      else if (def.maxAge !== undefined && player.age > def.maxAge) reason = "age";
+      else if (def.minAffinity !== undefined && aff < def.minAffinity) reason = "require";
+      else if (!meetsRequirements(player, def.requires)) reason = "require";
+      else if (player.actionPoints < (def.apCost ?? 1)) reason = "ap";
+      return { def, available: reason === undefined, reason };
+    });
+  }
+
+  public getDetail(npcId: string): NpcDetail | null {
+    const npc = this.registry.get(npcId);
+    if (!npc) return null;
+    const views = this.getInteractionsFor(npcId);
+    return {
+      npcId,
+      labelKey: npc.labelKey,
+      descKey: npc.descKey,
+      temperamentKey: npc.temperamentKey,
+      affinity: this.levelManager.getPlayer().getRelationship(npcId),
+      availableInteractions: views.filter((v) => v.available).length,
+      totalInteractions: views.length,
+    };
+  }
+
+  /** A line to show when the player opens an NPC. */
+  public dialogue(npcId: string): string | null {
+    const keys = this.registry.get(npcId)?.dialogueKeys ?? [];
+    if (keys.length === 0) return null;
+    return keys[Math.floor(Math.random() * keys.length)] ?? null;
+  }
+
+  // ── interaction ────────────────────────────────────────────────
+  public interact(npcId: string, interactionId: string): boolean {
+    const view = this.getInteractionsFor(npcId).find(
+      (v) => v.def.id === interactionId,
+    );
+    if (!view || !view.available) return false;
+
+    const player = this.levelManager.getPlayer();
+    const def = view.def;
+    player.actionPoints -= def.apCost ?? 1;
+    applyEffectPayload(
+      player,
+      {
+        effects: def.effects,
+        items: def.items,
+        buff: def.buff,
+        flag: def.flag,
+        karma: def.karma,
+      },
+      this.world,
+    );
+    if (def.affinity) player.adjustRelationship(npcId, def.affinity);
+    this.log(def.resultKey);
+    player.notify();
+    this.eventBus.emit("npc:interaction", { npcId, interactionId });
+    return true;
+  }
+
+  // ── yearly agency ──────────────────────────────────────────────
+  /** Every known NPC with a beating heart may act; returns nothing. */
+  public tickYear(player: Player): void {
+    const known = this.registry
+      .getAll()
+      .map((n) => n.id)
+      .filter((id) => player.getRelationship(id) > 0);
+    if (known.length === 0) return;
+
+    let applied = 0;
+    for (const npcId of shuffle(known)) {
+      if (applied >= MAX_PASSIVES) break;
+      if (Math.random() > PASSIVE_CHANCE) continue;
+      const def = weightedPick(this.eligible(npcId, "passive", player));
+      if (!def) continue;
+      this.applyPassive(npcId, def, player);
+      applied++;
+    }
+
+    if (Math.random() < OFFER_CHANCE) {
+      const npcId = shuffle(known)[0];
+      const def = weightedPick(this.eligible(npcId, "offer", player));
+      if (def) this.offerNpcChoice(npcId, def);
+    }
+  }
+
+  private eligible(
+    npcId: string,
+    kind: "passive" | "offer",
+    player: Player,
+  ): NpcAutonomyDef[] {
+    const aff = player.getRelationship(npcId);
+    return this.resolvedAutonomy(npcId, kind).filter((d) => {
+      if (d.minAffinity !== undefined && aff < d.minAffinity) return false;
+      if (d.maxAffinity !== undefined && aff > d.maxAffinity) return false;
+      if (d.minAge !== undefined && player.age < d.minAge) return false;
+      if (d.maxAge !== undefined && player.age > d.maxAge) return false;
+      if (d.kind === "offer" && (!d.options || d.options.length === 0)) return false;
+      return true;
+    });
+  }
+
+  private applyPassive(npcId: string, def: NpcAutonomyDef, player: Player): void {
+    applyEffectPayload(
+      player,
+      { effects: def.effects, items: def.items, buff: def.buff, flag: def.flag },
+      this.world,
+    );
+    if (def.affinity) player.adjustRelationship(npcId, def.affinity);
+    this.log(def.resultKey ?? def.labelKey);
+    this.eventBus.emit("toast", { textKey: def.labelKey, kind: "info" });
+    this.eventBus.emit("npc:acted", { npcId, autonomyId: def.id });
+    player.notify();
+  }
+
+  private offerNpcChoice(npcId: string, def: NpcAutonomyDef): void {
+    const incident = new NpcOfferIncident(npcId, def);
+    this.pendingOffers.set(incident.id, { npcId, def });
+    this.levelManager.offerNpcChoice(incident);
+  }
+
+  private log(nameKey: string): void {
+    this.levelManager
+      .getCurrentLogStore()
+      ?.addEvent(new NpcLogIncident(`npc_log_${++this.logSeq}`, nameKey));
+  }
+}
+
+function shuffle<T>(items: T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function weightedPick<T extends { weight: number }>(items: T[]): T | undefined {
+  const total = items.reduce((s, i) => s + i.weight, 0);
+  if (total <= 0) return undefined;
+  let r = Math.random() * total;
+  for (const item of items) {
+    if (r < item.weight) return item;
+    r -= item.weight;
+  }
+  return items[items.length - 1];
+}

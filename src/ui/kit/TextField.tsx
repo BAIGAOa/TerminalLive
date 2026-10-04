@@ -18,6 +18,11 @@ export interface TextFieldProps {
   mask?: string;
   color?: string;
   autoFocus?: boolean;
+  /**
+   * Draw the blinking block caret. Set false when the real terminal cursor is
+   * positioned at the caret instead (e.g. the pseudo-terminal prompt).
+   */
+  showCaret?: boolean;
 }
 
 /**
@@ -38,6 +43,7 @@ export function TextField({
   mask,
   color = "white",
   autoFocus = true,
+  showCaret = true,
 }: TextFieldProps) {
   const { boundKeyboard, focusSet } = useKeyboard();
   const focused = useFocusState(focusId, group);
@@ -100,15 +106,16 @@ export function TextField({
     }
   }, [autoFocus, focusSet, focusId, group]);
 
-  // Blinking caret only while focused.
+  // Blinking caret only while focused (skipped when the caller drives the
+  // real terminal cursor instead).
   useEffect(() => {
-    if (!focused) {
+    if (!showCaret || !focused) {
       setCursorOn(true);
       return;
     }
     const t = setInterval(() => setCursorOn((c) => !c), 500);
     return () => clearInterval(t);
-  }, [focused]);
+  }, [focused, showCaret]);
 
   const shown = mask ? mask.repeat(value.length) : value;
 
@@ -119,7 +126,7 @@ export function TextField({
       ) : placeholder ? (
         <Text dimColor>{placeholder}</Text>
       ) : null}
-      {focused ? (
+      {showCaret && focused ? (
         <Text color="gray">{cursorOn ? "█" : " "}</Text>
       ) : null}
     </Box>

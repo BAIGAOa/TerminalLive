@@ -10,13 +10,18 @@ const TerminalSizeContext = createContext<TerminalSize>({ columns: 80, rows: 24 
 
 export const TerminalSizeProvider = ({ children }: { children: ReactNode }) => {
   const { stdout } = useStdout();
-  const [size, setSize] = useState<TerminalSize>({
-    columns: stdout.columns,
-    rows: stdout.rows,
+
+  // Some streams (e.g. ink-testing-library) report no rows/columns — fall back
+  // to a sane default so layout math never becomes NaN.
+  const read = (): TerminalSize => ({
+    columns: stdout.columns || 80,
+    rows: stdout.rows || 24,
   });
 
+  const [size, setSize] = useState<TerminalSize>(read);
+
   useEffect(() => {
-    const handler = () => setSize({ columns: stdout.columns, rows: stdout.rows });
+    const handler = () => setSize(read());
     stdout.on('resize', handler);
     return () => { stdout.off('resize', handler); };
   }, [stdout]);

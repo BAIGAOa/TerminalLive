@@ -3,10 +3,9 @@ import { container } from "../Container.js";
 import LevelManager from "../level/LevelManager.js";
 import Level from "../level/Level.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import ConfigStore from "../core/store/ConfigStore.js";
 import GeneralPurpose from "../level/conditions/GeneralPurpose.js";
-import { PlayerConfigType } from "../types/ConfigType.js";
 import DifficultyRegistry from "../core/registry/DifficultyRegistry.js";
+import { sortLevelsLinearly } from "../level/levelChain.js";
 import LevelCondition from "../level/LevelCondition.js";
 
 export interface DifficultyItem {
@@ -34,35 +33,13 @@ export interface LevelSelectionData {
   activeDifficulty: string | null;
   t: (key: string, params?: Record<string, string | number>) => string;
   onSelectDifficulty: (item: DifficultyItem) => void;
-  onSelectLevel: (item: LevelItem) => void;
-  showDetail: boolean;
-  selectedLevel: Level | null;
-  formattedConditions: FormattedCondition[];
-  initialAttributes: Record<string, string | number>;
-  onBackFromDetail: () => void;
-  onConfirmEnter: () => void;
-}
-
-function sortLevelsLinearly(levels: Level[]): Level[] {
-  if (levels.length === 0) return [];
-  const idMap = new Map<string, Level>();
-  const childSet = new Set<string>();
-  for (const l of levels) {
-    idMap.set(l.id, l);
-    if (l.nextLevel !== "none") childSet.add(l.nextLevel);
-  }
-  const root = levels.find((l) => !childSet.has(l.id));
-  if (!root) return [...levels].sort((a, b) => a.id.localeCompare(b.id));
-  const ordered: Level[] = [];
-  const seen = new Set<string>();
-  let current: Level | undefined = root;
-  // `seen` guards against a cyclic nextLevel chain (e.g. a bad mod).
-  while (current && !seen.has(current.id)) {
-    seen.add(current.id);
-    ordered.push(current);
-    current = current.nextLevel === "none" ? undefined : idMap.get(current.nextLevel);
-  }
-  return ordered;
+  /** Previews a level's conditions in the footer (no navigation). */
+  onHighlightLevel: (item: LevelItem) => void;
+  /** Starts the highlighted level directly (one Enter). */
+  onStartLevel: (item: LevelItem) => void;
+  /** Description key of the currently highlighted level, if any. */
+  highlightedDescKey: string | null;
+  highlightedConditions: FormattedCondition[];
 }
 
 function formatSingleCondition(
@@ -81,42 +58,17 @@ function formatSingleCondition(
   };
 }
 
-function mergeInitialAttributes(
-  globalConfig: PlayerConfigType,
-  levelInitial?: Record<string, unknown>,
-): Record<string, string | number> {
-  const result: Record<string, string | number> = {};
-  for (const [key, value] of Object.entries(globalConfig)) {
-    if (typeof value === "string" || typeof value === "number") {
-      result[key] = value;
-    }
-  }
-  if (levelInitial) {
-    for (const [key, value] of Object.entries(levelInitial)) {
-      if (
-        key in result &&
-        (typeof value === "string" || typeof value === "number")
-      ) {
-        result[key] = value;
-      }
-    }
-  }
-  return result;
-}
-
 export function useLevelSelection(): LevelSelectionData {
   const { t } = useI18n();
   const difficultyRegistry = container.resolve(DifficultyRegistry);
   const levelManager = container.resolve(LevelManager);
-  const configStore = container.resolve(ConfigStore);
 
   const version = useSyncExternalStore(levelManager.subscribe, () =>
     levelManager.getSnapshot(),
   );
 
   const [activeDifficulty, setActiveDifficulty] = useState<string | null>(null);
-  const [showDetail, setShowDetail] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
 
   const leftItems: DifficultyItem[] = useMemo(() => {
     return difficultyRegistry.getDifficulties().map((d) => ({
@@ -158,45 +110,32 @@ export function useLevelSelection(): LevelSelectionData {
     return result;
   }, [activeDifficulty, levelMap, levelManager, t, version]);
 
-  const formattedConditions: FormattedCondition[] = useMemo(() => {
-    if (!selectedLevel) return [];
-    return selectedLevel.nextLevelUnlock.map((cond) =>
+  const highlightedLevel = highlightedId ? (levelMap.get(highlightedId) ?? null) : null;
+
+  const highlightedConditions: FormattedCondition[] = useMemo(() => {
+    if (!highlightedLevel) return [];
+    return highlightedLevel.nextLevelUnlock.map((cond) =>
       formatSingleCondition(cond, t),
     );
-  }, [selectedLevel, t]);
-
-  const initialAttributes: Record<string, string | number> = useMemo(() => {
-    const globalConfig = configStore.getPlayerConfig();
-    return mergeInitialAttributes(globalConfig, selectedLevel?.initialPlayerAttributes);
-  }, [selectedLevel, configStore]);
+  }, [highlightedLevel, t]);
 
   const onSelectDifficulty = useCallback((item: DifficultyItem) => {
     setActiveDifficulty(item.value);
-    setShowDetail(false);
-    setSelectedLevel(null);
+    setHighlightedId(null);
   }, []);
 
-  const onSelectLevel = useCallback(
+  const onHighlightLevel = useCallback((item: LevelItem) => {
+    setHighlightedId(item.value);
+  }, []);
+
+  const onStartLevel = useCallback(
     (item: LevelItem) => {
       if (item.status === "locked") return; // locked levels cannot be started
       const level = levelMap.get(item.value);
-      if (level) {
-        setSelectedLevel(level);
-        setShowDetail(true);
-      }
+      if (level) levelManager.start(level.id);
     },
-    [levelMap],
+    [levelMap, levelManager],
   );
-
-  const onBackFromDetail = useCallback(() => {
-    setShowDetail(false);
-    setSelectedLevel(null);
-  }, []);
-
-  const onConfirmEnter = useCallback(() => {
-    if (!selectedLevel) return;
-    levelManager.start(selectedLevel.id);
-  }, [selectedLevel, levelManager]);
 
   return {
     leftItems,
@@ -204,12 +143,9 @@ export function useLevelSelection(): LevelSelectionData {
     activeDifficulty,
     t,
     onSelectDifficulty,
-    onSelectLevel,
-    showDetail,
-    selectedLevel,
-    formattedConditions,
-    initialAttributes,
-    onBackFromDetail,
-    onConfirmEnter,
+    onHighlightLevel,
+    onStartLevel,
+    highlightedDescKey: highlightedLevel?.descriptionKey ?? null,
+    highlightedConditions,
   };
 }

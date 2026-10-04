@@ -1,5 +1,6 @@
 import Player from "../world/Player.js";
 import { PendingChoice } from "./PendingChoice.js";
+import type { Incident } from "../world/Incident.js";
 
 export interface IEventAlgorithm {
     /** 每回合被调用，尝试在本关卡中触发事件 */
@@ -13,4 +14,16 @@ export interface IEventAlgorithm {
     getPendingChoice?(): PendingChoice | null;
     /** 玩家选择了某个分支，结算并返回是否成功 */
     resolveChoice?(optionId: string, player: Player): boolean;
+    /** 读档时重新抛出一个等待抉择的事件 */
+    restorePendingChoice?(
+        incidentId: string,
+        rangeKey: string,
+        player: Player,
+    ): void;
+    /** 抛出一个非事件池来源的抉择（如 NPC 自主发起的邀请） */
+    offerExternalChoice?(
+        incident: Incident,
+        rangeKey: string,
+        player: Player,
+    ): void;
 }

@@ -83,12 +83,29 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
     const uEsc = boundKeyboard(["escape"], () => onClose());
     const uTab = boundKeyboard(["tab"], () => {
       if (!data.inputMode) data.enterInputMode();
+      else data.acceptCompletion();
+    });
+    const uUp = boundKeyboard(["up"], () => {
+      if (data.inputMode) data.historyPrev();
+    });
+    const uDown = boundKeyboard(["down"], () => {
+      if (data.inputMode) data.historyNext();
     });
     return () => {
       uEsc();
       uTab();
+      uUp();
+      uDown();
     };
-  }, [boundKeyboard, onClose, data.inputMode, data.enterInputMode]);
+  }, [
+    boundKeyboard,
+    onClose,
+    data.inputMode,
+    data.enterInputMode,
+    data.acceptCompletion,
+    data.historyPrev,
+    data.historyNext,
+  ]);
 
   return (
     <ModalFrame
@@ -102,7 +119,12 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
         <Box justifyContent="flex-end">
           <Text dimColor>
             {data.inputMode
-              ? "[Esc] " + data.t("console.exitInputMode")
+              ? "[Tab] " +
+                data.t("console.complete") +
+                "  [↑↓] " +
+                data.t("console.history") +
+                "  [Esc] " +
+                data.t("console.exitInputMode")
               : "[Tab] " + data.t("console.enterInputMode") + "  [Esc] " + data.t("console.close")}
           </Text>
         </Box>
@@ -132,6 +154,21 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
               .map((r) => <CommandResultItem key={r.id} result={r} t={data.t} />)
           )}
         </Box>
+
+        {data.inputMode && data.completions.length > 0 ? (
+          <Box flexDirection="column">
+            {data.completions.map((candidate, i) => (
+              <Text
+                key={candidate}
+                color={i === 0 ? colors.success : colors.muted}
+                dimColor={i !== 0}
+              >
+                {i === 0 ? "▸ " : "  "}
+                {candidate}
+              </Text>
+            ))}
+          </Box>
+        ) : null}
 
         <Box marginTop={1} flexDirection="row">
           {data.inputMode ? (

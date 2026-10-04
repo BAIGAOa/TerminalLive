@@ -1,0 +1,399 @@
+[
+  {
+    "type": "EffectEvent",
+    "id": "ev_first_steps",
+    "nameKey": "ev.first_steps",
+    "rangeKey": ["0-2"],
+    "weight": 2,
+    "once": true,
+    "params": { "effects": { "fitness": 2, "happiness": 3 } }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_first_word",
+    "nameKey": "ev.first_word",
+    "rangeKey": ["0-2"],
+    "weight": 2,
+    "once": true,
+    "params": { "effects": { "intelligence": 2, "happiness": 2 } }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_baby_illness",
+    "nameKey": "ev.baby_illness",
+    "textKey": "ev.baby_illness.text",
+    "rangeKey": ["0-2"],
+    "weight": 1.2,
+    "once": true,
+    "choices": [
+      {
+        "id": "hospital",
+        "labelKey": "ev.baby_illness.opt.hospital",
+        "effects": { "health": 6, "money": -100 },
+        "noteKey": "ev.baby_illness.note.hospital"
+      },
+      {
+        "id": "home",
+        "labelKey": "ev.baby_illness.opt.home",
+        "effects": { "health": -3, "happiness": 2 },
+        "noteKey": "ev.baby_illness.note.home"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_childhood_hobby",
+    "nameKey": "ev.childhood_hobby",
+    "rangeKey": ["3-12"],
+    "weight": 1.5,
+    "once": true,
+    "params": { "effects": { "happiness": 4, "intelligence": 1 } }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_school_play",
+    "nameKey": "ev.school_play",
+    "rangeKey": ["6-12"],
+    "weight": 1.3,
+    "once": true,
+    "params": { "effects": { "social": 3, "happiness": 3 } }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_moved_house",
+    "nameKey": "ev.moved_house",
+    "rangeKey": ["3-12"],
+    "weight": 1,
+    "once": true,
+    "params": { "effects": { "happiness": -2, "social": 1 } }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_best_friend",
+    "nameKey": "ev.best_friend",
+    "textKey": "ev.best_friend.text",
+    "rangeKey": ["6-12"],
+    "weight": 1.5,
+    "once": true,
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "ev.best_friend.opt.share",
+        "effects": { "happiness": 4 },
+        "relationship": { "npc": "npc_friend", "delta": 12 },
+        "flag": "has_friend",
+        "noteKey": "ev.best_friend.note.share"
+      },
+      {
+        "id": "keep",
+        "labelKey": "ev.best_friend.opt.keep",
+        "effects": { "happiness": 1, "intelligence": 1 },
+        "noteKey": "ev.best_friend.note.keep"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_lost_pet",
+    "nameKey": "ev.lost_pet",
+    "textKey": "ev.lost_pet.text",
+    "rangeKey": ["6-14"],
+    "weight": 0.9,
+    "once": true,
+    "choices": [
+      {
+        "id": "search",
+        "labelKey": "ev.lost_pet.opt.search",
+        "effects": { "happiness": 5, "fitness": -1 },
+        "relationship": { "npc": "npc_pet", "delta": 15 },
+        "noteKey": "ev.lost_pet.note.search"
+      },
+      {
+        "id": "wait",
+        "labelKey": "ev.lost_pet.opt.wait",
+        "effects": { "happiness": -4 },
+        "noteKey": "ev.lost_pet.note.wait"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_club_tryout",
+    "nameKey": "ev.club_tryout",
+    "rangeKey": ["13-18"],
+    "weight": 1.4,
+    "params": { "effects": { "fitness": 3, "social": 2, "happiness": 2 } }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_gaming_allnight",
+    "nameKey": "ev.gaming_allnight",
+    "rangeKey": ["13-18"],
+    "weight": 1.2,
+    "params": {
+      "effects": { "happiness": 4, "fitness": -2, "health": -1 },
+      "buff": { "id": "fx_fatigue", "turns": 2 }
+    }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_part_time",
+    "nameKey": "ev.part_time",
+    "textKey": "ev.part_time.text",
+    "rangeKey": ["14-18"],
+    "weight": 1.4,
+    "once": true,
+    "choices": [
+      {
+        "id": "take",
+        "labelKey": "ev.part_time.opt.take",
+        "effects": { "money": 120, "happiness": -2, "social": 2 },
+        "flag": "employed",
+        "noteKey": "ev.part_time.note.take"
+      },
+      {
+        "id": "study",
+        "labelKey": "ev.part_time.opt.study",
+        "effects": { "intelligence": 5, "money": -20 },
+        "noteKey": "ev.part_time.note.study"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_crush",
+    "nameKey": "ev.crush",
+    "textKey": "ev.crush.text",
+    "rangeKey": ["13-18"],
+    "weight": 1.3,
+    "once": true,
+    "choices": [
+      {
+        "id": "confess",
+        "labelKey": "ev.crush.opt.confess",
+        "effects": { "happiness": 6 },
+        "relationship": { "npc": "npc_partner", "delta": 18 },
+        "noteKey": "ev.crush.note.confess"
+      },
+      {
+        "id": "silent",
+        "labelKey": "ev.crush.opt.silent",
+        "effects": { "depressionValue": 5 },
+        "buff": { "id": "fx_heartache", "turns": 3 },
+        "noteKey": "ev.crush.note.silent"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_career_boost",
+    "nameKey": "ev.career_boost",
+    "rangeKey": ["25-55"],
+    "weight": 1.2,
+    "params": { "effects": { "money": 200, "reputation": 4, "happiness": 2 } }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_travel_day",
+    "nameKey": "ev.travel_day",
+    "textKey": "ev.travel_day.text",
+    "rangeKey": ["20-45"],
+    "weight": 1.3,
+    "once": true,
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "ev.travel_day.opt.go",
+        "effects": { "happiness": 8, "money": -300, "fitness": 1 },
+        "flag": "traveled",
+        "noteKey": "ev.travel_day.note.go"
+      },
+      {
+        "id": "stay",
+        "labelKey": "ev.travel_day.opt.stay",
+        "effects": { "money": 30, "happiness": -1 },
+        "noteKey": "ev.travel_day.note.stay"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_rent_room",
+    "nameKey": "ev.rent_room",
+    "textKey": "ev.rent_room.text",
+    "rangeKey": ["19-30"],
+    "weight": 1.2,
+    "once": true,
+    "choices": [
+      {
+        "id": "city",
+        "labelKey": "ev.rent_room.opt.city",
+        "effects": { "money": -150, "social": 3, "happiness": 2 },
+        "noteKey": "ev.rent_room.note.city"
+      },
+      {
+        "id": "suburb",
+        "labelKey": "ev.rent_room.opt.suburb",
+        "effects": { "money": -60, "health": 2, "happiness": 1 },
+        "noteKey": "ev.rent_room.note.suburb"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_blind_date",
+    "nameKey": "ev.blind_date",
+    "textKey": "ev.blind_date.text",
+    "rangeKey": ["19-38"],
+    "weight": 1.1,
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "ev.blind_date.opt.go",
+        "effects": { "happiness": 3, "social": 2 },
+        "relationship": { "npc": "npc_partner", "delta": 8 },
+        "noteKey": "ev.blind_date.note.go"
+      },
+      {
+        "id": "skip",
+        "labelKey": "ev.blind_date.opt.skip",
+        "effects": { "happiness": -1 },
+        "noteKey": "ev.blind_date.note.skip"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_mortgage",
+    "nameKey": "ev.mortgage",
+    "textKey": "ev.mortgage.text",
+    "rangeKey": ["28-52"],
+    "weight": 1.1,
+    "once": true,
+    "requires": [{ "prop": "money", "gte": 800 }],
+    "choices": [
+      {
+        "id": "buy",
+        "labelKey": "ev.mortgage.opt.buy",
+        "effects": { "money": -800, "happiness": 6 },
+        "flag": "homeowner",
+        "noteKey": "ev.mortgage.note.buy"
+      },
+      {
+        "id": "rent",
+        "labelKey": "ev.mortgage.opt.rent",
+        "effects": { "money": -100, "happiness": 1 },
+        "noteKey": "ev.mortgage.note.rent"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_health_scan",
+    "nameKey": "ev.health_scan",
+    "textKey": "ev.health_scan.text",
+    "rangeKey": ["38-62"],
+    "weight": 1.2,
+    "choices": [
+      {
+        "id": "check",
+        "labelKey": "ev.health_scan.opt.check",
+        "effects": { "money": -200, "health": 6 },
+        "noteKey": "ev.health_scan.note.check"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "ev.health_scan.opt.ignore",
+        "effects": { "happiness": 1, "health": -4 },
+        "noteKey": "ev.health_scan.note.ignore"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_retirement_plan",
+    "nameKey": "ev.retirement_plan",
+    "textKey": "ev.retirement_plan.text",
+    "rangeKey": ["58-72"],
+    "weight": 1.3,
+    "once": true,
+    "choices": [
+      {
+        "id": "save",
+        "labelKey": "ev.retirement_plan.opt.save",
+        "effects": { "money": -200, "happiness": -1 },
+        "buff": { "id": "fx_calm", "turns": 5 },
+        "noteKey": "ev.retirement_plan.note.save"
+      },
+      {
+        "id": "live",
+        "labelKey": "ev.retirement_plan.opt.live",
+        "effects": { "money": 100, "happiness": 5 },
+        "noteKey": "ev.retirement_plan.note.live"
+      }
+    ]
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_new_grandchild",
+    "nameKey": "ev.new_grandchild",
+    "rangeKey": ["55-85"],
+    "weight": 1.4,
+    "once": true,
+    "params": { "effects": { "happiness": 8, "health": 1 }, "flag": "grandparent" }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_garden",
+    "nameKey": "ev.garden",
+    "rangeKey": ["60-90"],
+    "weight": 1.2,
+    "params": { "effects": { "happiness": 4, "health": 1 } }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_reminisce",
+    "nameKey": "ev.reminisce",
+    "rangeKey": ["65-95"],
+    "weight": 1.3,
+    "params": { "effects": { "happiness": 3, "depressionValue": -3 } }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "ev_memoir",
+    "nameKey": "ev.memoir",
+    "rangeKey": ["72-99"],
+    "weight": 1.2,
+    "once": true,
+    "params": {
+      "effects": { "reputation": 6, "happiness": 3 },
+      "flag": "wrote_memoir"
+    }
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "ev_inheritance",
+    "nameKey": "ev.inheritance",
+    "textKey": "ev.inheritance.text",
+    "rangeKey": ["74-99"],
+    "weight": 1.1,
+    "once": true,
+    "requires": [{ "prop": "money", "gte": 500 }],
+    "choices": [
+      {
+        "id": "give",
+        "labelKey": "ev.inheritance.opt.give",
+        "effects": { "money": -500, "happiness": 6, "reputation": 4 },
+        "flag": "donated",
+        "karma": { "benevolence": 15 },
+        "noteKey": "ev.inheritance.note.give"
+      },
+      {
+        "id": "keep",
+        "labelKey": "ev.inheritance.opt.keep",
+        "effects": { "money": 200, "happiness": -2 },
+        "noteKey": "ev.inheritance.note.keep"
+      }
+    ]
+  }
+]

@@ -61,6 +61,8 @@ const PlayerConfigSchema = z.object({
   relationships: z.record(z.string(), z.number()).optional(),
   flags: z.array(z.string()).optional(),
   actionPoints: z.number().optional(),
+  careerId: z.string().nullable().optional(),
+  careerRank: z.number().optional(),
 });
 
 const ConfigSchema = z.object({
