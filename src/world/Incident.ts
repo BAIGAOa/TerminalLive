@@ -26,17 +26,46 @@ export interface IncidentParameter {
   predecessorEvent?: string;
   excludedIds?: string[];
 
+  /**
+   * Soft cooldown (years): once this event fires, its weight drops to 0 for
+   * this many years, so it cannot repeat back-to-back.
+   */
+  cooldown?: number;
+  /** Semantic tags the director reads (e.g. "heal", "boon", "challenge"). */
+  tags?: string[];
+  /** Optional event class for same-class anti-repeat decay. */
+  category?: string;
+
   once?: boolean | string[];
   postEvent?: string | PostIncidentConfig[];
 
   params?: Record<string, unknown>;
 }
 
+/**
+ * A single edge in a post-event graph. An event's `postEvent` is a set of
+ * edges; edges may be weighted, delayed, gated by age, marked `once`, capped by
+ * `maxRuns`, and grouped (edges sharing a `group` are mutually exclusive).
+ * Convergence falls out naturally: many sources may point at the same node.
+ */
 export interface PostIncidentConfig {
   incident: string;
   delay?: number;
   weight?: number;
   triggerCondition?: (player: Player) => boolean;
+  /** Stable id used to track `once` / `maxRuns` across a life. */
+  edgeId?: string;
+  /** This edge may fire at most once per life. */
+  once?: boolean;
+  /** Cap how many times this edge's target may fire through this edge. */
+  maxRuns?: number;
+  /** Edges sharing a group are mutually exclusive — once one fires, the rest die. */
+  group?: string;
+  /** Narrative line this edge belongs to (defaults to the source event id). */
+  chainId?: string;
+  /** Only eligible while the player's age is within this window. */
+  minAge?: number;
+  maxAge?: number;
 }
 
 export abstract class Incident {
@@ -62,6 +91,12 @@ export abstract class Incident {
   public weatherBias: WeatherBias[] | null = null;
   /** 出现概率权重，数值越高概率越大 */
   public weight: number = 0.5;
+  /** Soft cooldown in years: weight is 0 for this many years after firing. */
+  public cooldown: number = 0;
+  /** Semantic tags read by the director (heal/boon/challenge/…). */
+  public tags: string[] = [];
+  /** Event class for same-class anti-repeat decay (optional). */
+  public category: string | null = null;
   /** 事件触发时的具体影响逻辑 */
   public abstract apply(player: Player): void;
 
@@ -95,6 +130,9 @@ export abstract class Incident {
     this.id = parameter.id ?? this.id;
     this.rangeKey = parameter.rangeKey ?? this.rangeKey;
     this.weight = parameter.weight ?? this.weight;
+    this.cooldown = parameter.cooldown ?? this.cooldown;
+    this.tags = parameter.tags ?? this.tags;
+    this.category = parameter.category ?? this.category;
     this.predecessorEvent = parameter.predecessorEvent ?? this.predecessorEvent;
     this.excludedIds = parameter.excludedIds ?? this.excludedIds;
     this.once = parameter.once ?? this.once;

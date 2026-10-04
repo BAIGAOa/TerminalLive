@@ -27,9 +27,13 @@ export default class ConsoleCommandParser {
     }
   }
 
-  private performAction(command: Command, instructionID: string): void {
+  private performAction(
+    command: Command,
+    instructionID: string,
+    args: string[],
+  ): void {
     try {
-      const result = command();
+      const result = command(args);
       if (result === undefined || result === null) {
         this.consoleStore.addCommandResult({
           type: "success",
@@ -60,17 +64,19 @@ export default class ConsoleCommandParser {
   }
 
   public load(instructionID: string): void {
-    const trimmed = instructionID.trim().toLowerCase();
-    if (!trimmed) {
+    const parts = instructionID.trim().split(/\s+/);
+    const id = (parts[0] ?? "").toLowerCase();
+    const args = parts.slice(1);
+    if (!id) {
       this.consoleStore.addCommandResult({
         type: "error",
         messageKey: "console.error.emptyInput",
       });
       return;
     }
-    const command = this.validateInstruction(trimmed);
+    const command = this.validateInstruction(id);
     if (command) {
-      this.performAction(command, trimmed);
+      this.performAction(command, id, args);
     }
   }
 }

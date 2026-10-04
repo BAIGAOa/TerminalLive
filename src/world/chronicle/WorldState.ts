@@ -6,6 +6,7 @@ import { unlockedLore } from "./lore.js";
 import { evaluateFates, fateWeightFactor } from "./fate.js";
 import { ChronicleContext } from "./unlock.js";
 import type { Climate } from "../weather/WeatherDefinition.js";
+import RandomService from "../../core/random/RandomService.js";
 
 export interface WorldTickResult {
   /** Era id entered this tick, if the world crossed an era boundary. */
@@ -46,6 +47,7 @@ const STANDING_MAX = 100;
  */
 export default class WorldState {
   private registry: WorldRegistry;
+  private random: RandomService;
 
   public year = 0;
   public eraId = "";
@@ -64,6 +66,7 @@ export default class WorldState {
 
   constructor() {
     this.registry = container.resolve(WorldRegistry);
+    this.random = container.resolve(RandomService);
   }
 
   public subscribe = (listener: () => void): (() => void) => {
@@ -83,7 +86,7 @@ export default class WorldState {
     const regions = this.registry.getRegions();
     const region =
       (regionId && this.registry.getRegion(regionId)) ||
-      regions[Math.floor(Math.random() * regions.length)];
+      regions[this.random.int(regions.length)];
 
     this.year = 0;
     this.regionId = region?.id ?? "";

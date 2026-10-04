@@ -7,6 +7,24 @@ import RelationshipSystem from "../../world/relationships/RelationshipSystem.js"
 import TypedEventBus from "../../core/TypedEventBus.js";
 import LevelManager from "../../level/LevelManager.js";
 import WorldState from "../../world/chronicle/WorldState.js";
+import RandomService from "../../core/random/RandomService.js";
+import type { RandomSource } from "../../core/random/RandomSource.js";
+
+/** A deterministic stream: every roll passes, shuffle keeps order, pick first. */
+const alwaysLow: RandomSource = {
+  next: () => 0.1,
+  int: () => 0,
+  range: (min) => min,
+  bool: () => true,
+  weighted: (items) => items[0],
+  weightedIndex: () => 0,
+  sample: (items, count) => items.slice(0, count),
+  shuffle: (items) => [...items],
+  normal: () => 0,
+  poisson: () => 0,
+  snapshot: () => ({ seed: 0, step: 0 }),
+  restore: () => {},
+};
 
 interface Harness {
   player: Player;
@@ -50,6 +68,7 @@ function setup(): Harness {
   container.register(TypedEventBus, new TypedEventBus());
   container.register(LevelManager, levelManager as unknown as LevelManager);
   container.register(WorldState, {} as unknown as WorldState);
+  container.register(RandomService, alwaysLow as unknown as RandomService);
 
   return { player, system: new RelationshipSystem(), offers };
 }
@@ -100,7 +119,6 @@ describe("RelationshipSystem", () => {
   });
 
   it("runs NPC agency each year: a passive effect and an offer", () => {
-    vi.spyOn(Math, "random").mockReturnValue(0.1); // always passes both rolls
     const hapBefore = h.player.happiness;
     h.system.tickYear(h.player);
     // A friend passive (gift/gossip) raised happiness…

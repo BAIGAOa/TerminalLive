@@ -27,23 +27,23 @@ import WeatherFilter, {
   weatherBiasFactor,
 } from "../world/weather/WeatherFilter.js";
 import type WeatherState from "../world/weather/WeatherState.js";
+import RandomService from "../core/random/RandomService.js";
+import {
+  buildWeighted,
+  logFactors,
+  pickWeighted,
+  WeightedEntry,
+} from "../core/random/Weighting.js";
+import EventDirector, { DirectorContext } from "./EventDirector.js";
+import ChainTracker from "./ChainTracker.js";
 
 type PostEventSpec = string | PostIncidentConfig[];
 
-function weightedRandom<T>(
-  items: T[],
-  weightFn: (item: T) => number,
-): T | undefined {
-  const totalWeight = items.reduce((sum, item) => sum + weightFn(item), 0);
-  if (totalWeight <= 0) return undefined;
-  let random = Math.random() * totalWeight;
-  for (const item of items) {
-    const w = weightFn(item);
-    if (random < w) return item;
-    random -= w;
-  }
-  return items[items.length - 1];
-}
+/** Category cooldown strengths: back-to-back classes are pushed down hard. */
+const CATEGORY_DECAY_NEAR = 0.35;
+const CATEGORY_DECAY_MID = 0.7;
+const CATEGORY_NEAR_YEARS = 2;
+const CATEGORY_MID_YEARS = 4;
 
 export default class DefaultEventAlgorithm implements IEventAlgorithm {
   private eventCenter: EventCenter;
@@ -54,8 +54,17 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
   private filters: IncidentFilter[];
   private eventBus: TypedEventBus;
 
+  /** Seeded random stream (safe to save/replay), the narrative director, and
+   *  the post-event graph bookkeeping. All container singletons. */
+  private random: RandomService;
+  private director: EventDirector;
+  private chain: ChainTracker;
+
   /** Set while a choice event waits for the player to pick an option. */
   private pendingChoice: PendingChoice | null = null;
+
+  /** Debug hook: the next roll is forced to this incident id when eligible. */
+  private forcedId: string | null = null;
 
   /** The living world (for worldGate filtering + fate weighting), if any. */
   private world: WorldState | null;
@@ -92,6 +101,9 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     ];
 
     this.eventBus = container.resolve(TypedEventBus);
+    this.random = container.resolve(RandomService);
+    this.director = container.resolve(EventDirector);
+    this.chain = container.resolve(ChainTracker);
   }
 
   public trigger(player: Player): void {
@@ -105,7 +117,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     const eligible = this.filterEligible(matched);
     if (eligible.length === 0) return;
 
-    const selected = this.getRandomIncident(eligible, player);
+    const selected = this.takeForced(eligible) ?? this.getRandomIncident(eligible, player);
     if (selected) {
       this.executeIncident(selected.incident, selected.rangeKey, player);
     }
@@ -115,6 +127,23 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     this.eventHistory.reset();
     this.postEventScheduler.reset();
     this.pendingChoice = null;
+    this.forcedId = null;
+  }
+
+  /** Debug: force the next eligible roll to this event. */
+  public forceNextEvent(incidentId: string): boolean {
+    if (!this.eventCenter.getIncidentById(incidentId)) return false;
+    this.forcedId = incidentId;
+    return true;
+  }
+
+  private takeForced(
+    eligible: Array<{ incident: Incident; rangeKey: string }>,
+  ): { incident: Incident; rangeKey: string } | undefined {
+    if (!this.forcedId) return undefined;
+    const match = eligible.find((e) => e.incident.id === this.forcedId);
+    this.forcedId = null;
+    return match;
   }
 
   // ── choice API ─────────────────────────────────────────────────
@@ -174,7 +203,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
   private processPendingPostEvents(player: Player): boolean {
     const due = this.postEventScheduler.advanceRound();
     for (let i = 0; i < due.length; i++) {
-      if (!this.tryExecutePostEvent(due[i], player)) continue; // failed → dropped, as before
+      if (!this.tryExecutePostEvent(due[i], player)) continue; // failed → dropped
       // Don't lose the other due items this turn — re-queue them.
       for (let j = i + 1; j < due.length; j++) {
         this.postEventScheduler.add({ ...due[j], delay: 0 });
@@ -191,6 +220,12 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
       return false;
     }
     if (item.condition && !item.condition(player)) return false;
+    // Re-check the edge's age window at fire time (cross-age chains).
+    if (item.edge) {
+      const { minAge, maxAge } = item.edge;
+      if (minAge !== undefined && player.age < minAge) return false;
+      if (maxAge !== undefined && player.age > maxAge) return false;
+    }
 
     const originalWeight = incident.weight;
     if (item.weight !== undefined) incident.weight = item.weight;
@@ -199,13 +234,20 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
       const eligible = this.filterEligible([candidate]);
       if (eligible.length === 0) return false;
       this.executeIncident(incident, "post", player);
+      if (item.edge) {
+        this.chain.record(item.sourceId, item.edge, item.edgeIndex ?? 0);
+      }
       return true;
     } finally {
       incident.weight = originalWeight;
     }
   }
 
-  private schedulePostEvents(sourceId: string, post: PostEventSpec): void {
+  private schedulePostEvents(
+    sourceId: string,
+    post: PostEventSpec,
+    player: Player,
+  ): void {
     if (typeof post === "string") {
       this.postEventScheduler.add({
         sourceId,
@@ -213,24 +255,58 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
         delay: 0,
         condition: undefined,
       });
-    } else if (Array.isArray(post)) {
-      const selected = this.selectedPostBranch(post);
-      if (selected) {
-        this.postEventScheduler.add({
-          sourceId,
-          targetId: selected.incident,
-          delay: selected.delay ?? 0,
-          weight: selected.weight,
-          condition: selected.triggerCondition,
-        });
-      }
+      return;
     }
+    if (!Array.isArray(post)) return;
+    const index = this.selectedPostBranch(post, sourceId, player);
+    if (index < 0) return;
+    const edge = post[index];
+    this.postEventScheduler.add({
+      sourceId,
+      targetId: edge.incident,
+      delay: edge.delay ?? 0,
+      weight: edge.weight,
+      condition: edge.triggerCondition,
+      edge,
+      edgeIndex: index,
+    });
   }
 
+  /**
+   * Resolve a post-event graph step: among the still-open edges (once / maxRuns
+   * / group / age window / condition), pick one weighted. Returns the index into
+   * `branches`, or -1 when the whole branch set is closed.
+   */
   private selectedPostBranch(
     branches: PostIncidentConfig[],
-  ): PostIncidentConfig | null {
-    return weightedRandom(branches, (b) => b.weight ?? 1) ?? null;
+    sourceId: string,
+    player: Player,
+  ): number {
+    const entries = buildWeighted(
+      branches.map((edge, index) => ({ edge, index })),
+      ({ edge, index }) => {
+        if (!this.chain.isOpen(sourceId, edge, index, player.age)) {
+          return -Infinity;
+        }
+        if (edge.triggerCondition && !edge.triggerCondition(player)) {
+          return -Infinity;
+        }
+        return Math.log(Math.max(1e-4, edge.weight ?? 1));
+      },
+    );
+    const picked = pickWeighted(this.random, entries);
+    if (picked < 0) return -1;
+    const branch = entries[picked].item;
+    this.random.logDraw({
+      label: "postEvent.branch",
+      age: player.age,
+      candidates: entries.map((e) => ({
+        id: e.item.edge.incident,
+        weight: e.weight,
+      })),
+      chosen: branch.edge.incident,
+    });
+    return branch.index;
   }
 
   // ── selection ──────────────────────────────────────────────────
@@ -318,9 +394,16 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     player: Player,
     chosen: ChoiceDef | null,
   ): void {
-    this.eventHistory.markTriggered(incident.id, rangeKey);
+    this.eventHistory.markTriggered(
+      incident.id,
+      rangeKey,
+      player.age,
+      incident.category,
+    );
     this.eventHistory.markBlocked(incident.excludedIds);
     this.logStore.addEvent(incident);
+    // Feed the director's luck-streak memory.
+    this.director.observe(incident);
 
     if (chosen) {
       applyEffectPayload(
@@ -342,27 +425,94 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     }
 
     const post: PostEventSpec | null = chosen?.postEvent ?? incident.postEvent;
-    if (post) this.schedulePostEvents(incident.id, post);
+    if (post) this.schedulePostEvents(incident.id, post, player);
 
     this.modPluginLoader.fireIncidentExecuted(incident, player);
     this.eventBus.emit("incident:executed", { incidentId: incident.id });
   }
 
+  /**
+   * Draw the next incident. Every candidate is scored once, in log space
+   * (`base * fate * bias * weather * cooldown * category * repeat * director`),
+   * then selected with a numerically stable softmax — so a long product chain
+   * can neither overflow nor silently zero an event out (see {@link Weighting}).
+   */
   protected getRandomIncident(
     list: Array<{ incident: Incident; rangeKey: string }>,
     player: Player,
   ): { incident: Incident; rangeKey: string } | undefined {
-    return weightedRandom(list, (item) => {
-      const base = item.incident.getWeight(player);
-      // Active fate arcs bias the roll toward their favoured events.
-      const fate = this.world ? this.world.fateWeight(item.incident.id) : 1;
-      // Hidden-score / weather bands bias the roll toward events that favour them.
-      const bias = pressureBiasFactor(item.incident.pressureBias, this.pressures);
-      const weatherBias = weatherBiasFactor(
-        item.incident.weatherBias,
-        this.weather?.currentIdValue() ?? null,
-      );
-      return base * fate * bias * weatherBias;
+    const ctx: DirectorContext = {
+      player,
+      world: this.world,
+      pressures: this.pressures,
+      weather: this.weather,
+    };
+    const currentWeather = this.weather?.currentIdValue() ?? null;
+
+    const entries: WeightedEntry<{ incident: Incident; rangeKey: string }>[] =
+      buildWeighted(list, (item) => {
+        const incident = item.incident;
+        const base = incident.getWeight(player);
+        // Active fate arcs bias the roll toward their favoured events.
+        const fate = this.world ? this.world.fateWeight(incident.id) : 1;
+        // Hidden-score / weather bands bias the roll toward events that favour them.
+        const bias = pressureBiasFactor(incident.pressureBias, this.pressures);
+        const weatherBias = weatherBiasFactor(
+          incident.weatherBias,
+          currentWeather,
+        );
+        const cooldown = this.cooldownFactor(incident, player.age);
+        const category = this.categoryFactor(incident, player.age);
+        const repeat = this.repeatFactor(incident);
+        const director = this.director.factor(incident, ctx);
+        return logFactors(
+          base,
+          fate,
+          bias,
+          weatherBias,
+          cooldown,
+          category,
+          repeat,
+          director,
+        );
+      });
+
+    const index = pickWeighted(this.random, entries);
+    this.random.logDraw({
+      label: "event.roll",
+      age: player.age,
+      candidates: entries.map((e) => ({
+        id: e.item.incident.id,
+        weight: e.weight,
+      })),
+      chosen: index >= 0 ? entries[index].item.incident.id : null,
     });
+    return index < 0 ? undefined : entries[index].item;
+  }
+
+  /** Hard cooldown: 0 (excluded) until `cooldown` years have passed. */
+  private cooldownFactor(incident: Incident, age: number): number {
+    if (incident.cooldown <= 0) return 1;
+    const last = this.eventHistory.lastTriggeredAge(incident.id);
+    if (last === undefined) return 1;
+    return age - last < incident.cooldown ? 0 : 1;
+  }
+
+  /** Soft same-class decay so consecutive years aren't the same genre. */
+  private categoryFactor(incident: Incident, age: number): number {
+    if (!incident.category) return 1;
+    const last = this.eventHistory.lastCategoryAge(incident.category);
+    if (last === undefined) return 1;
+    const gap = age - last;
+    if (gap <= CATEGORY_NEAR_YEARS) return CATEGORY_DECAY_NEAR;
+    if (gap <= CATEGORY_MID_YEARS) return CATEGORY_DECAY_MID;
+    return 1;
+  }
+
+  /** Stronger damping the longer an event repeats itself. */
+  private repeatFactor(incident: Incident): number {
+    const n = this.eventHistory.consecutiveCountOf(incident.id);
+    if (n <= 0) return 1;
+    return Math.max(0.15, Math.pow(0.3, n));
   }
 }

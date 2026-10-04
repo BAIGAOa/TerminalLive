@@ -1,4 +1,5 @@
 import Player from "../world/Player.js"
+import type { PostIncidentConfig } from "../world/Incident.js"
 
 export interface PendingPostEvent {
     sourceId: string
@@ -6,6 +7,10 @@ export interface PendingPostEvent {
     delay: number
     weight?: number
     condition?: (player: Player) => boolean
+    /** The graph edge that produced this item (for once/maxRuns/group tracking). */
+    edge?: PostIncidentConfig
+    /** Index of `edge` within its source's `postEvent` list. */
+    edgeIndex?: number
 }
 
 

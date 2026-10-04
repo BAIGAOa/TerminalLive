@@ -42,6 +42,12 @@ export const saveDataSchema = z.object({
     triggered: z.array(z.string()),
     blocked: z.array(z.string()),
     rangeRecord: z.record(z.string(), z.array(z.string())),
+    /** Age each event last fired (cooldown bookkeeping). */
+    triggeredAge: z.record(z.string(), z.number()).default({}),
+    /** Age each category last fired (same-class decay bookkeeping). */
+    categoryAge: z.record(z.string(), z.number()).default({}),
+    lastId: z.string().nullable().default(null),
+    consecutiveCount: z.number().default(0),
   }),
   achievements: z.array(
     z.object({
@@ -82,6 +88,20 @@ export const saveDataSchema = z.object({
     }),
   pressures: z.record(z.string(), z.number()).default({}),
   weather: z.string().default("weather_clear"),
+  /** Seeded RNG position — resume the exact same stream on load. */
+  random: z
+    .object({ seed: z.number(), step: z.number() })
+    .default({ seed: 0, step: 0 }),
+  /** Post-event graph bookkeeping (fired edges / runs / groups). */
+  chain: z
+    .object({
+      firedEdges: z.array(z.string()).default([]),
+      runs: z.record(z.string(), z.number()).default({}),
+      firedGroups: z.array(z.string()).default([]),
+    })
+    .default({ firedEdges: [], runs: {}, firedGroups: [] }),
+  /** Narrative director streak memory. */
+  director: z.object({ fortune: z.number().default(0) }).default({ fortune: 0 }),
   /** A choice event awaiting the player's pick when the save was taken. */
   pendingChoice: z
     .object({ incidentId: z.string(), rangeKey: z.string() })

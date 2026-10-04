@@ -26,4 +26,6 @@ export interface IEventAlgorithm {
         rangeKey: string,
         player: Player,
     ): void;
+    /** 调试：强制下一次抽取选中该事件（若它可被抽取），返回是否已排定 */
+    forceNextEvent?(incidentId: string): boolean;
 }

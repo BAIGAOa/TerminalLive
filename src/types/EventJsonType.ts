@@ -5,6 +5,13 @@ const postEventItemSchema = z.object({
   incident: z.string(),
   delay: z.number().optional(),
   weight: z.number().optional(),
+  edgeId: z.string().optional(),
+  once: z.boolean().optional(),
+  maxRuns: z.number().optional(),
+  group: z.string().optional(),
+  chainId: z.string().optional(),
+  minAge: z.number().optional(),
+  maxAge: z.number().optional(),
 });
 
 const worldGateSchema = z.object({
@@ -50,6 +57,9 @@ export const modEventSchema = z.object({
   weight: z.number().default(0.5),
   predecessorEvent: z.string().nullable().default(null),
   excludedIds: z.array(z.string()).default([]),
+  cooldown: z.number().optional(),
+  tags: z.array(z.string()).optional(),
+  category: z.string().optional(),
   once: z.union([z.boolean(), z.array(z.string())]).default(false),
   postEvent: z
     .union([z.string(), z.array(postEventItemSchema)])

@@ -28,6 +28,7 @@
         "test": "vitest run",
         "test:watch": "vitest",
         "test:engine": "npm run build && node dist/dev/validate.js",
+        "balance": "npm run build && node dist/dev/montecarlo.js",
         "test:ui": "npm run build && node scripts/ui-smoke.mjs"
     },
     "keywords": [

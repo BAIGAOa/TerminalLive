@@ -14,6 +14,7 @@ import { meetsRequirements } from "../requirements.js";
 import LevelManager from "../../level/LevelManager.js";
 import WorldState from "../chronicle/WorldState.js";
 import TypedEventBus from "../../core/TypedEventBus.js";
+import RandomService from "../../core/random/RandomService.js";
 
 /** Odds/limits for the once-a-year NPC agency pass. */
 const PASSIVE_CHANCE = 0.45;
@@ -41,6 +42,7 @@ export default class RelationshipSystem {
   private levelManager: LevelManager;
   private world: WorldState;
   private eventBus: TypedEventBus;
+  private random: RandomService;
 
   private logSeq = 0;
   /** Offers awaiting an answer, so we can narrate the chosen outcome. */
@@ -52,6 +54,7 @@ export default class RelationshipSystem {
     this.levelManager = inject(LevelManager);
     this.world = inject(WorldState);
     this.eventBus = inject(TypedEventBus);
+    this.random = inject(RandomService);
 
     this.eventBus.on("choice:resolved", ({ incidentId, optionId }) => {
       const rec = this.pendingOffers.get(incidentId);
@@ -114,7 +117,7 @@ export default class RelationshipSystem {
   public dialogue(npcId: string): string | null {
     const keys = this.registry.get(npcId)?.dialogueKeys ?? [];
     if (keys.length === 0) return null;
-    return keys[Math.floor(Math.random() * keys.length)] ?? null;
+    return keys[this.random.int(keys.length)] ?? null;
   }
 
   // ── interaction ────────────────────────────────────────────────
@@ -155,20 +158,26 @@ export default class RelationshipSystem {
     if (known.length === 0) return;
 
     let applied = 0;
-    for (const npcId of shuffle(known)) {
+    for (const npcId of this.random.shuffle(known)) {
       if (applied >= MAX_PASSIVES) break;
-      if (Math.random() > PASSIVE_CHANCE) continue;
-      const def = weightedPick(this.eligible(npcId, "passive", player));
+      if (this.random.next() > PASSIVE_CHANCE) continue;
+      const def = this.weightedPick(this.eligible(npcId, "passive", player));
       if (!def) continue;
       this.applyPassive(npcId, def, player);
       applied++;
     }
 
-    if (Math.random() < OFFER_CHANCE) {
-      const npcId = shuffle(known)[0];
-      const def = weightedPick(this.eligible(npcId, "offer", player));
+    if (this.random.next() < OFFER_CHANCE) {
+      const npcId = this.random.shuffle(known)[0];
+      const def = this.weightedPick(this.eligible(npcId, "offer", player));
       if (def) this.offerNpcChoice(npcId, def);
     }
+  }
+
+  private weightedPick<T extends { weight: number }>(
+    items: T[],
+  ): T | undefined {
+    return this.random.weighted(items, (item) => item.weight);
   }
 
   private eligible(
@@ -211,24 +220,4 @@ export default class RelationshipSystem {
       .getCurrentLogStore()
       ?.addEvent(new NpcLogIncident(`npc_log_${++this.logSeq}`, nameKey));
   }
-}
-
-function shuffle<T>(items: T[]): T[] {
-  const out = [...items];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-}
-
-function weightedPick<T extends { weight: number }>(items: T[]): T | undefined {
-  const total = items.reduce((s, i) => s + i.weight, 0);
-  if (total <= 0) return undefined;
-  let r = Math.random() * total;
-  for (const item of items) {
-    if (r < item.weight) return item;
-    r -= item.weight;
-  }
-  return items[items.length - 1];
 }

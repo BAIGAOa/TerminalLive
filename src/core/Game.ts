@@ -13,6 +13,7 @@ import PressureState from "../world/pressures/PressureState.js";
 import WeatherState from "../world/weather/WeatherState.js";
 import RelationshipSystem from "../world/relationships/RelationshipSystem.js";
 import CareerSystem from "../world/careers/CareerSystem.js";
+import RandomService from "./random/RandomService.js";
 
 export type ActionUnavailableReason = "ap" | "age" | "require" | "once";
 
@@ -37,6 +38,7 @@ export default class Game {
   private weather: WeatherState;
   private relationships: RelationshipSystem;
   private careers: CareerSystem;
+  private random: RandomService;
 
   constructor() {
     this.levelManager = inject(LevelManager);
@@ -48,6 +50,7 @@ export default class Game {
     this.weather = inject(WeatherState);
     this.relationships = inject(RelationshipSystem);
     this.careers = inject(CareerSystem);
+    this.random = inject(RandomService);
   }
 
   public get player(): Player {
@@ -150,13 +153,14 @@ export default class Game {
   /** Advance the chronicle + hidden-score web a year; surface changes as toasts. */
   private advanceWorld(): void {
     // The pressure web rolls first so this year's weather + events read fresh state.
-    this.pressures.tick(Math.random, 0.4);
+    this.pressures.tick(this.random.rand, 0.4);
 
     // Weather: drawn from the current state, biased by climate/season/pressures.
     const weather = this.weather.advance(
       this.player.age,
       this.world.climate(),
       this.pressures,
+      this.random.rand,
     );
     if (weather.changed) {
       const def = this.weather.current();

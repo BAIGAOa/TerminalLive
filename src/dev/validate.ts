@@ -17,6 +17,7 @@ import EffectRegistry from "../world/effects/EffectRegistry.js";
 import Game from "../core/Game.js";
 import TypedEventBus from "../core/TypedEventBus.js";
 import AutoSave from "../core/archive/AutoSave.js";
+import RandomService from "../core/random/RandomService.js";
 import { readFileSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resourcePath } from "../core/paths.js";
@@ -104,6 +105,10 @@ async function main() {
   check("level chain resolves to the end", id === "none", `ended at ${id}`);
 
   console.log("[simulation]");
+  // Pin the seeded RNG (the game no longer reads Math.random), so this life is
+  // byte-for-byte reproducible run to run.
+  container.resolve(RandomService).reseed(0x2f6e2b1);
+  container.resolve(RandomService).setNextSeed(0x2f6e2b1);
   lm.start("childhood");
   const ranges = lm.current.eventCenter.getAllRanges();
   check("events registered for the level", ranges.length >= 20, `${ranges.length}`);

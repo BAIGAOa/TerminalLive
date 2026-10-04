@@ -9,6 +9,9 @@ import { VersionProvider } from "../version/VersionProvider.js";
 import WorldState from "../../world/chronicle/WorldState.js";
 import PressureState from "../../world/pressures/PressureState.js";
 import WeatherState from "../../world/weather/WeatherState.js";
+import RandomService from "../random/RandomService.js";
+import ChainTracker from "../../event/ChainTracker.js";
+import EventDirector from "../../event/EventDirector.js";
 import { SaveData } from "./SaveSchema.js";
 
 /**
@@ -25,7 +28,7 @@ export function captureSaveData(): SaveData {
   const pending = levelManager.getPendingChoice();
 
   return {
-    version: 4,
+    version: 5,
     appVersion: versionProvider.version,
     timestamp: new Date().toISOString(),
     player: {
@@ -52,10 +55,14 @@ export function captureSaveData(): SaveData {
       careerId: player.careerId,
       careerRank: player.careerRank,
     },
-    history: {
-      triggered: Array.from(currentHistory?.getTriggered() ?? []),
-      blocked: Array.from(currentHistory?.getBlocked() ?? []),
-      rangeRecord: serializeRangeRecord(currentHistory),
+    history: currentHistory?.toArchiveData() ?? {
+      triggered: [],
+      blocked: [],
+      rangeRecord: {},
+      triggeredAge: {},
+      categoryAge: {},
+      lastId: null,
+      consecutiveCount: 0,
     },
     achievements: achievementManager.getState(),
     config: {
@@ -71,6 +78,9 @@ export function captureSaveData(): SaveData {
     world: container.resolve(WorldState).toSnapshot(),
     pressures: container.resolve(PressureState).snapshot(),
     weather: container.resolve(WeatherState).snapshot(),
+    random: container.resolve(RandomService).snapshot(),
+    chain: container.resolve(ChainTracker).snapshot(),
+    director: container.resolve(EventDirector).snapshot(),
     pendingChoice: pending
       ? { incidentId: pending.incidentId, rangeKey: pending.rangeKey }
       : null,
@@ -123,6 +133,10 @@ export function applySaveData(data: SaveData): void {
   container.resolve(WorldState).restore(data.world, player.flags);
   container.resolve(PressureState).restore(data.pressures);
   container.resolve(WeatherState).restore(data.weather);
+  // Resume the exact same random stream (seed + step), graph and streak memory.
+  container.resolve(RandomService).restore(data.random);
+  container.resolve(ChainTracker).restore(data.chain);
+  container.resolve(EventDirector).restore(data.director);
 
   eventHistory.restoreFromArchive(data.history);
   eventHistory.save();
@@ -131,17 +145,4 @@ export function applySaveData(data: SaveData): void {
   achievementManager.persist();
 
   levelManager.initCompletedLevels(data.levels.completedLevels);
-}
-
-function serializeRangeRecord(
-  history: ReturnType<LevelManager["getCurrentEventHistory"]>,
-): Record<string, string[]> {
-  const record = history?.getRangeKeyRecord();
-  const result: Record<string, string[]> = {};
-  if (record) {
-    for (const [key, set] of record) {
-      result[key] = Array.from(set);
-    }
-  }
-  return result;
 }

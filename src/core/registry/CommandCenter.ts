@@ -5,7 +5,9 @@ export interface CommandResult {
   params?: Record<string, string | number>;
 }
 
-export type Command = () => string | CommandResult | void;
+export type Command = (
+  args: string[],
+) => string | CommandResult | void;
 
 export default class CommandCenter extends BaseRegistry<Command> {
   public getCommandIds(): string[] {

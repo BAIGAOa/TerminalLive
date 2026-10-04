@@ -21,6 +21,8 @@ import WorldRegistry from "../../world/chronicle/WorldRegistry.js";
 import TraitRegistry from "../../world/traits/TraitRegistry.js";
 import { resolveLoadOrder } from "./loadOrder.js";
 import { loadModModule } from "./sandbox.js";
+import RandomService from "../random/RandomService.js";
+import EventDirector from "../../event/EventDirector.js";
 
 interface HookEntry {
   fn: (...args: any[]) => any;
@@ -71,6 +73,8 @@ export default class ModPluginLoader {
   private playerCreatedHooks: HookEntry[] = [];
   private yearHooks: HookEntry[] = [];
   private choiceHooks: HookEntry[] = [];
+  private weightRuleSeq = 0;
+  private weightRuleDisposers: Array<() => void> = [];
 
   constructor() {
     this.registry = inject(ModMonitor);
@@ -115,6 +119,10 @@ export default class ModPluginLoader {
     this.playerCreatedHooks = [];
     this.yearHooks = [];
     this.choiceHooks = [];
+    // Drop the weight rules the previous load contributed, so a reload doesn't
+    // stack duplicate multipliers.
+    for (const dispose of this.weightRuleDisposers) dispose();
+    this.weightRuleDisposers = [];
     this.loadEnabled();
   }
 
@@ -263,6 +271,12 @@ export default class ModPluginLoader {
       addWorldEvent: (def) => this.worldRegistry.registerWorldEvent(def),
       addTrait: (def) => {
         if (!this.traitRegistry.has(def.id)) this.traitRegistry.register(def);
+      },
+      // A per-mod forked stream: reproducible, and isolated from the main one.
+      random: inject(RandomService).fork(modName),
+      addWeightRule: (rule) => {
+        const id = `mod:${modName}:rule${++this.weightRuleSeq}`;
+        this.weightRuleDisposers.push(inject(EventDirector).addRule(id, rule));
       },
     };
   }

@@ -16,6 +16,9 @@ import NpcRegistry from "../world/relationships/NpcRegistry.js";
 import WorldState from "../world/chronicle/WorldState.js";
 import PressureState from "../world/pressures/PressureState.js";
 import WeatherState from "../world/weather/WeatherState.js";
+import RandomService from "../core/random/RandomService.js";
+import EventDirector from "../event/EventDirector.js";
+import ChainTracker from "../event/ChainTracker.js";
 
 type Listener = () => void;
 
@@ -36,6 +39,9 @@ export default class LevelManager {
   private world: WorldState;
   private pressures: PressureState;
   private weather: WeatherState;
+  private random: RandomService;
+  private director: EventDirector;
+  private chain: ChainTracker;
 
   public lastPlayedLevelId: string | null = null;
 
@@ -58,6 +64,9 @@ export default class LevelManager {
     this.world = inject(WorldState);
     this.pressures = inject(PressureState);
     this.weather = inject(WeatherState);
+    this.random = inject(RandomService);
+    this.director = inject(EventDirector);
+    this.chain = inject(ChainTracker);
   }
 
   public subscribe = (listener: Listener) => {
@@ -165,6 +174,11 @@ export default class LevelManager {
       // clear the completion set, then apply the level's start state + traits.
       level.player.resetForNewLife((level.initialPlayerAttributes ?? {}) as never);
       level.player.seedRelationships(this.npcRegistry.getAll());
+      // A new life gets a fresh random stream, luck streak and event graph —
+      // reseed *before* the world rolls its region, so the pick is in-stream.
+      this.random.reset();
+      this.director.reset();
+      this.chain.reset();
       // A new life resets the world too (region, karma, era, lore, fates).
       this.world.begin();
       this.pressures.reset();
@@ -232,6 +246,12 @@ export default class LevelManager {
       this.notify();
     }
     return ok;
+  }
+
+  /** Debug: force the current level's next roll to a specific event. */
+  public forceEvent(incidentId: string): boolean {
+    if (!this._current) return false;
+    return this._current.algorithm.forceNextEvent?.(incidentId) ?? false;
   }
 
   /** Re-offer a pending choice saved before the last quit (after a reload). */

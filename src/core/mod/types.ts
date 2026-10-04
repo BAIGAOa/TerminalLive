@@ -13,6 +13,8 @@ import type { LoreDefinition } from "../../world/chronicle/lore.js";
 import type { FateArcDefinition } from "../../world/chronicle/fate.js";
 import type { WorldEventDefinition } from "../../world/chronicle/worldEvents.js";
 import type { TraitDefinition } from "../../world/traits/TraitDefinition.js";
+import type { RandomSource } from "../random/RandomSource.js";
+import type { WeightRule } from "../../event/EventDirector.js";
 
 /** The API version this build of the game speaks. */
 export const MOD_API_VERSION = 1;
@@ -88,6 +90,17 @@ export interface ModContext {
   addFateArc: (def: FateArcDefinition) => void;
   addWorldEvent: (def: WorldEventDefinition) => void;
   addTrait: (def: TraitDefinition) => void;
+  /**
+   * A deterministic random stream forked for this mod. Draws are reproducible
+   * and isolated — they never perturb the main game's sequence, so replays and
+   * saves stay stable. Provides weighted pick, shuffle, sample, normal, poisson.
+   */
+  random: RandomSource;
+  /**
+   * Register a weight multiplier: `(incident, tags, ctx) => factor`. Runs
+   * alongside the built-in director rules; return 1 for "no opinion".
+   */
+  addWeightRule: (rule: WeightRule) => void;
 }
 
 export interface ModEventClassDef {

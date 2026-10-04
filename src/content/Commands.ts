@@ -10,6 +10,9 @@ import ModMonitor from "../core/mod/ModMonitor.js";
 import ModPluginLoader from "../core/mod/ModPluginLoader.js";
 import ModWatcher from "../core/mod/ModWatcher.js";
 import ConfigStore from "../core/store/ConfigStore.js";
+import RandomService from "../core/random/RandomService.js";
+import EventDirector from "../event/EventDirector.js";
+import LevelManager from "../level/LevelManager.js";
 
 export default class Commands {
   private static init: boolean = false;
@@ -64,6 +67,65 @@ export default class Commands {
     });
 
     this.registerModCommands(cmdCenter);
+    this.registerRandomCommands(cmdCenter);
+  }
+
+  /**
+   * Random-subsystem debug tools: inspect the stream, pin a seed, dump the
+   * draw journal, or force the next event — the "why did X (not) fire?" kit.
+   */
+  private static registerRandomCommands(cmdCenter: CommandCenter): void {
+    const random = container.resolve(RandomService);
+    const director = container.resolve(EventDirector);
+    const levelManager = container.resolve(LevelManager);
+
+    cmdCenter.register("random-state", (): CommandResult => {
+      return {
+        key: "console.cmd.randomState",
+        params: {
+          seed: random.seed,
+          step: random.step,
+          fortune: Math.round(director.fortuneScore * 100) / 100,
+        },
+      };
+    });
+
+    cmdCenter.register("seed", (args): CommandResult => {
+      const seed = Number(args[0]);
+      if (!args[0] || !Number.isFinite(seed)) {
+        return { key: "console.cmd.seedUsage" };
+      }
+      random.reseed(seed >>> 0);
+      return { key: "console.cmd.seedSet", params: { seed: random.seed } };
+    });
+
+    cmdCenter.register("random-log", (): string => {
+      const records = random.journal.recent(12);
+      if (records.length === 0) return "(random log empty)";
+      return records
+        .map((r) => {
+          const chosen = r.candidates.find((c) => c.id === r.chosen);
+          const pct = chosen ? Math.round(chosen.probability * 100) : 0;
+          return `#${r.seq} age=${r.age ?? "-"} [${r.label}] → ${
+            r.chosen ?? "(none)"
+          } ${pct}% of ${r.candidates.length}`;
+        })
+        .join("\n");
+    });
+
+    cmdCenter.register("random-log-clear", (): CommandResult => {
+      random.journal.clear();
+      return { key: "console.cmd.randomCleared" };
+    });
+
+    cmdCenter.register("force-event", (args): CommandResult => {
+      const id = args[0];
+      if (!id) return { key: "console.cmd.forceEventUsage" };
+      if (!levelManager.forceEvent(id)) {
+        return { key: "console.cmd.forceEventUnknown", params: { id } };
+      }
+      return { key: "console.cmd.forceEvent", params: { id } };
+    });
   }
 
   private static registerModCommands(cmdCenter: CommandCenter): void {
