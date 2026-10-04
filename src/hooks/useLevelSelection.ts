@@ -5,7 +5,9 @@ import Level from "../level/Level.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import GeneralPurpose from "../level/conditions/GeneralPurpose.js";
 import DifficultyRegistry from "../core/registry/DifficultyRegistry.js";
-import { sortLevelsLinearly } from "../level/levelChain.js";
+import LevelRecordsStore from "../core/store/LevelRecordsStore.js";
+import { levelEntries } from "../level/levelProgression.js";
+import type { LevelStatus } from "../level/levelProgression.js";
 import LevelCondition from "../level/LevelCondition.js";
 
 export interface DifficultyItem {
@@ -13,7 +15,7 @@ export interface DifficultyItem {
   value: string;
 }
 
-export type LevelStatus = "locked" | "unlocked" | "completed";
+export type { LevelStatus };
 
 export interface LevelItem {
   label: string;
@@ -40,6 +42,18 @@ export interface LevelSelectionData {
   /** Description key of the currently highlighted level, if any. */
   highlightedDescKey: string | null;
   highlightedConditions: FormattedCondition[];
+  /** Status of the highlighted level (for the footer's locked hint). */
+  highlightedStatus: LevelStatus | null;
+  /** Extra goals on the highlighted level (some optional = medals). */
+  highlightedObjectives: Array<{
+    id: string;
+    labelKey: string;
+    optional: boolean;
+    hasReward: boolean;
+  }>;
+  /** Medals earned / available on the highlighted level (meta record). */
+  highlightedMedals: { earned: number; total: number };
+  highlightedDifficulty: string | null;
 }
 
 function formatSingleCondition(
@@ -67,15 +81,24 @@ export function useLevelSelection(): LevelSelectionData {
     levelManager.getSnapshot(),
   );
 
+  // Medals/progress can change after a completed run; keep the panel fresh.
+  const records = container.resolve(LevelRecordsStore);
+  useSyncExternalStore(records.subscribe, records.getSnapshot);
+
   const [activeDifficulty, setActiveDifficulty] = useState<string | null>(null);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
 
   const leftItems: DifficultyItem[] = useMemo(() => {
-    return difficultyRegistry.getDifficulties().map((d) => ({
-      label: t(`difficulty.${d}`) || d,
-      value: d,
-    }));
-  }, [difficultyRegistry, t]);
+    return difficultyRegistry.getDifficulties().map((d) => {
+      const levels = difficultyRegistry.getLevels(d);
+      const done = levels.filter((l) => levelManager.isLevelCompleted(l.id)).length;
+      const base = t(`difficulty.${d}`) || d;
+      return {
+        label: levels.length > 0 ? `${base}  ${done}/${levels.length}` : base,
+        value: d,
+      };
+    });
+  }, [difficultyRegistry, levelManager, t, version]);
 
   const levelMap = useMemo(() => {
     if (!activeDifficulty) return new Map<string, Level>();
@@ -87,27 +110,21 @@ export function useLevelSelection(): LevelSelectionData {
 
   const rightItems: LevelItem[] = useMemo(() => {
     if (!activeDifficulty) return [];
-    const levels = Array.from(levelMap.values());
-    const sorted = sortLevelsLinearly(levels);
-
-    // Chain progression: a level is unlocked only when the previous one in the
-    // chain is completed; everything after the first incomplete level is locked.
-    let prevCompleted = true;
-    const result: LevelItem[] = [];
-    for (const level of sorted) {
-      const completed = levelManager.isLevelCompleted(level.id);
-      let status: LevelStatus;
-      if (completed) status = "completed";
-      else if (prevCompleted) status = "unlocked";
-      else status = "locked";
-      result.push({
-        label: t(level.nameKey) || level.nameKey,
-        value: level.id,
-        status,
-      });
-      prevCompleted = completed;
-    }
-    return result;
+    // Compute status on the FULL graph (cross-difficulty chains), then show the
+    // active tier — otherwise a stage with an off-tier predecessor looks
+    // unlocked and the chain can be skipped.
+    const all = [...levelManager.getAllLevels().values()];
+    const completed = new Set(
+      all.filter((l) => levelManager.isLevelCompleted(l.id)).map((l) => l.id),
+    );
+    const statuses = new Map(
+      levelEntries(all, completed).map((e) => [e.level.id, e.status]),
+    );
+    return Array.from(levelMap.values()).map((level) => ({
+      label: t(level.nameKey) || level.nameKey,
+      value: level.id,
+      status: statuses.get(level.id) ?? "locked",
+    }));
   }, [activeDifficulty, levelMap, levelManager, t, version]);
 
   const highlightedLevel = highlightedId ? (levelMap.get(highlightedId) ?? null) : null;
@@ -137,6 +154,30 @@ export function useLevelSelection(): LevelSelectionData {
     [levelMap, levelManager],
   );
 
+  const highlightedStatus: LevelStatus | null = highlightedId
+    ? (rightItems.find((r) => r.value === highlightedId)?.status ?? null)
+    : null;
+
+  const highlightedObjectives = useMemo(
+    () =>
+      (highlightedLevel?.objectives ?? []).map((o) => ({
+        id: o.id,
+        labelKey: o.labelKey,
+        optional: o.optional,
+        hasReward: o.reward !== undefined,
+      })),
+    [highlightedLevel],
+  );
+
+  const highlightedMedals = (() => {
+    if (!highlightedLevel) return { earned: 0, total: 0 };
+    const rec = records.getRecord(highlightedLevel.id);
+    return {
+      earned: rec.medals.length,
+      total: highlightedLevel.objectives.filter((o) => o.optional).length,
+    };
+  })();
+
   return {
     leftItems,
     rightItems,
@@ -147,5 +188,9 @@ export function useLevelSelection(): LevelSelectionData {
     onStartLevel,
     highlightedDescKey: highlightedLevel?.descriptionKey ?? null,
     highlightedConditions,
+    highlightedStatus,
+    highlightedObjectives,
+    highlightedMedals,
+    highlightedDifficulty: highlightedLevel?.difficultyIdentification ?? null,
   };
 }

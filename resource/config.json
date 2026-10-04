@@ -3,61 +3,74 @@
   "theme": "default",
   "player": {
     "playerName": "Mike",
-    "age": 20,
-    "health": 65,
+    "age": 121,
+    "health": 90.1,
     "height": 1.55,
     "weight": 45,
-    "money": 50,
-    "intelligence": 32,
-    "social": 31,
-    "fitness": 21,
-    "happiness": 89.50000000000001,
-    "reputation": 0,
-    "angerValue": 0,
+    "money": 9307,
+    "intelligence": 100,
+    "social": 95,
+    "fitness": 34.10000000000001,
+    "happiness": 99,
+    "reputation": 86,
+    "angerValue": 9,
     "excitationValue": 0,
     "depressionValue": 0,
     "weakValue": 0,
-    "effects": [
+    "effects": [],
+    "inventory": [
       {
-        "id": "fx_blessed",
-        "remaining": 1,
-        "stacks": 1
+        "id": "item_guitar",
+        "count": 2
       },
       {
-        "id": "fx_sick",
-        "remaining": 1,
-        "stacks": 1
+        "id": "item_ring",
+        "count": 1
       }
     ],
-    "inventory": [],
     "relationships": {
-      "npc_mom": 70,
-      "npc_dad": 67,
-      "npc_friend": 40,
-      "npc_teacher": 30,
-      "npc_partner": 21,
-      "npc_boss": 20,
-      "npc_child": 0,
-      "npc_colleague": 25,
-      "npc_neighbor": 20,
+      "npc_mom": 90,
+      "npc_dad": 88,
+      "npc_friend": 30,
+      "npc_teacher": 35,
+      "npc_partner": 100,
+      "npc_boss": 94,
+      "npc_child": 99,
+      "npc_colleague": 39,
+      "npc_neighbor": 43,
       "npc_pet": 0,
-      "npc_rival": 10
+      "npc_rival": 63
     },
     "flags": [
-      "founder"
+      "founder",
+      "employed",
+      "traveled",
+      "homeowner",
+      "married",
+      "wartime",
+      "donated",
+      "philanthropist",
+      "wrote_memoir",
+      "star_voyage",
+      "mentored"
     ],
-    "actionPoints": 3,
-    "careerId": null,
-    "careerRank": 0
+    "actionPoints": 4,
+    "careerId": "career_teacher",
+    "careerRank": 2
   },
   "enabledMods": [],
-  "lastLevelId": "youth",
   "completedLevels": [
-    "adolescence"
+    "infancy",
+    "childhood",
+    "adolescence",
+    "youth",
+    "midlife",
+    "elder"
   ],
   "keyBindings": {},
   "traits": [
     "trait_charming",
     "trait_lucky"
-  ]
+  ],
+  "simplified": false
 }

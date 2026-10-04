@@ -103,9 +103,13 @@ export default class EventDirector {
 
   /** Register an extra rule (mods). Returns a disposer. */
   public addRule(id: string, factor: WeightRule): () => void {
-    this.rules.push({ id, factor });
+    const entry = { id, factor };
+    this.rules.push(entry);
+    // Remove by IDENTITY, not by id — a mod reusing a builtin rule id (e.g.
+    // "mercy") must not delete the builtin on unload.
     return () => {
-      this.rules = this.rules.filter((r) => r.id !== id);
+      const i = this.rules.indexOf(entry);
+      if (i >= 0) this.rules.splice(i, 1);
     };
   }
 

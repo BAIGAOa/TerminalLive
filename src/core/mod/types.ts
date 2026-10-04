@@ -32,6 +32,11 @@ export const modManifestSchema = z.object({
   main: z.string().default("index.js"),
   /** id → semver range (informational; mismatches warn, not fail). */
   dependencies: z.record(z.string(), z.string()).default({}),
+  /**
+   * Declared powers (events/items/npcs/levels/world/random/ui/storage). Omitted
+   * = legacy content capabilities only (events/items/npcs/levels).
+   */
+  capabilities: z.array(z.string()).optional(),
 });
 
 export type ModManifest = z.infer<typeof modManifestSchema>;

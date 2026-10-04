@@ -32,6 +32,13 @@ declare global {
     /** 关卡通关 */
     "level:completed": { levelId: string; nextLevel: string };
 
+    /** 关卡的一个目标达成（可选目标即勋章） */
+    "level:objective": {
+      levelId: string;
+      objectiveId: string;
+      optional: boolean;
+    };
+
     /** 一生结束（死亡或自然终老） */
     "game:over": { reason: "death" | "complete"; age: number };
 

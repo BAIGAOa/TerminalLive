@@ -19,12 +19,23 @@ export default function PlayerConfig({ player: playerProp, onBack }: PlayerConfi
   const data = usePlayerConfig(player, onBack);
   const { rows } = useTerminalSize();
   const colors = useThemeColors();
-  const { boundKeyboard } = useKeyboard();
+  const { boundKeyboard, focusSet } = useKeyboard();
 
   useEffect(() => {
     const u = boundKeyboard(["escape"], () => data.onCancelEdit());
     return () => u();
   }, [data.onCancelEdit, boundKeyboard]);
+
+  // Move keyboard focus with the panel: otherwise the right-hand attribute list
+  // is unreachable (it only ever got focus from mouse hover).
+  useEffect(() => {
+    const id = data.focus === "right" ? "player-config-attr" : "player-config-category";
+    try {
+      focusSet(id);
+    } catch {
+      /* target not registered yet */
+    }
+  }, [data.focus, focusSet]);
 
   const leftItems = data.leftItems.map((c) => ({
     value: c.value,

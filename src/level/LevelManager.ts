@@ -13,12 +13,27 @@ import ModMonitor from "../core/mod/ModMonitor.js";
 import DifficultyRegistry from "../core/registry/DifficultyRegistry.js";
 import TraitRegistry from "../world/traits/TraitRegistry.js";
 import NpcRegistry from "../world/relationships/NpcRegistry.js";
+import NpcSimulation from "../world/relationships/NpcSimulation.js";
+import CareerSystem from "../world/careers/CareerSystem.js";
+import EconomySystem from "../world/economy/EconomySystem.js";
+import HealthSystem from "../world/health/HealthSystem.js";
+import PoliticsSystem from "../world/politics/PoliticsSystem.js";
+import RegionsSystem from "../world/regions/RegionsSystem.js";
+import WorldChainSystem from "../world/chains/WorldChainSystem.js";
+import { hasCapability } from "../core/mod/capabilities.js";
+import NarrativeSystem from "../world/narrative/NarrativeSystem.js";
 import WorldState from "../world/chronicle/WorldState.js";
 import PressureState from "../world/pressures/PressureState.js";
 import WeatherState from "../world/weather/WeatherState.js";
 import RandomService from "../core/random/RandomService.js";
 import EventDirector from "../event/EventDirector.js";
 import ChainTracker from "../event/ChainTracker.js";
+import LineageStore from "../core/store/LineageStore.js";
+import { computeInheritance } from "../world/lineage/inheritance.js";
+import { applyEffectPayload } from "../world/effects/applyEffects.js";
+import { difficultyModifier } from "./DifficultyModifier.js";
+import { resolveBranch } from "./levelProgression.js";
+import LevelRecordsStore from "../core/store/LevelRecordsStore.js";
 
 type Listener = () => void;
 
@@ -32,6 +47,8 @@ export default class LevelManager {
   private levels: Map<string, Level> = new Map();
   private completedLevels = new Set<string>();
   private _current: Level | null = null;
+  /** Saved per-level event history, applied when the level is re-entered. */
+  private pendingHistory: Parameters<EventHistory["restoreFromArchive"]>[0] | null = null;
   /** Levels that no other level points to as `nextLevel` (the life's start). */
   private rootLevelIds = new Set<string>();
   private traitRegistry: TraitRegistry;
@@ -42,6 +59,16 @@ export default class LevelManager {
   private random: RandomService;
   private director: EventDirector;
   private chain: ChainTracker;
+  private lineage: LineageStore;
+  private npcSim: NpcSimulation;
+  private levelRecords: LevelRecordsStore;
+  private careers: CareerSystem;
+  private economy: EconomySystem;
+  private health: HealthSystem;
+  private politics: PoliticsSystem;
+  private regions: RegionsSystem;
+  private chains: WorldChainSystem;
+  private narrative: NarrativeSystem;
 
   public lastPlayedLevelId: string | null = null;
 
@@ -67,6 +94,16 @@ export default class LevelManager {
     this.random = inject(RandomService);
     this.director = inject(EventDirector);
     this.chain = inject(ChainTracker);
+    this.lineage = inject(LineageStore);
+    this.npcSim = inject(NpcSimulation);
+    this.levelRecords = inject(LevelRecordsStore);
+    this.careers = inject(CareerSystem);
+    this.economy = inject(EconomySystem);
+    this.health = inject(HealthSystem);
+    this.politics = inject(PoliticsSystem);
+    this.regions = inject(RegionsSystem);
+    this.chains = inject(WorldChainSystem);
+    this.narrative = inject(NarrativeSystem);
   }
 
   public subscribe = (listener: Listener) => {
@@ -127,6 +164,9 @@ export default class LevelManager {
     const enabledMods = this.configStore.getEnabledMods();
     for (const modName of enabledMods) {
       if (!this.modRegistry.isValid(modName)) continue;
+      if (!hasCapability(this.modRegistry.getModManifest(modName) ?? {}, "levels")) {
+        continue;
+      }
 
       const modLevelsPath = join(
         this.modRegistry.getModPath(modName),
@@ -151,6 +191,7 @@ export default class LevelManager {
     const referenced = new Set<string>();
     for (const level of this.levels.values()) {
       if (level.nextLevel !== "none") referenced.add(level.nextLevel);
+      for (const branch of level.nextBranches) referenced.add(branch.levelId);
     }
     this.rootLevelIds = new Set(
       [...this.levels.keys()].filter((id) => !referenced.has(id)),
@@ -161,6 +202,8 @@ export default class LevelManager {
     const level = this.levels.get(id);
     if (!level) throw new Error(`关卡 "${id}" 未加载`);
 
+    // A fresh start never inherits a stashed save-history blob.
+    this.pendingHistory = null;
     if (this._current) {
       this._current.dispose();
     }
@@ -174,13 +217,36 @@ export default class LevelManager {
       // clear the completion set, then apply the level's start state + traits.
       level.player.resetForNewLife((level.initialPlayerAttributes ?? {}) as never);
       level.player.seedRelationships(this.npcRegistry.getAll());
-      // A new life gets a fresh random stream, luck streak and event graph —
-      // reseed *before* the world rolls its region, so the pick is in-stream.
+      // Don't show the previous life's journal on the new life's root level.
+      level.logStore.clear();
+      // Wipe the shared life-scoped event history so once-per-life events can
+      // fire again in the new life.
+      inject(EventHistory).reset();
+      // A new life gets a fresh random stream FIRST, so every subsystem reset
+      // below (NPC sim rolls random start stats) draws from the new stream —
+      // otherwise a seeded replay isn't reproducible.
       this.random.reset();
       this.director.reset();
       this.chain.reset();
-      // A new life resets the world too (region, karma, era, lore, fates).
+      // Fresh cast of NPCs, each starting their own life trajectory.
+      this.npcSim.reset();
+      // Fresh work life (career ladder, skills, any venture).
+      this.careers.reset();
+      // Fresh market and empty portfolio.
+      this.economy.reset();
+      // Fresh body and mind.
+      this.health.reset();
+      // Fresh political landscape.
+      this.politics.reset();
+      // A new life resets the world too (region, karma, era, lore, fates). The
+      // region roll is now in-stream with the reseeded random above.
       this.world.begin();
+      // Regions are seeded at the world's chosen starting region.
+      this.regions.reset(this.world.regionId);
+      // Fresh chain of world events.
+      this.chains.reset();
+      // Fresh narrative arcs.
+      this.narrative.reset();
       this.pressures.reset();
       this.weather.reset();
       this.completedLevels.clear();
@@ -192,8 +258,13 @@ export default class LevelManager {
     }
 
     if (isRoot) {
+      this.applyInheritance(level.player);
       this.applyTraits(level.player);
     }
+    // Difficulty applies at every stage (once per tier per life, see method).
+    this.applyDifficulty(level, level.player);
+    // Each level is played once per life; reset its objective progress.
+    level.beginObjectives();
 
     // 加载事件到当前关卡
     this.loadEventsFor(level);
@@ -211,6 +282,20 @@ export default class LevelManager {
     return this._current !== null;
   }
 
+  /**
+   * Seed a fresh life with the previous generation's legacy. Runs after
+   * `resetForNewLife` (which wipes stats/flags) and after `world.begin` (which
+   * zeroes karma), and before `applyTraits`. A no-op when there is no ancestor.
+   */
+  private applyInheritance(player: Player): void {
+    const plan = computeInheritance(this.lineage.getLast());
+    if (!plan) return;
+    player.applyDelta({ money: plan.money, ...plan.deltas });
+    if (plan.karmaLean) this.world.applyKarma(plan.karmaLean);
+    player.setFlag(plan.flag);
+    player.notify();
+  }
+
   /** Apply the config-selected traits to the player (once, at life start). */
   private applyTraits(player: Player): void {
     for (const id of this.configStore.getTraits()) {
@@ -222,13 +307,70 @@ export default class LevelManager {
     player.notify();
   }
 
+  /**
+   * Apply the level's difficulty as a real life-start modifier (stat shifts,
+   * wealth scaling, a gating flag). Applied once per difficulty TIER per life
+   * (tracked by a flag), so penalties land when the player first reaches a hard
+   * stage but the same tier can't stack its bonuses across stages.
+   */
+  private applyDifficulty(level: Level, player: Player): void {
+    const id = level.difficultyIdentification;
+    const appliedFlag = `diff_applied_${id}`;
+    if (player.flags.has(appliedFlag)) return;
+    const mod = difficultyModifier(id);
+    if (mod.statAdd) player.applyDelta(mod.statAdd);
+    if (mod.moneyMul !== undefined) {
+      player.setStat("money", Math.floor(player.money * mod.moneyMul));
+    }
+    if (mod.statBonus) player.applyDelta(mod.statBonus);
+    if (mod.flag) player.setFlag(mod.flag);
+    player.setFlag(appliedFlag);
+    player.notify();
+  }
+
+  /** Resolve the next level: first satisfied branch, else the linear next. */
+  public resolveNextLevelId(level: Level): string | null {
+    return resolveBranch(level);
+  }
+
   public update(): void {
     this.current.endTurn();
     // Let mods observe the player and the year.
     this.modPluginLoader.firePlayerUpdate(this.current.player);
     this.modPluginLoader.fireYear(this.current.player);
+    this.applyObjectives();
     this.eventBus.emit("player:updated");
     this.notify();
+  }
+
+  /** Score the current level's objectives; grant rewards/medals for new ones. */
+  private applyObjectives(): void {
+    const level = this.current;
+    const player = level.player;
+    const newly = level.evaluateObjectives(player);
+    if (newly.length === 0) return;
+    for (const obj of newly) {
+      if (obj.reward) {
+        applyEffectPayload(
+          player,
+          {
+            effects: obj.reward.effects,
+            items: obj.reward.items,
+            flag: obj.reward.flag,
+            karma: obj.reward.karma,
+          },
+          this.world,
+        );
+      }
+      this.eventBus.emit("toast", { textKey: obj.labelKey, kind: "info" });
+      this.eventBus.emit("level:objective", {
+        levelId: level.id,
+        objectiveId: obj.id,
+        optional: obj.optional,
+      });
+      if (obj.optional) void this.levelRecords.addMedal(level.id, obj.id);
+    }
+    player.notify();
   }
 
   public hasPendingChoice(): boolean {
@@ -298,9 +440,8 @@ export default class LevelManager {
   /** 切换到下一关 */
   public goToNextLevel(): boolean {
     if (!this._current) return false;
-    const nextId = this._current.nextLevel;
-    if (nextId === "none") return false;
-    if (!this.levels.has(nextId)) return false;
+    const nextId = this.resolveNextLevelId(this._current);
+    if (!nextId || !this.levels.has(nextId)) return false;
     // Record the level we are leaving as completed, and persist it so progress
     // survives a restart.
     this.completedLevels.add(this._current.id);
@@ -312,6 +453,16 @@ export default class LevelManager {
   /** IDs of levels the player has actually finished this run. */
   public getCompletedLevelIds(): string[] {
     return [...this.completedLevels];
+  }
+
+  /** Objective ids already met on the current level (for save/restore). */
+  public getCompletedObjectiveIds(): string[] {
+    return this._current?.completedObjectiveIds() ?? [];
+  }
+
+  /** Restore a level's objective progress from a save (prevents re-rewarding). */
+  public restoreObjectives(levelId: string, ids: string[]): void {
+    this.levels.get(levelId)?.restoreObjectives(ids);
   }
 
   private loadEventsFor(level: Level): void {
@@ -326,9 +477,11 @@ export default class LevelManager {
 
     const enabledMods = this.configStore.getEnabledMods();
     for (const modName of enabledMods) {
-      if (this.modRegistry.isValid(modName)) {
-        level.eventLoader.loadDir(this.modRegistry.getModEventsPath(modName));
+      if (!this.modRegistry.isValid(modName)) continue;
+      if (!hasCapability(this.modRegistry.getModManifest(modName) ?? {}, "events")) {
+        continue;
       }
+      level.eventLoader.loadDir(this.modRegistry.getModEventsPath(modName));
     }
   }
 
@@ -360,6 +513,13 @@ export default class LevelManager {
     }
     this._current = level;
     level.player = player;
+    // Apply any event-history blob handed over by a save load (levels own their
+    // history, so it can only be restored once we've re-entered the level).
+    if (this.pendingHistory) {
+      level.eventHistory.restoreFromArchive(this.pendingHistory);
+      level.eventHistory.save();
+      this.pendingHistory = null;
+    }
     if (level.eventCenter.getAllRanges().length === 0) {
       this.loadEventsFor(level);
     }
@@ -367,5 +527,12 @@ export default class LevelManager {
     this.lastPlayedLevelId = levelId;
     this.eventBus.emit("level:started", { levelId });
     this.notify();
+  }
+
+  /** Stash a saved per-level history blob to apply on the next restoreLevel. */
+  public setPendingHistory(
+    history: Parameters<EventHistory["restoreFromArchive"]>[0],
+  ): void {
+    this.pendingHistory = history;
   }
 }

@@ -69,7 +69,11 @@ export default class AchievementManager {
     const data = Array.from(this.states.entries())
       .filter(([, s]) => s.unlocked)
       .map(([id, s]) => ({ id, unlockedAt: s.unlockedAt }));
-    await this.persistence.save(data);
+    try {
+      await this.persistence.save(data);
+    } catch (err) {
+      console.warn("[Achievement] 持久化失败:", (err as Error).message);
+    }
   }
 
   /** 存档系统：序列化 */
@@ -122,7 +126,7 @@ export default class AchievementManager {
     }
 
     if (anyUnlocked) {
-      this.persist();
+      void this.persist();
       this.emitChange();
     }
   }
@@ -155,7 +159,11 @@ export default class AchievementManager {
       case "flag":
         return this.player.hasFlag(cond.flag);
       case "stat": {
+        // Require a real, bounded stat — an unknown prop (typo/mod) returned
+        // undefined and both comparisons were false, unlocking instantly.
+        if (cond.gte === undefined && cond.lte === undefined) return false;
         const value = this.player.getStat(cond.prop as never);
+        if (typeof value !== "number" || !Number.isFinite(value)) return false;
         if (cond.gte !== undefined && value < cond.gte) return false;
         if (cond.lte !== undefined && value > cond.lte) return false;
         return true;

@@ -74,6 +74,8 @@ const ConfigSchema = z.object({
   completedLevels: z.array(z.string()).default([]),
   keyBindings: z.record(z.string(), z.string()).default({}),
   traits: z.array(z.string()).default([]),
+  /** Accessibility: reduce information density across the UI. */
+  simplified: z.boolean().default(false),
 });
 
 export type ConfigType = z.infer<typeof ConfigSchema>;

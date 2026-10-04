@@ -16,6 +16,12 @@ export interface NpcDefinition {
   roleKey?: string;
   /** Affinity the player starts with (0–100). */
   initial?: number;
+  /** Age at the start of a life; NPCs age each year (see NpcSimulation). */
+  startAge?: number;
+  /** NPC ids this one is kin to — seeds the social graph. */
+  kinOf?: string[];
+  /** NPC id this one is partnered with at the start of a life. */
+  partnerOf?: string;
   /** Flavour temperament tag shown on the detail panel. */
   temperamentKey?: string;
   /** Lines sampled when the player talks to this NPC. */
@@ -81,6 +87,9 @@ export const npcSchema = z.object({
   descKey: z.string(),
   roleKey: z.string().optional(),
   initial: z.number().min(0).max(100).default(30),
+  startAge: z.number().optional(),
+  kinOf: z.array(z.string()).optional(),
+  partnerOf: z.string().optional(),
   temperamentKey: z.string().optional(),
   dialogueKeys: z.array(z.string()).default([]),
   interactions: z.array(interactionSchema).optional(),

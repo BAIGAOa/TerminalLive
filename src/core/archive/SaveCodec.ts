@@ -3,16 +3,24 @@ import Player from "../../world/Player.js";
 import ConfigStore from "../store/ConfigStore.js";
 import LevelManager from "../../level/LevelManager.js";
 import ThemeManager from "../theme/ThemeManager.js";
-import EventHistory from "../../event/EventHistory.js";
 import AchievementManager from "../../achievement/AchievementManager.js";
 import { VersionProvider } from "../version/VersionProvider.js";
 import WorldState from "../../world/chronicle/WorldState.js";
 import PressureState from "../../world/pressures/PressureState.js";
 import WeatherState from "../../world/weather/WeatherState.js";
+import NpcSimulation from "../../world/relationships/NpcSimulation.js";
+import CareerSystem from "../../world/careers/CareerSystem.js";
+import EconomySystem from "../../world/economy/EconomySystem.js";
+import HealthSystem from "../../world/health/HealthSystem.js";
+import PoliticsSystem from "../../world/politics/PoliticsSystem.js";
+import RegionsSystem from "../../world/regions/RegionsSystem.js";
+import WorldChainSystem from "../../world/chains/WorldChainSystem.js";
+import NarrativeSystem from "../../world/narrative/NarrativeSystem.js";
 import RandomService from "../random/RandomService.js";
 import ChainTracker from "../../event/ChainTracker.js";
 import EventDirector from "../../event/EventDirector.js";
 import { SaveData } from "./SaveSchema.js";
+import { SAVE_VERSION } from "./migrations.js";
 
 /**
  * Snapshot the entire living game into a `SaveData`. Resolves every dependency
@@ -28,7 +36,7 @@ export function captureSaveData(): SaveData {
   const pending = levelManager.getPendingChoice();
 
   return {
-    version: 5,
+    version: SAVE_VERSION,
     appVersion: versionProvider.version,
     timestamp: new Date().toISOString(),
     player: {
@@ -75,9 +83,21 @@ export function captureSaveData(): SaveData {
       currentLevel: levelManager.getCurrentLevelId() ?? "none",
       completedLevels: levelManager.getCompletedLevelIds(),
     },
+    levelObjectives: {
+      levelId: levelManager.getCurrentLevelId(),
+      completed: levelManager.getCompletedObjectiveIds(),
+    },
     world: container.resolve(WorldState).toSnapshot(),
     pressures: container.resolve(PressureState).snapshot(),
     weather: container.resolve(WeatherState).snapshot(),
+    npcSim: container.resolve(NpcSimulation).snapshot(),
+    career: container.resolve(CareerSystem).snapshot(),
+    economy: container.resolve(EconomySystem).snapshot(),
+    health: container.resolve(HealthSystem).snapshot(),
+    politics: container.resolve(PoliticsSystem).snapshot(),
+    regions: container.resolve(RegionsSystem).snapshot(),
+    chains: container.resolve(WorldChainSystem).snapshot(),
+    narrative: container.resolve(NarrativeSystem).snapshot(),
     random: container.resolve(RandomService).snapshot(),
     chain: container.resolve(ChainTracker).snapshot(),
     director: container.resolve(EventDirector).snapshot(),
@@ -96,7 +116,6 @@ export function applySaveData(data: SaveData): void {
   const themeManager = container.resolve(ThemeManager);
   const levelManager = container.resolve(LevelManager);
   const achievementManager = container.resolve(AchievementManager);
-  const eventHistory = container.resolve(EventHistory);
   const player: Player = levelManager.getPlayer();
 
   configStore.update({
@@ -133,16 +152,32 @@ export function applySaveData(data: SaveData): void {
   container.resolve(WorldState).restore(data.world, player.flags);
   container.resolve(PressureState).restore(data.pressures);
   container.resolve(WeatherState).restore(data.weather);
+  container.resolve(NpcSimulation).restore(data.npcSim);
+  container.resolve(CareerSystem).restore(data.career);
+  container.resolve(EconomySystem).restore(data.economy);
+  container.resolve(HealthSystem).restore(data.health);
+  container.resolve(PoliticsSystem).restore(data.politics);
+  container.resolve(RegionsSystem).restore(data.regions);
+  container.resolve(WorldChainSystem).restore(data.chains);
+  container.resolve(NarrativeSystem).restore(data.narrative);
   // Resume the exact same random stream (seed + step), graph and streak memory.
   container.resolve(RandomService).restore(data.random);
   container.resolve(ChainTracker).restore(data.chain);
   container.resolve(EventDirector).restore(data.director);
 
-  eventHistory.restoreFromArchive(data.history);
-  eventHistory.save();
+  // Per-level event history is restored when the level is re-entered (each
+  // level owns its own EventHistory), so hand the blob to LevelManager.
+  levelManager.setPendingHistory(data.history);
 
   achievementManager.setState(data.achievements);
   achievementManager.persist();
 
   levelManager.initCompletedLevels(data.levels.completedLevels);
+  // Restore per-level objective progress so rewards aren't granted twice.
+  if (data.levelObjectives.levelId) {
+    levelManager.restoreObjectives(
+      data.levelObjectives.levelId,
+      data.levelObjectives.completed,
+    );
+  }
 }

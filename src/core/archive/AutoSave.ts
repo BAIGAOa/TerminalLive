@@ -5,6 +5,7 @@ import TypedEventBus from "../TypedEventBus.js";
 import LevelManager from "../../level/LevelManager.js";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import { applySaveData, captureSaveData } from "./SaveCodec.js";
+import { migrateSave, RawSave } from "./migrations.js";
 
 /**
  * Continuous auto-save of the current life, so quitting mid-game and relaunching
@@ -81,7 +82,8 @@ export default class AutoSave {
   public load(): SaveData | null {
     if (!this.exists()) return null;
     try {
-      const data = saveDataSchema.parse(JSON.parse(readFileSync(this.filePath, "utf8")));
+      const raw = JSON.parse(readFileSync(this.filePath, "utf8")) as RawSave;
+      const data = saveDataSchema.parse(migrateSave(raw));
       if (data.player.health <= 0) {
         this.clear();
         return null;

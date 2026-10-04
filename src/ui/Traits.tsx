@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useSyncExternalStore } from "react";
 import { Box, Text } from "ink";
 import { useKeyboard, useScreenSystem } from "ink-cartridge";
-import { MenuList } from "./kit/index.js";
+import { ScrollList } from "./kit/index.js";
 import { container } from "../Container.js";
 import ConfigStore from "../core/store/ConfigStore.js";
 import TraitRegistry from "../world/traits/TraitRegistry.js";
@@ -18,7 +18,7 @@ export default function Traits() {
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
   const { back } = useScreenSystem();
-  const { columns } = useTerminalSize();
+  const { columns, rows } = useTerminalSize();
   const configStore = container.resolve(ConfigStore);
   const reg = container.resolve(TraitRegistry);
 
@@ -64,8 +64,11 @@ export default function Traits() {
       </Box>
 
       <Box width={clampWidth(columns, 62)} flexDirection="column" marginTop={1}>
-        <MenuList
+        <ScrollList
           focusId="traits-list"
+          itemHeight={4}
+          height={Math.max(4, rows - 11)}
+          pageKeys={false}
           items={items}
           onSelect={(item) => toggle(item.value)}
           renderItem={(item) => {
@@ -82,7 +85,7 @@ export default function Traits() {
                   {on ? "✓ " : "  "}
                   {item.label}
                 </Text>
-                <Text dimColor>{def ? t(def.descKey) : ""}</Text>
+                <Text dimColor wrap="truncate">{def ? t(def.descKey) : ""}</Text>
               </Box>
             );
           }}

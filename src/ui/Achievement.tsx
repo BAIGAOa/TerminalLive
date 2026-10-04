@@ -47,7 +47,7 @@ function AchievementCard({
           </Text>
         ) : null}
       </Box>
-      <Text dimColor={!isUnlocked}>
+      <Text dimColor={!isUnlocked} wrap="truncate">
         {hidden ? t("achievement.hidden") : t(achievement.descriptionKey)}
       </Text>
     </Box>
@@ -57,13 +57,25 @@ function AchievementCard({
 export default function AchievementScreen() {
   const data = useAchievementScreen();
   const colors = useThemeColors();
-  const { boundKeyboard } = useKeyboard();
+  const { boundKeyboard, focusSet } = useKeyboard();
   const { back } = useScreenSystem();
 
   useEffect(() => {
     const u = boundKeyboard(["escape"], () => back());
     return () => u();
   }, [back, boundKeyboard]);
+
+  // Defer: the new category's card list mounts on the next render, so the
+  // focus target may not be registered yet if we move focus synchronously.
+  const focusCards = () => {
+    setTimeout(() => {
+      try {
+        focusSet("achievement-list");
+      } catch {
+        /* not registered yet */
+      }
+    }, 0);
+  };
 
   const catItems = data.menuItems.map((m) => ({
     value: m.value,
@@ -100,6 +112,7 @@ export default function AchievementScreen() {
             onSelect={(item) => {
               const cat = data.menuItems.find((m) => m.value === item.value);
               if (cat) data.onSelectCategory(cat);
+              focusCards();
             }}
             renderItem={(item, state) => (
               <Box

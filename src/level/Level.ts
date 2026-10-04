@@ -6,14 +6,25 @@ import { IEventAlgorithm } from "../event/IEventAlgorithm.js";
 import LogStore from "../core/store/LogStore.js";
 import { LevelEventLoader } from "../event/LevelEventLoader.js";
 import LevelCondition from "./LevelCondition.js";
+import { LevelObjective } from "./LevelObjective.js";
+
+export interface LevelBranch {
+  levelId: string;
+  requires: LevelCondition[];
+}
 
 export interface LevelConfig {
   id: string;
   nameKey: string;
   descriptionKey: string;
   nextLevel: string | "none";
+  /** Optional branching successors (first with met requirements wins). */
+  nextBranches?: LevelBranch[];
+  /** Optional act/chapter label for grouping in the UI. */
+  act?: string;
   difficultyIdentification: string;
   nextLevelUnlock: LevelCondition[];
+  objectives?: LevelObjective[];
 }
 
 export default class Level {
@@ -23,6 +34,12 @@ export default class Level {
 
   public readonly nextLevel: string | "none";
   public readonly nextLevelUnlock: LevelCondition[];
+  public readonly nextBranches: LevelBranch[];
+  public readonly objectives: LevelObjective[];
+  /** Act/chapter label (for grouping), if the level declares one. */
+  public readonly act?: string;
+  /** Objective ids met this life (reward granted once each). */
+  private completedObjectives = new Set<string>();
 
   public readonly eventCenter: EventCenter;
   public readonly eventHistory: EventHistory;
@@ -61,7 +78,37 @@ export default class Level {
 
     this.difficultyIdentification = config.difficultyIdentification;
     this.nextLevelUnlock = config.nextLevelUnlock;
+    this.nextBranches = config.nextBranches ?? [];
+    this.objectives = config.objectives ?? [];
+    this.act = config.act;
     this.initialPlayerAttributes = initialPlayerAttributes;
+  }
+
+  /** Reset per-life objective progress when this level begins a run. */
+  public beginObjectives(): void {
+    this.completedObjectives = new Set();
+  }
+
+  public completedObjectiveIds(): string[] {
+    return [...this.completedObjectives];
+  }
+
+  /** Restore per-life objective progress loaded from a save. */
+  public restoreObjectives(ids: string[]): void {
+    this.completedObjectives = new Set(ids);
+  }
+
+  /** Evaluate all objectives; returns the ones completed for the first time. */
+  public evaluateObjectives(player: Player): LevelObjective[] {
+    const newly: LevelObjective[] = [];
+    for (const obj of this.objectives) {
+      if (this.completedObjectives.has(obj.id)) continue;
+      if (obj.condition.customsClearance(player)) {
+        this.completedObjectives.add(obj.id);
+        newly.push(obj);
+      }
+    }
+    return newly;
   }
 
   /** End the current turn: age the player a year and roll for an event. */
@@ -97,14 +144,16 @@ export default class Level {
   }
 
   public reset(): void {
-    this.eventHistory.reset();
+    // Event history is shared across a whole life (see LevelLoader) and is only
+    // reset at a new life's start — clearing it here would let once-per-life
+    // events refire as the player crosses level (age-stage) boundaries.
     this.eventCenter.clear();
     this.algorithm.reset();
+    this.beginObjectives();
   }
 
   public dispose(): void {
     this.eventCenter.clear();
-    this.eventHistory.reset();
     this.algorithm.reset();
   }
 }

@@ -5,48 +5,40 @@ import {
   openModalLayer,
 } from "ink-cartridge";
 
-const open = new Set<string>();
+/** Ids we have presented, so `dismissModal` never touches an unknown layer. */
+const opened = new Set<string>();
 
-function ensureOpen(id: string, zIndex: number): void {
-  if (!open.has(id)) {
-    try {
-      openModalLayer(id, zIndex);
-    } catch {
-      // already registered in the screen system
-    }
-    open.add(id);
-  }
-}
-
-/** Open (or refresh) a modal layer rendering `element` with `props`. */
+/**
+ * Open (or refresh) a modal layer rendering `element` with `props`.
+ *
+ * The layer is re-asserted before the element is applied: navigating between
+ * screens prunes every non-cross-page modal layer, so a cached "open" flag here
+ * would be stale and the following apply would throw. That throw happens later,
+ * during React's render phase (the reducer runs when the queued action is
+ * processed), so an inline try/catch around the call site cannot catch it.
+ * `openModalLayer` is a no-op when the layer is already registered.
+ */
 export function presentModal(
   id: string,
   element: React.ComponentType<any>,
   props: Record<string, unknown>,
   zIndex = 900,
 ): void {
-  ensureOpen(id, zIndex);
   try {
+    openModalLayer(id, zIndex);
     applyElementToModalLayer(id, { elementId: id, element, props });
+    opened.add(id);
   } catch {
-    // The layer was cleared out from under us (e.g. a screen change while the
-    // modal was open). Reopen it and try once more.
-    open.delete(id);
-    ensureOpen(id, zIndex);
-    try {
-      applyElementToModalLayer(id, { elementId: id, element, props });
-    } catch {
-      open.delete(id);
-    }
+    // No provider mounted (screen teardown) — nothing to present.
   }
 }
 
 export function dismissModal(id: string): void {
-  if (!open.has(id)) return;
-  open.delete(id);
+  if (!opened.has(id)) return;
+  opened.delete(id);
   try {
     closeModalLayer(id);
   } catch {
-    /* already gone */
+    /* no provider, or already gone */
   }
 }

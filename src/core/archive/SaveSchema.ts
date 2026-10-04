@@ -65,6 +65,13 @@ export const saveDataSchema = z.object({
     currentLevel: z.string(),
     completedLevels: z.array(z.string()),
   }),
+  /** Objective progress on the current level, so a resume can't re-grant them. */
+  levelObjectives: z
+    .object({
+      levelId: z.string().nullable().default(null),
+      completed: z.array(z.string()).default([]),
+    })
+    .default({ levelId: null, completed: [] }),
   world: z
     .object({
       year: z.number().default(0),
@@ -88,6 +95,246 @@ export const saveDataSchema = z.object({
     }),
   pressures: z.record(z.string(), z.number()).default({}),
   weather: z.string().default("weather_clear"),
+  /** The NPC simulation: per-NPC state, the NPC↔NPC graph, and player bonds. */
+  npcSim: z
+    .object({
+      lives: z
+        .record(
+          z.string(),
+          z.object({
+            age: z.number().default(30),
+            stage: z.enum(["child", "youth", "adult", "elder"]).default("adult"),
+            alive: z.boolean().default(true),
+            health: z.number().default(70),
+            wealth: z.number().default(30),
+            mood: z.number().default(50),
+            careerTier: z.number().default(0),
+            partnerId: z.string().nullable().default(null),
+            children: z.number().default(0),
+            moved: z.boolean().default(false),
+            homeRegion: z.string().nullable().default(null),
+            goals: z.array(z.string()).default([]),
+          }),
+        )
+        .default({}),
+      edges: z
+        .record(
+          z.string(),
+          z.object({
+            kind: z
+              .enum(["kin", "friend", "rival", "partner", "colleague"])
+              .default("friend"),
+            affinity: z.number().default(0),
+            trust: z.number().default(50),
+          }),
+        )
+        .default({}),
+      bonds: z
+        .record(
+          z.string(),
+          z.object({
+            trust: z.number().default(40),
+            debt: z.number().default(0),
+            conflict: z.number().default(0),
+          }),
+        )
+        .default({}),
+    })
+    .default({ lives: {}, edges: {}, bonds: {} }),
+  /** Work life: career ladder progress, skills, politics and any venture. */
+  career: z
+    .object({
+      work: z
+        .object({
+          careerId: z.string().nullable().default(null),
+          rank: z.number().default(0),
+          tenure: z.number().default(0),
+          performance: z.number().default(40),
+          burnout: z.number().default(0),
+          skills: z.record(z.string(), z.number()).default({}),
+          certs: z.array(z.string()).default([]),
+          standing: z.record(z.string(), z.number()).default({}),
+          venture: z
+            .object({
+              industry: z.string(),
+              capital: z.number(),
+              staff: z.number(),
+              product: z.number(),
+              revenue: z.number(),
+              risk: z.number(),
+            })
+            .nullable()
+            .default(null),
+        })
+        .default({
+          careerId: null,
+          rank: 0,
+          tenure: 0,
+          performance: 40,
+          burnout: 0,
+          skills: {},
+          certs: [],
+          standing: {},
+          venture: null,
+        }),
+    })
+    .default({
+      work: {
+        careerId: null,
+        rank: 0,
+        tenure: 0,
+        performance: 40,
+        burnout: 0,
+        skills: {},
+        certs: [],
+        standing: {},
+        venture: null,
+      },
+    }),
+  /** Market + personal portfolio/debt. */
+  economy: z
+    .object({
+      market: z
+        .object({
+          year: z.number().default(0),
+          inflation: z.number().default(0.03),
+          priceIndex: z.number().default(1),
+          houseIndex: z.number().default(1),
+          stocks: z.record(z.string(), z.number()).default({}),
+        })
+        .default({
+          year: 0,
+          inflation: 0.03,
+          priceIndex: 1,
+          houseIndex: 1,
+          stocks: {},
+        }),
+      portfolio: z
+        .object({
+          holdings: z
+            .record(z.string(), z.object({ shares: z.number(), avgCost: z.number() }))
+            .default({}),
+          loans: z
+            .array(z.object({ id: z.string(), principal: z.number(), rate: z.number() }))
+            .default([]),
+          properties: z
+            .array(
+              z.object({
+                id: z.string(),
+                value: z.number(),
+                rent: z.number(),
+                mortgage: z
+                  .object({ id: z.string(), principal: z.number(), rate: z.number() })
+                  .optional(),
+              }),
+            )
+            .default([]),
+        })
+        .default({ holdings: {}, loans: [], properties: [] }),
+    })
+    .default({
+      market: {
+        year: 0,
+        inflation: 0.03,
+        priceIndex: 1,
+        houseIndex: 1,
+        stocks: {},
+      },
+      portfolio: { holdings: {}, loans: [], properties: [] },
+    }),
+  /** Body & mind: conditions, trauma/resilience/meaning, addictions. */
+  health: z
+    .object({
+      conditions: z
+        .record(
+          z.string(),
+          z.object({ severity: z.number().default(0), sinceAge: z.number().default(0) }),
+        )
+        .default({}),
+      trauma: z.number().default(0),
+      resilience: z.number().default(40),
+      meaning: z.number().default(50),
+      addictions: z
+        .record(
+          z.string(),
+          z.object({ dependence: z.number().default(0), tolerance: z.number().default(0) }),
+        )
+        .default({}),
+      checkupAge: z.number().default(0),
+    })
+    .default({
+      conditions: {},
+      trauma: 0,
+      resilience: 40,
+      meaning: 50,
+      addictions: {},
+      checkupAge: 0,
+    }),
+  /** Inter-faction politics: power, relations, tension, active policies. */
+  politics: z
+    .object({
+      factions: z
+        .record(
+          z.string(),
+          z.object({
+            id: z.string(),
+            power: z.number().default(50),
+            relation: z.record(z.string(), z.number()).default({}),
+          }),
+        )
+        .default({}),
+      tension: z.number().default(30),
+      policies: z.array(z.string()).default([]),
+      playerLean: z.string().nullable().default(null),
+    })
+    .default({ factions: {}, tension: 30, policies: [], playerLean: null }),
+  /** Regional development and the player's place among the regions. */
+  regions: z
+    .object({
+      regions: z
+        .record(
+          z.string(),
+          z.object({
+            id: z.string(),
+            prosperity: z.number().default(50),
+            population: z.number().default(50),
+            stability: z.number().default(50),
+            development: z.number().default(30),
+          }),
+        )
+        .default({}),
+      currentId: z.string().default(""),
+      visits: z.record(z.string(), z.number()).default({}),
+    })
+    .default({ regions: {}, currentId: "", visits: {} }),
+  /** Cascading world-event chains: scheduled/fired nodes + lingering tilt. */
+  chains: z
+    .object({
+      active: z
+        .array(z.object({ chainId: z.string(), nodeId: z.string(), dueYear: z.number() }))
+        .default([]),
+      fired: z.array(z.string()).default([]),
+      started: z.array(z.string()).default([]),
+      marketBias: z.number().default(0),
+    })
+    .default({ active: [], fired: [], started: [], marketBias: 0 }),
+  /** Long-form narrative arcs: stage progress per arc + milestones. */
+  narrative: z
+    .object({
+      arcs: z
+        .record(
+          z.string(),
+          z.object({
+            id: z.string(),
+            stage: z.number().default(0),
+            startedAge: z.number().default(0),
+            completedAge: z.number().optional(),
+          }),
+        )
+        .default({}),
+      milestones: z.array(z.string()).default([]),
+    })
+    .default({ arcs: {}, milestones: [] }),
   /** Seeded RNG position — resume the exact same stream on load. */
   random: z
     .object({ seed: z.number(), step: z.number() })

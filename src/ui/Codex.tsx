@@ -7,11 +7,13 @@ import WorldState from "../world/chronicle/WorldState.js";
 import WorldRegistry from "../world/chronicle/WorldRegistry.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { useTerminalSize } from "./TerminalSizeContext.js";
 
 /** The codex — world lore unlocked as a life unfolds. */
 export default function Codex() {
   const { t } = useI18n();
   const colors = useThemeColors();
+  const { rows } = useTerminalSize();
   const { boundKeyboard } = useKeyboard();
   const { back } = useScreenSystem();
   const world = container.resolve(WorldState);
@@ -75,7 +77,7 @@ export default function Codex() {
               </Text>
               <Box marginTop={1} flexGrow={1}>
                 <ScrollPanel
-                  height={10}
+                  height={Math.max(3, rows - 10)}
                   showBar={false}
                   lines={[
                     <Text key="body" color={currentUnlocked ? colors.text : colors.muted}>

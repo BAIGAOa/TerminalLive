@@ -270,11 +270,11 @@
     "rangeKey": ["28-52"],
     "weight": 1.1,
     "once": true,
-    "requires": [{ "prop": "money", "gte": 800 }],
     "choices": [
       {
         "id": "buy",
         "labelKey": "ev.mortgage.opt.buy",
+        "require": [{ "prop": "money", "gte": 800 }],
         "effects": { "money": -800, "happiness": 6 },
         "flag": "homeowner",
         "noteKey": "ev.mortgage.note.buy"
@@ -378,11 +378,11 @@
     "rangeKey": ["74-99"],
     "weight": 1.1,
     "once": true,
-    "requires": [{ "prop": "money", "gte": 500 }],
     "choices": [
       {
         "id": "give",
         "labelKey": "ev.inheritance.opt.give",
+        "require": [{ "prop": "money", "gte": 500 }],
         "effects": { "money": -500, "happiness": 6, "reputation": 4 },
         "flag": "donated",
         "karma": { "benevolence": 15 },

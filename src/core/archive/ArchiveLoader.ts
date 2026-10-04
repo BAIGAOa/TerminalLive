@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { container } from "../../Container.js";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import { applySaveData } from "./SaveCodec.js";
+import { migrateSave, RawSave } from "./migrations.js";
 import ModMonitor from "../mod/ModMonitor.js";
 import AutoSave from "./AutoSave.js";
 
@@ -54,7 +55,8 @@ export class ArchiveLoader {
   private readArchiveData(archiveDir: string): SaveData {
     const raw = readFileSync(join(archiveDir, "archive.json"), "utf-8");
     try {
-      return saveDataSchema.parse(JSON.parse(raw));
+      const parsed = JSON.parse(raw) as RawSave;
+      return saveDataSchema.parse(migrateSave(parsed));
     } catch {
       throw new Error(
         "存档不兼容，无法加载。 Archive is incompatible and cannot be loaded.",

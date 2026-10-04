@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Text } from "ink";
 import { gotoScreen, useKeyboard } from "ink-cartridge";
 import useLevelGameScreen from "../hooks/useLevelGameScreen.js";
@@ -17,15 +17,26 @@ import TypedEventBus from "../core/TypedEventBus.js";
 import { computeLifeScore } from "../game/score.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
 import { resolveKeymap } from "./keymap.js";
+import LineageStore from "../core/store/LineageStore.js";
+import WorldState from "../world/chronicle/WorldState.js";
+import {
+  buildLineageRecord,
+  computeInheritance,
+} from "../world/lineage/inheritance.js";
+import type { StatKey } from "../world/stats.js";
+import type { GameOverLineage } from "./GameOver.js";
+import LevelManager from "../level/LevelManager.js";
+import LevelRecordsStore from "../core/store/LevelRecordsStore.js";
 
 export default function LevelGame() {
   const data = useLevelGameScreen();
   const colors = useThemeColors();
   const { boundKeyboard, focusSet, focusNext } = useKeyboard();
   const narrative = useNarrative().join(" ");
-  const endTurnKey = resolveKeymap(
-    container.resolve(ConfigStore).getKeyBindings(),
-  ).endTurn;
+  const keymap = resolveKeymap(container.resolve(ConfigStore).getKeyBindings());
+  const endTurnKey = keymap.endTurn;
+  const consoleKey = keymap.console.toUpperCase();
+  const menuKey = keymap.menu.toUpperCase();
 
   // End the current year, and switch the status view with ← / →.
   useEffect(() => {
@@ -58,18 +69,29 @@ export default function LevelGame() {
 
   useEffect(() => {
     const uTab = boundKeyboard(["tab"], () => {
-      if (data.currentViewId !== "relationships") return;
-      try {
-        focusNext("game-main");
-      } catch {
-        /* group not registered yet */
+      if (data.currentViewId === "relationships") {
+        try {
+          focusNext("game-main");
+        } catch {
+          /* group not registered yet */
+        }
+        return;
+      }
+      if (data.currentViewId === "inventory") {
+        safeFocus("game-actions", "game-main");
       }
     });
     return () => uTab();
-  }, [boundKeyboard, data.currentViewId, focusNext]);
+  }, [boundKeyboard, data.currentViewId, focusNext, safeFocus]);
 
   useEffect(() => {
     if (data.currentViewId === "relationships") return;
+    // The inventory list must own focus for Enter/arrow keys to work (its hint
+    // promises Enter-to-use); other views hand focus back to the actions.
+    if (data.currentViewId === "inventory") {
+      safeFocus("inventory-list", "status-views");
+      return;
+    }
     safeFocus("game-actions", "game-main");
   }, [data.currentViewId, safeFocus]);
 
@@ -86,10 +108,15 @@ export default function LevelGame() {
     return () => dismissModal("choice-modal");
   }, [data.pendingChoice, data.resolveChoice]);
 
+  // Records the current level's outcome once per status transition.
+  const recordedRef = useRef<string | null>(null);
+
   // Game-over / level-complete dialog.
   useEffect(() => {
     if (data.status === "playing") {
       dismissModal("gameover-modal");
+      // New attempt (e.g. a fresh life on the same level) → allow re-recording.
+      recordedRef.current = null;
       return;
     }
     const achievements = container
@@ -97,6 +124,51 @@ export default function LevelGame() {
       .getSnapshot()
       .filter((a) => a.unlocked).length;
     const { score, rankKey } = computeLifeScore(data.player, achievements);
+
+    // Meta-progression: remember this attempt (completions / best / outcome).
+    const levelId = container.resolve(LevelManager).getCurrentLevelId();
+    const recordKey = `${data.status}:${levelId}`;
+    if (levelId && recordedRef.current !== recordKey) {
+      recordedRef.current = recordKey;
+      const records = container.resolve(LevelRecordsStore);
+      if (data.status === "cleared") {
+        void records.recordCompletion(levelId, score, "complete");
+      } else if (data.status === "dead") {
+        void records.recordCompletion(levelId, score, "death");
+      }
+    }
+
+    // Only a finished life (death / final clear) rolls a legacy into the next
+    // generation — a mid-chain stage clear keeps the same life going.
+    const lifeOver =
+      data.status === "dead" ||
+      (data.status === "cleared" && !data.hasNextLevel);
+    let lineage: GameOverLineage | undefined;
+    if (lifeOver) {
+      const store = container.resolve(LineageStore);
+      const endedGeneration = store.getNextGeneration();
+      const record = buildLineageRecord({
+        player: data.player,
+        karma: container.resolve(WorldState).karma,
+        reason: data.status === "dead" ? "death" : "complete",
+        achievements,
+        generation: endedGeneration,
+      });
+      const plan = computeInheritance(record);
+      lineage = {
+        endedGeneration,
+        nextGeneration: endedGeneration + 1,
+        epithetKey: record.epithetKey,
+        inheritedMoney: plan?.money ?? 0,
+        inheritedStats: plan
+          ? Object.entries(plan.deltas).map(([key, value]) => ({
+              key: key as StatKey,
+              value: value as number,
+            }))
+          : [],
+      };
+    }
+
     presentModal("gameover-modal", GameOver, {
       info: {
         reason: data.status === "dead" ? "death" : "complete",
@@ -107,6 +179,7 @@ export default function LevelGame() {
         score,
         rankKey,
         hasNext: data.status === "cleared" && data.hasNextLevel,
+        lineage,
       },
       onNext: () => {
         dismissModal("gameover-modal");
@@ -130,11 +203,14 @@ export default function LevelGame() {
       reason: data.status === "dead" ? "death" : "complete",
       age: Math.floor(data.player.age),
     });
+    // Clear the resume pointer too, or a fresh launch would boot into the last
+    // level with default stats even though the auto-save slot was cleared.
+    void container.resolve(ConfigStore).update({ lastLevelId: undefined });
   }, [lifeOver, data.status, data.player]);
 
   // Never assume more rows than the terminal actually has — a forced minimum
   // used to make the layout taller than the screen and spill out of the boxes.
-  const rows = Math.max(8, data.rows);
+  const rows = Math.max(1, data.rows);
   const { columns } = useTerminalSize();
 
   // Deterministic, size-driven layout. The middle row (actions | status) and
@@ -171,14 +247,18 @@ export default function LevelGame() {
       setJournalOffset((o) => o + 1),
     );
     const home = boundKeyboard(["home"], () => setJournalOffset(0));
-    const end = boundKeyboard(["end"], () => setJournalOffset(9999));
+    // Clamp stored End offset so a following PageUp moves immediately instead
+    // of counting down from an absurd value.
+    const end = boundKeyboard(["end"], () =>
+      setJournalOffset(Math.max(0, data.logs.length - journalInner)),
+    );
     return () => {
       up();
       down();
       home();
       end();
     };
-  }, [boundKeyboard]);
+  }, [boundKeyboard, data.logs.length, journalInner]);
 
   return (
     <Box flexDirection="column" width="100%" height={rows} padding={1}>
@@ -190,18 +270,18 @@ export default function LevelGame() {
         borderColor={colors.info}
         paddingX={1}
       >
-        <Text bold color={colors.menuTitle}>
+        <Text bold wrap="truncate" color={colors.menuTitle}>
           {data.levelName}
         </Text>
-        <Text>
-          {data.t("game.age")}: <Text color="yellow">{Math.floor(data.player.age)}</Text>
+        <Text wrap="truncate">
+          {data.t("game.age")}: <Text color={colors.warning}>{Math.floor(data.player.age)}</Text>
           {"   "}
-          {data.t("game.actions.apShort")}: <Text color="cyan">{data.actionPoints}/{data.maxActionPoints}</Text>
+          {data.t("game.actions.apShort")}: <Text color={colors.info}>{data.actionPoints}/{data.maxActionPoints}</Text>
           {"   "}
-          {data.t("player.money")}: <Text color="yellow">${data.player.money}</Text>
+          {data.t("player.money")}: <Text color={colors.money}>${data.player.money}</Text>
           {"   "}
           {data.t("player.health")}:{" "}
-          <Text color={data.player.health < 30 ? "red" : "green"}>
+          <Text color={data.player.health < 30 ? colors.danger : colors.health}>
             {Math.round(data.player.health)}
           </Text>
         </Text>
@@ -214,7 +294,7 @@ export default function LevelGame() {
         </Box>
 
         {/* status carousel */}
-        <Box flexDirection="column" flexGrow={1} borderStyle="round" borderColor={colors.info} paddingX={1}>
+        <Box flexDirection="column" flexGrow={1} borderStyle="round" borderColor={colors.info} paddingX={1} overflowY="hidden">
           <Box flexDirection="row" justifyContent="space-between" marginBottom={0}>
             <Text color={colors.muted}>{"◄ "}</Text>
             <Text bold color={colors.text}>
@@ -231,7 +311,7 @@ export default function LevelGame() {
           {/* victory conditions */}
           <Box flexDirection="column">
             {data.victoryConditions.map((cond, i) => (
-              <Text key={i} color={cond.isMet ? colors.success : colors.muted}>
+              <Text key={i} wrap="truncate" color={cond.isMet ? colors.success : colors.muted}>
                 {cond.isMet ? "  ✓" : "  ○"} {cond.description}
               </Text>
             ))}
@@ -241,9 +321,9 @@ export default function LevelGame() {
 
       {/* journal — a prose scene, then the recent events */}
       {showJournal ? (
-      <Box flexDirection="column" borderStyle="round" borderColor="magenta" paddingX={1} marginTop={1} height={journalH}>
+      <Box flexDirection="column" borderStyle="round" borderColor={colors.info} paddingX={1} marginTop={1} height={journalH}>
         <Box flexDirection="row" justifyContent="space-between">
-          <Text bold color="magenta">
+          <Text bold color={colors.info}>
             {data.t("game.journal.title", { logsLength: data.logs.length })}
           </Text>
           <Text dimColor>{data.t("game.journal.wheel")}</Text>
@@ -293,8 +373,8 @@ export default function LevelGame() {
         ) : null}
         {HINT_H >= 3 ? (
           <Text dimColor>
-            [PgUp/PgDn] {data.t("game.hint.journal")}   [P]{" "}
-            {data.t("console.title")}   [Q] {data.t("game.hint.menu")}
+            [PgUp/PgDn] {data.t("game.hint.journal")}   [{consoleKey}]{" "}
+            {data.t("console.title")}   [{menuKey}] {data.t("game.hint.menu")}
           </Text>
         ) : null}
       </Box>

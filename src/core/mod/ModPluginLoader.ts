@@ -23,6 +23,7 @@ import { resolveLoadOrder } from "./loadOrder.js";
 import { loadModModule } from "./sandbox.js";
 import RandomService from "../random/RandomService.js";
 import EventDirector from "../../event/EventDirector.js";
+import { hasCapability } from "./capabilities.js";
 
 interface HookEntry {
   fn: (...args: any[]) => any;
@@ -123,6 +124,9 @@ export default class ModPluginLoader {
     // stack duplicate multipliers.
     for (const dispose of this.weightRuleDisposers) dispose();
     this.weightRuleDisposers = [];
+    // Also drop screens the previous load registered, or re-registration
+    // accumulates duplicates on every reload.
+    this.registeredScreens.clear();
     this.loadEnabled();
   }
 
@@ -151,9 +155,15 @@ export default class ModPluginLoader {
     }
 
     const ctx = this.createContext(mod.dirName);
-    safe(`${mod.dirName}.registerEventTypes`, () =>
-      plugin.registerEventTypes?.(this.eventTypeRegistry, ctx),
-    );
+    // Capability-gated like every other API: event types need "events".
+    const manifest = this.registry.getModManifest(mod.dirName) ?? {};
+    if (hasCapability(manifest, "events")) {
+      safe(`${mod.dirName}.registerEventTypes`, () =>
+        plugin.registerEventTypes?.(this.eventTypeRegistry, ctx),
+      );
+    } else if (plugin.registerEventTypes) {
+      console.warn(`[Mod] "${mod.dirName}" 未声明 "events" 能力，忽略 registerEventTypes`);
+    }
     this.registerHooks(plugin, ctx, mod.dirName);
     safe(`${mod.dirName}.onInit`, () => plugin.hooks?.onInit?.(ctx));
 
@@ -218,6 +228,27 @@ export default class ModPluginLoader {
   }
 
   private createContext(modName: string): ModContext {
+    // Capability gate: a mod only gets the powers its manifest declares.
+    const manifest = this.registry.getModManifest(modName) ?? {};
+    const can = (cap: Parameters<typeof hasCapability>[1]): boolean => {
+      const ok = hasCapability(manifest, cap);
+      if (!ok) {
+        console.warn(`[Mod] "${modName}" 未声明 "${cap}" 能力，调用被拒绝`);
+      }
+      return ok;
+    };
+    // Swallow duplicate-registration throws so a hot reload (which re-runs
+    // onInit against already-populated registries) can't abort the rest of it.
+    const reg = (fn: () => void, label: string) => {
+      try {
+        fn();
+      } catch (err) {
+        console.warn(
+          `[Mod] "${modName}" ${label} 注册失败（可能重复）:`,
+          (err as Error).message,
+        );
+      }
+    };
     return {
       eventBus: this.eventBus,
       configStore: this.configStore,
@@ -230,14 +261,22 @@ export default class ModPluginLoader {
         if (!this.playerRef) throw new Error("Player 未初始化");
         return this.playerRef;
       },
-      createEventClass: (def: ModEventClassDef) => this.makeEventClass(def),
+      createEventClass: (def: ModEventClassDef) => {
+        if (!can("events")) return this.makeEventClass({ apply: () => {} });
+        return this.makeEventClass(def);
+      },
 
       registerScreen: (key, entry) => {
+        if (!can("ui")) return;
         this.registeredScreens.set(key, entry.component);
         const parent = (entry as { parent?: ComponentType<any> }).parent;
-        registerComponent(entry.component, {}, parent ? { parent } : undefined);
+        reg(
+          () => registerComponent(entry.component, {}, parent ? { parent } : undefined),
+          "screen",
+        );
       },
       navigateTo: (scene: string) => {
+        if (!can("ui")) return;
         const target = this.registeredScreens.get(scene);
         if (!target) {
           console.warn(`[Mod] navigateTo: 未注册的屏幕 "${scene}"`);
@@ -246,31 +285,43 @@ export default class ModPluginLoader {
         gotoScreen(target, {});
       },
       addCondition: (id, ctor, schema) => {
-        this.conditionReg.register(id, { ctor, schema });
+        if (can("events")) reg(() => this.conditionReg.register(id, { ctor, schema }), "condition");
       },
       addAlgorithm: (name, factory) => {
-        this.algoRegister.register(name, factory);
+        if (can("events")) reg(() => this.algoRegister.register(name, factory), "algorithm");
       },
       addFilter: (id, filter) => {
-        this.filterRegister.register(id, filter);
+        if (can("events")) reg(() => this.filterRegister.register(id, filter), "filter");
       },
       addSetting: (key, entry) => {
-        this.settingCenter.register(key, entry);
+        if (can("ui")) reg(() => this.settingCenter.register(key, entry), "setting");
       },
       registerAchievement: (achievement: Achievement) => {
-        this.achievementResolver.registerSingle(achievement);
+        reg(() => this.achievementResolver.registerSingle(achievement), "achievement");
       },
       addPressureAxis: (def) => {
+        if (!can("world")) return;
         if (!this.pressureRegistry.hasAxis(def.id)) {
-          this.pressureRegistry.registerAxis(def);
+          reg(() => this.pressureRegistry.registerAxis(def), "pressureAxis");
         }
       },
-      addPressureRule: (rule) => this.pressureRegistry.registerRule(rule),
-      addLore: (def) => this.worldRegistry.registerLore(def),
-      addFateArc: (def) => this.worldRegistry.registerFate(def),
-      addWorldEvent: (def) => this.worldRegistry.registerWorldEvent(def),
+      addPressureRule: (rule) => {
+        if (can("world")) reg(() => this.pressureRegistry.registerRule(rule), "pressureRule");
+      },
+      addLore: (def) => {
+        if (can("world")) reg(() => this.worldRegistry.registerLore(def), "lore");
+      },
+      addFateArc: (def) => {
+        if (can("world")) reg(() => this.worldRegistry.registerFate(def), "fate");
+      },
+      addWorldEvent: (def) => {
+        if (can("world")) reg(() => this.worldRegistry.registerWorldEvent(def), "worldEvent");
+      },
       addTrait: (def) => {
-        if (!this.traitRegistry.has(def.id)) this.traitRegistry.register(def);
+        if (!can("world")) return;
+        if (!this.traitRegistry.has(def.id)) {
+          reg(() => this.traitRegistry.register(def), "trait");
+        }
       },
       // A per-mod forked stream: reproducible, and isolated from the main one.
       random: inject(RandomService).fork(modName),

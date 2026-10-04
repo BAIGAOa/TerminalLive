@@ -2,6 +2,7 @@ import ReplRegistry from "../ReplRegistry.js";
 import { registerNavCommands } from "./nav.js";
 import { registerGameCommands } from "./game.js";
 import { registerSystemCommands } from "./system.js";
+import { registerDebugCommands } from "./debug.js";
 
 /** Register every built-in terminal command. Safe to call once. */
 export function registerReplCommands(reg: ReplRegistry): void {
@@ -9,4 +10,5 @@ export function registerReplCommands(reg: ReplRegistry): void {
   registerGameCommands(reg);
   registerNavCommands(reg);
   registerSystemCommands(reg);
+  registerDebugCommands(reg);
 }

@@ -5,6 +5,7 @@ import { container } from "../Container.js";
 import TypedEventBus from "../core/TypedEventBus.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
+import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
 interface ToastEntry {
   id: number;
@@ -15,14 +16,17 @@ interface ToastEntry {
 const TOAST_WIDTH = 34;
 const MAX_TOASTS = 4;
 
-function colorFor(kind: ToastEntry["kind"]): string {
+function colorFor(
+  kind: ToastEntry["kind"],
+  colors: ReturnType<typeof useThemeColors>,
+): string {
   switch (kind) {
     case "success":
-      return "green";
+      return colors.success;
     case "warn":
-      return "yellow";
+      return colors.warning;
     default:
-      return "cyan";
+      return colors.info;
   }
 }
 
@@ -33,6 +37,7 @@ function colorFor(kind: ToastEntry["kind"]): string {
  */
 function Toasts() {
   const { t } = useI18n();
+  const colors = useThemeColors();
   const { columns } = useTerminalSize();
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
   const counter = useRef(0);
@@ -66,11 +71,11 @@ function Toasts() {
         <Box
           key={toast.id}
           borderStyle="round"
-          borderColor={colorFor(toast.kind)}
+          borderColor={colorFor(toast.kind, colors)}
           paddingX={1}
           marginBottom={0}
         >
-          <Text color={colorFor(toast.kind)}>
+          <Text color={colorFor(toast.kind, colors)}>
             {toast.kind === "success" ? "★ " : "• "}
             {t(toast.textKey)}
           </Text>

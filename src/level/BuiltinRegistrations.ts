@@ -5,6 +5,9 @@ import DefaultEventAlgorithm from "../event/DefaultEventAlgorithm.js";
 import BlockedFilter from "../event/filters/BlockedFilter.js";
 import OnceFilter from "../event/filters/OnceFilter.js";
 import PredecessorFilter from "../event/filters/PredecessorFilter.js";
+import WorldFilter from "../world/chronicle/WorldFilter.js";
+import PressureFilter from "../world/pressures/PressureFilter.js";
+import WeatherFilter from "../world/weather/WeatherFilter.js";
 
 export function registerBuiltinRegistrations(): void {
   const algoReg = container.resolve(AlgorithmRegistry);
@@ -18,4 +21,7 @@ export function registerBuiltinRegistrations(): void {
   filterReg.register("blocked", () => new BlockedFilter());
   filterReg.register("predecessor", () => new PredecessorFilter());
   filterReg.register("once", () => new OnceFilter());
+  filterReg.register("world", () => new WorldFilter());
+  filterReg.register("pressure", () => new PressureFilter());
+  filterReg.register("weather", () => new WeatherFilter());
 }

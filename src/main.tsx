@@ -36,6 +36,7 @@ import Archive from "./ui/Archive.js";
 import Traits from "./ui/Traits.js";
 import Shop from "./ui/Shop.js";
 import Codex from "./ui/Codex.js";
+import Lineage from "./ui/Lineage.js";
 import KeyBinding from "./ui/KeyBinding.js";
 import { ToastHost } from "./ui/ToastHost.js";
 import { HelpModal } from "./ui/HelpModal.js";
@@ -61,6 +62,7 @@ registerComponent(Archive, {}, { parent: MainMenu });
 registerComponent(Traits, {}, { parent: MainMenu });
 registerComponent(Shop, {}, { parent: MainMenu });
 registerComponent(Codex, {}, { parent: MainMenu });
+registerComponent(Lineage, {}, { parent: MainMenu });
 
 // 设置子页面注册到 SettingRegistry（供 Setting 组件动态渲染）
 const settingReg = container.resolve(SettingRegistry);

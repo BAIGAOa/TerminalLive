@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { Box, Text } from "ink";
 import { useKeyboard } from "ink-cartridge";
-import { MenuList } from "./kit/index.js";
+import { ScrollList } from "./kit/index.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { ThemeColors } from "../core/theme/ThemeDefinition.js";
 import { useThemeScreen } from "../hooks/theme/useThemeScreen.js";
+import { useTerminalSize } from "./TerminalSizeContext.js";
 
 function PreviewSwatches({ colors }: { colors: ThemeColors }) {
   return (
@@ -20,6 +21,7 @@ export default function ThemeScreen({ onBack }: { onBack?: () => void }) {
   const data = useThemeScreen();
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
+  const { rows } = useTerminalSize();
 
   useEffect(() => {
     const u = boundKeyboard(["escape"], () => onBack?.());
@@ -49,8 +51,11 @@ export default function ThemeScreen({ onBack }: { onBack?: () => void }) {
       </Box>
 
       <Box flexGrow={1} width="100%">
-        <MenuList
+        <ScrollList
           focusId="theme-list"
+          itemHeight={3}
+          height={Math.max(3, rows - 9)}
+          pageKeys={false}
           items={items}
           onSelect={(item) => {
             const theme = data.items.find((t) => t.value === item.value);

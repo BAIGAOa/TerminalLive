@@ -9,6 +9,7 @@ import { useTerminalSize } from "./TerminalSizeContext.js";
 import { computeMenuLayout } from "./menuLayout.js";
 import { container } from "../Container.js";
 import LevelManager from "../level/LevelManager.js";
+import LineageStore from "../core/store/LineageStore.js";
 import LevelSelection from "./LevelSelection.js";
 import LevelGame from "./LevelGame.js";
 import Setting from "./Setting.js";
@@ -18,6 +19,7 @@ import Archive from "./Archive.js";
 import Traits from "./Traits.js";
 import Shop from "./Shop.js";
 import Codex from "./Codex.js";
+import Lineage from "./Lineage.js";
 
 export default function MainMenu() {
   const { t } = useI18n();
@@ -35,10 +37,16 @@ export default function MainMenu() {
     ...(hasActiveLife
       ? [{ value: "continue", label: t("main.continue") }]
       : []),
-    { value: "start", label: t("main.startGame") },
+    {
+      value: "start",
+      label: `${t("main.startGame")} · ${t("lineage.genShort", {
+        n: container.resolve(LineageStore).getNextGeneration(),
+      })}`,
+    },
     { value: "traits", label: t("main.traits") },
     { value: "shop", label: t("main.shop") },
     { value: "codex", label: t("main.codex") },
+    { value: "lineage", label: t("main.lineage") },
     { value: "config", label: t("main.enterConfig") },
     { value: "language", label: t("main.configurationLanguage") },
     { value: "achievement", label: t("main.achievement") },
@@ -69,6 +77,9 @@ export default function MainMenu() {
           break;
         case "codex":
           skip(Codex, {});
+          break;
+        case "lineage":
+          skip(Lineage, {});
           break;
         case "config":
           skip(Setting, {});
@@ -127,6 +138,7 @@ export default function MainMenu() {
           >
             <Text
               bold={state.selected}
+              wrap="truncate"
               color={state.selected ? colors.highlight : colors.text}
             >
               {item.label}

@@ -8,6 +8,7 @@ import Archive from "../../../ui/Archive.js";
 import Traits from "../../../ui/Traits.js";
 import Shop from "../../../ui/Shop.js";
 import Codex from "../../../ui/Codex.js";
+import Lineage from "../../../ui/Lineage.js";
 
 /** Commands that open the game's feature screens. */
 export function registerNavCommands(reg: ReplRegistry): void {
@@ -40,4 +41,5 @@ export function registerNavCommands(reg: ReplRegistry): void {
   register("traits", ["trait"], Traits, "repl.enter.traits");
   register("shop", ["store"], Shop, "repl.enter.shop");
   register("codex", ["lore", "wiki"], Codex, "repl.enter.codex");
+  register("lineage", ["family", "ancestors"], Lineage, "repl.enter.lineage");
 }

@@ -89,20 +89,21 @@ function getAttrMeta(key: string): PlayerAttributeMeta | undefined {
 function validateValue(
   meta: PlayerAttributeMeta,
   raw: string,
+  t: (key: string, params?: Record<string, string | number>) => string,
 ): { valid: true; value: string | number } | { valid: false; error: string } {
   if (meta.type === "string") {
-    if (!raw.trim()) return { valid: false, error: "不能为空" };
+    if (!raw.trim()) return { valid: false, error: t("playerConfig.error.empty") };
     return { valid: true, value: raw.trim() };
   }
   const num = Number(raw);
   if (isNaN(num) || raw.trim() === "") {
-    return { valid: false, error: "请输入有效数字" };
+    return { valid: false, error: t("playerConfig.error.number") };
   }
   if (meta.min !== undefined && num < meta.min) {
-    return { valid: false, error: `最小值为 ${meta.min}` };
+    return { valid: false, error: t("playerConfig.error.min", { n: meta.min }) };
   }
   if (meta.max !== undefined && num > meta.max) {
-    return { valid: false, error: `最大值为 ${meta.max}` };
+    return { valid: false, error: t("playerConfig.error.max", { n: meta.max }) };
   }
   return { valid: true, value: num };
 }
@@ -174,7 +175,7 @@ export function usePlayerConfig(
     const meta = getAttrMeta(editingKey);
     if (!meta) return;
 
-    const result = validateValue(meta, editValue);
+    const result = validateValue(meta, editValue, t);
     if (!result.valid) {
       setValidationError(result.error);
       return;

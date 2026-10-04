@@ -49,7 +49,9 @@ export default function NpcModal({ npcId }: { npcId: string }) {
       ? t("npc.it.reason.ap")
       : reason === "age"
         ? t("npc.it.reason.age")
-        : t("npc.it.reason.require");
+        : reason === "gone"
+          ? t("npc.it.reason.gone")
+          : t("npc.it.reason.require");
 
   const choose = (id: string) => {
     if (id === CLOSE_ID) {
@@ -71,9 +73,25 @@ export default function NpcModal({ npcId }: { npcId: string }) {
     >
       <Box flexDirection="column" key={tick}>
         <Text color="white">{dialogue ? t(dialogue) : t(detail.descKey)}</Text>
-        <Box marginTop={1}>
-          <Text dimColor>{t(detail.descKey)}</Text>
-        </Box>
+        {dialogue ? (
+          <Box marginTop={1}>
+            <Text dimColor>{t(detail.descKey)}</Text>
+          </Box>
+        ) : null}
+
+        {detail.age !== undefined ? (
+          <Text dimColor>
+            {t(detail.stageKey ?? "npc.stage.adult")} ·{" "}
+            {t("npc.detail.age", { n: detail.age })} ·{" "}
+            {t(detail.statusKey ?? "npc.status.well")}
+          </Text>
+        ) : null}
+        {detail.bond ? (
+          <Text dimColor>
+            {t("npc.bond.trust")} {detail.bond.trust} · {t("npc.bond.debt")}{" "}
+            {detail.bond.debt} · {t("npc.bond.conflict")} {detail.bond.conflict}
+          </Text>
+        ) : null}
 
         <Box marginTop={1} flexDirection="column">
           <MenuList

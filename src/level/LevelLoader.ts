@@ -18,6 +18,7 @@ import LevelConditionRegistry from "../core/registry/LevelConditionRegistry.js";
 import WorldState from "../world/chronicle/WorldState.js";
 import PressureState from "../world/pressures/PressureState.js";
 import WeatherState from "../world/weather/WeatherState.js";
+import LevelCondition from "./LevelCondition.js";
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -76,12 +77,24 @@ export default class LevelLoader {
     return this.buildLevel(parsed.data, player);
   }
 
+  /** Build one condition instance from a `{ type, params }` config entry. */
+  private buildCondition(
+    type: string,
+    params: Record<string, unknown>,
+  ): LevelCondition {
+    const entry = this.conditionCenter.get(type);
+    const data = entry.schema.parse(params);
+    return new entry.ctor(data);
+  }
+
   private buildLevel(config: LevelJsonConfig, player: Player): Level {
     // `onEnter.setPlayer` is deliberately NOT applied here — levels share one
     // player instance, so applying at load time would let the last-loaded
     // level's start state win. It is applied in LevelManager.start instead.
     const eventCenter = new EventCenter();
-    const eventHistory = new EventHistory();
+    // One shared history for the whole life (see Level.reset) so once-per-life
+    // events can't refire after a stage transition.
+    const eventHistory = container.resolve(EventHistory);
     const logStore = new LogStore();
 
     // 构建过滤器链
@@ -89,6 +102,11 @@ export default class LevelLoader {
       this.filterRegistry.create("blocked"),
       this.filterRegistry.create("predecessor"),
       this.filterRegistry.create("once"),
+      // World/pressure/weather gates were defined but never wired into the
+      // chain, so era/faction/weather-gated events fired unconditionally.
+      this.filterRegistry.create("world"),
+      this.filterRegistry.create("pressure"),
+      this.filterRegistry.create("weather"),
       ...config.extraFilters.map((name) => this.filterRegistry.create(name)),
     ];
 
@@ -110,21 +128,32 @@ export default class LevelLoader {
       this.eventTypeRegistry,
     );
 
-    const conditions = config.nextLevelUnlock.map((each) => {
-      const entry = this.conditionCenter.get(each.type);
-      // 为了不引入复杂的类型体操，况且类型体操也很不灵活
-      // 但当前的schema验证也已经够用了，模组开发者只需要确保schema
-      // 和构造函数的参数一致，就可以了
-      const data = entry.schema.parse(each.params);
-      return new entry.ctor(data);
-    });
+    const conditions = config.nextLevelUnlock.map((each) =>
+      this.buildCondition(each.type, each.params),
+    );
+
+    const objectives = config.objectives.map((each) => ({
+      id: each.id,
+      labelKey: each.labelKey,
+      optional: each.optional,
+      condition: this.buildCondition(each.condition.type, each.condition.params),
+      reward: each.reward,
+    }));
+
+    const nextBranches = (config.nextLevels ?? []).map((branch) => ({
+      levelId: branch.levelId,
+      requires: branch.requires.map((r) => this.buildCondition(r.type, r.params)),
+    }));
 
     const levelConfig: LevelConfig = {
       id: config.id,
       nextLevelUnlock: conditions,
+      objectives,
+      nextBranches,
       nameKey: config.nameKey,
       descriptionKey: config.descriptionKey,
       nextLevel: config.nextLevel,
+      act: config.act,
       difficultyIdentification: config.difficultyIdentification,
     };
 

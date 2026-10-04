@@ -1,9 +1,8 @@
 import { ReplCommand } from "./types.js";
 
 /**
- * The main terminal's command table. Deliberately separate from the in-game
- * console's `CommandCenter`: this one supports aliases, subcommands and
- * completion, and only the terminal screen uses it.
+ * The terminal's command table — aliases, subcommands and completion. Backs
+ * both the REPL screen and the in-game developer console (`P`).
  */
 export default class ReplRegistry {
   private commands: ReplCommand[] = [];

@@ -18,8 +18,11 @@ const CLASS_COLOR: Record<string, string> = {
 /** The hidden-score web: every "pressure" the world quietly rides on. */
 export default function PressuresView({
   t,
+  height,
 }: {
   t: (key: string, params?: Record<string, string | number>) => string;
+  /** Rows the status carousel gives this view. */
+  height?: number;
 }) {
   const pressures = container.resolve(PressureState);
   const { rows } = useTerminalSize();
@@ -49,12 +52,21 @@ export default function PressuresView({
     }
   }
 
+  // Window the list to the height the carousel actually allots — never the
+  // whole terminal, which used to leave the panel taller than its box and hide
+  // the bottom rows on a short screen. Drop the hint first when very cramped.
+  const viewH = Math.max(1, height ?? Math.max(6, rows - 13));
+  const showHint = viewH >= 3;
+  const panelH = Math.max(1, viewH - (showHint ? 2 : 0));
+
   return (
-    <Box flexDirection="column">
-      <Box marginBottom={1}>
-        <Text dimColor>{t("pressures.hint")}</Text>
-      </Box>
-      <ScrollPanel height={Math.max(6, rows - 13)} lines={lines} />
+    <Box flexDirection="column" height={viewH}>
+      {showHint ? (
+        <Box marginBottom={1}>
+          <Text dimColor>{t("pressures.hint")}</Text>
+        </Box>
+      ) : null}
+      <ScrollPanel height={panelH} lines={lines} />
     </Box>
   );
 }

@@ -28,6 +28,22 @@ export interface NarrativeState {
   karma: KarmaState;
   pressures: NarrativePressure[];
   mood: MoodKey;
+  /** Already-localized recall material the narrator may reference. */
+  memory?: NarrativeMemory;
+}
+
+/**
+ * What the narrator remembers: recent happenings, the player's closest tie and
+ * calling, and an active through-line. Strings are pre-localized by the caller
+ * (the composer stays pure).
+ */
+export interface NarrativeMemory {
+  recentEvents: string[];
+  topNpc?: string;
+  topNpcAffinity?: number;
+  career?: string;
+  careerRank?: number;
+  arc?: string;
 }
 
 export interface NarrativeSegment {
@@ -114,6 +130,34 @@ export function buildNarrative(state: NarrativeState): NarrativeSegment[] {
   }
 
   segments.push({ key: `narr.mood.${state.mood}` });
+
+  // One remembered detail — recent event, a bond, a calling, or a through-line.
+  const recalls: NarrativeSegment[] = [];
+  const m = state.memory;
+  if (m) {
+    if (m.recentEvents.length > 0) {
+      recalls.push({ key: "narr.recall.event", params: { event: m.recentEvents[0] } });
+    }
+    if (m.topNpc) {
+      recalls.push({
+        key: "narr.recall.bond",
+        params: { npc: m.topNpc, value: m.topNpcAffinity ?? 0 },
+      });
+    }
+    if (m.career) {
+      recalls.push({
+        key: "narr.recall.career",
+        params: { career: m.career, rank: m.careerRank ?? 1 },
+      });
+    }
+    if (m.arc) {
+      recalls.push({ key: "narr.recall.arc", params: { arc: m.arc } });
+    }
+  }
+  if (recalls.length > 0) {
+    segments.push(recalls[pick(seed ^ 0x51ed270b, recalls.length)]);
+  }
+
   segments.push({ key: `narr.close.${pick(seed ^ 0x9e3779b9, 3)}` });
   return segments;
 }

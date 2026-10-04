@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useSyncExternalStore } from "react";
 import { Box, Text } from "ink";
 import { useKeyboard, useScreenSystem } from "ink-cartridge";
-import { MenuList } from "./kit/index.js";
+import { ScrollList } from "./kit/index.js";
 import { container } from "../Container.js";
 import ItemRegistry from "../world/items/ItemRegistry.js";
 import LevelManager from "../level/LevelManager.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { useTerminalSize } from "./TerminalSizeContext.js";
+import { clampWidth } from "./kit/viewport.js";
 
 /** Spend money on items (priced items only). Uses the shared player. */
 export default function Shop() {
@@ -16,6 +18,7 @@ export default function Shop() {
   const { back } = useScreenSystem();
   const reg = container.resolve(ItemRegistry);
   const player = container.resolve(LevelManager).getPlayer();
+  const { columns, rows } = useTerminalSize();
   const [message, setMessage] = useState<string | null>(null);
 
   useSyncExternalStore(
@@ -58,14 +61,17 @@ export default function Shop() {
         {t("shop.title")}
       </Text>
       <Box marginTop={1}>
-        <Text color="yellow">
+        <Text color={colors.money}>
           {t("player.money")}: ${player.money}
         </Text>
       </Box>
 
-      <Box width={56} flexDirection="column" marginTop={1}>
-        <MenuList
+      <Box width={clampWidth(columns, 56)} flexDirection="column" marginTop={1}>
+        <ScrollList
           focusId="shop-list"
+          itemHeight={3}
+          height={Math.max(3, rows - 8)}
+          pageKeys={false}
           items={items}
           onSelect={(item) => buy(item.value)}
           renderItem={(item, state) => {
@@ -83,7 +89,7 @@ export default function Shop() {
                 <Text bold={state.selected} color={affordable ? colors.text : colors.muted}>
                   {item.label}
                 </Text>
-                <Text color={affordable ? "yellow" : "red"}>${def?.price}</Text>
+                <Text color={affordable ? colors.money : colors.danger}>${def?.price}</Text>
               </Box>
             );
           }}

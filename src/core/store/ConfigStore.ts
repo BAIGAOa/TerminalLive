@@ -16,6 +16,7 @@ export default class ConfigStore {
     completedLevels: [],
     keyBindings: {},
     traits: [],
+    simplified: false,
   };
   private listeners: Set<Listener> = new Set();
   private jsonParser = new JSONparsing("config.json");
@@ -117,6 +118,16 @@ export default class ConfigStore {
 
   public async setTraits(traits: string[]): Promise<void> {
     this.config = { ...this.config, traits };
+    await this.persist();
+    this.emitChange();
+  }
+
+  public getSimplified(): boolean {
+    return this.config.simplified ?? false;
+  }
+
+  public async setSimplified(on: boolean): Promise<void> {
+    this.config = { ...this.config, simplified: on };
     await this.persist();
     this.emitChange();
   }

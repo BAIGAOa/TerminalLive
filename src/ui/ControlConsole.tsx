@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Text } from "ink";
 import { useKeyboard } from "ink-cartridge";
 import {
@@ -7,7 +7,13 @@ import {
 } from "../core/console/ConsoleStore.js";
 import { useControlConsole } from "../hooks/useControlConsole.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
-import { ModalFrame, TextField } from "./kit/index.js";
+import { useTerminalSize } from "./TerminalSizeContext.js";
+import {
+  clampHeight,
+  ModalFrame,
+  ScrollPanel,
+  TextField,
+} from "./kit/index.js";
 
 function NotificationItem({
   notification,
@@ -74,34 +80,96 @@ function CommandResultItem({
   return <Text color={color}>{text}</Text>;
 }
 
+/** Desired panel height; ModalFrame clamps it to the terminal. */
+const DESIRED_H = 24;
+
 export default function ControlConsole({ onClose }: { onClose: () => void }) {
   const data = useControlConsole();
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
+  const { rows } = useTerminalSize();
+
+  // Mirror ModalFrame's clamp so the inner layout exactly fills the frame
+  // (border 2 + paddingY 2 + title 2 = 6 rows of chrome).
+  const modalH = clampHeight(rows, DESIRED_H, 6);
+  const bodyH = Math.max(1, modalH - 6);
+
+  const notifH = Math.min(2, data.notifications.length);
+  const gap = notifH > 0 ? 1 : 0;
+  const compH = data.inputMode ? Math.min(4, data.completions.length) : 0;
+  const resultsH = Math.max(1, bodyH - (1 /*hint*/ + notifH + gap + 1 /*header*/ + 2 /*input+margin*/ + compH));
+
+  // The store keeps results newest-first; show them chronologically (like a
+  // terminal) so multi-line command output reads top-to-bottom.
+  const lines = useMemo<React.ReactNode[]>(
+    () =>
+      data.commandResults.length === 0
+        ? [<Text key="__empty" dimColor>{data.t("console.noResults")}</Text>]
+        : [...data.commandResults]
+            .reverse()
+            .map((r) => <CommandResultItem key={r.id} result={r} t={data.t} />),
+    [data.commandResults, data.t],
+  );
+
+  const maxOffset = Math.max(0, lines.length - resultsH);
+  const [offset, setOffset] = useState(0);
+  const [follow, setFollow] = useState(true);
+
+  // Keep the newest line in view unless the user has scrolled up.
+  useEffect(() => {
+    if (follow) setOffset(maxOffset);
+  }, [follow, maxOffset, lines.length]);
+
+  const scrollTo = useCallback(
+    (next: number) => {
+      const v = Math.max(0, Math.min(maxOffset, next));
+      setOffset(v);
+      setFollow(v >= maxOffset);
+    },
+    [maxOffset],
+  );
+
+  // Scroll the output — only when not typing (↑/↓ are history in input mode).
+  useEffect(() => {
+    if (data.inputMode) return;
+    const page = Math.max(1, resultsH - 1);
+    const unbinds = [
+      boundKeyboard(["up"], () => scrollTo(offset - 1)),
+      boundKeyboard(["down"], () => scrollTo(offset + 1)),
+      boundKeyboard(["pageup"], () => scrollTo(offset - page)),
+      boundKeyboard(["pagedown"], () => scrollTo(offset + page)),
+      boundKeyboard(["home"], () => scrollTo(0)),
+      boundKeyboard(["end"], () => scrollTo(maxOffset)),
+    ];
+    return () => unbinds.forEach((u) => u());
+  }, [boundKeyboard, data.inputMode, offset, resultsH, maxOffset, scrollTo]);
 
   useEffect(() => {
-    const uEsc = boundKeyboard(["escape"], () => onClose());
+    // Esc leaves input mode first (matching the hint), then closes the console.
+    const uEsc = boundKeyboard(["escape"], () => {
+      if (data.inputMode) data.exitInputMode();
+      else onClose();
+    });
     const uTab = boundKeyboard(["tab"], () => {
       if (!data.inputMode) data.enterInputMode();
       else data.acceptCompletion();
     });
-    const uUp = boundKeyboard(["up"], () => {
-      if (data.inputMode) data.historyPrev();
-    });
-    const uDown = boundKeyboard(["down"], () => {
-      if (data.inputMode) data.historyNext();
-    });
-    return () => {
-      uEsc();
-      uTab();
-      uUp();
-      uDown();
-    };
+    // ↑/↓ walk command history only while typing; otherwise they scroll output
+    // (see the scroll effect above), so don't bind them twice.
+    const unbinds = [uEsc, uTab];
+    if (data.inputMode) {
+      unbinds.push(
+        boundKeyboard(["up"], () => data.historyPrev()),
+        boundKeyboard(["down"], () => data.historyNext()),
+      );
+    }
+    return () => unbinds.forEach((u) => u());
   }, [
     boundKeyboard,
     onClose,
     data.inputMode,
     data.enterInputMode,
+    data.exitInputMode,
     data.acceptCompletion,
     data.historyPrev,
     data.historyNext,
@@ -110,14 +178,14 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
   return (
     <ModalFrame
       width={76}
-      height={18}
+      height={DESIRED_H}
       title={data.t("console.title")}
       borderColor={colors.consoleBorder}
       draggable
     >
       <Box flexDirection="column" flexGrow={1}>
         <Box justifyContent="flex-end">
-          <Text dimColor>
+          <Text dimColor wrap="truncate">
             {data.inputMode
               ? "[Tab] " +
                 data.t("console.complete") +
@@ -125,39 +193,39 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
                 data.t("console.history") +
                 "  [Esc] " +
                 data.t("console.exitInputMode")
-              : "[Tab] " + data.t("console.enterInputMode") + "  [Esc] " + data.t("console.close")}
+              : "[↑↓ PgUp/PgDn] " +
+                data.t("console.scroll") +
+                "  [Tab] " +
+                data.t("console.enterInputMode") +
+                "  [Esc] " +
+                data.t("console.close")}
           </Text>
         </Box>
 
-        <Box flexDirection="column">
-          {data.notifications.length === 0 ? (
-            <Text dimColor>{data.t("console.empty")}</Text>
-          ) : (
-            data.notifications
-              .slice(0, 4)
+        {notifH > 0 ? (
+          <Box flexDirection="column">
+            {data.notifications
+              .slice(0, notifH)
               .map((n) => (
                 <NotificationItem key={n.id} notification={n} t={data.t} colors={colors} />
-              ))
-          )}
-        </Box>
+              ))}
+          </Box>
+        ) : null}
 
-        <Box marginY={1}>
+        <Box marginTop={gap}>
           <Text color={colors.muted}>── {data.t("console.results")} ────────────</Text>
         </Box>
 
-        <Box flexDirection="column" flexGrow={1}>
-          {data.commandResults.length === 0 ? (
-            <Text dimColor>{data.t("console.noResults")}</Text>
-          ) : (
-            data.commandResults
-              .slice(0, 4)
-              .map((r) => <CommandResultItem key={r.id} result={r} t={data.t} />)
-          )}
-        </Box>
+        <ScrollPanel
+          height={resultsH}
+          lines={lines}
+          offset={offset}
+          onOffsetChange={scrollTo}
+        />
 
-        {data.inputMode && data.completions.length > 0 ? (
+        {compH > 0 ? (
           <Box flexDirection="column">
-            {data.completions.map((candidate, i) => (
+            {data.completions.slice(0, compH).map((candidate, i) => (
               <Text
                 key={candidate}
                 color={i === 0 ? colors.success : colors.muted}

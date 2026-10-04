@@ -9,6 +9,10 @@ import CareerView from "../ui/gameStatus/CareerView.js";
 import PerksView from "../ui/gameStatus/PerksView.js";
 import WorldView from "../ui/gameStatus/WorldView.js";
 import PressuresView from "../ui/gameStatus/PressuresView.js";
+import EconomyView from "../ui/gameStatus/EconomyView.js";
+import HealthView from "../ui/gameStatus/HealthView.js";
+import PoliticsView from "../ui/gameStatus/PoliticsView.js";
+import RegionView from "../ui/gameStatus/RegionView.js";
 import GameStatusMap from "../core/registry/GameStatusMap.js";
 
 export default class GameStatus {
@@ -46,6 +50,18 @@ export default class GameStatus {
     );
     map.register("pressures", (props?: any) =>
       React.createElement(PressuresView, props),
+    );
+    map.register("economy", (props?: any) =>
+      React.createElement(EconomyView, props),
+    );
+    map.register("health", (props?: any) =>
+      React.createElement(HealthView, props),
+    );
+    map.register("politics", (props?: any) =>
+      React.createElement(PoliticsView, props),
+    );
+    map.register("regions", (props?: any) =>
+      React.createElement(RegionView, props),
     );
   }
 }

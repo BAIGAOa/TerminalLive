@@ -15,6 +15,7 @@ import LevelManager from "../../level/LevelManager.js";
 import WorldState from "../chronicle/WorldState.js";
 import TypedEventBus from "../../core/TypedEventBus.js";
 import RandomService from "../../core/random/RandomService.js";
+import NpcSimulation from "./NpcSimulation.js";
 
 /** Odds/limits for the once-a-year NPC agency pass. */
 const PASSIVE_CHANCE = 0.45;
@@ -29,6 +30,17 @@ export interface NpcDetail {
   affinity: number;
   availableInteractions: number;
   totalInteractions: number;
+  /** Current age (from the NPC's own life trajectory). */
+  age?: number;
+  /** i18n key for the NPC's standing (well / married / moved / deceased). */
+  statusKey?: string;
+  /** Life stage key (child / youth / adult / elder). */
+  stageKey?: string;
+  health?: number;
+  wealth?: number;
+  careerTier?: number;
+  /** Multi-axis player bond alongside the scalar affinity. */
+  bond?: { trust: number; debt: number; conflict: number };
 }
 
 /**
@@ -43,6 +55,7 @@ export default class RelationshipSystem {
   private world: WorldState;
   private eventBus: TypedEventBus;
   private random: RandomService;
+  private sim: NpcSimulation;
 
   private logSeq = 0;
   /** Offers awaiting an answer, so we can narrate the chosen outcome. */
@@ -55,6 +68,7 @@ export default class RelationshipSystem {
     this.world = inject(WorldState);
     this.eventBus = inject(TypedEventBus);
     this.random = inject(RandomService);
+    this.sim = inject(NpcSimulation);
 
     this.eventBus.on("choice:resolved", ({ incidentId, optionId }) => {
       const rec = this.pendingOffers.get(incidentId);
@@ -86,10 +100,12 @@ export default class RelationshipSystem {
 
   public getInteractionsFor(npcId: string): InteractionView[] {
     const player = this.levelManager.getPlayer();
+    const gone = !this.sim.isAvailable(npcId);
     return this.resolvedInteractions(npcId).map((def) => {
       let reason: InteractionView["reason"];
       const aff = player.getRelationship(npcId);
-      if (def.minAge !== undefined && player.age < def.minAge) reason = "age";
+      if (gone) reason = "gone";
+      else if (def.minAge !== undefined && player.age < def.minAge) reason = "age";
       else if (def.maxAge !== undefined && player.age > def.maxAge) reason = "age";
       else if (def.minAffinity !== undefined && aff < def.minAffinity) reason = "require";
       else if (!meetsRequirements(player, def.requires)) reason = "require";
@@ -102,6 +118,7 @@ export default class RelationshipSystem {
     const npc = this.registry.get(npcId);
     if (!npc) return null;
     const views = this.getInteractionsFor(npcId);
+    const life = this.sim.get(npcId);
     return {
       npcId,
       labelKey: npc.labelKey,
@@ -110,6 +127,13 @@ export default class RelationshipSystem {
       affinity: this.levelManager.getPlayer().getRelationship(npcId),
       availableInteractions: views.filter((v) => v.available).length,
       totalInteractions: views.length,
+      age: life?.age,
+      statusKey: this.sim.statusKey(npcId),
+      stageKey: this.sim.stageKey(npcId),
+      health: life ? Math.round(life.health) : undefined,
+      wealth: life ? Math.round(life.wealth) : undefined,
+      careerTier: life?.careerTier,
+      bond: this.sim.bond(npcId),
     };
   }
 
@@ -142,6 +166,14 @@ export default class RelationshipSystem {
       this.world,
     );
     if (def.affinity) player.adjustRelationship(npcId, def.affinity);
+    // Interactions move the multi-axis bond: kindness builds trust, conflict
+    // breeds friction (and a quarrel plants guilt the player can later mend).
+    if (def.affinity) {
+      this.sim.adjustBond(npcId, {
+        trust: Math.sign(def.affinity) * 2,
+        conflict: def.affinity < 0 ? 4 : 0,
+      });
+    }
     this.log(def.resultKey);
     player.notify();
     this.eventBus.emit("npc:interaction", { npcId, interactionId });
@@ -157,8 +189,16 @@ export default class RelationshipSystem {
       .filter((id) => player.getRelationship(id) > 0);
     if (known.length === 0) return;
 
+    // NPCs live their own lives first: age + life events (marriage, promotion,
+    // illness, moving away, death). Only known faces are narrated.
+    for (const ev of this.sim.tickYear()) {
+      if (player.getRelationship(ev.npcId) > 0) this.log(`npc.life.${ev.kind}`);
+    }
+
+    const present = known.filter((id) => this.sim.isAvailable(id));
+
     let applied = 0;
-    for (const npcId of this.random.shuffle(known)) {
+    for (const npcId of this.random.shuffle(present)) {
       if (applied >= MAX_PASSIVES) break;
       if (this.random.next() > PASSIVE_CHANCE) continue;
       const def = this.weightedPick(this.eligible(npcId, "passive", player));
@@ -167,8 +207,8 @@ export default class RelationshipSystem {
       applied++;
     }
 
-    if (this.random.next() < OFFER_CHANCE) {
-      const npcId = this.random.shuffle(known)[0];
+    if (present.length > 0 && this.random.next() < OFFER_CHANCE) {
+      const npcId = this.random.shuffle(present)[0];
       const def = this.weightedPick(this.eligible(npcId, "offer", player));
       if (def) this.offerNpcChoice(npcId, def);
     }

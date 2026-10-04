@@ -27,4 +27,10 @@ export default class LogStore {
     this.entries = [entry, ...this.entries].slice(0, this.MAX_Events);
     this.listeners.forEach((fn) => fn());
   }
+
+  /** Drop every entry (a new life shouldn't show the previous life's log). */
+  public clear(): void {
+    this.entries = [];
+    this.listeners.forEach((fn) => fn());
+  }
 }

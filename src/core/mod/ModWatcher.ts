@@ -39,6 +39,12 @@ export default class ModWatcher {
           this.schedule();
         },
       );
+      // A watch root deleted/renamed mid-run emits 'error'; without a handler
+      // Node throws it as an unhandled error and crashes the game.
+      this.watcher.on("error", (err) => {
+        console.warn("[Mod] 监听出错:", err.message);
+        this.stop();
+      });
       return true;
     } catch (err) {
       console.warn("[Mod] 无法监听模组目录:", (err as Error).message);

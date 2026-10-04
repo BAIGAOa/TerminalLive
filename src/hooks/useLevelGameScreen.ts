@@ -11,6 +11,10 @@ import GameStatusMap from "../core/registry/GameStatusMap.js";
 import Game, { ActionView, GameStatusKind } from "../core/Game.js";
 import { PendingChoice } from "../event/PendingChoice.js";
 
+// Stable fallbacks for useSyncExternalStore when no level is active.
+const NOOP_SUB = () => () => {};
+const EMPTY_LOGS: never[] = [];
+
 export interface FormattedVictoryCondition {
   description: string;
   isMet: boolean;
@@ -98,10 +102,10 @@ export default function useLevelGameScreen(): GameScreenData {
   const logStore = levelManager.getCurrentLogStore();
   const rawLogs: LogEntry[] = useSyncExternalStore(
     useCallback(
-      (listener: () => void) => logStore?.subscribe(listener) ?? (() => {}),
+      (listener: () => void) => logStore?.subscribe(listener) ?? NOOP_SUB,
       [logStore],
     ),
-    useCallback(() => logStore?.getSnapshot() ?? [], [logStore]),
+    useCallback(() => logStore?.getSnapshot() ?? EMPTY_LOGS, [logStore]),
   );
 
   const viewIds: string[] = useMemo(() => {

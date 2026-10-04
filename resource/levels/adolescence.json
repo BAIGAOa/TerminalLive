@@ -14,5 +14,17 @@
       "type": "generalPurpose",
       "params": { "prop": "age", "num": 18, "cat": "greaterThan" }
     }
+  ],
+  "objectives": [
+    {
+      "id": "ob_teen_athlete",
+      "labelKey": "level.obj.athlete",
+      "optional": true,
+      "condition": {
+        "type": "generalPurpose",
+        "params": { "prop": "fitness", "num": 25, "cat": "greaterThan" }
+      },
+      "reward": { "effects": { "health": 5, "fitness": 2 }, "flag": "teen_athlete" }
+    }
   ]
 }

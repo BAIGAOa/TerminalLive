@@ -1,12 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Box, Text } from "ink";
-import { useKeyboard } from "ink-cartridge";
-import { MenuList, TextField } from "./kit/index.js";
+import { back, useKeyboard } from "ink-cartridge";
+import { ScrollList, TextField } from "./kit/index.js";
 import { useArchiveScreen } from "../hooks/useArchiveScreen.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
 export default function Archive({ onBack }: { onBack?: () => void }) {
-  const data = useArchiveScreen(onBack);
+  // Esc leaves the screen with `back()`, like every sibling screen. `onBack`
+  // is an optional override; the screen is opened via `skip(Archive, {})`, so
+  // without this fallback Esc would do nothing and only the global menu key
+  // would return.
+  const goBack = useCallback(() => {
+    if (onBack) onBack();
+    else back();
+  }, [onBack]);
+  const data = useArchiveScreen(goBack);
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
 
@@ -57,11 +65,19 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
         </Box>
       ) : (
         <Box flexDirection="column" flexGrow={1}>
-          <MenuList
+          <ScrollList
             focusId="archive-list"
+            itemHeight={4}
+            height={Math.max(4, data.rows - 10)}
+            pageKeys={false}
             items={items}
             onChange={(_item, index) => data.setSelectedIndex(index)}
-            onSelect={(item) => data.loadByName(item.value)}
+            onSelect={(item) => {
+              // While a delete is pending, Enter confirms it (matching the
+              // confirmation prompt) instead of loading the save.
+              if (data.confirmDelete) data.handleDelete();
+              else data.loadByName(item.value);
+            }}
             renderItem={(item, state) => {
               const save = data.saves.find((s) => s.name === item.value);
               return (
@@ -111,9 +127,11 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
 
       <Box marginTop={1}>
         <Text dimColor>
-          {data.saveMode
-            ? data.t("archive.saveModeHint")
-            : data.t("archive.hint")}
+          {data.confirmDelete
+            ? data.t("archive.confirmHint")
+            : data.saveMode
+              ? data.t("archive.saveModeHint")
+              : data.t("archive.hint")}
         </Text>
       </Box>
     </Box>

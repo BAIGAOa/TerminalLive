@@ -10,6 +10,7 @@ import { ScrollList } from "../kit/index.js";
 import NpcModal from "../NpcModal.js";
 import { presentModal } from "../layers/modalBus.js";
 import { useTerminalSize } from "../TerminalSizeContext.js";
+import { useThemeColors } from "../../hooks/theme/ThematicCommunicator.js";
 import { bar } from "./common.js";
 
 const CARD_HEIGHT = 3;
@@ -23,11 +24,14 @@ const ROLE_ICON: Record<string, string> = {
   "npc.role.pet": "🐾",
 };
 
-function affinityColor(v: number): string {
-  if (v >= 70) return "green";
-  if (v >= 40) return "yellow";
-  if (v >= 20) return "white";
-  return "red";
+function affinityColor(
+  v: number,
+  colors: ReturnType<typeof useThemeColors>,
+): string {
+  if (v >= 70) return colors.success;
+  if (v >= 40) return colors.warning;
+  if (v >= 20) return colors.text;
+  return colors.danger;
 }
 
 /**
@@ -50,6 +54,7 @@ export default function RelationshipsView({
   const system = container.resolve(RelationshipSystem);
   const game = container.resolve(Game);
   const { rows } = useTerminalSize();
+  const colors = useThemeColors();
   const contentH = height ?? Math.max(8, rows - 16);
   const focused = useFocusState("rel-cards", "game-main");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -71,6 +76,7 @@ export default function RelationshipsView({
 
   const selected = known.find((k) => k.npc.id === selectedId) ?? known[0];
   const selectedDef = selected.npc;
+  const detail = system.getDetail(selectedDef.id);
 
   const items = known.map((k) => ({
     value: k.npc.id,
@@ -140,7 +146,7 @@ export default function RelationshipsView({
                 {active ? "❯ " : "  "}
                 {icon} {t(k.npc.labelKey)}
               </Text>
-              <Text color={affinityColor(k.value)}>
+              <Text color={affinityColor(k.value, colors)}>
                 {bar(k.value, 10)} ♥{k.value}
               </Text>
             </Box>
@@ -166,7 +172,7 @@ export default function RelationshipsView({
             <Text bold color="cyan" wrap="truncate">
               {t(selectedDef.labelKey)}
             </Text>
-            <Text color={affinityColor(selected.value)}>
+            <Text color={affinityColor(selected.value, colors)}>
               {t("npc.detail.affinity", { value: selected.value })}
             </Text>
           </Box>
@@ -176,9 +182,31 @@ export default function RelationshipsView({
               : ""}
             {t(selectedDef.descKey)}
           </Text>
+          {detail?.age !== undefined ? (
+            <>
+              <Text dimColor wrap="truncate">
+                {t(detail.stageKey ?? "npc.stage.adult")} ·{" "}
+                {t("npc.detail.age", { n: detail.age })} ·{" "}
+                {t(detail.statusKey ?? "npc.status.well")}
+              </Text>
+              <Text dimColor wrap="truncate">
+                {t("npc.detail.vitals", {
+                  h: detail.health ?? 0,
+                  w: detail.wealth ?? 0,
+                })}
+              </Text>
+            </>
+          ) : null}
+          {detail?.bond ? (
+            <Text dimColor wrap="truncate">
+              {t("npc.bond.trust")} {bar(detail.bond.trust, 6)}
+              {"  "}
+              {t("npc.bond.conflict")} {bar(detail.bond.conflict, 6)}
+            </Text>
+          ) : null}
           <Text color="greenBright">
             {t("npc.detail.interact", {
-              n: system.getDetail(selectedDef.id)?.availableInteractions ?? 0,
+              n: detail?.availableInteractions ?? 0,
             })}
           </Text>
         </Box>

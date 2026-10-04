@@ -45,6 +45,9 @@ export default class EventCenter {
         }
       }
     }
+    // Keep the id→incident index in sync, or getIncidentById keeps resolving
+    // removed events.
+    this.incidentById.delete(incidentId);
   }
 
   public getIncidentById(id: string): Incident | undefined {

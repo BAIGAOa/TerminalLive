@@ -1,11 +1,16 @@
 import { back, gotoScreen } from "ink-cartridge";
+import { cpSync, existsSync } from "node:fs";
+import { join } from "node:path";
 import { container } from "../../../Container.js";
 import ReplRegistry from "../ReplRegistry.js";
+import type { ReplContext } from "../types.js";
 import ThemeCenter from "../../theme/ThemeCenter.js";
 import ThemeManager from "../../theme/ThemeManager.js";
 import ModMonitor from "../../mod/ModMonitor.js";
 import ModPluginLoader from "../../mod/ModPluginLoader.js";
+import ModWatcher from "../../mod/ModWatcher.js";
 import { VersionProvider } from "../../version/VersionProvider.js";
+import { resourcePath } from "../../paths.js";
 import ModManager from "../../../ui/ModManager.js";
 import ThemeScreen from "../../../ui/ThemeScreen.js";
 
@@ -72,35 +77,63 @@ export function registerSystemCommands(reg: ReplRegistry): void {
     },
   });
 
+  const listMods = (ctx: ReplContext) => {
+    const all = container.resolve(ModMonitor).getAllMods();
+    if (all.length === 0) {
+      ctx.print(ctx.t("repl.mods.none"), "dim");
+      return;
+    }
+    for (const name of all) ctx.print(`  ${name}`);
+  };
+
+  const reloadMods = (ctx: ReplContext) => {
+    const count = container.resolve(ModPluginLoader).getLoadedMods().length;
+    container.resolve(ModPluginLoader).reloadEnabled();
+    ctx.print(ctx.t("console.cmd.modsReload", { count }), "success");
+  };
+
+  const watchMods = (ctx: ReplContext) => {
+    const watcher = container.resolve(ModWatcher);
+    if (watcher.active) {
+      watcher.stop();
+      ctx.print(ctx.t("console.cmd.modsWatchOff"), "success");
+      return;
+    }
+    const ok = watcher.start();
+    ctx.print(
+      ctx.t(ok ? "console.cmd.modsWatchOn" : "console.cmd.modsWatchFail"),
+      ok ? "success" : "error",
+    );
+  };
+
+  const exampleMod = (ctx: ReplContext) => {
+    const src = resourcePath("example-mod");
+    if (!existsSync(src)) {
+      ctx.print(ctx.t("console.cmd.modsExampleMissing"), "error");
+      return;
+    }
+    const dest = join(container.resolve(ModMonitor).MOD_ROOT, "example_mod");
+    try {
+      cpSync(src, dest, { recursive: true });
+      ctx.print(ctx.t("console.cmd.modsExampleOk", { dest }), "success");
+    } catch (err) {
+      ctx.print(
+        ctx.t("console.cmd.modsExampleFail", { error: (err as Error).message }),
+        "error",
+      );
+    }
+  };
+
   reg.register({
     name: "mods",
     aliases: ["mod"],
     summary: "repl.cmd.mods",
-    usage: "mods [list|reload]",
+    usage: "mods [list|reload|watch|example]",
     subcommands: [
-      {
-        name: "list",
-        summary: "repl.sub.mods.list",
-        run: (ctx) => {
-          const all = container.resolve(ModMonitor).getAllMods();
-          if (all.length === 0) {
-            ctx.print(ctx.t("repl.mods.none"), "dim");
-            return;
-          }
-          for (const name of all) ctx.print(`  ${name}`);
-        },
-      },
-      {
-        name: "reload",
-        summary: "repl.sub.mods.reload",
-        run: (ctx) => {
-          const count = container
-            .resolve(ModPluginLoader)
-            .getLoadedMods().length;
-          container.resolve(ModPluginLoader).reloadEnabled();
-          ctx.print(ctx.t("console.cmd.modsReload", { count }), "success");
-        },
-      },
+      { name: "list", summary: "repl.sub.mods.list", run: listMods },
+      { name: "reload", summary: "repl.sub.mods.reload", run: reloadMods },
+      { name: "watch", summary: "repl.sub.mods.watch", run: watchMods },
+      { name: "example", summary: "repl.sub.mods.example", run: exampleMod },
     ],
     run: (ctx) => {
       ctx.print(ctx.t("repl.enter.mods"), "dim");
@@ -108,6 +141,18 @@ export function registerSystemCommands(reg: ReplRegistry): void {
       gotoScreen(ModManager, {});
     },
   });
+
+  // Flat aliases kept for parity with earlier docs (`mods-watch`, etc.). Hidden
+  // from `help`; `mods <sub>` is the canonical form.
+  const legacy: Array<[string, string, (ctx: ReplContext) => void]> = [
+    ["mods-list", "repl.sub.mods.list", listMods],
+    ["mods-reload", "repl.sub.mods.reload", reloadMods],
+    ["mods-watch", "repl.sub.mods.watch", watchMods],
+    ["mods-example", "repl.sub.mods.example", exampleMod],
+  ];
+  for (const [name, summary, run] of legacy) {
+    reg.register({ name, summary, usage: name, hidden: true, run });
+  }
 
   reg.register({
     name: "back",

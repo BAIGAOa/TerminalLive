@@ -13,6 +13,12 @@ import PressureState from "../world/pressures/PressureState.js";
 import WeatherState from "../world/weather/WeatherState.js";
 import RelationshipSystem from "../world/relationships/RelationshipSystem.js";
 import CareerSystem from "../world/careers/CareerSystem.js";
+import EconomySystem from "../world/economy/EconomySystem.js";
+import HealthSystem from "../world/health/HealthSystem.js";
+import PoliticsSystem from "../world/politics/PoliticsSystem.js";
+import RegionsSystem from "../world/regions/RegionsSystem.js";
+import WorldChainSystem from "../world/chains/WorldChainSystem.js";
+import NarrativeSystem from "../world/narrative/NarrativeSystem.js";
 import RandomService from "./random/RandomService.js";
 
 export type ActionUnavailableReason = "ap" | "age" | "require" | "once";
@@ -38,6 +44,12 @@ export default class Game {
   private weather: WeatherState;
   private relationships: RelationshipSystem;
   private careers: CareerSystem;
+  private economy: EconomySystem;
+  private health: HealthSystem;
+  private politics: PoliticsSystem;
+  private regions: RegionsSystem;
+  private chains: WorldChainSystem;
+  private narrative: NarrativeSystem;
   private random: RandomService;
 
   constructor() {
@@ -50,6 +62,12 @@ export default class Game {
     this.weather = inject(WeatherState);
     this.relationships = inject(RelationshipSystem);
     this.careers = inject(CareerSystem);
+    this.economy = inject(EconomySystem);
+    this.politics = inject(PoliticsSystem);
+    this.regions = inject(RegionsSystem);
+    this.chains = inject(WorldChainSystem);
+    this.narrative = inject(NarrativeSystem);
+    this.health = inject(HealthSystem);
     this.random = inject(RandomService);
   }
 
@@ -139,14 +157,31 @@ export default class Game {
 
   // ── turn ───────────────────────────────────────────────────────
   public endTurn(): void {
-    this.levelManager.update();
+    // Advance the world BEFORE rolling this year's event, so world/weather/
+    // pressure gates and bias read the current year, not last year's.
     this.advanceWorld();
+    this.levelManager.update();
     // Let the NPCs act — unless an event already paused the turn on a choice.
     if (!this.levelManager.hasPendingChoice()) {
       this.relationships.tickYear(this.player);
     }
     // Pay the salary and consider a promotion.
     this.careers.tickYear(this.player);
+    // Politics evolve first, then tilt the market.
+    this.politics.tickYear(this.player);
+    // Regions develop, trade and shift population.
+    this.regions.tickYear(this.player);
+    // Cascade world-event chains (war → shortage → unrest → coup …).
+    this.chains.tickYear(this.player);
+    // Advance the life's long-form narrative arcs.
+    this.narrative.tickYear(this.player);
+    // Drift the market and settle dividends / interest / rent.
+    this.economy.tickYear(
+      this.player,
+      this.politics.marketBias() + this.chains.marketBias(),
+    );
+    // Age the body and mind: conditions, trauma, meaning, addictions.
+    this.health.tickYear(this.player);
     this.eventBus.emit("turn:ended", { age: this.player.age });
   }
 
@@ -241,7 +276,8 @@ export default class Game {
   }
 
   public hasNextLevel(): boolean {
-    const id = this.levelManager.current.nextLevel;
-    return id !== "none";
+    return (
+      this.levelManager.resolveNextLevelId(this.levelManager.current) !== null
+    );
   }
 }

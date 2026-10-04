@@ -17,7 +17,6 @@ import GameStatus from "../content/GameStatus.js";
 import ThemeParser from "./theme/ThemeParser.js";
 import ThemeManager from "./theme/ThemeManager.js";
 import { VersionProvider } from "./version/VersionProvider.js";
-import Commands from "../content/Commands.js";
 import Effects from "../content/Effects.js";
 import Actions from "../content/Actions.js";
 import Traits from "../content/Traits.js";
@@ -30,8 +29,12 @@ import NpcLoader from "../world/relationships/NpcLoader.js";
 import CareerLoader from "../world/careers/CareerLoader.js";
 import NpcRegistry from "../world/relationships/NpcRegistry.js";
 import ModMonitor from "./mod/ModMonitor.js";
+import { hasCapability } from "./mod/capabilities.js";
 import AchievementManager from "../achievement/AchievementManager.js";
 import AchievementResolver from "../achievement/AchievementResolver.js";
+import LineageStore from "./store/LineageStore.js";
+import LineageManager from "../world/lineage/LineageManager.js";
+import LevelRecordsStore from "./store/LevelRecordsStore.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -66,6 +69,9 @@ export default class GameInitialization {
     if (
       lastLevelId &&
       lastLevelId !== "none" &&
+      // Only resume when an auto-save actually exists — otherwise a finished
+      // life (cleared slot) would boot into its last level with default stats.
+      container.resolve(AutoSave).exists() &&
       this.levelManager.getAllLevels().has(lastLevelId)
     ) {
       // Resume the saved life on its level WITHOUT re-applying onEnter
@@ -111,10 +117,20 @@ export default class GameInitialization {
     const pressureLoader = container.resolve(PressureLoader);
     for (const modName of this.configStore.getEnabledMods()) {
       if (!this.modRegistry.isValid(modName)) continue;
+      const manifest = this.modRegistry.getModManifest(modName);
       const dir = this.modRegistry.getModPath(modName);
-      itemLoader.loadDir(join(dir, "items"));
-      npcLoader.loadDir(join(dir, "npcs"));
-      pressureLoader.loadModDir(dir);
+      // Capability-gated: a mod only gets the content it declared.
+      if (hasCapability(manifest ?? {}, "items")) {
+        itemLoader.loadDir(join(dir, "items"));
+      } else if (manifest?.capabilities) {
+        console.warn(`[Mod] "${modName}" 未声明 items 能力，跳过 items/`);
+      }
+      if (hasCapability(manifest ?? {}, "npcs")) {
+        npcLoader.loadDir(join(dir, "npcs"));
+      }
+      if (hasCapability(manifest ?? {}, "world")) {
+        pressureLoader.loadModDir(dir);
+      }
     }
   }
 
@@ -182,9 +198,13 @@ export default class GameInitialization {
     levelManager.loadAllLevels();
 
     this.initThemes();
-    Commands.load();
 
     await this.initAchievementSystem();
+
+    // Load the family line and start listening for life-end captures.
+    await container.resolve(LineageStore).init();
+    container.resolve(LineageManager).bindPlayer(this.player);
+    await container.resolve(LevelRecordsStore).init();
 
     // Resume a life in progress: apply the full auto-save first (it sets the
     // current level + player + world), then re-enter that level, then re-offer
@@ -196,6 +216,9 @@ export default class GameInitialization {
         pendingChoice.incidentId,
         pendingChoice.rangeKey,
       );
+      // Re-enter emitted `level:started`, which auto-saved with a null choice;
+      // persist again so the awaiting choice survives another quit.
+      container.resolve(AutoSave).save();
     }
     this.levelManager.initCompletedLevels(
       this.configStore.getSnapshot().completedLevels,

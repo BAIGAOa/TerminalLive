@@ -30,7 +30,7 @@ export interface NpcInteractionDef {
   resultKey: string;
 }
 
-export type InteractionReason = "ap" | "age" | "require";
+export type InteractionReason = "ap" | "age" | "require" | "gone";
 
 export interface InteractionView {
   def: NpcInteractionDef;

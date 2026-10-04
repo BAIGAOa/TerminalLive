@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Box, Text } from "ink";
 import { useKeyboard, useScreenSystem } from "ink-cartridge";
-import { MenuList } from "./kit/index.js";
+import { MenuList, ScrollList } from "./kit/index.js";
 import { useLevelSelection } from "../hooks/useLevelSelection.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
 import LevelGame from "./LevelGame.js";
@@ -18,6 +18,24 @@ export default function LevelSelection() {
     const u = boundKeyboard(["escape"], () => back());
     return () => u();
   }, [back, boundKeyboard]);
+
+  // ←/→ move between the difficulty pane and the level pane (the level list
+  // isn't mounted until a difficulty is chosen, hence the guarded focus).
+  useEffect(() => {
+    const safe = (id: string) => {
+      try {
+        focusSet(id);
+      } catch {
+        /* target not mounted */
+      }
+    };
+    const uLeft = boundKeyboard(["left"], () => safe("level-difficulty"));
+    const uRight = boundKeyboard(["right"], () => safe("level-list"));
+    return () => {
+      uLeft();
+      uRight();
+    };
+  }, [boundKeyboard, focusSet]);
 
   // Once a difficulty is chosen, move focus onto the level list.
   useEffect(() => {
@@ -83,9 +101,13 @@ export default function LevelSelection() {
               <Text dimColor>{data.t("levelSelection.noLevels")}</Text>
             </Box>
           ) : (
-            <MenuList
+            <ScrollList
+              key={data.activeDifficulty ?? "none"}
               focusId="level-list"
+              itemHeight={3}
+              height={Math.max(3, rows - 14)}
               items={levelItems}
+              pageKeys={false}
               onChange={(item) => {
                 const lvl = data.rightItems.find((l) => l.value === item.value);
                 if (lvl) data.onHighlightLevel(lvl);
@@ -108,7 +130,7 @@ export default function LevelSelection() {
                   <Box
                     borderStyle="round"
                     borderColor={borderColor}
-                    flexGrow={1}
+                    width="100%"
                     paddingX={1}
                     justifyContent="space-between"
                   >
@@ -133,22 +155,60 @@ export default function LevelSelection() {
         borderColor={colors.info}
         paddingX={1}
         marginTop={1}
+        overflowY="hidden"
       >
         {data.highlightedDescKey ? (
           <>
-            <Text color={colors.text}>{data.t(data.highlightedDescKey)}</Text>
+            <Text color={colors.text} wrap="truncate">{data.t(data.highlightedDescKey)}</Text>
             <Box flexDirection="row" marginTop={1}>
               <Text dimColor>{data.t("levelDetail.victoryConditions")}: </Text>
               {data.highlightedConditions.length === 0 ? (
                 <Text dimColor>{data.t("levelDetail.noConditions")}</Text>
               ) : (
-                <Text color={colors.success}>
+                <Text color={colors.success} wrap="truncate">
                   {data.highlightedConditions
                     .map((c) => c.description)
                     .join("  ·  ")}
                 </Text>
               )}
             </Box>
+            {data.highlightedStatus === "locked" ? (
+              <Text color={colors.muted}>
+                {data.t("levelSelection.lockedHint")}
+              </Text>
+            ) : null}
+            <Box flexDirection="row" marginTop={1} gap={2}>
+              <Text dimColor>
+                {data.t("levelDetail.difficulty")}:{" "}
+                {data.highlightedDifficulty
+                  ? data.t(`difficulty.${data.highlightedDifficulty}`)
+                  : "-"}
+              </Text>
+              {data.highlightedMedals.total > 0 ? (
+                <Text color={colors.achievement}>
+                  {data.t("levelDetail.medals", {
+                    earned: data.highlightedMedals.earned,
+                    total: data.highlightedMedals.total,
+                  })}
+                </Text>
+              ) : null}
+            </Box>
+            {data.highlightedObjectives.length > 0 ? (
+              <Box flexDirection="column">
+                {data.highlightedObjectives.slice(0, 3).map((o) => (
+                  <Text key={o.id} wrap="truncate" color={o.optional ? colors.warning : colors.text}>
+                    {o.optional ? "★ " : "◆ "}
+                    {data.t(o.labelKey)}
+                    {o.hasReward ? "  🎁" : ""}
+                  </Text>
+                ))}
+                {data.highlightedObjectives.length > 3 ? (
+                  <Text dimColor>
+                    +{data.highlightedObjectives.length - 3}
+                  </Text>
+                ) : null}
+              </Box>
+            ) : null}
           </>
         ) : (
           <Text dimColor>{data.t("levelSelection.hintSelectDifficulty")}</Text>
