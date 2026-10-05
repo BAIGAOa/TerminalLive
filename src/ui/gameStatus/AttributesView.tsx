@@ -3,6 +3,7 @@ import { Box, Text } from "ink";
 import Player from "../../world/Player.js";
 import { StatBar, StatusScroll } from "./common.js";
 import { useTerminalSize } from "../TerminalSizeContext.js";
+import { barWidthFor } from "../kit/viewport.js";
 
 export default function AttributesView({
   player,
@@ -14,7 +15,7 @@ export default function AttributesView({
   height?: number;
 }) {
   const { columns } = useTerminalSize();
-  const barW = Math.max(8, Math.min(20, Math.floor(columns * 0.22)));
+  const barW = barWidthFor(columns);
 
   const lines: React.ReactNode[] = [
     <Box flexDirection="row" justifyContent="space-between">

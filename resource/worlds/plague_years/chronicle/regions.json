@@ -6,7 +6,8 @@
     "icon": "📍",
     "climate": "temperate",
     "neighbors": [
-      "reg_plague_years_1"
+      "reg_plague_years_7",
+      "reg_plague_years_2"
     ]
   },
   {
@@ -16,7 +17,8 @@
     "icon": "📍",
     "climate": "temperate",
     "neighbors": [
-      "reg_plague_years_2"
+      "reg_plague_years_1",
+      "reg_plague_years_3"
     ]
   },
   {
@@ -26,7 +28,8 @@
     "icon": "📍",
     "climate": "temperate",
     "neighbors": [
-      "reg_plague_years_3"
+      "reg_plague_years_2",
+      "reg_plague_years_4"
     ]
   },
   {
@@ -36,7 +39,8 @@
     "icon": "📍",
     "climate": "temperate",
     "neighbors": [
-      "reg_plague_years_4"
+      "reg_plague_years_3",
+      "reg_plague_years_5"
     ]
   },
   {
@@ -46,7 +50,8 @@
     "icon": "📍",
     "climate": "temperate",
     "neighbors": [
-      "reg_plague_years_5"
+      "reg_plague_years_4",
+      "reg_plague_years_6"
     ]
   },
   {
@@ -56,7 +61,8 @@
     "icon": "📍",
     "climate": "temperate",
     "neighbors": [
-      "reg_plague_years_6"
+      "reg_plague_years_5",
+      "reg_plague_years_7"
     ]
   },
   {
@@ -66,7 +72,8 @@
     "icon": "📍",
     "climate": "temperate",
     "neighbors": [
-      "reg_plague_years_7"
+      "reg_plague_years_6",
+      "reg_plague_years_1"
     ]
   }
 ]

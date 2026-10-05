@@ -1,7 +1,11 @@
 import React from "react";
 import { Box, Text } from "ink";
 import { ScrollPanel } from "../kit/index.js";
+import { bar, statusViewHeight } from "../kit/viewport.js";
 import { useTerminalSize } from "../TerminalSizeContext.js";
+
+// Re-exported so existing status views can keep importing `bar` from here.
+export { bar } from "../kit/viewport.js";
 
 /**
  * Fixed-height, wheel-scrollable viewport for a status view. `lines` must hold
@@ -16,15 +20,12 @@ export function StatusScroll({
   lines: React.ReactNode[];
 }) {
   const { rows } = useTerminalSize();
-  const viewH = Math.max(1, height ?? Math.max(6, rows - 13));
+  const viewH = Math.max(
+    1,
+    height ?? statusViewHeight(rows, { min: 6, reserved: 13 }),
+  );
   // Only draw the scrollbar when the content actually overflows.
   return <ScrollPanel height={viewH} lines={lines} showBar={lines.length > viewH} />;
-}
-
-export function bar(value: number, width = 18, max = 100): string {
-  const clamped = Math.max(0, Math.min(max, value));
-  const filled = Math.round((clamped / max) * width);
-  return "█".repeat(filled) + "░".repeat(Math.max(0, width - filled));
 }
 
 export function StatBar({

@@ -4,12 +4,15 @@ import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
 import WorldManager from "../worlds/WorldManager.js";
 import Player from "../world/Player.js";
-import GeneralPurpose from "../worlds/conditions/GeneralPurpose.js";
 import type { LogEntry } from "../core/store/LogStore.js";
-import WorldCondition from "../worlds/WorldCondition.js";
 import GameStatusMap from "../core/registry/GameStatusMap.js";
 import Game, { ActionView, GameStatusKind } from "../core/Game.js";
 import { PendingChoice } from "../event/PendingChoice.js";
+import { describeCondition } from "../world/conditionText.js";
+import { formatLogEntries, type LogDisplayEntry } from "../ui/logFormat.js";
+import { relationshipDigest } from "../ui/playerSnapshot.js";
+
+export type { LogDisplayEntry } from "../ui/logFormat.js";
 
 // Stable fallbacks for useSyncExternalStore when no level is active.
 const NOOP_SUB = () => () => {};
@@ -18,12 +21,6 @@ const EMPTY_LOGS: never[] = [];
 export interface FormattedVictoryCondition {
   description: string;
   isMet: boolean;
-}
-
-export interface LogDisplayEntry {
-  timestamp: string;
-  eventName: string;
-  isLatest: boolean;
 }
 
 export interface GameScreenData {
@@ -52,19 +49,6 @@ export interface GameScreenData {
   renderCurrentView: (height: number) => React.ReactNode;
 }
 
-function formatCondition(
-  condition: WorldCondition,
-  t: (key: string, params?: Record<string, string | number>) => string,
-): string {
-  if (condition instanceof GeneralPurpose) {
-    const propName = t(`playerConfig.attr.${condition.prop}`);
-    const cmp = condition.cat === "greaterThan" ? ">" : "<";
-    return `${propName} ${cmp} ${condition.num}`;
-  }
-  const typeName = (condition as any).constructor?.name || "Unknown";
-  return `[${typeName}]`;
-}
-
 export default function useWorldGameScreen(): GameScreenData {
   const { t, langCode } = useI18n();
   const { rows } = useTerminalSize();
@@ -75,7 +59,10 @@ export default function useWorldGameScreen(): GameScreenData {
 
   const player = levelManager.getPlayer();
 
-  // Re-render on any player change relevant to the screen.
+  // Re-render on any player change relevant to the screen. The relationship
+  // digest (id:value pairs, not just the size) matters: an NPC-gated action and
+  // the affinity bar only update when an individual affinity crosses a
+  // threshold, which leaves `.size` unchanged.
   useSyncExternalStore(
     player.subscribe,
     () =>
@@ -84,13 +71,15 @@ export default function useWorldGameScreen(): GameScreenData {
         player.health,
         player.happiness,
         player.money,
+        player.reputation,
         player.actionPoints,
         player.intelligence,
         player.social,
         player.fitness,
         player.activeEffects.length,
         player.inventory.length,
-        player.relationships.size,
+        player.flags.size,
+        relationshipDigest(player.relationships),
       ].join("|"),
   );
 
@@ -130,10 +119,13 @@ export default function useWorldGameScreen(): GameScreenData {
 
   const victoryConditions: FormattedVictoryCondition[] = useMemo(() => {
     if (!level?.nextLevelUnlock) return [];
-    return level.nextLevelUnlock.map((cond) => ({
-      description: formatCondition(cond, t),
-      isMet: cond.customsClearance(player),
-    }));
+    return level.nextLevelUnlock.map((cond) => {
+      const described = describeCondition(cond, t);
+      return {
+        description: described.known ? described.description : `[${described.typeName}]`,
+        isMet: cond.customsClearance(player),
+      };
+    });
   }, [
     level,
     player,
@@ -148,15 +140,10 @@ export default function useWorldGameScreen(): GameScreenData {
     player.happiness,
   ]);
 
-  const logs: LogDisplayEntry[] = useMemo(() => {
-    if (!rawLogs?.length) return [];
-    const locale = langCode.replace("_", "-");
-    return rawLogs.map((entry, index) => ({
-      timestamp: entry.timestamp.toLocaleString(locale),
-      eventName: t(entry.incident.nameKey ?? entry.incident.id),
-      isLatest: index === 0,
-    }));
-  }, [rawLogs, langCode, t]);
+  const logs: LogDisplayEntry[] = useMemo(
+    () => formatLogEntries(rawLogs, langCode, t),
+    [rawLogs, langCode, t],
+  );
 
   const onPrevView = useCallback(() => {
     setCurrentViewIndex((prev) => (prev - 1 + viewCount) % viewCount);

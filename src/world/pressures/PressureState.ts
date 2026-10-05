@@ -47,6 +47,15 @@ export default class PressureState {
     return v === undefined ? ax.initial : v;
   }
 
+  /**
+   * Whether `id` is an axis of the *currently active* content set. World-scoped
+   * worlds clear the classic axes, so consumers that bias behavior off an axis
+   * must distinguish "absent" from "value 0".
+   */
+  public has(id: string): boolean {
+    return this.registry.getAxis(id) !== undefined;
+  }
+
   public set(id: string, value: number): void {
     const ax = this.registry.getAxis(id);
     if (!ax) return;
@@ -76,7 +85,7 @@ export default class PressureState {
    * current values), pull each axis toward its baseline, then optionally add
    * `jitter` noise. Returns the net per-axis change.
    */
-  public tick(rand: () => number = Math.random, jitter = 0): PressureTickResult {
+  public tick(rand: () => number, jitter = 0): PressureTickResult {
     const deltas = new Map<string, number>();
     const add = (id: string, d: number) => deltas.set(id, (deltas.get(id) ?? 0) + d);
 

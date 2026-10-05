@@ -4,6 +4,7 @@ import { ArchiveManager } from "../core/archive/ArchiveManager.js";
 import { SaveMeta } from "../core/archive/SaveSchema.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
+import { useFlash } from "./useFlash.js";
 
 export interface ArchiveScreenData {
   saves: SaveMeta[];
@@ -31,7 +32,7 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
 
   const [saves, setSaves] = useState<SaveMeta[]>(() => store.listSaves());
   const [selectedIndex, setSelectedIndexState] = useState(0);
-  const [message, setMessage] = useState<string | null>(null);
+  const { value: message, flash, set: setMessage } = useFlash<string>(3000);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [saveMode, setSaveMode] = useState(false);
   const [saveName, setSaveName] = useState("");
@@ -43,11 +44,6 @@ export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
     setSaveMode(false);
     setSaveName("");
   }, [store]);
-
-  const flash = useCallback((msg: string) => {
-    setMessage(msg);
-    setTimeout(() => setMessage(null), 3000);
-  }, []);
 
   const handleStartSave = useCallback(() => {
     setSaveMode(true);

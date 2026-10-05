@@ -1,6 +1,6 @@
 {
     "name": "@baigao_h/terminal-live",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "A small game running on the terminal.",
     "main": "dist/main.js",
     "types": "dist/main.d.ts",
@@ -27,6 +27,7 @@
         "runtsc": "npx tsx src/main.tsx",
         "test": "vitest run",
         "test:watch": "vitest",
+        "test:ink": "vitest run --config vitest.ink.config.ts",
         "test:engine": "npm run build && node dist/dev/validate.js",
         "balance": "npm run build && node dist/dev/montecarlo.js",
         "test:ui": "npm run build && node scripts/ui-smoke.mjs"

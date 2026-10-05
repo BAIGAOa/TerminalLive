@@ -107,6 +107,9 @@ export function treatCondition(state: HealthState, id: string, amount: number): 
 }
 
 export function useAddiction(state: HealthState, id: string, amount = 10): void {
+  // Reject unknown ids: otherwise a typo'd substance creates an addiction entry
+  // that no content defines and that pollutes the save forever.
+  if (!(ADDICTIONS as readonly string[]).includes(id)) return;
   const a = state.addictions[id] ?? { dependence: 0, tolerance: 0 };
   a.dependence = clamp(a.dependence + amount);
   a.tolerance = clamp(a.tolerance + amount * 0.6);
@@ -197,7 +200,9 @@ export function tickHealth(
       (c) => !state.conditions[c.id] && c.kind === "chronic",
     );
     if (candidates.length > 0) {
-      const pick = candidates[Math.floor(rng() * candidates.length)];
+      // Clamp the index: an rng returning exactly 1 would index out of bounds.
+      const pick =
+        candidates[Math.min(candidates.length - 1, Math.floor(rng() * candidates.length))];
       acquireCondition(state, pick.id, stats.age, 15);
       events.push({ kind: "health.diagnosed", params: { id: pick.id } });
     }

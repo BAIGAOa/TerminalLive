@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Text } from "ink";
 import { useFocusState } from "ink-cartridge";
 import Player from "../../world/Player.js";
@@ -8,31 +8,17 @@ import RelationshipSystem from "../../world/relationships/RelationshipSystem.js"
 import Game from "../../core/Game.js";
 import { ScrollList } from "../kit/index.js";
 import NpcModal from "../NpcModal.js";
-import { presentModal } from "../layers/modalBus.js";
+import { dismissModal, presentModal } from "../layers/modalBus.js";
+import { NPC_MODAL_ID } from "../layers/layerIds.js";
 import { useTerminalSize } from "../TerminalSizeContext.js";
 import { useThemeColors } from "../../hooks/theme/ThematicCommunicator.js";
 import { bar } from "./common.js";
-
-const CARD_HEIGHT = 3;
-
-const ROLE_ICON: Record<string, string> = {
-  "npc.role.family": "👪",
-  "npc.role.friend": "🧑",
-  "npc.role.mentor": "🎓",
-  "npc.role.partner": "💞",
-  "npc.role.work": "💼",
-  "npc.role.pet": "🐾",
-};
-
-function affinityColor(
-  v: number,
-  colors: ReturnType<typeof useThemeColors>,
-): string {
-  if (v >= 70) return colors.success;
-  if (v >= 40) return colors.warning;
-  if (v >= 20) return colors.text;
-  return colors.danger;
-}
+import {
+  affinityColor,
+  CARD_HEIGHT,
+  fitRelationshipPanel,
+  ROLE_ICON,
+} from "./relationshipLayout.js";
 
 /**
  * The relationship page: a stack of NPC cards (↓/↑ select, ⏎ interact). The
@@ -58,6 +44,13 @@ export default function RelationshipsView({
   const contentH = height ?? Math.max(8, rows - 16);
   const focused = useFocusState("rel-cards", "game-main");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // The NPC dialog is a modal layer; when this view unmounts (navigating away)
+  // its cleanup must dismiss the layer, or a stale modal would linger on screen
+  // above the next screen. Mirrors WorldGame's modal effects.
+  useEffect(() => {
+    return () => dismissModal(NPC_MODAL_ID);
+  }, []);
 
   // Depend on `relationships` so the cards refresh when affinity changes.
   const known = useMemo(
@@ -87,23 +80,15 @@ export default function RelationshipsView({
   const openNpc = (npcId: string) => {
     // Don't stack another modal while a choice is pending.
     if (game.getPendingChoice()) return;
-    presentModal("npc-modal", NpcModal, { npcId });
+    presentModal(NPC_MODAL_ID, NpcModal, { npcId });
   };
 
   // Budget the panel: a header line, as many cards as fit, an optional
   // "more below" line, and the detail box (only when there is room for it).
-  const HEADER_H = 1;
-  const DETAIL_H = 5; // border×2 + 3 content lines
-  const HINT_H = 1;
-  const roomAfterChrome = contentH - HEADER_H - HINT_H;
-  const showDetail = roomAfterChrome >= CARD_HEIGHT + DETAIL_H;
-  const listRows = Math.max(
-    1,
-    Math.floor((roomAfterChrome - (showDetail ? DETAIL_H : 0)) / CARD_HEIGHT),
+  const { showDetail, shown, hidden, listHeight } = fitRelationshipPanel(
+    contentH,
+    known.length,
   );
-  const shown = Math.min(listRows, known.length);
-  const hidden = known.length - shown;
-  const listHeight = shown * CARD_HEIGHT;
 
   return (
     <Box flexDirection="column" width="100%" height={contentH}>

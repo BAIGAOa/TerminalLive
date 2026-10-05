@@ -8,12 +8,8 @@ import {
 import { useControlConsole } from "../hooks/useControlConsole.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
-import {
-  clampHeight,
-  ModalFrame,
-  ScrollPanel,
-  TextField,
-} from "./kit/index.js";
+import { computeConsoleLayout } from "./consoleLayout.js";
+import { ModalFrame, ScrollPanel, TextField } from "./kit/index.js";
 
 function NotificationItem({
   notification,
@@ -89,15 +85,14 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
   const { boundKeyboard } = useKeyboard();
   const { rows } = useTerminalSize();
 
-  // Mirror ModalFrame's clamp so the inner layout exactly fills the frame
-  // (border 2 + paddingY 2 + title 2 = 6 rows of chrome).
-  const modalH = clampHeight(rows, DESIRED_H, 6);
-  const bodyH = Math.max(1, modalH - 6);
-
-  const notifH = Math.min(2, data.notifications.length);
-  const gap = notifH > 0 ? 1 : 0;
-  const compH = data.inputMode ? Math.min(4, data.completions.length) : 0;
-  const resultsH = Math.max(1, bodyH - (1 /*hint*/ + notifH + gap + 1 /*header*/ + 2 /*input+margin*/ + compH));
+  // Size the inner layout to exactly fill the frame ModalFrame will render.
+  const { notifH, gap, compH, resultsH } = computeConsoleLayout({
+    rows,
+    desiredH: DESIRED_H,
+    notifications: data.notifications.length,
+    completions: data.completions.length,
+    inputMode: data.inputMode,
+  });
 
   // The store keeps results newest-first; show them chronologically (like a
   // terminal) so multi-line command output reads top-to-bottom.

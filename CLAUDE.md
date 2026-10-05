@@ -30,7 +30,7 @@ npm run build        # tsc --locale zh-CN → dist/
 npm run start        # run the built dist/main.js (bun)
 npm run runtsc       # run src/main.tsx directly with tsx (no build)
 
-npm test             # vitest run — unit tests for pure logic / engine (34 suites)
+npm test             # vitest run — unit tests for pure logic / engine
 npx vitest run src/__tests__/game/lifeReview.test.ts   # single test file
 npx vitest run -t "buildLifeReview"                    # single test by name
 npx tsc --noEmit     # cheap typecheck; preferred over heavy suites during iteration
@@ -68,13 +68,16 @@ Settings sub-page, also into `SettingRegistry`.
 - `src/core/` — infrastructure: `GameInitialization`, `Game` (the gameplay facade),
   `TypedEventBus`, registries, random, archive/save, mod sandbox, theme, repl, stores.
 - `src/content/` — content loaders that populate registries from `resource/*.json` and mods
-  (`Actions`, `Effects`, `Traits`, `World`, `Weather`, `Conditions`, `GameStatus`, `Arcs`, …).
+  (`Actions`, `Effects`, `Traits`, `Weather`, `Conditions`, `GameStatus`, `Arcs`, …).
+  World content/manifests are loaded by `src/worlds/`.
 - `src/world/` — gameplay systems & state: `Player`, `stats`, `requirements`, `choices`,
   and the `chronicle/`, `relationships/`, `careers/`, `economy/`, `health/`, `politics/`,
   `regions/`, `chains/`, `narrative/`, `pressures/`, `items/`, `weather/`, `lineage/` systems.
 - `src/event/` — the event engine: `EventCenter`, `EventDirector`, weighted algorithm,
   `filters/` (predecessor/once/blocked), `ChainTracker`, `PostEventScheduler`.
-- `src/level/` — `LevelManager` drives levels, event loading per level, level conditions.
+- `src/worlds/` — `WorldManager` drives worlds/lives: per-world content loading
+  (`WorldContentLoader`), manifests (`WorldManifestLoader`), event loading per world,
+  world conditions, and progression (`worldProgression`, `worldChain`).
 - `src/hooks/` — React hooks that bridge services/stores to screens (view-model layer).
 - `src/ui/` — screens (`*.tsx`), `ui/kit/` reusable components, `ui/layers/` modal & console
   layer bus (`modalBus`, `consoleLayer`), and pure helpers like `menuLayout.ts`, `keymap.ts`.

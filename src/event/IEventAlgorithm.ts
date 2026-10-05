@@ -1,6 +1,7 @@
 import Player from "../world/Player.js";
 import { PendingChoice } from "./PendingChoice.js";
 import type { Incident } from "../world/Incident.js";
+import type { SerializedPendingPostEvent } from "./PostEventScheduler.js";
 
 export interface IEventAlgorithm {
     /** 每回合被调用，尝试在本关卡中触发事件 */
@@ -28,4 +29,9 @@ export interface IEventAlgorithm {
     ): void;
     /** 调试：强制下一次抽取选中该事件（若它可被抽取），返回是否已排定 */
     forceNextEvent?(incidentId: string): boolean;
+
+    /** 序列化尚未触发的后置事件队列（存档用，闭包无关） */
+    snapshotPostEvents?(): SerializedPendingPostEvent[];
+    /** 从存档恢复后置事件队列，边在触发时按内容重新解析 */
+    restorePostEvents?(items: SerializedPendingPostEvent[]): void;
 }

@@ -3,11 +3,10 @@ import { container } from "../Container.js";
 import WorldManager from "../worlds/WorldManager.js";
 import World from "../worlds/World.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import GeneralPurpose from "../worlds/conditions/GeneralPurpose.js";
 import WorldRecordsStore from "../core/store/WorldRecordsStore.js";
 import { worldEntries } from "../worlds/worldProgression.js";
 import type { WorldStatus } from "../worlds/worldProgression.js";
-import WorldCondition from "../worlds/WorldCondition.js";
+import { describeCondition } from "../world/conditionText.js";
 
 export interface DifficultyItem {
   label: string;
@@ -57,19 +56,16 @@ export interface WorldSelectionData {
 }
 
 function formatSingleCondition(
-  condition: WorldCondition,
+  condition: Parameters<typeof describeCondition>[0],
   t: (key: string, params?: Record<string, string | number>) => string,
 ): FormattedCondition {
-  if (condition instanceof GeneralPurpose) {
-    const propName = t(`playerConfig.attr.${condition.prop}`);
-    const cmp = condition.cat === "greaterThan" ? ">" : "<";
-    return { description: `${propName} ${cmp} ${condition.num}`, isCustom: false };
-  }
-  const typeName = (condition as any).constructor?.name || "Unknown";
-  return {
-    description: t("levelDetail.customCondition", { type: typeName }),
-    isCustom: true,
-  };
+  const described = describeCondition(condition, t);
+  return described.known
+    ? { description: described.description, isCustom: false }
+    : {
+        description: t("levelDetail.customCondition", { type: described.typeName }),
+        isCustom: true,
+      };
 }
 
 /**
@@ -253,7 +249,9 @@ export function useWorldSelection(): WorldSelectionData {
     highlightedStatus,
     highlightedObjectives,
     highlightedMedals,
-    highlightedDifficulty: highlightedLevel?.tags[0] ?? activeTag,
+    // `activeTag` may be the "__all__" sentinel; never surface it as a tag key.
+    highlightedDifficulty:
+      highlightedLevel?.tags[0] ?? (activeTag === ALL ? null : activeTag),
     difficultyEffects: [],
     progressOverview,
   };

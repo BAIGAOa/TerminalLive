@@ -3,7 +3,7 @@ import { Text } from "ink";
 import { container } from "../../Container.js";
 import WorldState from "../../world/chronicle/WorldState.js";
 import ChronicleRegistry from "../../world/chronicle/ChronicleRegistry.js";
-import { KARMA_AXES, KarmaAxis } from "../../world/chronicle/karma.js";
+import { KARMA_AXES } from "../../world/chronicle/karma.js";
 import WeatherState from "../../world/weather/WeatherState.js";
 import { seasonOf } from "../../world/weather/WeatherDefinition.js";
 import WorldChainSystem from "../../world/chains/WorldChainSystem.js";
@@ -11,13 +11,7 @@ import { worldChainsById } from "../../content/WorldChains.js";
 import NarrativeSystem from "../../world/narrative/NarrativeSystem.js";
 import ConfigStore from "../../core/store/ConfigStore.js";
 import { StatusScroll } from "./common.js";
-
-const AXIS_COLOR: Record<KarmaAxis, string> = {
-  benevolence: "green",
-  ambition: "yellow",
-  wisdom: "cyan",
-  rebellion: "magenta",
-};
+import { AXIS_COLOR } from "./palettes.js";
 
 export default function WorldView({
   t,

@@ -173,6 +173,14 @@ export function tickWork(state: WorkState, stats: WorkStats, rng: Rng): WorkEven
     -100,
     100,
   );
+  // Boss standing decays unless output stays strong — this is the value the
+  // promotion gate reads, so it must actually move (it was previously frozen
+  // at 0, making `gateSatisfied`'s boss check always true).
+  state.standing.bosses = clamp(
+    (state.standing.bosses ?? 0) + (state.performance > 65 ? 1 : 0) - 1,
+    -100,
+    100,
+  );
 
   if (state.burnout >= 80) events.push({ kind: "work.burnout" });
   if (state.performance < 20 && rng() < 0.35) {

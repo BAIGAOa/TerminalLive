@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { Box, Text } from "ink";
 import { back, useKeyboard } from "ink-cartridge";
 import { ScrollList, TextField } from "./kit/index.js";
+import { statusViewHeight } from "./kit/viewport.js";
 import { useArchiveScreen } from "../hooks/useArchiveScreen.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
@@ -68,7 +69,7 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
           <ScrollList
             focusId="archive-list"
             itemHeight={4}
-            height={Math.max(4, data.rows - 10)}
+            height={statusViewHeight(data.rows, { min: 4, reserved: 10 })}
             pageKeys={false}
             items={items}
             onChange={(_item, index) => data.setSelectedIndex(index)}

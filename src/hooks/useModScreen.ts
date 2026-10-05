@@ -30,7 +30,9 @@ export function useModScreen(): ModScreenData {
   );
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const allNames = modRegistry.getAllMods();
+  // `getAllMods()` returns a fresh array each call; memoize it so the `mods`
+  // memo below isn't invalidated on every render.
+  const allNames = useMemo(() => modRegistry.getAllMods(), [modRegistry]);
 
   const mods: ModItem[] = useMemo(
     () =>

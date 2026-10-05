@@ -159,7 +159,9 @@ export function tickPolitics(
   if (state.policies.length < 3 && rng() < 0.16) {
     const available = POLICIES.filter((p) => !state.policies.includes(p.id));
     if (available.length > 0) {
-      const pick = available[Math.floor(rng() * available.length)];
+      // Clamp the index: an rng returning exactly 1 would index out of bounds.
+      const pick =
+        available[Math.min(available.length - 1, Math.floor(rng() * available.length))];
       state.policies.push(pick.id);
       state.tension = clamp(state.tension + pick.tensionDelta);
       events.push({ kind: "politics.policyEnacted", params: { id: pick.id } });

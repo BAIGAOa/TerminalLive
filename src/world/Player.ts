@@ -5,6 +5,7 @@ import {
   clampStat,
   deltaEntries,
   scaleDelta,
+  STAT_KEYS,
   StatDelta,
   StatKey,
 } from "./stats.js";
@@ -190,8 +191,13 @@ export default class Player {
   }
 
   public addEffect(id: string, turns?: number, stacks = 1): void {
+    // Unknown effect id (mod typo / version skew) must be a warning, not a
+    // silent no-op that leaves the content mysteriously inert.
     const def = container.resolve(EffectRegistry).get(id);
-    if (!def) return;
+    if (!def) {
+      console.warn(`[effects] 未知效果 id "${id}"，已忽略`);
+      return;
+    }
     const max = def.maxStacks ?? 1;
     const duration = turns ?? def.turns;
     const existing = this.activeEffects.find((e) => e.id === id);
@@ -325,14 +331,14 @@ export default class Player {
   }
 
   public applyAttributes(attrs: Partial<PlayerAttributes>): void {
-    for (const [k, v] of Object.entries(attrs)) {
-      if (v === undefined) continue;
-      if (k === "playerName") {
-        this.playerName = String(v);
-      } else if (typeof v === "number") {
-        this.setStat(k as StatKey, v);
-      }
+    // Only real StatKeys are written as stats. Iterating the attribute object
+    // blindly would also push transient numeric fields (actionPoints, careerRank)
+    // through setStat, where a future rename would silently mis-clamp.
+    for (const key of STAT_KEYS) {
+      const v = attrs[key];
+      if (typeof v === "number") this.setStat(key, v);
     }
+    if (attrs.playerName !== undefined) this.playerName = String(attrs.playerName);
     this.syncPsychEffects();
     this.notify();
   }

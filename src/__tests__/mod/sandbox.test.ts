@@ -54,6 +54,16 @@ describe("mod sandbox", () => {
     }
   });
 
+  it("aborts a synchronous infinite loop instead of hanging", () => {
+    const started = Date.now();
+    // A tiny timeout keeps the test fast; production defaults to 5s.
+    // `vm` reports a timeout as a thrown error (name varies by Node version).
+    expect(() =>
+      loadModModule(`while (true) {}`, { ...opts, timeoutMs: 50 }),
+    ).toThrow();
+    expect(Date.now() - started).toBeLessThan(10_000);
+  });
+
   it("exposes __filename and __dirname", () => {
     const out = loadModModule(
       `module.exports = { file: __filename, dir: __dirname };`,

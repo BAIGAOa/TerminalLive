@@ -23,6 +23,11 @@ export default class BaseRegistry<T> {
     return value;
   }
 
+  /** Non-throwing lookup for render paths: an unknown id must not crash the UI. */
+  public tryGet(key: string): T | undefined {
+    return this.entries.get(key);
+  }
+
   public has(key: string): boolean {
     return this.entries.has(key);
   }
@@ -49,7 +54,8 @@ export default class BaseRegistry<T> {
     return result;
   }
 
-  public getMap() {
+  /** Read-only view — callers must not mutate registry internals directly. */
+  public getMap(): ReadonlyMap<string, T> {
     return this.entries;
   }
 }

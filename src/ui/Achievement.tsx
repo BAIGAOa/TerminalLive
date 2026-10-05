@@ -5,6 +5,8 @@ import { MenuList, ScrollList } from "./kit/index.js";
 import { useAchievementScreen } from "../hooks/useAchievementScreen.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { MergedAchievement } from "../achievement/AchievementManager.js";
+import { statusViewHeight } from "./kit/viewport.js";
+import { useTrackedTimeout } from "../hooks/useFlash.js";
 
 /** Every card is exactly this many lines: top border, title, desc, bottom border. */
 const CARD_HEIGHT = 4;
@@ -59,6 +61,7 @@ export default function AchievementScreen() {
   const colors = useThemeColors();
   const { boundKeyboard, focusSet } = useKeyboard();
   const { back } = useScreenSystem();
+  const later = useTrackedTimeout();
 
   useEffect(() => {
     const u = boundKeyboard(["escape"], () => back());
@@ -68,7 +71,7 @@ export default function AchievementScreen() {
   // Defer: the new category's card list mounts on the next render, so the
   // focus target may not be registered yet if we move focus synchronously.
   const focusCards = () => {
-    setTimeout(() => {
+    later(() => {
       try {
         focusSet("achievement-list");
       } catch {
@@ -149,7 +152,10 @@ export default function AchievementScreen() {
             <ScrollList
               focusId="achievement-list"
               itemHeight={CARD_HEIGHT}
-              height={Math.max(CARD_HEIGHT, data.rows - data.menuItems.length - 6)}
+              height={statusViewHeight(data.rows, {
+                min: CARD_HEIGHT,
+                reserved: data.menuItems.length + 6,
+              })}
               items={cardItems}
               renderItem={(item, state) => {
                 const a = byId.get(item.value);

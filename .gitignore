@@ -145,8 +145,18 @@ repomix.config.json
 .npmrc
 AI.md
 
-# Auto-saved current life (runtime state, not source)
+# Runtime game state written by the stores (not source). The game recreates
+# these from defaults on first run, so they must not be committed or shipped.
 resource/life.json
+resource/config.json
+resource/lineage.json
+resource/levels_progress.json
+resource/history.json
+resource/achievement/unlocked.json
+
+# Stray atomic-write temp files (should be cleaned up, but never commit them)
+resource/*.tmp-*
+resource/**/*.tmp-*
 
 # CodeGraph local index
 .codegraph/

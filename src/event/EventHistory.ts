@@ -1,10 +1,3 @@
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
-
-const _filename = fileURLToPath(import.meta.url);
-const _dirname = dirname(_filename);
-
 export default class EventHistory {
   private triggered: Set<string> = new Set();
   private blocked: Set<string> = new Set();
@@ -16,13 +9,6 @@ export default class EventHistory {
   /** The most recently fired incident and how many years in a row it has fired. */
   private lastId: string | null = null;
   private consecutiveCount = 0;
-  private readonly HISTORY_PATH = join(
-    _dirname,
-    "..",
-    "..",
-    "resource",
-    "history.json",
-  );
 
   public markTriggered(
     incidentId: string,
@@ -101,30 +87,22 @@ export default class EventHistory {
     return this.rangeRecord;
   }
 
+  /**
+   * DEPRECATED no-op. History persistence is owned solely by SaveCodec /
+   * AutoSave (see `toArchiveData` / `restoreFromArchive`). The old
+   * `resource/history.json` file path was vestigial: it was written only on a
+   * save load (via `WorldManager.restoreWorld`) and read once at boot, i.e. it
+   * mutated a repo-tracked file at runtime while the authoritative state lived
+   * in the save blob. The methods are kept as no-ops so existing callers
+   * (`GameInitialization.init`, `WorldManager.restoreWorld`) still compile.
+   */
   public save(): void {
-    writeFileSync(
-      this.HISTORY_PATH,
-      JSON.stringify(this.toArchiveData(), null, 2),
-      "utf-8",
-    );
+    /* no-op — see class docs; persistence goes through the save codec. */
   }
 
+  /** DEPRECATED no-op — see {@link save}. State is restored from the save blob. */
   public load(): void {
-    if (!existsSync(this.HISTORY_PATH)) return;
-    try {
-      const data = JSON.parse(readFileSync(this.HISTORY_PATH, "utf-8"));
-      this.restoreFromArchive({
-        triggered: data.triggered ?? [],
-        blocked: data.blocked ?? [],
-        rangeRecord: data.rangeRecord ?? {},
-        triggeredAge: data.triggeredAge,
-        categoryAge: data.categoryAge,
-        lastId: data.lastId ?? null,
-        consecutiveCount: data.consecutiveCount ?? 0,
-      });
-    } catch {
-      /* 文件损坏则忽略 */
-    }
+    /* no-op — see save(). */
   }
 
   /** Serializable form shared by `save()` and the archive codec. */

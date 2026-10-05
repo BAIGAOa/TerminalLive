@@ -4,6 +4,7 @@ import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { MenuList, ScrollList } from "./kit/index.js";
 import { useWorldSelection } from "../hooks/useWorldSelection.js";
 import { fitPanelSections } from "./menuLayout.js";
+import { statusViewHeight } from "./kit/viewport.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
 import WorldGame from "./WorldGame.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
@@ -197,7 +198,7 @@ export default function WorldSelection() {
               key={data.activeDifficulty ?? "none"}
               focusId="level-list"
               itemHeight={3}
-              height={Math.max(3, rows - 14)}
+              height={statusViewHeight(rows, { min: 3, reserved: 14 })}
               items={levelItems}
               pageKeys={false}
               onChange={(item) => {

@@ -8,6 +8,7 @@ import ChronicleRegistry from "../world/chronicle/ChronicleRegistry.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
+import { statusViewHeight } from "./kit/viewport.js";
 
 /** The codex — world lore unlocked as a life unfolds. */
 export default function Codex() {
@@ -77,7 +78,7 @@ export default function Codex() {
               </Text>
               <Box marginTop={1} flexGrow={1}>
                 <ScrollPanel
-                  height={Math.max(3, rows - 10)}
+                  height={statusViewHeight(rows, { min: 3, reserved: 10 })}
                   showBar={false}
                   lines={[
                     <Text key="body" color={currentUnlocked ? colors.text : colors.muted}>

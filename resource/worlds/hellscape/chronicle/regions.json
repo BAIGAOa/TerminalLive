@@ -6,7 +6,8 @@
     "icon": "📍",
     "climate": "arid",
     "neighbors": [
-      "reg_hellscape_1"
+      "reg_hellscape_7",
+      "reg_hellscape_2"
     ]
   },
   {
@@ -16,7 +17,8 @@
     "icon": "📍",
     "climate": "arid",
     "neighbors": [
-      "reg_hellscape_2"
+      "reg_hellscape_1",
+      "reg_hellscape_3"
     ]
   },
   {
@@ -26,7 +28,8 @@
     "icon": "📍",
     "climate": "arid",
     "neighbors": [
-      "reg_hellscape_3"
+      "reg_hellscape_2",
+      "reg_hellscape_4"
     ]
   },
   {
@@ -36,7 +39,8 @@
     "icon": "📍",
     "climate": "arid",
     "neighbors": [
-      "reg_hellscape_4"
+      "reg_hellscape_3",
+      "reg_hellscape_5"
     ]
   },
   {
@@ -46,7 +50,8 @@
     "icon": "📍",
     "climate": "arid",
     "neighbors": [
-      "reg_hellscape_5"
+      "reg_hellscape_4",
+      "reg_hellscape_6"
     ]
   },
   {
@@ -56,7 +61,8 @@
     "icon": "📍",
     "climate": "arid",
     "neighbors": [
-      "reg_hellscape_6"
+      "reg_hellscape_5",
+      "reg_hellscape_7"
     ]
   },
   {
@@ -66,7 +72,8 @@
     "icon": "📍",
     "climate": "arid",
     "neighbors": [
-      "reg_hellscape_7"
+      "reg_hellscape_6",
+      "reg_hellscape_1"
     ]
   }
 ]

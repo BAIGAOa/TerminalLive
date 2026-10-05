@@ -155,6 +155,16 @@ export default class ModPluginLoader {
     // Also drop screens the previous load registered, or re-registration
     // accumulates duplicates on every reload.
     this.registeredScreens.clear();
+    // Reset the scoped content overlay too: `loadEnabled` re-runs every mod's
+    // `onInit`, so without this the arrays double on each reload and the
+    // overlay is re-registered over and over.
+    this.scopedOverlay = {
+      lore: [],
+      fates: [],
+      worldEvents: [],
+      pressureAxes: [],
+      pressureRules: [],
+    };
     this.loadEnabled();
   }
 
@@ -246,7 +256,16 @@ export default class ModPluginLoader {
       console.warn(`[Mod] "${mod.dirName}" 未声明 "npcs" 能力，忽略 registerNpcTypes`);
     }
     this.registerHooks(plugin, ctx, mod.dirName);
-    safe(`${mod.dirName}.onInit`, () => plugin.hooks?.onInit?.(ctx));
+    // `onInit` may be async; `safe` only guards synchronous throws, so attach a
+    // catch to the returned promise or a rejection becomes unhandled.
+    const initResult = safe(`${mod.dirName}.onInit`, () =>
+      plugin.hooks?.onInit?.(ctx),
+    );
+    if (initResult && typeof (initResult as Promise<unknown>).catch === "function") {
+      (initResult as Promise<unknown>).catch((err) =>
+        console.error(`[Mod] "${mod.dirName}".onInit 异步失败:`, err),
+      );
+    }
 
     this.plugins.push(plugin);
     this.eventBus.emit("moder:loadSuccess", { modName: plugin.id });

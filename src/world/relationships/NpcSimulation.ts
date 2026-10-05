@@ -231,7 +231,8 @@ export default class NpcSimulation {
     life.age += 1;
     const before = life.stage;
     life.stage = stageOf(life.age);
-    if (life.stage !== before && life.stage === "elder") life.health -= 6;
+    if (life.stage !== before && life.stage === "elder")
+      life.health = clamp(life.health - 6, 0, 100);
 
     const ageHazard =
       life.age >= 85 ? 0.12 : life.age >= 72 ? 0.06 : life.age >= 60 ? 0.025 : 0.003;
@@ -526,7 +527,8 @@ export default class NpcSimulation {
   // ── persistence ────────────────────────────────────────────────
   public snapshot(): NpcSimSnapshot {
     const lives: NpcSimSnapshot["lives"] = {};
-    for (const [id, l] of this.lives) lives[id] = { ...l, goals: [...l.goals] };
+    for (const [id, l] of this.lives)
+      lives[id] = { ...l, goals: [...l.goals], flags: [...l.flags] };
     const edges: Record<string, NpcEdge> = {};
     for (const [k, e] of this.edges) edges[k] = { ...e };
     const bonds: Record<string, NpcBond> = {};
@@ -536,7 +538,10 @@ export default class NpcSimulation {
 
   public restore(snap: Partial<NpcSimSnapshot> | undefined): void {
     if (!snap) return;
+    // Each present field is authoritative: clear before repopulating so a life
+    // loaded onto an already-populated singleton can't keep stale NPCs/edges.
     if (snap.lives) {
+      this.lives.clear();
       for (const [id, l] of Object.entries(snap.lives)) {
         this.lives.set(id, {
           ...l,
@@ -549,9 +554,11 @@ export default class NpcSimulation {
       }
     }
     if (snap.edges) {
+      this.edges.clear();
       for (const [k, e] of Object.entries(snap.edges)) this.edges.set(k, { ...e });
     }
     if (snap.bonds) {
+      this.bonds.clear();
       for (const [id, b] of Object.entries(snap.bonds)) this.bonds.set(id, { ...b });
     }
   }

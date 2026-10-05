@@ -140,7 +140,7 @@ export function tickArcs(
   return events;
 }
 
-/** Active arcs with their progress, newest milestone first. */
+/** Active arcs (in insertion order) that still have a resolvable definition. */
 export function activeArcs(
   state: NarrativeState,
   defs: Record<string, ArcDef>,

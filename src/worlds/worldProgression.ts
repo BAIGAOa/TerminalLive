@@ -28,7 +28,7 @@ export function predecessorsOf(levels: World[]): Map<string, Set<string>> {
 
 /**
  * Status per level: completed if finished; otherwise unlocked when it has no
- * predecessors, or at least one predecessor is completed; else locked.
+ * predecessors, or EVERY world it requires has been completed; else locked.
  */
 export function computeStatuses(
   levels: World[],

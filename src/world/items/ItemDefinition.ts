@@ -30,7 +30,7 @@ export const itemSchema = z.object({
   effects: statDeltaSchema.optional(),
   buff: buffRefSchema.optional(),
   tags: z.array(z.string()).default([]),
-  price: z.number().optional(),
+  price: z.number().min(0).optional(),
 });
 
 export type ItemJson = z.infer<typeof itemSchema>;

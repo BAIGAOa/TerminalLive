@@ -12,14 +12,26 @@ export default class AchievementResolver {
   }
 
   private parseFile(path: string): Achievement[] {
+    let raw: unknown;
     try {
-      const raw = JSON.parse(readFileSync(path, "utf-8"));
-      const entries = Array.isArray(raw) ? raw : [raw];
-      return entries.map((e) => AchievementSchema.parse(e));
+      raw = JSON.parse(readFileSync(path, "utf-8"));
     } catch (err) {
       console.error(`解析成就文件 ${path} 失败:`, (err as Error).message);
       return [];
     }
+    // Parse entry-by-entry: one bad achievement must not discard the file.
+    const entries = Array.isArray(raw) ? raw : [raw];
+    const out: Achievement[] = [];
+    for (const entry of entries) {
+      const parsed = AchievementSchema.safeParse(entry);
+      if (parsed.success) out.push(parsed.data);
+      else
+        console.warn(
+          `[achievement] 跳过 ${path} 中的无效条目:`,
+          parsed.error.message,
+        );
+    }
+    return out;
   }
 
   private parseDir(dir: string): Achievement[] {
@@ -42,7 +54,12 @@ export default class AchievementResolver {
 
   private buildAchievement(achievements: Achievement[]): void {
     for (const ach of achievements) {
-      this.registry.add(ach.category, ach);
+      // A duplicate id (e.g. a mod re-declaring a built-in) must not abort boot.
+      try {
+        this.registry.add(ach.category, ach);
+      } catch (err) {
+        console.warn(`[achievement] 跳过重复 id "${ach.id}":`, (err as Error).message);
+      }
     }
   }
 
@@ -53,6 +70,13 @@ export default class AchievementResolver {
 
   /** 供模组编程式注册 */
   public registerSingle(achievement: Achievement): void {
-    this.registry.add(achievement.category, achievement);
+    try {
+      this.registry.add(achievement.category, achievement);
+    } catch (err) {
+      console.warn(
+        `[achievement] 跳过重复 id "${achievement.id}":`,
+        (err as Error).message,
+      );
+    }
   }
 }

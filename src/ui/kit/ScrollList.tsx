@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box } from "ink";
 import { useFocusState, useKeyboard, useMouseRegion } from "ink-cartridge";
 import type { MenuEntry, MenuRenderState } from "./MenuList.js";
+import { firstEnabled, lastEnabled, seek } from "./listNav.js";
 
 export interface ScrollListProps {
   items: MenuEntry[];
@@ -18,44 +19,6 @@ export interface ScrollListProps {
   wrap?: boolean;
   /** Bind PageUp/PageDown to page the list (set false to leave them to a parent). */
   pageKeys?: boolean;
-}
-
-/** First selectable index at or after `from` (wraps). */
-function firstEnabled(items: MenuEntry[], from = 0): number {
-  const n = items.length;
-  for (let i = from; i < n; i++) if (!items[i]?.disabled) return i;
-  for (let i = 0; i < n; i++) if (!items[i]?.disabled) return i;
-  return 0;
-}
-
-/** Last selectable index (or 0). */
-function lastEnabled(items: MenuEntry[]): number {
-  for (let i = items.length - 1; i >= 0; i--) if (!items[i]?.disabled) return i;
-  return 0;
-}
-
-/** Step `dir` from `from`, skipping disabled rows. */
-function seekEnabled(
-  items: MenuEntry[],
-  from: number,
-  dir: 1 | -1,
-  wrap: boolean,
-): number {
-  const n = items.length;
-  if (n === 0) return from;
-  let i = from;
-  for (let c = 0; c < n; c++) {
-    i += dir;
-    if (i < 0) {
-      if (!wrap) return from;
-      i = n - 1;
-    } else if (i >= n) {
-      if (!wrap) return from;
-      i = 0;
-    }
-    if (!items[i]?.disabled) return i;
-  }
-  return from;
 }
 
 function ScrollRow({
@@ -179,13 +142,13 @@ export function ScrollList({
         const n = list.length;
         if (n === 0) return 0;
         if (Math.abs(delta) <= 1) {
-          return seekEnabled(list, prev, delta >= 0 ? 1 : -1, wrap);
+          return seek(list, prev, delta >= 0 ? 1 : -1, wrap);
         }
         let target = prev + delta;
         if (target < 0) target = wrap ? n - 1 : 0;
         if (target >= n) target = wrap ? 0 : n - 1;
         if (list[target]?.disabled) {
-          return seekEnabled(list, prev, delta > 0 ? 1 : -1, wrap);
+          return seek(list, prev, delta > 0 ? 1 : -1, wrap);
         }
         return target;
       });

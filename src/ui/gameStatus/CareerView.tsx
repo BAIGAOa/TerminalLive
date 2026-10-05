@@ -3,6 +3,7 @@ import { Box, Text } from "ink";
 import Player from "../../world/Player.js";
 import { container } from "../../Container.js";
 import CareerSystem from "../../world/careers/CareerSystem.js";
+import { careerRequirementsMet } from "../../world/careers/careerView.js";
 import { bar, StatusScroll } from "./common.js";
 
 const SKILLS = ["craft", "lead", "network", "finance"] as const;
@@ -72,24 +73,14 @@ export default function CareerView({
           {t("career.next", { title: t(next.rankDef.titleKey) })}
         </Text>,
       );
-      next.rankDef.requires.forEach((req) => {
-        const value =
-          req.npc !== undefined
-            ? player.getRelationship(req.npc)
-            : req.prop !== undefined
-              ? player.getStat(req.prop)
-              : 0;
-        const need = req.gte ?? req.lte ?? 0;
-        const met =
-          (req.gte === undefined || value >= req.gte) &&
-          (req.lte === undefined || value <= req.lte);
+      careerRequirementsMet(player, next.rankDef).forEach((req) => {
         const propName = req.prop
           ? t(`playerConfig.attr.${req.prop}`)
           : t("career.requirement");
         lines.push(
-          <Text color={met ? "green" : "gray"}>
+          <Text color={req.met ? "green" : "gray"}>
             {"  "}
-            {met ? "✓" : "○"} {propName} {value}/{need}
+            {req.met ? "✓" : "○"} {propName} {req.value}/{req.need}
           </Text>,
         );
       });

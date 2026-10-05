@@ -22,12 +22,17 @@ export const statKeySchema = z.enum(STAT_KEY_VALUES) as unknown as z.ZodType<Sta
 
 export const statDeltaSchema = z.partialRecord(statKeySchema, z.number());
 
-export const requirementSchema = z.object({
-  prop: statKeySchema.optional(),
-  npc: z.string().optional(),
-  gte: z.number().optional(),
-  lte: z.number().optional(),
-});
+export const requirementSchema = z
+  .object({
+    prop: statKeySchema.optional(),
+    npc: z.string().optional(),
+    gte: z.number().optional(),
+    lte: z.number().optional(),
+  })
+  // Must target something: a bare `{ gte: 50 }` is a content bug, not a gate.
+  .refine((r) => r.prop !== undefined || r.npc !== undefined, {
+    message: "requirement must set either `prop` or `npc`",
+  });
 
 export const buffRefSchema = z.object({
   id: z.string(),

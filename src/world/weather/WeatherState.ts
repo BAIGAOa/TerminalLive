@@ -72,26 +72,30 @@ export default class WeatherState {
   /** How the hidden scores bias each candidate weather's weight. */
   private pressureFactor(weatherId: string, pressures: PressureState | null): number {
     if (!pressures) return 1;
-    const v = (id: string, mid = 50) => pressures.get(id) - mid;
+    // An axis absent from the active (world-scoped) content set must be
+    // neutral, not 0: `get()` returns 0 for unknown axes, which would drag
+    // rain/storm/heat toward the clamp floor in every self-contained world.
+    const dev = (id: string, mid = 50) =>
+      pressures.has(id) ? pressures.get(id) - mid : 0;
     let f = 1;
     switch (weatherId) {
       case "weather_storm":
-        f = 1 + v("pr_calamity") / 50;
+        f = 1 + dev("pr_calamity") / 50;
         break;
       case "weather_rain":
-        f = 1 + v("pr_moist") / 50;
+        f = 1 + dev("pr_moist") / 50;
         break;
       case "weather_drought":
-        f = 1 + (50 - pressures.get("pr_moist")) / 50 + v("pr_temp") / 50;
+        f = 1 - dev("pr_moist") / 50 + dev("pr_temp") / 50;
         break;
       case "weather_snow":
-        f = 1 + (50 - pressures.get("pr_temp")) / 50;
+        f = 1 - dev("pr_temp") / 50;
         break;
       case "weather_fog":
-        f = 1 + v("pr_mystery", 50) / 60;
+        f = 1 + dev("pr_mystery") / 60;
         break;
       case "weather_heat":
-        f = 1 + v("pr_temp") / 50;
+        f = 1 + dev("pr_temp") / 50;
         break;
       default:
         f = 1;
@@ -104,7 +108,7 @@ export default class WeatherState {
     year: number,
     climate: Climate,
     pressures: PressureState | null,
-    rand: () => number = Math.random,
+    rand: () => number,
   ): WeatherTickResult {
     const season = seasonOf(year);
     const candidates = this.registry.getBase(this.currentId);

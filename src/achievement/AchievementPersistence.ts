@@ -1,6 +1,7 @@
-import { readFile, writeFile } from "fs/promises";
+import { readFile } from "fs/promises";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { atomicWriteJsonSync } from "../core/archive/atomicWrite.js";
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -16,13 +17,20 @@ export default class AchievementPersistence {
   );
 
   async save(data: UnlockedRecord[]): Promise<void> {
-    await writeFile(this.SAVE_PATH, JSON.stringify(data, null, 2), "utf-8");
+    atomicWriteJsonSync(this.SAVE_PATH, data);
   }
 
   async load(): Promise<UnlockedRecord[]> {
     try {
       const content = await readFile(this.SAVE_PATH, "utf-8");
-      return JSON.parse(content) as UnlockedRecord[];
+      const parsed: unknown = JSON.parse(content);
+      // A parse success is not a shape success: `{}` would otherwise reach
+      // `for (const ... of records)` in AchievementManager and crash boot.
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter(
+        (r): r is UnlockedRecord =>
+          !!r && typeof r === "object" && typeof (r as UnlockedRecord).id === "string",
+      );
     } catch {
       return [];
     }

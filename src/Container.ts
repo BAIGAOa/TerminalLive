@@ -32,6 +32,15 @@ class Container {
   public register<T>(Ctor: Constructor<T>, instance: T): void {
     this.instances.set(Ctor, instance);
   }
+
+  /**
+   * Drop every cached singleton. Test-only: vitest workers share this module
+   * singleton across cases in a file, so a clean container must be obtainable.
+   */
+  public reset(): void {
+    this.instances.clear();
+    this.building.clear();
+  }
 }
 
 export const container = new Container();

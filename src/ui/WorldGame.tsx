@@ -17,6 +17,7 @@ import ConfigStore from "../core/store/ConfigStore.js";
 import TypedEventBus from "../core/TypedEventBus.js";
 import { computeLifeScore } from "../game/score.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
+import { computeWorldGameLayout } from "./worldGameLayout.js";
 import { resolveKeymap } from "./keymap.js";
 import LineageStore from "../core/store/LineageStore.js";
 import WorldState from "../world/chronicle/WorldState.js";
@@ -215,29 +216,24 @@ export default function WorldGame() {
   const rows = Math.max(1, data.rows);
   const { columns } = useTerminalSize();
 
-  // Deterministic, size-driven layout. The middle row (actions | status) and
-  // the journal share the height left after the fixed chrome; the help text
-  // shrinks from 3 lines to 2 to 1 as the terminal gets shorter.
-  const HINT_H = rows >= 22 ? 3 : rows >= 16 ? 2 : 1;
-  const CHROME = 2 /*padding*/ + 3 /*header*/ + 3 /*marginTops*/;
-  const short = rows < 26;
-  const actionsW = Math.max(18, Math.min(38, Math.floor(columns * 0.34)));
-
-  let avail = Math.max(4, rows - CHROME - HINT_H);
-  let journalH = 0;
-  if (avail >= 12) {
-    journalH = Math.min(9, Math.max(4, Math.round(avail * 0.3)));
-  }
-  const showJournal = journalH >= 4;
-  const middleH = Math.max(4, avail - (showJournal ? journalH : 0));
-
-  // Rows the status panel leaves for the active view (minus its border, the
-  // carousel header row and the victory-condition lines).
-  const carouselContentH = Math.max(
-    3,
-    middleH - 3 - data.victoryConditions.length,
+  // Deterministic, size-driven layout — extracted to a pure module (see
+  // `worldGameLayout.ts`) so the arithmetic is unit-testable without rendering.
+  const {
+    hintH: HINT_H,
+    short,
+    actionsW,
+    journalH,
+    showJournal,
+    middleH,
+    carouselContentH,
+    journalInner,
+    maxJournalOffset,
+  } = computeWorldGameLayout(
+    rows,
+    columns,
+    data.victoryConditions.length,
+    data.logs.length,
   );
-  const journalInner = Math.max(1, journalH - (short ? 3 : 5));
 
   // Journal keyboard scrolling (PageUp/PageDown/Home/End). Offset 0 = newest.
   const [journalOffset, setJournalOffset] = useState(0);
@@ -252,7 +248,7 @@ export default function WorldGame() {
     // Clamp stored End offset so a following PageUp moves immediately instead
     // of counting down from an absurd value.
     const end = boundKeyboard(["end"], () =>
-      setJournalOffset(Math.max(0, data.logs.length - journalInner)),
+      setJournalOffset(maxJournalOffset),
     );
     return () => {
       up();
@@ -260,7 +256,7 @@ export default function WorldGame() {
       home();
       end();
     };
-  }, [boundKeyboard, data.logs.length, journalInner]);
+  }, [boundKeyboard, journalInner, maxJournalOffset]);
 
   return (
     <Box flexDirection="column" width="100%" height={rows} padding={1}>

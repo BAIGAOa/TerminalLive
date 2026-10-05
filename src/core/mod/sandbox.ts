@@ -12,7 +12,16 @@ export interface SandboxOptions {
   filename: string;
   /** Extra values injected as sandbox globals (kept minimal on purpose). */
   globals?: Record<string, unknown>;
+  /** Override the module-evaluation timeout (tests use a tiny value). */
+  timeoutMs?: number;
 }
+
+/**
+ * Evaluation time limit for a mod's entry file. `node:vm` cannot interrupt an
+ * async loop or cap memory, but this stops a synchronous `while(true){}` in the
+ * module body from hanging the whole game.
+ */
+const MOD_EVAL_TIMEOUT_MS = 5_000;
 
 /**
  * Evaluate a mod's CommonJS entry inside an isolated V8 context.
@@ -21,9 +30,12 @@ export interface SandboxOptions {
  * `process`, `global`, `Buffer`, `require("fs")`, `child_process`, etc. are all
  * unavailable because a `node:vm` context only carries ECMAScript built-ins.
  *
- * This is defence-in-depth for a single-player game, NOT a security boundary —
- * a determined mod can still escape via `this.constructor.constructor`. Only
- * ever install mods you trust.
+ * This is defence-in-depth for a single-player game, NOT a security boundary.
+ * Because the host MUST inject `require` and the live game objects for a mod to
+ * do anything useful, a determined mod can still reach the host realm via
+ * `require.constructor.constructor("return process")()`. This is unavoidable
+ * without moving plugins to a worker/child process — which is incompatible with
+ * mods registering in-process Ink components. Only ever install mods you trust.
  */
 export function loadModModule(
   source: string,
@@ -50,15 +62,16 @@ export function loadModModule(
   };
   vm.createContext(sandbox);
 
-  const wrapped = `(function (exports, require, module, __filename, __dirname) {\n${source}\n})`;
-  const fn = vm.runInContext(wrapped, sandbox, { filename }) as (
-    exports: unknown,
-    require: (id: string) => unknown,
-    module: { exports: unknown },
-    __filename: string,
-    __dirname: string,
-  ) => void;
-
-  fn(mod.exports, restrictedRequire, mod, filename, dirname(filename));
+  // Define AND invoke the wrapper in a single evaluated script. `timeout` only
+  // governs code run by `runInContext` itself — it does NOT cover a context
+  // function invoked later from the host, so a `while(true){}` in the module
+  // body would hang forever if we returned the function and called it outside.
+  const script =
+    `(function (exports, require, module, __filename, __dirname) {\n${source}\n})` +
+    `(module.exports, require, module, __filename, __dirname);`;
+  vm.runInContext(script, sandbox, {
+    filename,
+    timeout: options.timeoutMs ?? MOD_EVAL_TIMEOUT_MS,
+  });
   return mod.exports;
 }

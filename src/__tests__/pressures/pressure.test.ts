@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { container } from "../../Container.js";
+import SeededRandom from "../../core/random/SeededRandom.js";
 import PressureRegistry from "../../world/pressures/PressureRegistry.js";
 import PressureLoader from "../../world/pressures/PressureLoader.js";
 import PressureState from "../../world/pressures/PressureState.js";
@@ -62,7 +63,8 @@ describe("hidden-score web", () => {
 
   it("keeps everything in range after a year", () => {
     const p = new PressureState();
-    for (let i = 0; i < 50; i++) p.tick(() => Math.random(), 1);
+    const rng = new SeededRandom(4242);
+    for (let i = 0; i < 50; i++) p.tick(() => rng.next(), 1);
     for (const ax of container.resolve(PressureRegistry).getAxes()) {
       const v = p.get(ax.id);
       expect(v).toBeGreaterThanOrEqual(ax.min);

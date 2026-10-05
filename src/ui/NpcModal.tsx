@@ -7,6 +7,8 @@ import RelationshipSystem from "../world/relationships/RelationshipSystem.js";
 import Game from "../core/Game.js";
 import { MenuList, ModalFrame } from "./kit/index.js";
 import { dismissModal } from "./layers/modalBus.js";
+import { NPC_MODAL_ID } from "./layers/layerIds.js";
+import { reasonText } from "./npcText.js";
 
 const CLOSE_ID = "__close";
 
@@ -29,7 +31,7 @@ export default function NpcModal({ npcId }: { npcId: string }) {
   const views = system.getInteractionsFor(npcId);
 
   useEffect(() => {
-    const u = boundKeyboard(["escape"], () => dismissModal("npc-modal"));
+    const u = boundKeyboard(["escape"], () => dismissModal(NPC_MODAL_ID));
     return () => u();
   }, [boundKeyboard]);
 
@@ -44,20 +46,9 @@ export default function NpcModal({ npcId }: { npcId: string }) {
     { value: CLOSE_ID, label: `✕ ${t("common.close")}`, disabled: false },
   ];
 
-  const reasonText = (reason?: string): string =>
-    reason === "ap"
-      ? t("npc.it.reason.ap")
-      : reason === "age"
-        ? t("npc.it.reason.age")
-        : reason === "gone"
-          ? t("npc.it.reason.gone")
-          : reason === "unknown"
-            ? t("npc.it.reason.unknown")
-            : t("npc.it.reason.require");
-
   const choose = (id: string) => {
     if (id === CLOSE_ID) {
-      dismissModal("npc-modal");
+      dismissModal(NPC_MODAL_ID);
       return;
     }
     const def = views.find((v) => v.def.id === id)?.def;
@@ -110,9 +101,11 @@ export default function NpcModal({ npcId }: { npcId: string }) {
                     color={item.disabled ? "gray" : state.selected ? "greenBright" : "white"}
                   >
                     {item.label}
-                    {item.disabled ? `  (${reasonText(view?.reason)})` : ""}
+                    {item.disabled ? `  (${reasonText(view?.reason, t)})` : ""}
                   </Text>
-                  <Text dimColor>{view ? `AP${cost}` : ""}</Text>
+                  <Text dimColor>
+                    {view ? `${t("game.actions.apShort")}${cost}` : ""}
+                  </Text>
                 </Box>
               );
             }}

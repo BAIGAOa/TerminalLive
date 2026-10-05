@@ -6,6 +6,7 @@ import TypedEventBus from "../core/TypedEventBus.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { useTrackedTimeout } from "../hooks/useFlash.js";
 
 interface ToastEntry {
   id: number;
@@ -41,13 +42,16 @@ function Toasts() {
   const { columns } = useTerminalSize();
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
   const counter = useRef(0);
+  const later = useTrackedTimeout();
 
   useEffect(() => {
     const bus = container.resolve(TypedEventBus);
     const push = (textKey: string, kind: ToastEntry["kind"]) => {
       const id = ++counter.current;
       setToasts((prev) => [...prev, { id, textKey, kind }].slice(-MAX_TOASTS));
-      setTimeout(() => {
+      // Each toast expires independently; the tracked timeout clears the
+      // pending timers on unmount so they cannot fire against a dead host.
+      later(() => {
         setToasts((prev) => prev.filter((e) => e.id !== id));
       }, 3200);
     };
@@ -61,7 +65,7 @@ function Toasts() {
       offToast();
       offAch();
     };
-  }, []);
+  }, [later]);
 
   const left = Math.max(0, columns - TOAST_WIDTH - 1);
 

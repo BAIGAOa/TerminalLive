@@ -146,7 +146,7 @@ export function registerGameCommands(reg: ReplRegistry): void {
         const on = enabled === null ? true : enabled.includes(pid);
         ctx.print(`${on ? "●" : "○"} ${pid}`, on ? "success" : "dim");
       }
-      ctx.print(ctx.t("repl.cmd.builtins.hint") || "builtins <id> to toggle", "dim");
+      ctx.print(ctx.t("repl.cmd.builtins.hint"), "dim");
     },
   });
 }

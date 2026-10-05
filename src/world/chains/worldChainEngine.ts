@@ -141,7 +141,14 @@ export function tickChains(
   for (const pending of [...state.active]) {
     const def = defs[pending.chainId];
     const node = def?.nodes[pending.nodeId];
-    if (!def || !node) continue;
+    if (!def || !node) {
+      // Content changed mid-life (mod reload / version skew): the pending node
+      // is no longer resolvable. Drop it loudly rather than silently vanishing.
+      console.warn(
+        `[chain] 丢弃失效节点 ${pending.chainId}:${pending.nodeId}（内容已变更）`,
+      );
+      continue;
+    }
     if (ctx.year < pending.dueYear) {
       remaining.push(pending);
       continue;

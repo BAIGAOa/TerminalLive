@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useSyncExternalStore } from "react";
+import React, { useEffect, useSyncExternalStore } from "react";
 import { Box, Text } from "ink";
 import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { ScrollList } from "./kit/index.js";
@@ -7,8 +7,9 @@ import ItemRegistry from "../world/items/ItemRegistry.js";
 import WorldManager from "../worlds/WorldManager.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { useFlash } from "../hooks/useFlash.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
-import { clampWidth } from "./kit/viewport.js";
+import { clampWidth, statusViewHeight } from "./kit/viewport.js";
 
 /** Spend money on items (priced items only). Uses the shared player. */
 export default function Shop() {
@@ -19,7 +20,7 @@ export default function Shop() {
   const reg = container.resolve(ItemRegistry);
   const player = container.resolve(WorldManager).getPlayer();
   const { columns, rows } = useTerminalSize();
-  const [message, setMessage] = useState<string | null>(null);
+  const { value: message, flash } = useFlash<string>(2500);
 
   useSyncExternalStore(
     player.subscribe,
@@ -31,14 +32,12 @@ export default function Shop() {
     return () => u();
   }, [back, boundKeyboard]);
 
-  const flash = (msg: string) => {
-    setMessage(msg);
-    setTimeout(() => setMessage(null), 2500);
-  };
-
   const buy = (id: string) => {
     const def = reg.get(id);
     if (!def || def.price === undefined) return;
+    // A negative/NaN price would otherwise pass the affordability check and
+    // *mint* money (`-price` becomes a credit).
+    if (!Number.isFinite(def.price) || def.price < 0) return;
     if (player.money < def.price) {
       flash(t("shop.noMoney"));
       return;
@@ -49,7 +48,9 @@ export default function Shop() {
     flash(t("shop.bought", { name: t(def.labelKey) }));
   };
 
-  const goods = reg.getAll().filter((d) => typeof d.price === "number");
+  const goods = reg
+    .getAll()
+    .filter((d) => typeof d.price === "number" && d.price >= 0);
   const items = goods.map((d) => ({
     value: d.id,
     label: `${d.icon ?? "•"} ${d.labelKey === d.id ? d.id : t(d.labelKey)}`,
@@ -70,7 +71,7 @@ export default function Shop() {
         <ScrollList
           focusId="shop-list"
           itemHeight={3}
-          height={Math.max(3, rows - 8)}
+          height={statusViewHeight(rows, { min: 3, reserved: 8 })}
           pageKeys={false}
           items={items}
           onSelect={(item) => buy(item.value)}

@@ -37,7 +37,9 @@ export function logFactors(...factors: number[]): number {
 
 /** Clamp a finite log-weight into the visible band; pass `-Infinity` through. */
 export function clampLogWeight(logWeight: number): number {
-  if (!Number.isFinite(logWeight)) return logWeight; // -Infinity (excluded)
+  if (logWeight === -Infinity) return logWeight; // hard exclusion
+  // +Infinity / NaN still get clamped (and NaN is caught by buildWeighted) —
+  // only a true -Infinity means "excluded".
   return Math.max(LOG_MIN_WEIGHT, Math.min(LOG_MAX_WEIGHT, logWeight));
 }
 

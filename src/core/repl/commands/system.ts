@@ -87,8 +87,10 @@ export function registerSystemCommands(reg: ReplRegistry): void {
   };
 
   const reloadMods = (ctx: ReplContext) => {
-    const count = container.resolve(ModPluginLoader).getLoadedMods().length;
-    container.resolve(ModPluginLoader).reloadEnabled();
+    const loader = container.resolve(ModPluginLoader);
+    // Reload first, then report: the pre-reload count is stale.
+    loader.reloadEnabled();
+    const count = loader.getLoadedMods().length;
     ctx.print(ctx.t("console.cmd.modsReload", { count }), "success");
   };
 

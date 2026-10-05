@@ -38,16 +38,19 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [langCode, setLangCode] = useState<string>("");
 
   const loadLanguage = (code: string) => {
+    // `code` comes from user-editable config.json: never let it contain path
+    // separators or dots, or `${code}.json` could read any JSON file off disk.
+    const safe = /^[A-Za-z0-9_-]+$/.test(code) ? code : 'zh_CN';
     try {
       const dir = join(_dirname, '..', '..', '..', 'resource', 'language')
-      const filePath = join(dir, `${code}.json`)
+      const filePath = join(dir, `${safe}.json`)
       const content = JSON.parse(readFileSync(filePath, 'utf-8'))
 
-      setLangCode(code)
+      setLangCode(safe)
       setTranslations(content)
     } catch (err) {
       console.warn('No language packs found for your region, start default Chinese language pack')
-      if (code !== 'zh_CN') loadLanguage('zh_CN')
+      if (safe !== 'zh_CN') loadLanguage('zh_CN')
     }
   }
 
@@ -129,7 +132,9 @@ export const useI18n = () => {
 
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
-        text = text!.replace(new RegExp(`\\{${k}\\}`, "g"), String(v));
+        // split/join on the literal `{key}` token — no RegExp, so a param name
+        // containing regex metacharacters can never throw or over-match.
+        text = text!.split(`{${k}}`).join(String(v));
       });
     }
 

@@ -133,8 +133,12 @@ export default class SeededRandom implements RandomSource {
   }
 
   public restore(snapshot: RandomSnapshot): void {
-    const step = Math.max(0, Math.floor(snapshot.step));
-    this._seed = snapshot.seed >>> 0;
+    // Guard against NaN/Infinity from a corrupt or hand-edited save: `Math.floor(NaN)`
+    // is NaN, which would poison `count` and every later snapshot for this life.
+    const step = Number.isFinite(snapshot.step)
+      ? Math.max(0, Math.floor(snapshot.step))
+      : 0;
+    this._seed = Number.isFinite(snapshot.seed) ? snapshot.seed >>> 0 : 0;
     // state after `step` draws = seed + step * STEP (mod 2^32).
     this.state = (this._seed + Math.imul(step, STEP)) | 0;
     this.count = step;

@@ -10,7 +10,10 @@ import BlockedFilter from "./filters/BlockedFilter.js";
 import PredecessorFilter from "./filters/PredecessorFilter.js";
 import OnceFilter from "./filters/OnceFilter.js";
 import EventHistory from "./EventHistory.js";
-import PostEventScheduler, { PendingPostEvent } from "./PostEventScheduler.js";
+import PostEventScheduler, {
+  PendingPostEvent,
+  SerializedPendingPostEvent,
+} from "./PostEventScheduler.js";
 import ModPluginLoader from "../core/mod/ModPluginLoader.js";
 import FilterContext from "./FilterContext.js";
 import { IEventAlgorithm } from "./IEventAlgorithm.js";
@@ -204,31 +207,82 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
   }
 
   // ── post events ────────────────────────────────────────────────
+  /** Serializable queue state, so a save/load cannot drop a pending narrative line. */
+  public snapshotPostEvents(): SerializedPendingPostEvent[] {
+    return this.postEventScheduler.snapshot();
+  }
+
+  /** Restore a saved queue. Edges are re-resolved from content at fire time. */
+  public restorePostEvents(items: SerializedPendingPostEvent[]): void {
+    this.postEventScheduler.restore(items);
+  }
+
+  /**
+   * Resolve the graph edge a queued item belongs to. Runtime items carry it
+   * directly; restored items only carry `{ sourceId, edgeIndex }`, so the edge
+   * (and its `triggerCondition`) is looked up from content here — this is what
+   * keeps `snapshot()` closure-free while still honouring once/maxRuns/group and
+   * conditions after a reload.
+   */
+  private edgeOf(item: PendingPostEvent): PostIncidentConfig | undefined {
+    if (item.edge) return item.edge;
+    if (item.edgeIndex === undefined) return undefined;
+    const source = this.eventCenter.getIncidentById(item.sourceId);
+    const post = source?.postEvent;
+    if (!Array.isArray(post)) return undefined;
+    return post[item.edgeIndex];
+  }
+
   private processPendingPostEvents(player: Player): boolean {
     const due = this.postEventScheduler.advanceRound();
+    const deferred: PendingPostEvent[] = [];
     for (let i = 0; i < due.length; i++) {
-      if (!this.tryExecutePostEvent(due[i], player)) continue; // failed → dropped
-      // Don't lose the other due items this turn — re-queue them.
-      for (let j = i + 1; j < due.length; j++) {
-        this.postEventScheduler.add({ ...due[j], delay: 0 });
+      const outcome = this.tryExecutePostEvent(due[i], player);
+      if (outcome === "fired") {
+        // Don't lose the other due items this turn — re-queue them.
+        for (let j = i + 1; j < due.length; j++) {
+          this.postEventScheduler.add({ ...due[j], delay: 0 });
+        }
+        for (const item of deferred) {
+          this.postEventScheduler.add({ ...item, delay: 0 });
+        }
+        return true;
       }
-      return true;
+      if (outcome === "retry") {
+        // Temporarily blocked (condition / not-yet-open age window). Keep it
+        // queued so the narrative line survives instead of being silently lost.
+        deferred.push({ ...due[i], delay: 0 });
+      }
+      // "drop": permanently impossible (target gone / edge exhausted) — discard.
+    }
+    for (const item of deferred) {
+      this.postEventScheduler.add({ ...item, delay: 0 });
     }
     return false;
   }
 
-  private tryExecutePostEvent(item: PendingPostEvent, player: Player): boolean {
+  private tryExecutePostEvent(
+    item: PendingPostEvent,
+    player: Player,
+  ): "fired" | "retry" | "drop" {
     const incident = this.eventCenter.getIncidentById(item.targetId);
     if (!incident) {
       console.warn(`后置事件id${item.targetId}不存在`);
-      return false;
+      return "drop";
     }
-    if (item.condition && !item.condition(player)) return false;
-    // Re-check the edge's age window at fire time (cross-age chains).
-    if (item.edge) {
-      const { minAge, maxAge } = item.edge;
-      if (minAge !== undefined && player.age < minAge) return false;
-      if (maxAge !== undefined && player.age > maxAge) return false;
+    const edge = this.edgeOf(item);
+    const condition = item.condition ?? edge?.triggerCondition;
+    if (condition && !condition(player)) return "retry";
+
+    if (edge) {
+      // Too early for the edge's window → retry once the player is old enough.
+      if (edge.minAge !== undefined && player.age < edge.minAge) return "retry";
+      // Past maxAge the window has been overrun by a long delay. Do NOT drop the
+      // line: clamp and fire anyway (the window was already checked when the
+      // edge was selected), but still respect once/maxRuns/group.
+      if (!this.chain.isAvailable(item.sourceId, edge, item.edgeIndex ?? 0)) {
+        return "drop";
+      }
     }
 
     const originalWeight = incident.weight;
@@ -236,12 +290,12 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     try {
       const candidate = { incident, rangeKey: "post" as const };
       const eligible = this.filterEligible([candidate]);
-      if (eligible.length === 0) return false;
+      if (eligible.length === 0) return "drop";
       this.executeIncident(incident, "post", player);
-      if (item.edge) {
-        this.chain.record(item.sourceId, item.edge, item.edgeIndex ?? 0);
+      if (edge) {
+        this.chain.record(item.sourceId, edge, item.edgeIndex ?? 0);
       }
-      return true;
+      return "fired";
     } finally {
       incident.weight = originalWeight;
     }
@@ -314,16 +368,27 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
   }
 
   // ── selection ──────────────────────────────────────────────────
-  private getMatchedIncidents(
+  /**
+   * Every incident whose declared range covers `age`. An incident registered in
+   * several overlapping ranges is included ONCE — otherwise it would be scored
+   * (and softmax-weighted) once per matching range, silently multiplying its
+   * odds. The first matching range wins, deterministically, for range filters.
+   */
+  public getMatchedIncidents(
     age: number,
   ): Array<{ incident: Incident; rangeKey: string }> {
     const result: Array<{ incident: Incident; rangeKey: string }> = [];
+    const seen = new Set<string>();
     for (const rangeKey of this.eventCenter.getAllRanges()) {
       const [start, end] = rangeKey.split("-").map(Number);
       if (age >= start && age <= end) {
         const incidents = this.eventCenter.getIncidentsByRange(rangeKey);
         if (incidents) {
-          incidents.forEach((incident) => result.push({ incident, rangeKey }));
+          incidents.forEach((incident) => {
+            if (seen.has(incident.id)) return;
+            seen.add(incident.id);
+            result.push({ incident, rangeKey });
+          });
         }
       }
     }

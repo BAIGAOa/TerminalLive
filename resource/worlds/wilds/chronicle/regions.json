@@ -6,7 +6,8 @@
     "icon": "📍",
     "climate": "highland",
     "neighbors": [
-      "reg_wilds_1"
+      "reg_wilds_7",
+      "reg_wilds_2"
     ]
   },
   {
@@ -16,7 +17,8 @@
     "icon": "📍",
     "climate": "highland",
     "neighbors": [
-      "reg_wilds_2"
+      "reg_wilds_1",
+      "reg_wilds_3"
     ]
   },
   {
@@ -26,7 +28,8 @@
     "icon": "📍",
     "climate": "highland",
     "neighbors": [
-      "reg_wilds_3"
+      "reg_wilds_2",
+      "reg_wilds_4"
     ]
   },
   {
@@ -36,7 +39,8 @@
     "icon": "📍",
     "climate": "highland",
     "neighbors": [
-      "reg_wilds_4"
+      "reg_wilds_3",
+      "reg_wilds_5"
     ]
   },
   {
@@ -46,7 +50,8 @@
     "icon": "📍",
     "climate": "highland",
     "neighbors": [
-      "reg_wilds_5"
+      "reg_wilds_4",
+      "reg_wilds_6"
     ]
   },
   {
@@ -56,7 +61,8 @@
     "icon": "📍",
     "climate": "highland",
     "neighbors": [
-      "reg_wilds_6"
+      "reg_wilds_5",
+      "reg_wilds_7"
     ]
   },
   {
@@ -66,7 +72,8 @@
     "icon": "📍",
     "climate": "highland",
     "neighbors": [
-      "reg_wilds_7"
+      "reg_wilds_6",
+      "reg_wilds_1"
     ]
   }
 ]

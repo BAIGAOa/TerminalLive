@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { container } from "../../Container.js";
+import SeededRandom from "../../core/random/SeededRandom.js";
 import Weather from "../../content/Weather.js";
 import WeatherRegistry from "../../world/weather/WeatherRegistry.js";
 import WeatherState from "../../world/weather/WeatherState.js";
@@ -43,8 +44,9 @@ describe("weather", () => {
   it("stays on a registered state across many years", () => {
     const w = new WeatherState();
     const reg = container.resolve(WeatherRegistry);
+    const rng = new SeededRandom(4242);
     for (let y = 0; y < 40; y++) {
-      w.advance(y, "polar", null, () => Math.random());
+      w.advance(y, "polar", null, () => rng.next());
       expect(reg.getState(w.currentIdValue())).toBeDefined();
     }
   });

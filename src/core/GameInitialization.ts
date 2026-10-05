@@ -2,7 +2,6 @@ import { inject } from "../Container.js";
 import Game from "./Game.js";
 import ConfigStore from "./store/ConfigStore.js";
 import Player from "../world/Player.js";
-import ModLoader from "./mod/ModLoader.js";
 import EventTypes from "./mod/EventTypes.js";
 import ModPluginLoader from "./mod/ModPluginLoader.js";
 import ConsoleStore from "./console/ConsoleStore.js";
@@ -13,7 +12,6 @@ import AutoSave from "./archive/AutoSave.js";
 import { registerBuiltinRegistrations } from "../worlds/BuiltinRegistrations.js";
 import WorldManager from "../worlds/WorldManager.js";
 import Conditions from "../content/Conditions.js";
-import GameStatus from "../content/GameStatus.js";
 import ThemeParser from "./theme/ThemeParser.js";
 import ThemeManager from "./theme/ThemeManager.js";
 import { VersionProvider } from "./version/VersionProvider.js";
@@ -46,7 +44,6 @@ import { fileURLToPath } from "url";
 export default class GameInitialization {
   public configStore: ConfigStore;
   public game: Game;
-  public modLoader: ModLoader;
   public modRegistry: ModMonitor;
   public player!: Player;
   public eventHistory: EventHistory;
@@ -57,7 +54,6 @@ export default class GameInitialization {
   constructor() {
     this.configStore = inject(ConfigStore);
     this.game = inject(Game);
-    this.modLoader = inject(ModLoader);
     this.modRegistry = inject(ModMonitor);
     this.eventHistory = inject(EventHistory);
     this.archiveManager = inject(ArchiveManager);
@@ -104,9 +100,10 @@ export default class GameInitialization {
     // NPC archetype classes must exist before any NPC JSON is parsed.
     NpcTypes.registerAll();
     // Events are loaded per-level by WorldManager.loadEventsFor (built-in +
-    // enabled mods), so the global ModLoader pass is intentionally skipped.
+    // enabled mods); there is no global event-loader pass.
     Conditions.load();
-    GameStatus.load();
+    // Status-view components are registered by the UI layer (registerStatusViews,
+    // called from main.tsx) so content never imports React components.
     Effects.load();
     Actions.load();
     Traits.load();

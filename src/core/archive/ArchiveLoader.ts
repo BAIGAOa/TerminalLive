@@ -1,10 +1,18 @@
-import { existsSync, readdirSync, readFileSync, mkdirSync, cpSync } from "node:fs";
+import {
+  existsSync,
+  readdirSync,
+  readFileSync,
+  mkdirSync,
+  cpSync,
+  renameSync,
+} from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { container } from "../../Container.js";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import { applySaveData } from "./SaveCodec.js";
 import { migrateSave, RawSave } from "./migrations.js";
+import { resolveWithin } from "./saveName.js";
 import ModMonitor from "../mod/ModMonitor.js";
 import AutoSave from "./AutoSave.js";
 
@@ -12,7 +20,7 @@ export class ArchiveLoader {
   private readonly ARCHIVE_ROOT = join(homedir(), ".archive_live");
 
   public load(name: string): void {
-    const archiveDir = join(this.ARCHIVE_ROOT, name);
+    const archiveDir = resolveWithin(this.ARCHIVE_ROOT, name);
     const data = this.readArchiveData(archiveDir);
 
     this.loadMod(archiveDir, container.resolve(ModMonitor).MOD_ROOT);
@@ -51,14 +59,24 @@ export class ArchiveLoader {
         console.warn(
           `[Mod] 模组 "${entry.name}" 已存在，将被存档中的版本覆盖。 Mod "${entry.name}" already exists and will be overwritten by the archived version.`,
         );
+        // Back up the installed copy before clobbering it: if the archive later
+        // fails to load, the player's real mods are still recoverable.
+        try {
+          renameSync(dest, `${dest}.bak-${Date.now()}`);
+        } catch (err) {
+          console.warn(
+            `[Mod] 无法备份 "${entry.name}"，将直接覆盖:`,
+            (err as Error).message,
+          );
+        }
       }
       cpSync(src, dest, { recursive: true, force: true });
     }
   }
 
   private readArchiveData(archiveDir: string): SaveData {
-    const raw = readFileSync(join(archiveDir, "archive.json"), "utf-8");
     try {
+      const raw = readFileSync(join(archiveDir, "archive.json"), "utf-8");
       const parsed = JSON.parse(raw) as RawSave;
       return saveDataSchema.parse(migrateSave(parsed));
     } catch {

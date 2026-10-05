@@ -8,7 +8,7 @@ import TraitRegistry from "../world/traits/TraitRegistry.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
-import { clampWidth } from "./kit/viewport.js";
+import { clampWidth, statusViewHeight } from "./kit/viewport.js";
 
 const MAX_TRAITS = 2;
 
@@ -67,7 +67,7 @@ export default function Traits() {
         <ScrollList
           focusId="traits-list"
           itemHeight={4}
-          height={Math.max(4, rows - 11)}
+          height={statusViewHeight(rows, { min: 4, reserved: 11 })}
           pageKeys={false}
           items={items}
           onSelect={(item) => toggle(item.value)}

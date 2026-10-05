@@ -1,10 +1,14 @@
-import { readFile, writeFile } from "fs/promises";
+import { readFile } from "fs/promises";
+import { rename, rm, writeFile } from "fs/promises";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import z from "zod";
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
+
+/** Per-call suffix so two overlapping async saves never share one temp file. */
+let tmpSeq = 0;
 
 export default class JSONparsing {
   private configPath: string;
@@ -43,13 +47,20 @@ export default class JSONparsing {
   public async saveConfig(data: unknown): Promise<void>;
   public async saveConfig<T>(data: T, schema: z.ZodSchema<T>): Promise<void>;
   public async saveConfig<T>(data: T, schema?: z.ZodSchema<T>): Promise<void> {
-    if (schema) {
-      schema.parse(data);
-    }
+    // temp + rename so an interrupted write can never truncate the real file.
+    // The suffix must be unique per call: async callers can overlap, and a
+    // shared temp name makes the second rename fail with ENOENT.
+    const tmp = `${this.configPath}.tmp-${process.pid}-${tmpSeq++}`;
     try {
+      if (schema) {
+        schema.parse(data);
+      }
       const content = JSON.stringify(data, null, 2);
-      await writeFile(this.configPath, content, "utf-8");
+      await writeFile(tmp, content, "utf-8");
+      await rename(tmp, this.configPath);
     } catch (error) {
+      // Never leave a stray temp file behind when the write/rename fails.
+      await rm(tmp, { force: true }).catch(() => {});
       throw new Error(
         `保存配置文件失败: ${this.configPath}\n${(error as Error).message}`,
       );

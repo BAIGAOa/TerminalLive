@@ -1,10 +1,11 @@
-import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync } from "node:fs";
 import { inject } from "../../Container.js";
 import { resourcePath } from "../paths.js";
 import TypedEventBus from "../TypedEventBus.js";
 import WorldManager from "../../worlds/WorldManager.js";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import { applySaveData, captureSaveData } from "./SaveCodec.js";
+import { atomicWriteJsonSync, quarantineFileSync } from "./atomicWrite.js";
 import { migrateSave, RawSave } from "./migrations.js";
 
 /**
@@ -59,7 +60,7 @@ export default class AutoSave {
       return;
     }
     try {
-      writeFileSync(this.filePath, JSON.stringify(captureSaveData(), null, 2), "utf8");
+      atomicWriteJsonSync(this.filePath, captureSaveData());
     } catch (err) {
       console.warn("[Save] 自动存档失败:", (err as Error).message);
     }
@@ -69,7 +70,7 @@ export default class AutoSave {
   public writeData(data: SaveData): void {
     if (!this.enabled) return;
     try {
-      writeFileSync(this.filePath, JSON.stringify(data, null, 2), "utf8");
+      atomicWriteJsonSync(this.filePath, data);
     } catch (err) {
       console.warn("[Save] 写入存档失败:", (err as Error).message);
     }
@@ -89,14 +90,24 @@ export default class AutoSave {
         return null;
       }
       if (!applySaveData(data)) {
-        // World missing / content version mismatch — start a fresh life.
-        this.clear();
+        // World missing / content version mismatch. The save itself is intact,
+        // so keep the file (the world may be re-enabled later) and just start a
+        // fresh life this session instead of destroying the player's run.
+        console.warn(
+          "[Save] 世界缺失或内容版本不符，本次以新生命开始（存档已保留）",
+        );
         return null;
       }
       return data;
     } catch (err) {
-      console.warn("[Save] 自动存档损坏，已忽略:", (err as Error).message);
-      this.clear();
+      // Preserve the bad file for manual recovery instead of destroying it —
+      // a single failed parse must not cost the player their whole life.
+      const kept = quarantineFileSync(this.filePath);
+      console.warn(
+        "[Save] 自动存档损坏，已忽略:",
+        (err as Error).message,
+        kept ? `(已保留为 ${kept})` : "",
+      );
       return null;
     }
   }

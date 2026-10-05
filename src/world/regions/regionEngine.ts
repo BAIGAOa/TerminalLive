@@ -73,13 +73,21 @@ export function tickRegions(
 ): RegionEvent[] {
   const events: RegionEvent[] = [];
 
+  // Snapshot prosperity first: trade must read the PRE-tick prosperity of every
+  // neighbour, not a mix of pre/post values depending on map iteration order.
+  const preProsperity: Record<string, number> = {};
   for (const sim of Object.values(state.regions)) {
-    const neighbors = neighborsOf(adjacency, sim.id)
-      .map((id) => state.regions[id])
-      .filter((r): r is RegionSim => !!r);
-    const avgNeighborProsperity = neighbors.length
-      ? neighbors.reduce((s, r) => s + r.prosperity, 0) / neighbors.length
-      : sim.prosperity;
+    preProsperity[sim.id] = sim.prosperity;
+  }
+
+  for (const sim of Object.values(state.regions)) {
+    const neighborIds = neighborsOf(adjacency, sim.id).filter(
+      (id) => state.regions[id] !== undefined,
+    );
+    const avgNeighborProsperity = neighborIds.length
+      ? neighborIds.reduce((s, id) => s + preProsperity[id], 0) /
+        neighborIds.length
+      : preProsperity[sim.id];
 
     // Trade pulls prosperity toward neighbours; development compounds it.
     sim.prosperity = clamp(

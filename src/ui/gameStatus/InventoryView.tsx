@@ -6,6 +6,7 @@ import ItemRegistry from "../../world/items/ItemRegistry.js";
 import { ScrollList } from "../kit/index.js";
 import { StatusScroll } from "./common.js";
 import { useTerminalSize } from "../TerminalSizeContext.js";
+import { statusViewHeight } from "../kit/viewport.js";
 
 export default function InventoryView({
   player,
@@ -46,7 +47,10 @@ export default function InventoryView({
   });
 
   // Window the item rows so a long inventory never spills past the panel.
-  const viewH = Math.max(1, height ?? Math.max(6, rows - 13));
+  const viewH = Math.max(
+    1,
+    height ?? statusViewHeight(rows, { min: 6, reserved: 13 }),
+  );
   const headerH = viewH >= 4 ? 2 : 0;
 
   return (

@@ -43,6 +43,16 @@ describe("SeededRandom", () => {
     expect(r.shuffle([1, 2, 3, 4, 5]).sort()).toEqual([1, 2, 3, 4, 5]);
   });
 
+  it("ignores NaN/Infinity in a corrupt snapshot instead of poisoning state", () => {
+    const r = new SeededRandom(7);
+    for (let i = 0; i < 5; i++) r.next();
+    r.restore({ seed: NaN, step: NaN } as unknown as { seed: number; step: number });
+    expect(r.snapshot()).toEqual({ seed: 0, step: 0 });
+    expect(Number.isFinite(r.next())).toBe(true);
+    r.restore({ seed: 1, step: Infinity } as unknown as { seed: number; step: number });
+    expect(Number.isFinite(r.snapshot().step)).toBe(true);
+  });
+
   it("weighted pick respects zero weights and picks the only positive", () => {
     const r = new SeededRandom(1);
     const items = [{ w: 0 }, { w: 5 }, { w: 0 }];

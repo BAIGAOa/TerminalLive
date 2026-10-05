@@ -185,6 +185,10 @@ export default class Game {
     );
     // Age the body and mind: conditions, trauma, meaning, addictions.
     this.health.tickYear(this.player);
+    // health.tickYear can drop HP to 0 after the player already recomputed
+    // `alive` during its own tick; keep the flag consistent with health so the
+    // HUD and the headless dev loops agree on when the life is over.
+    this.player.alive = this.player.health > 0;
     this.eventBus.emit("turn:ended", { age: this.player.age });
   }
 

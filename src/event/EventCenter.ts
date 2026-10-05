@@ -45,9 +45,22 @@ export default class EventCenter {
         }
       }
     }
-    // Keep the id→incident index in sync, or getIncidentById keeps resolving
-    // removed events.
-    this.incidentById.delete(incidentId);
+    // Keep the id→incident index in sync, but only drop it once NO range still
+    // holds the incident: WorldEventLoader registers one instance per range, so
+    // removing it from one range must not hide it from the others (nor from
+    // post-event resolution, which looks incidents up by id).
+    if (!this.isRegisteredInAnyRange(incidentId)) {
+      this.incidentById.delete(incidentId);
+    }
+  }
+
+  private isRegisteredInAnyRange(incidentId: string): boolean {
+    for (const incidents of this.eventMap.values()) {
+      for (const item of incidents) {
+        if (item.id === incidentId) return true;
+      }
+    }
+    return false;
   }
 
   public getIncidentById(id: string): Incident | undefined {

@@ -17,6 +17,7 @@ import RegionsSystem from "../../world/regions/RegionsSystem.js";
 import WorldChainSystem from "../../world/chains/WorldChainSystem.js";
 import NarrativeSystem from "../../world/narrative/NarrativeSystem.js";
 import RandomService from "../random/RandomService.js";
+import WorldContentLoader from "../../worlds/WorldContentLoader.js";
 import ChainTracker from "../../event/ChainTracker.js";
 import EventDirector from "../../event/EventDirector.js";
 import { SaveData } from "./SaveSchema.js";
@@ -100,6 +101,9 @@ export function captureSaveData(): SaveData {
     narrative: container.resolve(NarrativeSystem).snapshot(),
     random: container.resolve(RandomService).snapshot(),
     chain: container.resolve(ChainTracker).snapshot(),
+    // Queued post-event steps — without these a delayed / gated narrative line
+    // dies on save/load. Captured from the active world's algorithm.
+    postEvents: levelManager.getCurrentWorld()?.algorithm.snapshotPostEvents?.() ?? [],
     director: container.resolve(EventDirector).snapshot(),
     pendingChoice: pending
       ? { incidentId: pending.incidentId, rangeKey: pending.rangeKey }
@@ -127,6 +131,11 @@ export function applySaveData(data: SaveData): boolean {
       );
       return false;
     }
+    // Install the saved world's scoped content BEFORE restoring subsystem
+    // state below. The chronicle/weather/pressure/npc registries must hold
+    // THIS world's definitions, or the restores resolve against the classic
+    // baseline (wrong eras/regions/axes, dropped world events).
+    container.resolve(WorldContentLoader).loadFor(world);
   }
 
   const player: Player = levelManager.getPlayer();
@@ -178,6 +187,12 @@ export function applySaveData(data: SaveData): boolean {
   container.resolve(RandomService).restore(data.random);
   container.resolve(ChainTracker).restore(data.chain);
   container.resolve(EventDirector).restore(data.director);
+  // Restore queued post-event steps onto the SAVED world's algorithm (not the
+  // currently-active one). Events are loaded when that world is re-entered, so
+  // the queue stays closure-free here and re-resolves its edges at fire time.
+  if (worldId) {
+    levelManager.getWorld(worldId)?.algorithm.restorePostEvents?.(data.postEvents);
+  }
 
   // Per-level event history is restored when the level is re-entered (each
   // level owns its own EventHistory), so hand the blob to WorldManager.

@@ -41,7 +41,7 @@ export function ActionPanel({
           {focused ? "▶" : " "} {t("game.actions.title")}
         </Text>
         <Text color="yellow">
-          AP {actionPoints}/{maxActionPoints}
+          {t("game.actions.apShort")} {actionPoints}/{maxActionPoints}
         </Text>
       </Box>
       {items.length === 0 ? (
@@ -77,7 +77,10 @@ export function ActionPanel({
                     {active ? "❯ " : "  "}
                     {item.label}
                   </Text>
-                  <Text dimColor>AP{av?.def.apCost ?? 1}</Text>
+                  <Text dimColor>
+                    {t("game.actions.apShort")}
+                    {av?.def.apCost ?? 1}
+                  </Text>
                 </Box>
               );
             }}

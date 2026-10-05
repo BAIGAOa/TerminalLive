@@ -15,6 +15,7 @@ import {
   deriveMood,
   NarrativeMemory,
 } from "../world/narrative/compose.js";
+import { relationshipDigest } from "../ui/playerSnapshot.js";
 
 /**
  * A prose "scene" describing the current year, woven from the living world
@@ -47,10 +48,13 @@ export default function useNarrative(): string[] {
     logStore?.subscribe ?? NO_SUB,
     logStore?.getSnapshot ?? NO_SNAP,
   );
+  // The relationship digest (not just its size) matters: raising an existing
+  // NPC's affinity changes the narrator's "top bond" segment but leaves `.size`
+  // unchanged, so a size-only snapshot would never refresh the prose.
   useSyncExternalStore(player.subscribe, () =>
-    `${player.age}|${player.health}|${player.happiness}|${player.activeEffects
+    `${player.age}|${player.health}|${player.happiness}|${player.reputation}|${player.activeEffects
       .map((e) => e.id)
-      .join(",")}`,
+      .join(",")}|${relationshipDigest(player.relationships)}`,
   );
 
   const pressureList = pressureReg.getAxes().map((a) => ({

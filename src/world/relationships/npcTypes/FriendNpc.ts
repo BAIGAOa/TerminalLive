@@ -18,18 +18,16 @@ export class FriendNpc extends Npc {
     );
     if (singles.length >= 2 && chance(ctx, 0.04)) {
       const [a, b] = ctx.random.shuffle(singles).slice(0, 2);
+      // The partner edge belongs to the couple (a↔b), not to the matchmaker:
+      // applyScheme keys the edge on pairKey(actorId, targetId), so both
+      // endpoints must be the pair being wed.
       out.push({
-        actorId: this.id,
-        targetId: a.npc.id,
-        target: { mood: 6, partnerId: b.npc.id },
+        actorId: a.npc.id,
+        targetId: b.npc.id,
+        actor: { mood: 6, partnerId: b.npc.id },
+        target: { mood: 6, partnerId: a.npc.id },
         edge: { kind: "partner", affinity: 25, trust: 15 },
         player: ctx.knowsPlayer(this.id) ? { effects: { happiness: 2 } } : undefined,
-        logKey: "npc.scheme.friend.matchmake",
-      });
-      out.push({
-        actorId: this.id,
-        targetId: b.npc.id,
-        target: { mood: 6, partnerId: a.npc.id },
         logKey: "npc.scheme.friend.matchmake",
       });
       return out;

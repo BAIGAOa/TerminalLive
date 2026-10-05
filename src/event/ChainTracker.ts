@@ -24,6 +24,25 @@ export default class ChainTracker {
     return `${chain}:${id}:${index}`;
   }
 
+  /**
+   * Whether an edge's once / maxRuns / group still permit another fire,
+   * ignoring the age window. Used at fire time to tell a *permanently* closed
+   * edge (drop) apart from one merely outside its age window (retry / clamp).
+   */
+  public isAvailable(
+    sourceId: string,
+    edge: PostIncidentConfig,
+    index: number,
+  ): boolean {
+    const key = this.keyOf(sourceId, edge, index);
+    if (edge.once && this.firedEdges.has(key)) return false;
+    if (edge.maxRuns !== undefined && (this.runs.get(key) ?? 0) >= edge.maxRuns) {
+      return false;
+    }
+    if (edge.group && this.firedGroups.has(edge.group)) return false;
+    return true;
+  }
+
   /** Whether an edge is still available (once / maxRuns / group + age window). */
   public isOpen(
     sourceId: string,
@@ -33,13 +52,7 @@ export default class ChainTracker {
   ): boolean {
     if (edge.minAge !== undefined && age < edge.minAge) return false;
     if (edge.maxAge !== undefined && age > edge.maxAge) return false;
-    const key = this.keyOf(sourceId, edge, index);
-    if (edge.once && this.firedEdges.has(key)) return false;
-    if (edge.maxRuns !== undefined && (this.runs.get(key) ?? 0) >= edge.maxRuns) {
-      return false;
-    }
-    if (edge.group && this.firedGroups.has(edge.group)) return false;
-    return true;
+    return this.isAvailable(sourceId, edge, index);
   }
 
   /** Mark an edge as fired (called when its target actually executes). */

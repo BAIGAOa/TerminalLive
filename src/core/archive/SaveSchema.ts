@@ -2,8 +2,10 @@ import z from "zod";
 
 export const saveDataSchema = z.object({
   version: z.number(),
-  appVersion: z.string(),
-  timestamp: z.string(),
+  // Defaults (not bare required fields) so a save predating these keys migrates
+  // and loads instead of being rejected as "incompatible".
+  appVersion: z.string().default("0.0.0"),
+  timestamp: z.string().default(""),
   player: z.object({
     playerName: z.string(),
     age: z.number(),
@@ -16,10 +18,10 @@ export const saveDataSchema = z.object({
     fitness: z.number().default(0),
     happiness: z.number().default(50),
     reputation: z.number().default(0),
-    angerValue: z.number(),
-    excitationValue: z.number(),
-    depressionValue: z.number(),
-    weakValue: z.number(),
+    angerValue: z.number().default(0),
+    excitationValue: z.number().default(0),
+    depressionValue: z.number().default(0),
+    weakValue: z.number().default(0),
     effects: z
       .array(
         z.object({
@@ -39,9 +41,9 @@ export const saveDataSchema = z.object({
     careerRank: z.number().default(0),
   }),
   history: z.object({
-    triggered: z.array(z.string()),
-    blocked: z.array(z.string()),
-    rangeRecord: z.record(z.string(), z.array(z.string())),
+    triggered: z.array(z.string()).default([]),
+    blocked: z.array(z.string()).default([]),
+    rangeRecord: z.record(z.string(), z.array(z.string())).default({}),
     /** Age each event last fired (cooldown bookkeeping). */
     triggeredAge: z.record(z.string(), z.number()).default({}),
     /** Age each category last fired (same-class decay bookkeeping). */
@@ -49,16 +51,18 @@ export const saveDataSchema = z.object({
     lastId: z.string().nullable().default(null),
     consecutiveCount: z.number().default(0),
   }),
-  achievements: z.array(
-    z.object({
-      id: z.string(),
-      unlockedAt: z.number().nullable(),
-    }),
-  ),
+  achievements: z
+    .array(
+      z.object({
+        id: z.string(),
+        unlockedAt: z.number().nullable(),
+      }),
+    )
+    .default([]),
   config: z.object({
-    language: z.string(),
+    language: z.string().default("en_US"),
     theme: z.string().default("default"),
-    enabledMods: z.array(z.string()),
+    enabledMods: z.array(z.string()).default([]),
     traits: z.array(z.string()).default([]),
   }),
   /** Which world this run is in, plus its content identity for save guarding. */
@@ -352,6 +356,22 @@ export const saveDataSchema = z.object({
       firedGroups: z.array(z.string()).default([]),
     })
     .default({ firedEdges: [], runs: {}, firedGroups: [] }),
+  /**
+   * Pending post-event graph queue (closure-free). Without this a delayed or
+   * condition-gated post edge is lost on save/load, silently ending its
+   * narrative line. Edges are re-resolved from content by `sourceId`/`edgeIndex`.
+   */
+  postEvents: z
+    .array(
+      z.object({
+        sourceId: z.string(),
+        targetId: z.string(),
+        delay: z.number().default(0),
+        weight: z.number().optional(),
+        edgeIndex: z.number().optional(),
+      }),
+    )
+    .default([]),
   /** Narrative director streak memory. */
   director: z.object({ fortune: z.number().default(0) }).default({ fortune: 0 }),
   /** A choice event awaiting the player's pick when the save was taken. */
@@ -369,4 +389,6 @@ export interface SaveMeta {
   playerName: string;
   age: number;
   appVersion: string;
+  /** Directory mtime, used to sort newest-first without a second stat pass. */
+  mtimeMs: number;
 }

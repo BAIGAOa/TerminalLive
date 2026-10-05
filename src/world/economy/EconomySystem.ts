@@ -65,8 +65,11 @@ export default class EconomySystem {
   public buyStock(player: Player, id: string, shares: number): EconomyEvent[] {
     const price = this.market.stocks[id];
     if (!price) return [{ kind: "market.noStock" }];
+    // NaN passes every `<`/`<=` comparison, so validate before any arithmetic:
+    // otherwise `money - NaN` permanently poisons the stat.
+    if (!Number.isFinite(shares) || shares <= 0) return [];
     const cost = Math.round(price * shares);
-    if (shares <= 0) return [];
+    if (!Number.isFinite(cost)) return [];
     if (player.money < cost) return [{ kind: "market.cantAfford" }];
     player.applyDelta({ money: -cost });
     const { events } = buyStock(this.portfolio, this.market, id, shares);
@@ -84,7 +87,7 @@ export default class EconomySystem {
   }
 
   public borrow(player: Player, amount: number, rate = 0.06): EconomyEvent[] {
-    if (amount <= 0) return [];
+    if (!Number.isFinite(amount) || amount <= 0) return [];
     takeLoan(this.portfolio, amount, rate);
     player.applyDelta({ money: amount });
     player.notify();
@@ -92,6 +95,9 @@ export default class EconomySystem {
   }
 
   public repay(player: Player, loanId: string, amount: number): EconomyEvent[] {
+    // A negative amount would *grow* the loan in repayLoan; require a positive,
+    // finite repayment before clamping to available cash.
+    if (!Number.isFinite(amount) || amount <= 0) return [];
     const paid = repayLoan(this.portfolio, loanId, Math.min(amount, player.money));
     if (paid > 0) {
       player.applyDelta({ money: -paid });
@@ -106,6 +112,15 @@ export default class EconomySystem {
     baseValue: number,
     downPayment: number,
   ): EconomyEvent[] {
+    // Negative/NaN down payment would otherwise slip past the affordability
+    // check and buy a home for free (paid clamps to 0, loan covers full value).
+    if (
+      !Number.isFinite(baseValue) ||
+      !Number.isFinite(downPayment) ||
+      downPayment < 0
+    ) {
+      return [];
+    }
     if (player.money < downPayment) return [{ kind: "market.cantAfford" }];
     const { cost, events } = buyProperty(
       this.portfolio,

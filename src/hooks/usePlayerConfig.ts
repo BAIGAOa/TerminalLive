@@ -1,49 +1,20 @@
-import { useState, useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { container } from "../Container.js";
 import Player from "../world/Player.js";
 import ConfigStore from "../core/store/ConfigStore.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useTerminalSize } from "../ui/TerminalSizeContext.js";
 import { PlayerConfigType } from "../types/ConfigType.js";
+import {
+  ATTRIBUTE_META,
+  getAttrMeta,
+  PlayerConfigCategory,
+  validateValue,
+} from "../world/playerConfig.js";
+import { useFlash } from "./useFlash.js";
 
-export enum PlayerConfigCategory {
-  basic = "basic",
-  physical = "physical",
-  skills = "skills",
-  psychological = "psychological",
-  wealth = "wealth",
-}
-
-export interface PlayerAttributeMeta {
-  key: keyof PlayerConfigType;
-  type: "string" | "number";
-  min?: number;
-  max?: number;
-}
-
-const ATTRIBUTE_META: Record<PlayerConfigCategory, PlayerAttributeMeta[]> = {
-  [PlayerConfigCategory.basic]: [{ key: "playerName", type: "string" }],
-  [PlayerConfigCategory.physical]: [
-    { key: "age", type: "number", min: 0, max: 150 },
-    { key: "health", type: "number", min: 0, max: 100 },
-    { key: "height", type: "number", min: 0.5, max: 3 },
-    { key: "weight", type: "number", min: 1, max: 500 },
-  ],
-  [PlayerConfigCategory.skills]: [
-    { key: "intelligence", type: "number", min: 0, max: 100 },
-    { key: "social", type: "number", min: 0, max: 100 },
-    { key: "fitness", type: "number", min: 0, max: 100 },
-    { key: "happiness", type: "number", min: 0, max: 100 },
-    { key: "reputation", type: "number", min: 0, max: 100 },
-  ],
-  [PlayerConfigCategory.psychological]: [
-    { key: "angerValue", type: "number", min: 0, max: 100 },
-    { key: "excitationValue", type: "number", min: 0, max: 100 },
-    { key: "depressionValue", type: "number", min: 0, max: 100 },
-    { key: "weakValue", type: "number", min: 0, max: 100 },
-  ],
-  [PlayerConfigCategory.wealth]: [{ key: "money", type: "number", min: 0 }],
-};
+export { PlayerConfigCategory } from "../world/playerConfig.js";
+export type { PlayerAttributeMeta } from "../world/playerConfig.js";
 
 export interface CategoryMenuItem {
   label: string;
@@ -78,36 +49,6 @@ export interface PlayerConfigData {
   onCancelEdit: () => void;
 }
 
-function getAttrMeta(key: string): PlayerAttributeMeta | undefined {
-  for (const list of Object.values(ATTRIBUTE_META)) {
-    const found = list.find((m) => m.key === key);
-    if (found) return found;
-  }
-  return undefined;
-}
-
-function validateValue(
-  meta: PlayerAttributeMeta,
-  raw: string,
-  t: (key: string, params?: Record<string, string | number>) => string,
-): { valid: true; value: string | number } | { valid: false; error: string } {
-  if (meta.type === "string") {
-    if (!raw.trim()) return { valid: false, error: t("playerConfig.error.empty") };
-    return { valid: true, value: raw.trim() };
-  }
-  const num = Number(raw);
-  if (isNaN(num) || raw.trim() === "") {
-    return { valid: false, error: t("playerConfig.error.number") };
-  }
-  if (meta.min !== undefined && num < meta.min) {
-    return { valid: false, error: t("playerConfig.error.min", { n: meta.min }) };
-  }
-  if (meta.max !== undefined && num > meta.max) {
-    return { valid: false, error: t("playerConfig.error.max", { n: meta.max }) };
-  }
-  return { valid: true, value: num };
-}
-
 export function usePlayerConfig(
   player: Player,
   onBack?: () => void,
@@ -123,7 +64,11 @@ export function usePlayerConfig(
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const {
+    value: successMessage,
+    flash: flashSuccess,
+    reset: resetSuccess,
+  } = useFlash<string>(3000);
 
   const leftItems: CategoryMenuItem[] = useMemo(
     () =>
@@ -160,9 +105,9 @@ export function usePlayerConfig(
       setEditValue(String((player as any)[item.value] ?? ""));
       setIsEditing(true);
       setValidationError(null);
-      setSuccessMessage(null);
+      resetSuccess();
     },
-    [player],
+    [player, resetSuccess],
   );
 
   const onEditChange = useCallback((value: string) => {
@@ -172,12 +117,11 @@ export function usePlayerConfig(
 
   const onSubmitEdit = useCallback(async () => {
     if (!editingKey) return;
-    const meta = getAttrMeta(editingKey);
-    if (!meta) return;
+    if (!getAttrMeta(editingKey)) return;
 
-    const result = validateValue(meta, editValue, t);
+    const result = validateValue(editingKey, editValue);
     if (!result.valid) {
-      setValidationError(result.error);
+      setValidationError(t(result.errorKey, result.params));
       return;
     }
 
@@ -189,12 +133,11 @@ export function usePlayerConfig(
       console.error("玩家配置持久化失败:", err);
     }
 
-    setSuccessMessage(t("playerConfig.saveSuccess"));
+    flashSuccess(t("playerConfig.saveSuccess"));
     setIsEditing(false);
     setEditingKey(null);
     setValidationError(null);
-    setTimeout(() => setSuccessMessage(null), 3000);
-  }, [editingKey, editValue, player, configStore, t]);
+  }, [editingKey, editValue, player, configStore, t, flashSuccess]);
 
   const onCancelEdit = useCallback(() => {
     if (isEditing) {

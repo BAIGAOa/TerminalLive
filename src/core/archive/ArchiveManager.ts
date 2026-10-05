@@ -12,6 +12,7 @@ import { ArchiveLoader } from "./ArchiveLoader.js";
 import { SaveMeta } from "./SaveSchema.js";
 import ConfigStore from "../store/ConfigStore.js";
 import { ArchivingKeeper } from "./ArchiveKeeper.js";
+import { isValidSaveName, resolveWithin } from "./saveName.js";
 
 type Listener = () => void;
 
@@ -44,9 +45,9 @@ export class ArchiveManager {
 
     const result: SaveMeta[] = [];
     for (const dirName of dirs) {
-      const archiveFile = join(this.ARCHIVE_ROOT, dirName, "archive.json");
+      const dir = join(this.ARCHIVE_ROOT, dirName);
       try {
-        const raw = readFileSync(archiveFile, "utf-8");
+        const raw = readFileSync(join(dir, "archive.json"), "utf-8");
         const data = JSON.parse(raw);
         result.push({
           name: dirName,
@@ -54,22 +55,22 @@ export class ArchiveManager {
           playerName: data.player?.playerName ?? "Unknown",
           age: data.player?.age ?? 0,
           appVersion: data.appVersion ?? "0.0.0",
+          mtimeMs: statSync(dir).mtimeMs,
         });
       } catch {
         // 跳过损坏的存档文件
       }
     }
 
-    result.sort((a, b) => {
-      const ta = statSync(join(this.ARCHIVE_ROOT, a.name)).mtimeMs;
-      const tb = statSync(join(this.ARCHIVE_ROOT, b.name)).mtimeMs;
-      return tb - ta;
-    });
+    result.sort((a, b) => b.mtimeMs - a.mtimeMs);
 
     return result;
   }
 
   public save(name: string): void {
+    if (!isValidSaveName(name)) {
+      throw new Error(`不合法的存档名: ${JSON.stringify(name)}`);
+    }
     this.keeper.save(name, this.configStore);
     this.emitChange();
   }
@@ -79,7 +80,7 @@ export class ArchiveManager {
   }
 
   public delete(name: string): void {
-    const dir = join(this.ARCHIVE_ROOT, name);
+    const dir = resolveWithin(this.ARCHIVE_ROOT, name);
     if (existsSync(dir)) {
       rmSync(dir, { recursive: true, force: true });
       this.emitChange();

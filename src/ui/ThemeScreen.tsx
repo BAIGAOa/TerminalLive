@@ -6,6 +6,7 @@ import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { ThemeColors } from "../core/theme/ThemeDefinition.js";
 import { useThemeScreen } from "../hooks/theme/useThemeScreen.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
+import { statusViewHeight } from "./kit/viewport.js";
 
 function PreviewSwatches({ colors }: { colors: ThemeColors }) {
   return (
@@ -54,7 +55,7 @@ export default function ThemeScreen({ onBack }: { onBack?: () => void }) {
         <ScrollList
           focusId="theme-list"
           itemHeight={3}
-          height={Math.max(3, rows - 9)}
+          height={statusViewHeight(rows, { min: 3, reserved: 9 })}
           pageKeys={false}
           items={items}
           onSelect={(item) => {

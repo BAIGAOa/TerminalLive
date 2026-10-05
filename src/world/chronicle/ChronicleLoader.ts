@@ -30,11 +30,26 @@ export default class ChronicleLoader {
       }
     };
 
-    for (const e of read("eras.json") ?? []) this.registry.registerEra(e as never);
-    for (const f of read("factions.json") ?? []) this.registry.registerFaction(f as never);
-    for (const r of read("regions.json") ?? []) this.registry.registerRegion(r as never);
-    for (const l of read("lore.json") ?? []) this.registry.registerLore(l as never);
-    for (const f of read("fates.json") ?? []) this.registry.registerFate(f as never);
-    for (const w of read("worldEvents.json") ?? []) this.registry.registerWorldEvent(w as never);
+    // Register per entry: a duplicate id (e.g. a mod layering an existing
+    // definition) or a malformed entry must be skipped with a warning, not
+    // thrown out of `start()` and abort the whole boot.
+    const apply = (name: string, register: (entry: unknown) => void): void => {
+      for (const entry of read(name) ?? []) {
+        try {
+          register(entry);
+        } catch (err) {
+          console.warn(
+            `[chronicle] 跳过 ${name} 中重复或无效的条目:`,
+            (err as Error).message,
+          );
+        }
+      }
+    };
+    apply("eras.json", (e) => this.registry.registerEra(e as never));
+    apply("factions.json", (f) => this.registry.registerFaction(f as never));
+    apply("regions.json", (r) => this.registry.registerRegion(r as never));
+    apply("lore.json", (l) => this.registry.registerLore(l as never));
+    apply("fates.json", (f) => this.registry.registerFate(f as never));
+    apply("worldEvents.json", (w) => this.registry.registerWorldEvent(w as never));
   }
 }

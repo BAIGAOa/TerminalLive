@@ -27,16 +27,23 @@ export default class TypedEventBus {
     ...args: EventMap[K] extends void ? [] : [payload: EventMap[K]]
   ): void {
     const handlers = this.listeners.get(event as string);
-    if (!handlers) return;
+    if (!handlers || handlers.size === 0) return;
     const payload = args[0]; // 如果是 void，此处为 undefined
-    handlers.forEach((fn) => {
-      // 为了类型准确，void 事件直接调用 fn()
-      if (args.length === 0) {
-        (fn as () => void)();
-      } else {
-        fn(payload);
+    // Snapshot so a handler that subscribes/unsubscribes during the emit cannot
+    // alter who receives this event, and isolate each handler: one throwing
+    // listener must not prevent the others (save, achievements, toasts) from running.
+    for (const fn of [...handlers]) {
+      try {
+        // 为了类型准确，void 事件直接调用 fn()
+        if (args.length === 0) {
+          (fn as () => void)();
+        } else {
+          fn(payload);
+        }
+      } catch (err) {
+        console.error(`[EventBus] "${String(event)}" 监听器抛出异常:`, err);
       }
-    });
+    }
   }
 
   public once<K extends keyof EventMap>(

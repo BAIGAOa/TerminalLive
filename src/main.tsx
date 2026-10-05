@@ -42,10 +42,13 @@ import { ToastHost } from "./ui/ToastHost.js";
 import { HelpModal } from "./ui/HelpModal.js";
 import { dismissModal, presentModal } from "./ui/layers/modalBus.js";
 import { toggleConsole } from "./ui/layers/consoleLayer.js";
+import { registerStatusViews } from "./ui/gameStatus/registerStatusViews.js";
 import { replInput } from "./core/repl/replInputState.js";
 
 // ── 初始化游戏核心 ──
 await container.resolve(GameInitialization).init();
+// UI layer wires the status-view components into GameStatusMap (keeps content UI-free).
+registerStatusViews();
 
 // ── 注册屏幕树 ──
 registerComponent(MainMenu, {});
@@ -177,6 +180,47 @@ function App() {
   );
 }
 
+/**
+ * Last-resort recovery screen. Rendered INSIDE KeyboardProvider so it can grab
+ * a global key; a render throw anywhere in the tree lands here instead of
+ * tearing the whole TUI down with a raw stack trace.
+ */
+function RecoveryPrompt({ error, onReset }: { error: Error; onReset: () => void }) {
+  const { globalKeys } = useKeyboard();
+  useEffect(() => {
+    globalKeys([{ key: "r", operate: onReset, category: "*", cover: true }]);
+  }, [globalKeys, onReset]);
+  return (
+    <Box flexDirection="column" padding={1}>
+      <Text color="red" bold>
+        ⚠ 渲染出错 / Render error
+      </Text>
+      <Text dimColor>{error.message}</Text>
+      <Text>按 R 返回主菜单 / Press R to return to the main menu</Text>
+    </Box>
+  );
+}
+
+class AppErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { error: Error | null }
+> {
+  state: { error: Error | null } = { error: null };
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  componentDidCatch(error: Error) {
+    console.error("[UI] 渲染异常:", error);
+  }
+  private reset = () => this.setState({ error: null });
+  render() {
+    if (this.state.error) {
+      return <RecoveryPrompt error={this.state.error} onReset={this.reset} />;
+    }
+    return this.props.children;
+  }
+}
+
 render(
   <LanguageProvider>
     <TerminalSizeProvider>
@@ -188,7 +232,9 @@ render(
             modes={["normal", "insert"]}
             defaultMode="normal"
           >
-            <App />
+            <AppErrorBoundary>
+              <App />
+            </AppErrorBoundary>
           </KeyboardProvider>
         </ScenarioManagementProvider>
       </ThemeProvider>

@@ -26,6 +26,9 @@ export function meetsUnlock(
   cond: UnlockCondition,
   ctx: ChronicleContext,
 ): boolean {
+  // Un-validated content (a mod entry missing `unlock`) must degrade to
+  // "locked", not throw a TypeError on the first unlock pass.
+  if (!cond || typeof cond.kind !== "string") return false;
   switch (cond.kind) {
     case "era":
       return ctx.eraId === cond.era;

@@ -52,6 +52,13 @@ export function ScrollPanel({
     else setInternal(v);
   };
 
+  // Refs so the key bindings below stay stable across scroll ticks instead of
+  // rebinding all six handlers on every offset change.
+  const offsetRef = useRef(offset);
+  offsetRef.current = offset;
+  const commitRef = useRef(commit);
+  commitRef.current = commit;
+
   // Follow the tail when asked (uncontrolled live journals only).
   useEffect(() => {
     if (!stickToEnd || controlled) return;
@@ -73,15 +80,15 @@ export function ScrollPanel({
     const focusOpt = group ? { group, focusId } : focusId;
     const page = Math.max(1, height - 1);
     const unbinds = [
-      boundKeyboard(["up"], () => commit(offset - 1), { focusId: focusOpt }),
-      boundKeyboard(["down"], () => commit(offset + 1), { focusId: focusOpt }),
-      boundKeyboard(["pageup"], () => commit(offset - page), { focusId: focusOpt }),
-      boundKeyboard(["pagedown"], () => commit(offset + page), { focusId: focusOpt }),
-      boundKeyboard(["home"], () => commit(0), { focusId: focusOpt }),
-      boundKeyboard(["end"], () => commit(maxRef.current), { focusId: focusOpt }),
+      boundKeyboard(["up"], () => commitRef.current(offsetRef.current - 1), { focusId: focusOpt }),
+      boundKeyboard(["down"], () => commitRef.current(offsetRef.current + 1), { focusId: focusOpt }),
+      boundKeyboard(["pageup"], () => commitRef.current(offsetRef.current - page), { focusId: focusOpt }),
+      boundKeyboard(["pagedown"], () => commitRef.current(offsetRef.current + page), { focusId: focusOpt }),
+      boundKeyboard(["home"], () => commitRef.current(0), { focusId: focusOpt }),
+      boundKeyboard(["end"], () => commitRef.current(maxRef.current), { focusId: focusOpt }),
     ];
     return () => unbinds.forEach((u) => u());
-  }, [boundKeyboard, focusId, group, height, offset, controlled, onOffsetChange]);
+  }, [boundKeyboard, focusId, group, height]);
 
   const visible = lines.slice(offset, offset + height);
   const thumbTop = maxOffset === 0 ? 0 : Math.round((offset / maxOffset) * (height - 1));

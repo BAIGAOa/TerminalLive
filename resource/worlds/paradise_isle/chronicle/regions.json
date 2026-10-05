@@ -6,7 +6,8 @@
     "icon": "📍",
     "climate": "coastal",
     "neighbors": [
-      "reg_paradise_isle_1"
+      "reg_paradise_isle_7",
+      "reg_paradise_isle_2"
     ]
   },
   {
@@ -16,7 +17,8 @@
     "icon": "📍",
     "climate": "coastal",
     "neighbors": [
-      "reg_paradise_isle_2"
+      "reg_paradise_isle_1",
+      "reg_paradise_isle_3"
     ]
   },
   {
@@ -26,7 +28,8 @@
     "icon": "📍",
     "climate": "coastal",
     "neighbors": [
-      "reg_paradise_isle_3"
+      "reg_paradise_isle_2",
+      "reg_paradise_isle_4"
     ]
   },
   {
@@ -36,7 +39,8 @@
     "icon": "📍",
     "climate": "coastal",
     "neighbors": [
-      "reg_paradise_isle_4"
+      "reg_paradise_isle_3",
+      "reg_paradise_isle_5"
     ]
   },
   {
@@ -46,7 +50,8 @@
     "icon": "📍",
     "climate": "coastal",
     "neighbors": [
-      "reg_paradise_isle_5"
+      "reg_paradise_isle_4",
+      "reg_paradise_isle_6"
     ]
   },
   {
@@ -56,7 +61,8 @@
     "icon": "📍",
     "climate": "coastal",
     "neighbors": [
-      "reg_paradise_isle_6"
+      "reg_paradise_isle_5",
+      "reg_paradise_isle_7"
     ]
   },
   {
@@ -66,7 +72,8 @@
     "icon": "📍",
     "climate": "coastal",
     "neighbors": [
-      "reg_paradise_isle_7"
+      "reg_paradise_isle_6",
+      "reg_paradise_isle_1"
     ]
   }
 ]

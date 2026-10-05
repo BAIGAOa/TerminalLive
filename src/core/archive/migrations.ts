@@ -26,14 +26,8 @@ export const MIGRATIONS: Migration[] = [
     to: 6,
     up: (raw) => {
       const out = { ...raw };
-      if (out.economy === undefined) out.economy = undefined;
-      if (out.health === undefined) out.health = undefined;
-      if (out.politics === undefined) out.politics = undefined;
-      if (out.regions === undefined) out.regions = undefined;
-      if (out.chains === undefined) out.chains = undefined;
-      if (out.narrative === undefined) out.narrative = undefined;
-      if (out.career === undefined) out.career = undefined;
-      if (out.npcSim === undefined) out.npcSim = undefined;
+      // The new subsystems (economy/health/politics/regions/chains/narrative/
+      // career/npcSim) are left absent so the schema fills their defaults.
       if (out.levelObjectives === undefined) {
         out.levelObjectives = { levelId: null, completed: [] };
       }
@@ -61,9 +55,19 @@ export const MIGRATIONS: Migration[] = [
   },
 ];
 
-/** Walk a raw save forward to the current version (never downgrades). */
+/**
+ * Walk a raw save forward to the current version. A save from a NEWER version
+ * is refused rather than silently stamped down (which would drop fields the
+ * current build doesn't understand).
+ */
 export function migrateSave(raw: RawSave): RawSave {
-  let version = typeof raw.version === "number" ? raw.version : 1;
+  const startVersion = typeof raw.version === "number" ? raw.version : 1;
+  if (startVersion > SAVE_VERSION) {
+    throw new Error(
+      `存档版本 ${startVersion} 高于当前支持的 ${SAVE_VERSION}，无法加载`,
+    );
+  }
+  let version = startVersion;
   let out = raw;
   for (const m of [...MIGRATIONS].sort((a, b) => a.to - b.to)) {
     if (version < m.to) {

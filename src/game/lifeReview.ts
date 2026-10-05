@@ -58,8 +58,13 @@ export interface LifeReview {
   lines: ReviewLine[];
 }
 
+/** Coerce a possibly-missing/non-finite input to a finite number (default 0). */
+function num(v: number | undefined): number {
+  return typeof v === "number" && Number.isFinite(v) ? v : 0;
+}
+
 function clamp(v: number, lo = 0, hi = 100): number {
-  return Math.round(Math.max(lo, Math.min(hi, v)));
+  return Math.round(Math.max(lo, Math.min(hi, num(v))));
 }
 
 export function buildLifeReview(input: LifeReviewInput): LifeReview {
@@ -94,13 +99,17 @@ export function buildLifeReview(input: LifeReviewInput): LifeReview {
 
   const completedArcs = input.arcs.filter((a) => a.stage >= a.total).length;
   const lines: ReviewLine[] = [
-    { key: "review.line.summary", params: { name: input.name, age: input.age } },
+    { key: "review.line.summary", params: { name: input.name, age: num(input.age) } },
     { key: "review.line.epithet", params: { epithet: epithetKey } },
-    { key: "review.line.career", params: { rank: input.careerRank + 1 } },
-    { key: "review.line.family", params: { n: Math.round(input.maxRelationship) } },
+    {
+      key: "review.line.career",
+      // Rank 0 means "no career" rather than a careerless life showing rank 1.
+      params: { rank: input.hasCareer ? num(input.careerRank) + 1 : 0 },
+    },
+    { key: "review.line.family", params: { n: Math.round(num(input.maxRelationship)) } },
     {
       key: "review.line.vitals",
-      params: { wellbeing: input.wellbeing, expectancy: input.lifeExpectancy },
+      params: { wellbeing: num(input.wellbeing), expectancy: num(input.lifeExpectancy) },
     },
     {
       key: "review.line.arcs",

@@ -263,8 +263,9 @@ export default class WorldManager {
       // Fresh political landscape.
       this.politics.reset();
       // A new life resets the world too (region, karma, era, lore, fates). The
-      // region roll is now in-stream with the reseeded random above.
-      this.world.begin();
+      // region roll is now in-stream with the reseeded random above. A world may
+      // pin its birth region via manifest `startRegion` (else it rolls randomly).
+      this.world.begin(level.startRegion);
       // Regions are seeded at the world's chosen starting region.
       this.regions.reset(this.world.regionId);
       // Fresh chain of world events.
@@ -550,6 +551,13 @@ export default class WorldManager {
     }
     this._current = level;
     level.player = player;
+    // Re-activate the world's rule set so weather bias, stat drift, economy
+    // bias and mortality shape the resumed life. Only `setActive` — the start
+    // patch is NOT re-applied, it already ran when the life began.
+    this.rules.setActive([
+      ...level.worldRules,
+      ...this.builtins.worldRuleIdsFor(level.id),
+    ]);
     // Apply any event-history blob handed over by a save load (levels own their
     // history, so it can only be restored once we've re-entered the level).
     if (this.pendingHistory) {

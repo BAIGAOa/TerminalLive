@@ -42,6 +42,8 @@ export default class RandomService implements RandomSource {
   private src: SeededRandom;
   /** Seed to use for the next `reset()` (set by the Monte-Carlo harness). */
   private pendingSeed: number | null = null;
+  /** Increments per {@link fork} call to keep sub-streams independent. */
+  private forkCounter = 0;
   public readonly journal = new RandomJournal();
   /** Toggle journaling (e.g. off in hot loops / tests). */
   public journaling = true;
@@ -84,6 +86,9 @@ export default class RandomService implements RandomSource {
 
   public restore(snapshot: RandomSnapshot): void {
     this.src.restore(snapshot);
+    // Drop the previous life's draws so the post-reload journal reflects only
+    // the restored stream.
+    this.journal.clear();
   }
 
   /**
@@ -92,8 +97,14 @@ export default class RandomService implements RandomSource {
    * never perturbs the main sequence (which would desync replays).
    */
   public fork(label: string): RandomSource {
+    // Mix in a call counter so two labels that happen to hash-collide at the
+    // same stream position still get independent sub-streams.
     const derived =
-      (hashString(label) ^ Math.imul(this.seed, 2654435761) ^ this.step) >>> 0;
+      (hashString(label) ^
+        Math.imul(this.seed, 2654435761) ^
+        this.step ^
+        Math.imul(this.forkCounter++, 0x9e3779b1)) >>>
+      0;
     return new SeededRandom(derived);
   }
 

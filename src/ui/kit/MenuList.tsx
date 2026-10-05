@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, Text } from "ink";
 import { useFocusState, useKeyboard, useMouseRegion } from "ink-cartridge";
+import { firstEnabled, lastEnabled, seek } from "./listNav.js";
 
 export interface MenuEntry {
   value: string;
@@ -37,37 +38,6 @@ export interface MenuListProps {
   columnWidth?: number;
   /** Horizontal gap between grid cells (default 1). */
   colGap?: number;
-}
-
-function firstEnabled(items: MenuEntry[], from = 0): number {
-  for (let i = from; i < items.length; i++) if (!items[i]?.disabled) return i;
-  for (let i = 0; i < items.length; i++) if (!items[i]?.disabled) return i;
-  return 0;
-}
-
-function lastEnabled(items: MenuEntry[]): number {
-  for (let i = items.length - 1; i >= 0; i--) if (!items[i]?.disabled) return i;
-  return 0;
-}
-
-function seek(
-  items: MenuEntry[],
-  from: number,
-  step: number,
-  wrap: boolean,
-): number {
-  const n = items.length;
-  if (n === 0 || step === 0) return from;
-  let i = from;
-  for (let c = 0; c < n; c++) {
-    i += step;
-    if (i < 0 || i >= n) {
-      if (!wrap) return from;
-      i = ((i % n) + n) % n;
-    }
-    if (!items[i]?.disabled) return i;
-  }
-  return from;
 }
 
 function MenuRow({
@@ -285,8 +255,10 @@ export function MenuList({
   // Centered, uniform-width grid: each cell is a fixed-width box so buttons
   // align regardless of label length, and every row is centered as a whole.
   const rows: MenuEntry[][] = [];
-  for (let i = 0; i < items.length; i += columns) {
-    rows.push(items.slice(i, i + columns));
+  // Guard against columns <= 0, which would make this loop never advance.
+  const cols = Math.max(1, Math.floor(columns));
+  for (let i = 0; i < items.length; i += cols) {
+    rows.push(items.slice(i, i + cols));
   }
   return (
     <Box flexDirection="column">
@@ -299,7 +271,7 @@ export function MenuList({
               flexDirection="column"
               marginRight={c < row.length - 1 ? colGap : 0}
             >
-              {renderRow(item, r * columns + c, rowGap)}
+              {renderRow(item, r * cols + c, rowGap)}
             </Box>
           ))}
         </Box>

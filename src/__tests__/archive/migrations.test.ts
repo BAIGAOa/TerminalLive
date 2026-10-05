@@ -32,4 +32,8 @@ describe("migrateSave", () => {
     const twice = migrateSave(once);
     expect(twice).toEqual(once);
   });
+
+  it("refuses a save from a newer version instead of downgrading it", () => {
+    expect(() => migrateSave({ version: SAVE_VERSION + 1 })).toThrow();
+  });
 });
