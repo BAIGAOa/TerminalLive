@@ -5,6 +5,14 @@ import {
   WeatherTransition,
 } from "./WeatherDefinition.js";
 
+/** A serialisable snapshot of all weather content. */
+export interface WeatherSnapshot {
+  states: Array<[string, WeatherDefinition]>;
+  base: Array<[string, WeatherTransition[]]>;
+  climateMult: Array<[Climate, Record<string, number>]>;
+  seasonMult: Array<[Season, Record<string, number>]>;
+}
+
 /**
  * Holds the weather states and the transition tables. A single base table is
  * scaled per climate and per season.
@@ -56,5 +64,29 @@ export default class WeatherRegistry {
     const c = this.climateMult.get(climate)?.[weatherId] ?? 1;
     const s = this.seasonMult.get(season)?.[weatherId] ?? 1;
     return c * s;
+  }
+
+  // ── resettable (World content layering) ────────────────────────
+  public snapshot(): WeatherSnapshot {
+    return {
+      states: [...this.states.entries()],
+      base: [...this.base.entries()],
+      climateMult: [...this.climateMult.entries()],
+      seasonMult: [...this.seasonMult.entries()],
+    };
+  }
+
+  public restore(snap: WeatherSnapshot): void {
+    this.states = new Map(snap.states);
+    this.base = new Map(snap.base);
+    this.climateMult = new Map(snap.climateMult);
+    this.seasonMult = new Map(snap.seasonMult);
+  }
+
+  public clear(): void {
+    this.states = new Map();
+    this.base = new Map();
+    this.climateMult = new Map();
+    this.seasonMult = new Map();
   }
 }

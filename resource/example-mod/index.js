@@ -25,6 +25,38 @@ module.exports = {
     registry.register("ExampleKindness", ExampleKindness);
   },
 
+  // Register a brand-new NPC archetype, then reference it from
+  // npcs/guardian.json with `"type": "example_guardian"` (+ custom `params`).
+  // A mod can also `class X extends ctx.npcBase { … }` and register that class.
+  registerNpcTypes(registry, ctx) {
+    const ExampleGuardian = ctx.createNpcClass({
+      // Custom field: `params.favor` picks the guardian's blessing.
+      parseParams(self, params) {
+        self.favor = typeof params.favor === "string" ? params.favor : "shield";
+      },
+      traits: { warmth: 0.85, ambition: 0.3, stability: 0.9, sociability: 0.4 },
+      // The guardian only enters the player's life at age 6.
+      knowsFromAge: 6,
+      autonomyMinAge: 6,
+      // A rare, quiet act of protection — real good news for the player.
+      peerScheme(self) {
+        if (ctx.random.next() >= 0.08) return [];
+        const effects =
+          self.favor === "hearth"
+            ? { happiness: 6, depressionValue: -4 }
+            : { health: 4, happiness: 3 };
+        return [
+          {
+            actorId: self.id,
+            player: { effects, toastKey: "example.npc.guardian.watch" },
+            logKey: "example.npc.guardian.watch",
+          },
+        ];
+      },
+    });
+    registry.register("example_guardian", ExampleGuardian);
+  },
+
   hooks: {
     onInit(ctx) {
       // Add a hidden-score axis (see the Pressures panel in-game).

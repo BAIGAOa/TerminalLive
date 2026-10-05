@@ -1,0 +1,122 @@
+[
+  {
+    "id": "npc_wasteland_1",
+    "roleKey": "npc.role.family",
+    "initial": 50,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.1",
+    "descKey": "wasteland.npc.1.desc",
+    "dialogueKeys": [
+      "wasteland.npc.1.l1",
+      "wasteland.npc.1.l2"
+    ]
+  },
+  {
+    "id": "npc_wasteland_2",
+    "roleKey": "npc.role.friend",
+    "initial": 46,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.2",
+    "descKey": "wasteland.npc.2.desc",
+    "dialogueKeys": [
+      "wasteland.npc.2.l1",
+      "wasteland.npc.2.l2"
+    ]
+  },
+  {
+    "id": "npc_wasteland_3",
+    "roleKey": "npc.role.mentor",
+    "initial": 42,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.3",
+    "descKey": "wasteland.npc.3.desc",
+    "dialogueKeys": [
+      "wasteland.npc.3.l1",
+      "wasteland.npc.3.l2"
+    ]
+  },
+  {
+    "id": "npc_wasteland_4",
+    "roleKey": "npc.role.rival",
+    "initial": 38,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.4",
+    "descKey": "wasteland.npc.4.desc",
+    "dialogueKeys": [
+      "wasteland.npc.4.l1",
+      "wasteland.npc.4.l2"
+    ]
+  },
+  {
+    "id": "npc_wasteland_5",
+    "roleKey": "npc.role.work",
+    "initial": 34,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.5",
+    "descKey": "wasteland.npc.5.desc",
+    "dialogueKeys": [
+      "wasteland.npc.5.l1",
+      "wasteland.npc.5.l2"
+    ]
+  },
+  {
+    "id": "npc_wasteland_6",
+    "roleKey": "npc.role.family",
+    "initial": 30,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.6",
+    "descKey": "wasteland.npc.6.desc",
+    "dialogueKeys": [
+      "wasteland.npc.6.l1",
+      "wasteland.npc.6.l2"
+    ]
+  },
+  {
+    "id": "npc_wasteland_7",
+    "roleKey": "npc.role.rival",
+    "initial": 26,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.7",
+    "descKey": "wasteland.npc.7.desc",
+    "dialogueKeys": [
+      "wasteland.npc.7.l1",
+      "wasteland.npc.7.l2"
+    ]
+  },
+  {
+    "id": "npc_wasteland_8",
+    "roleKey": "npc.role.friend",
+    "initial": 22,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.8",
+    "descKey": "wasteland.npc.8.desc",
+    "dialogueKeys": [
+      "wasteland.npc.8.l1",
+      "wasteland.npc.8.l2"
+    ]
+  },
+  {
+    "id": "npc_wasteland_9",
+    "roleKey": "npc.role.mentor",
+    "initial": 18,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.9",
+    "descKey": "wasteland.npc.9.desc",
+    "dialogueKeys": [
+      "wasteland.npc.9.l1",
+      "wasteland.npc.9.l2"
+    ]
+  },
+  {
+    "id": "npc_wasteland_10",
+    "roleKey": "npc.role.work",
+    "initial": 14,
+    "startAge": 30,
+    "labelKey": "wasteland.npc.10",
+    "descKey": "wasteland.npc.10.desc",
+    "dialogueKeys": [
+      "wasteland.npc.10.l1",
+      "wasteland.npc.10.l2"
+    ]
+  }
+]

@@ -92,7 +92,7 @@ export default function KeyBinding({ onBack }: { onBack?: () => void }) {
               flexDirection="row"
               flexGrow={1}
               justifyContent="space-between"
-              borderStyle="round"
+              borderStyle="bold"
               borderColor={state.selected ? colors.highlight : colors.muted}
               paddingX={1}
             >

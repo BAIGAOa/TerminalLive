@@ -1,0 +1,50 @@
+[
+  {
+    "source": "pr_wasteland_1",
+    "target": "pr_wasteland_2",
+    "threshold": 50,
+    "factor": 0.1
+  },
+  {
+    "source": "pr_wasteland_2",
+    "target": "pr_wasteland_3",
+    "threshold": 50,
+    "factor": 0.08
+  },
+  {
+    "source": "pr_wasteland_3",
+    "target": "pr_wasteland_4",
+    "threshold": 50,
+    "factor": 0.07
+  },
+  {
+    "source": "pr_wasteland_4",
+    "target": "pr_wasteland_5",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_wasteland_5",
+    "target": "pr_wasteland_6",
+    "threshold": 50,
+    "factor": -0.05
+  },
+  {
+    "source": "pr_wasteland_6",
+    "target": "pr_wasteland_7",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_wasteland_7",
+    "target": "pr_wasteland_8",
+    "threshold": 50,
+    "factor": 0.05
+  },
+  {
+    "source": "pr_wasteland_8",
+    "target": "pr_wasteland_1",
+    "threshold": 50,
+    "factor": 0.05
+  }
+]

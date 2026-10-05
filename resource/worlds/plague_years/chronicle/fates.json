@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fate_plague_years_1",
+    "labelKey": "plague_years.fate.1",
+    "descKey": "plague_years.fate.1.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_plague_years_2",
+    "labelKey": "plague_years.fate.2",
+    "descKey": "plague_years.fate.2.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_plague_years_3",
+    "labelKey": "plague_years.fate.3",
+    "descKey": "plague_years.fate.3.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_plague_years_4",
+    "labelKey": "plague_years.fate.4",
+    "descKey": "plague_years.fate.4.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_plague_years_5",
+    "labelKey": "plague_years.fate.5",
+    "descKey": "plague_years.fate.5.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "year",
+      "year": 50
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_plague_years_6",
+    "labelKey": "plague_years.fate.6",
+    "descKey": "plague_years.fate.6.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "era",
+      "era": "era_plague_years_5"
+    },
+    "factor": 2
+  }
+]

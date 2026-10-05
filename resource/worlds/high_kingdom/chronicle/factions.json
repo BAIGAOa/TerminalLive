@@ -1,0 +1,47 @@
+[
+  {
+    "id": "fac_high_kingdom_1",
+    "labelKey": "high_kingdom.fac.1",
+    "descKey": "high_kingdom.fac.1.desc",
+    "icon": "👑",
+    "rivals": [
+      "fac_high_kingdom_2"
+    ]
+  },
+  {
+    "id": "fac_high_kingdom_2",
+    "labelKey": "high_kingdom.fac.2",
+    "descKey": "high_kingdom.fac.2.desc",
+    "icon": "⚔",
+    "rivals": [
+      "fac_high_kingdom_3"
+    ]
+  },
+  {
+    "id": "fac_high_kingdom_3",
+    "labelKey": "high_kingdom.fac.3",
+    "descKey": "high_kingdom.fac.3.desc",
+    "icon": "🕯",
+    "rivals": [
+      "fac_high_kingdom_4"
+    ]
+  },
+  {
+    "id": "fac_high_kingdom_4",
+    "labelKey": "high_kingdom.fac.4",
+    "descKey": "high_kingdom.fac.4.desc",
+    "icon": "🔧",
+    "rivals": [
+      "fac_high_kingdom_5"
+    ]
+  },
+  {
+    "id": "fac_high_kingdom_5",
+    "labelKey": "high_kingdom.fac.5",
+    "descKey": "high_kingdom.fac.5.desc",
+    "icon": "🕸",
+    "rivals": [
+      "fac_high_kingdom_1"
+    ]
+  }
+]

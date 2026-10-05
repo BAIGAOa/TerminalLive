@@ -1,0 +1,62 @@
+[
+  {
+    "id": "we_paranoia_1",
+    "year": 8,
+    "labelKey": "paranoia.we.1",
+    "bodyKey": "paranoia.we.1.body",
+    "pressures": {
+      "pr_paranoia_1": -8,
+      "pr_paranoia_2": 8
+    }
+  },
+  {
+    "id": "we_paranoia_2",
+    "year": 26,
+    "labelKey": "paranoia.we.2",
+    "bodyKey": "paranoia.we.2.body",
+    "pressures": {
+      "pr_paranoia_2": -12,
+      "pr_paranoia_3": 10
+    }
+  },
+  {
+    "id": "we_paranoia_3",
+    "year": 44,
+    "labelKey": "paranoia.we.3",
+    "bodyKey": "paranoia.we.3.body",
+    "pressures": {
+      "pr_paranoia_3": 10,
+      "pr_paranoia_4": -6
+    }
+  },
+  {
+    "id": "we_paranoia_4",
+    "year": 62,
+    "labelKey": "paranoia.we.4",
+    "bodyKey": "paranoia.we.4.body",
+    "pressures": {
+      "pr_paranoia_4": 15,
+      "pr_paranoia_5": -10
+    }
+  },
+  {
+    "id": "we_paranoia_5",
+    "year": 80,
+    "labelKey": "paranoia.we.5",
+    "bodyKey": "paranoia.we.5.body",
+    "pressures": {
+      "pr_paranoia_5": -6,
+      "pr_paranoia_6": 12
+    }
+  },
+  {
+    "id": "we_paranoia_6",
+    "year": 96,
+    "labelKey": "paranoia.we.6",
+    "bodyKey": "paranoia.we.6.body",
+    "pressures": {
+      "pr_paranoia_6": 12,
+      "pr_paranoia_7": -8
+    }
+  }
+]

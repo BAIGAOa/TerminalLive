@@ -1,0 +1,62 @@
+[
+  {
+    "id": "we_wilds_1",
+    "year": 8,
+    "labelKey": "wilds.we.1",
+    "bodyKey": "wilds.we.1.body",
+    "pressures": {
+      "pr_wilds_1": -8,
+      "pr_wilds_2": 8
+    }
+  },
+  {
+    "id": "we_wilds_2",
+    "year": 26,
+    "labelKey": "wilds.we.2",
+    "bodyKey": "wilds.we.2.body",
+    "pressures": {
+      "pr_wilds_2": -12,
+      "pr_wilds_3": 10
+    }
+  },
+  {
+    "id": "we_wilds_3",
+    "year": 44,
+    "labelKey": "wilds.we.3",
+    "bodyKey": "wilds.we.3.body",
+    "pressures": {
+      "pr_wilds_3": 10,
+      "pr_wilds_4": -6
+    }
+  },
+  {
+    "id": "we_wilds_4",
+    "year": 62,
+    "labelKey": "wilds.we.4",
+    "bodyKey": "wilds.we.4.body",
+    "pressures": {
+      "pr_wilds_4": 15,
+      "pr_wilds_5": -10
+    }
+  },
+  {
+    "id": "we_wilds_5",
+    "year": 80,
+    "labelKey": "wilds.we.5",
+    "bodyKey": "wilds.we.5.body",
+    "pressures": {
+      "pr_wilds_5": -6,
+      "pr_wilds_6": 12
+    }
+  },
+  {
+    "id": "we_wilds_6",
+    "year": 96,
+    "labelKey": "wilds.we.6",
+    "bodyKey": "wilds.we.6.body",
+    "pressures": {
+      "pr_wilds_6": 12,
+      "pr_wilds_7": -8
+    }
+  }
+]

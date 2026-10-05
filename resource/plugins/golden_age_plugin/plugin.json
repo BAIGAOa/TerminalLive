@@ -1,0 +1,1442 @@
+{
+  "id": "golden_age_plugin",
+  "nameKey": "golden_age.plugin",
+  "descKey": "golden_age.plugin.desc",
+  "world": "golden_age",
+  "npcBehaviors": [
+    {
+      "id": "golden_age_pb_care_1",
+      "labelKey": "golden_age.beh.care.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 4,
+        "happiness": 3
+      },
+      "affinity": 3,
+      "resultKey": "golden_age.beh.care.1.res"
+    },
+    {
+      "id": "golden_age_pb_care_2",
+      "labelKey": "golden_age.beh.care.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 6,
+        "happiness": 4
+      },
+      "affinity": 3,
+      "resultKey": "golden_age.beh.care.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_care_3",
+      "labelKey": "golden_age.beh.care.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 8,
+        "happiness": 6
+      },
+      "affinity": 3,
+      "resultKey": "golden_age.beh.care.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_meal_1",
+      "labelKey": "golden_age.beh.meal.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 5
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.meal.1.res"
+    },
+    {
+      "id": "golden_age_pb_meal_2",
+      "labelKey": "golden_age.beh.meal.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 8
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.meal.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_meal_3",
+      "labelKey": "golden_age.beh.meal.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 10
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.meal.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_coin_1",
+      "labelKey": "golden_age.beh.coin.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 25
+      },
+      "affinity": 1,
+      "resultKey": "golden_age.beh.coin.1.res"
+    },
+    {
+      "id": "golden_age_pb_coin_2",
+      "labelKey": "golden_age.beh.coin.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 38
+      },
+      "affinity": 1,
+      "resultKey": "golden_age.beh.coin.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_coin_3",
+      "labelKey": "golden_age.beh.coin.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 50
+      },
+      "affinity": 1,
+      "resultKey": "golden_age.beh.coin.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_talk_1",
+      "labelKey": "golden_age.beh.talk.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 3,
+        "happiness": 2
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.talk.1.res"
+    },
+    {
+      "id": "golden_age_pb_talk_2",
+      "labelKey": "golden_age.beh.talk.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 4,
+        "happiness": 3
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.talk.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_talk_3",
+      "labelKey": "golden_age.beh.talk.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 6,
+        "happiness": 4
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.talk.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_teach_1",
+      "labelKey": "golden_age.beh.teach.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 3
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.teach.1.res"
+    },
+    {
+      "id": "golden_age_pb_teach_2",
+      "labelKey": "golden_age.beh.teach.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 4
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.teach.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_teach_3",
+      "labelKey": "golden_age.beh.teach.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 6
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.teach.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_train_1",
+      "labelKey": "golden_age.beh.train.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 3
+      },
+      "affinity": 1,
+      "resultKey": "golden_age.beh.train.1.res"
+    },
+    {
+      "id": "golden_age_pb_train_2",
+      "labelKey": "golden_age.beh.train.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 4
+      },
+      "affinity": 1,
+      "resultKey": "golden_age.beh.train.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_train_3",
+      "labelKey": "golden_age.beh.train.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 6
+      },
+      "affinity": 1,
+      "resultKey": "golden_age.beh.train.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_warn_1",
+      "labelKey": "golden_age.beh.warn.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 3
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.warn.1.res"
+    },
+    {
+      "id": "golden_age_pb_warn_2",
+      "labelKey": "golden_age.beh.warn.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 4
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.warn.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_warn_3",
+      "labelKey": "golden_age.beh.warn.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 6
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.warn.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_gift_1",
+      "labelKey": "golden_age.beh.gift.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 4
+      },
+      "affinity": 4,
+      "resultKey": "golden_age.beh.gift.1.res"
+    },
+    {
+      "id": "golden_age_pb_gift_2",
+      "labelKey": "golden_age.beh.gift.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 6
+      },
+      "affinity": 4,
+      "resultKey": "golden_age.beh.gift.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_gift_3",
+      "labelKey": "golden_age.beh.gift.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 8
+      },
+      "affinity": 4,
+      "resultKey": "golden_age.beh.gift.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_song_1",
+      "labelKey": "golden_age.beh.song.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -6,
+        "happiness": 2
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.song.1.res"
+    },
+    {
+      "id": "golden_age_pb_song_2",
+      "labelKey": "golden_age.beh.song.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -9,
+        "happiness": 3
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.song.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_song_3",
+      "labelKey": "golden_age.beh.song.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -12,
+        "happiness": 4
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.song.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_rest_1",
+      "labelKey": "golden_age.beh.rest.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -6,
+        "health": 2
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.rest.1.res"
+    },
+    {
+      "id": "golden_age_pb_rest_2",
+      "labelKey": "golden_age.beh.rest.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -9,
+        "health": 3
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.rest.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_rest_3",
+      "labelKey": "golden_age.beh.rest.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -12,
+        "health": 4
+      },
+      "affinity": 2,
+      "resultKey": "golden_age.beh.rest.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_debt_1",
+      "labelKey": "golden_age.beh.debt.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -30,
+        "happiness": 1
+      },
+      "affinity": -1,
+      "resultKey": "golden_age.beh.debt.1.res"
+    },
+    {
+      "id": "golden_age_pb_debt_2",
+      "labelKey": "golden_age.beh.debt.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -45,
+        "happiness": 2
+      },
+      "affinity": -1,
+      "resultKey": "golden_age.beh.debt.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_debt_3",
+      "labelKey": "golden_age.beh.debt.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -60,
+        "happiness": 2
+      },
+      "affinity": -1,
+      "resultKey": "golden_age.beh.debt.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_rumor_1",
+      "labelKey": "golden_age.beh.rumor.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -3,
+        "angerValue": 3
+      },
+      "affinity": -2,
+      "resultKey": "golden_age.beh.rumor.1.res"
+    },
+    {
+      "id": "golden_age_pb_rumor_2",
+      "labelKey": "golden_age.beh.rumor.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -4,
+        "angerValue": 4
+      },
+      "affinity": -2,
+      "resultKey": "golden_age.beh.rumor.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_rumor_3",
+      "labelKey": "golden_age.beh.rumor.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -6,
+        "angerValue": 6
+      },
+      "affinity": -2,
+      "resultKey": "golden_age.beh.rumor.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_taunt_1",
+      "labelKey": "golden_age.beh.taunt.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -3
+      },
+      "affinity": -3,
+      "resultKey": "golden_age.beh.taunt.1.res"
+    },
+    {
+      "id": "golden_age_pb_taunt_2",
+      "labelKey": "golden_age.beh.taunt.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -4
+      },
+      "affinity": -3,
+      "resultKey": "golden_age.beh.taunt.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_taunt_3",
+      "labelKey": "golden_age.beh.taunt.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -6
+      },
+      "affinity": -3,
+      "resultKey": "golden_age.beh.taunt.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_scheme_1",
+      "labelKey": "golden_age.beh.scheme.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -40,
+        "angerValue": 4
+      },
+      "affinity": -4,
+      "resultKey": "golden_age.beh.scheme.1.res"
+    },
+    {
+      "id": "golden_age_pb_scheme_2",
+      "labelKey": "golden_age.beh.scheme.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -60,
+        "angerValue": 6
+      },
+      "affinity": -4,
+      "resultKey": "golden_age.beh.scheme.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_scheme_3",
+      "labelKey": "golden_age.beh.scheme.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -80,
+        "angerValue": 8
+      },
+      "affinity": -4,
+      "resultKey": "golden_age.beh.scheme.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_pb_upkeep_1",
+      "labelKey": "golden_age.beh.upkeep.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 2,
+        "money": 10
+      },
+      "affinity": 1,
+      "resultKey": "golden_age.beh.upkeep.1.res"
+    },
+    {
+      "id": "golden_age_pb_upkeep_2",
+      "labelKey": "golden_age.beh.upkeep.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 3,
+        "money": 15
+      },
+      "affinity": 1,
+      "resultKey": "golden_age.beh.upkeep.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_pb_upkeep_3",
+      "labelKey": "golden_age.beh.upkeep.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 4,
+        "money": 20
+      },
+      "affinity": 1,
+      "resultKey": "golden_age.beh.upkeep.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "golden_age_po_visit_1",
+      "labelKey": "golden_age.off.visit.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "golden_age.off.visit.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.visit.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.visit.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.visit.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.visit.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "golden_age_po_visit_2",
+      "labelKey": "golden_age.off.visit.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "golden_age.off.visit.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.visit.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.visit.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.visit.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.visit.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_po_favor_1",
+      "labelKey": "golden_age.off.favor.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "golden_age.off.favor.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.favor.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.favor.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.favor.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.favor.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "golden_age_po_favor_2",
+      "labelKey": "golden_age.off.favor.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "golden_age.off.favor.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.favor.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.favor.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.favor.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.favor.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_po_venture_1",
+      "labelKey": "golden_age.off.venture.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "golden_age.off.venture.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.venture.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.venture.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.venture.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.venture.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "golden_age_po_venture_2",
+      "labelKey": "golden_age.off.venture.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "golden_age.off.venture.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.venture.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.venture.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.venture.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.venture.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_po_feast_1",
+      "labelKey": "golden_age.off.feast.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "golden_age.off.feast.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.feast.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.feast.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.feast.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.feast.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "golden_age_po_feast_2",
+      "labelKey": "golden_age.off.feast.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "golden_age.off.feast.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.feast.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.feast.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.feast.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.feast.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_po_secret_1",
+      "labelKey": "golden_age.off.secret.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "golden_age.off.secret.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.secret.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.secret.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.secret.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.secret.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "golden_age_po_secret_2",
+      "labelKey": "golden_age.off.secret.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "golden_age.off.secret.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.secret.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.secret.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.secret.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.secret.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_po_duel_1",
+      "labelKey": "golden_age.off.duel.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "golden_age.off.duel.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.duel.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.duel.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.duel.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.duel.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "golden_age_po_duel_2",
+      "labelKey": "golden_age.off.duel.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "golden_age.off.duel.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.duel.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.duel.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.duel.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.duel.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_po_trade_1",
+      "labelKey": "golden_age.off.trade.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "golden_age.off.trade.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.trade.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.trade.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.trade.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.trade.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "golden_age_po_trade_2",
+      "labelKey": "golden_age.off.trade.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "golden_age.off.trade.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.trade.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.trade.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.trade.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.trade.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "golden_age_po_journey_1",
+      "labelKey": "golden_age.off.journey.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "golden_age.off.journey.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.journey.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.journey.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.journey.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.journey.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "golden_age_po_journey_2",
+      "labelKey": "golden_age.off.journey.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "golden_age.off.journey.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "golden_age.off.journey.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "golden_age.off.journey.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "golden_age.off.journey.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "golden_age.off.journey.2.no.res"
+        }
+      ],
+      "minAge": 16
+    }
+  ],
+  "pressures": {
+    "axes": [
+      {
+        "id": "pr_golden_age_x1",
+        "labelKey": "golden_age.px.1",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x2",
+        "labelKey": "golden_age.px.2",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x3",
+        "labelKey": "golden_age.px.3",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x4",
+        "labelKey": "golden_age.px.4",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x5",
+        "labelKey": "golden_age.px.5",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x6",
+        "labelKey": "golden_age.px.6",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x7",
+        "labelKey": "golden_age.px.7",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x8",
+        "labelKey": "golden_age.px.8",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x9",
+        "labelKey": "golden_age.px.9",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x10",
+        "labelKey": "golden_age.px.10",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x11",
+        "labelKey": "golden_age.px.11",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x12",
+        "labelKey": "golden_age.px.12",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x13",
+        "labelKey": "golden_age.px.13",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x14",
+        "labelKey": "golden_age.px.14",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x15",
+        "labelKey": "golden_age.px.15",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x16",
+        "labelKey": "golden_age.px.16",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x17",
+        "labelKey": "golden_age.px.17",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x18",
+        "labelKey": "golden_age.px.18",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x19",
+        "labelKey": "golden_age.px.19",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x20",
+        "labelKey": "golden_age.px.20",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x21",
+        "labelKey": "golden_age.px.21",
+        "class": "supernatural",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x22",
+        "labelKey": "golden_age.px.22",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x23",
+        "labelKey": "golden_age.px.23",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x24",
+        "labelKey": "golden_age.px.24",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x25",
+        "labelKey": "golden_age.px.25",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x26",
+        "labelKey": "golden_age.px.26",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x27",
+        "labelKey": "golden_age.px.27",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x28",
+        "labelKey": "golden_age.px.28",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x29",
+        "labelKey": "golden_age.px.29",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_golden_age_x30",
+        "labelKey": "golden_age.px.30",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      }
+    ],
+    "rules": [
+      {
+        "source": "pr_golden_age_x1",
+        "target": "pr_golden_age_x3",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x3",
+        "target": "pr_golden_age_x5",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x5",
+        "target": "pr_golden_age_x7",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x7",
+        "target": "pr_golden_age_x9",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x9",
+        "target": "pr_golden_age_x11",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x11",
+        "target": "pr_golden_age_x13",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x13",
+        "target": "pr_golden_age_x15",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x15",
+        "target": "pr_golden_age_x17",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x17",
+        "target": "pr_golden_age_x19",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x19",
+        "target": "pr_golden_age_x21",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x21",
+        "target": "pr_golden_age_x23",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x23",
+        "target": "pr_golden_age_x25",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x25",
+        "target": "pr_golden_age_x27",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x27",
+        "target": "pr_golden_age_x29",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_golden_age_x29",
+        "target": "pr_golden_age_x1",
+        "threshold": 50,
+        "factor": 0.05
+      }
+    ]
+  },
+  "worldRules": []
+}

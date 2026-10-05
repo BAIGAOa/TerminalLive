@@ -1,0 +1,169 @@
+[
+  {
+    "id": "lore_hellscape_1",
+    "titleKey": "hellscape.lore.1",
+    "bodyKey": "hellscape.lore.1.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 1
+    }
+  },
+  {
+    "id": "lore_hellscape_2",
+    "titleKey": "hellscape.lore.2",
+    "bodyKey": "hellscape.lore.2.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 16
+    }
+  },
+  {
+    "id": "lore_hellscape_3",
+    "titleKey": "hellscape.lore.3",
+    "bodyKey": "hellscape.lore.3.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_hellscape_3"
+    }
+  },
+  {
+    "id": "lore_hellscape_4",
+    "titleKey": "hellscape.lore.4",
+    "bodyKey": "hellscape.lore.4.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_hellscape_5"
+    }
+  },
+  {
+    "id": "lore_hellscape_5",
+    "titleKey": "hellscape.lore.5",
+    "bodyKey": "hellscape.lore.5.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_hellscape_6",
+    "titleKey": "hellscape.lore.6",
+    "bodyKey": "hellscape.lore.6.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_hellscape_7",
+    "titleKey": "hellscape.lore.7",
+    "bodyKey": "hellscape.lore.7.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_hellscape_8",
+    "titleKey": "hellscape.lore.8",
+    "bodyKey": "hellscape.lore.8.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_hellscape_9",
+    "titleKey": "hellscape.lore.9",
+    "bodyKey": "hellscape.lore.9.body",
+    "category": "deed",
+    "unlock": {
+      "kind": "flag",
+      "flag": "traveled"
+    }
+  },
+  {
+    "id": "lore_hellscape_10",
+    "titleKey": "hellscape.lore.10",
+    "bodyKey": "hellscape.lore.10.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 60
+    }
+  },
+  {
+    "id": "lore_hellscape_11",
+    "titleKey": "hellscape.lore.11",
+    "bodyKey": "hellscape.lore.11.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "era",
+      "era": "era_hellscape_6"
+    }
+  },
+  {
+    "id": "lore_hellscape_12",
+    "titleKey": "hellscape.lore.12",
+    "bodyKey": "hellscape.lore.12.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_hellscape_13",
+    "titleKey": "hellscape.lore.13",
+    "bodyKey": "hellscape.lore.13.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 30
+    }
+  },
+  {
+    "id": "lore_hellscape_14",
+    "titleKey": "hellscape.lore.14",
+    "bodyKey": "hellscape.lore.14.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 45
+    }
+  },
+  {
+    "id": "lore_hellscape_15",
+    "titleKey": "hellscape.lore.15",
+    "bodyKey": "hellscape.lore.15.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_hellscape_16",
+    "titleKey": "hellscape.lore.16",
+    "bodyKey": "hellscape.lore.16.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 60
+    }
+  }
+]

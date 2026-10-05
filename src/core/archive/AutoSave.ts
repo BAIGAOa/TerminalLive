@@ -2,7 +2,7 @@ import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { inject } from "../../Container.js";
 import { resourcePath } from "../paths.js";
 import TypedEventBus from "../TypedEventBus.js";
-import LevelManager from "../../level/LevelManager.js";
+import WorldManager from "../../worlds/WorldManager.js";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import { applySaveData, captureSaveData } from "./SaveCodec.js";
 import { migrateSave, RawSave } from "./migrations.js";
@@ -17,13 +17,13 @@ import { migrateSave, RawSave } from "./migrations.js";
  * disable auto-saving entirely (used by the headless test harnesses).
  */
 export default class AutoSave {
-  private levelManager: LevelManager;
+  private levelManager: WorldManager;
   private eventBus: TypedEventBus;
   private readonly filePath: string;
   private readonly enabled: boolean;
 
   constructor() {
-    this.levelManager = inject(LevelManager);
+    this.levelManager = inject(WorldManager);
     this.eventBus = inject(TypedEventBus);
 
     const override = process.env.TL_AUTOSAVE;
@@ -51,7 +51,7 @@ export default class AutoSave {
   /** Snapshot the current life to disk. Skipped when no life is active. */
   public save(): void {
     if (!this.enabled) return;
-    if (!this.levelManager.hasActiveLevel()) return;
+    if (!this.levelManager.hasActiveWorld()) return;
     const player = this.levelManager.getPlayer();
     // A dead player means the life is over — don't keep resuming a corpse.
     if (player.health <= 0) {
@@ -88,7 +88,11 @@ export default class AutoSave {
         this.clear();
         return null;
       }
-      applySaveData(data);
+      if (!applySaveData(data)) {
+        // World missing / content version mismatch — start a fresh life.
+        this.clear();
+        return null;
+      }
       return data;
     } catch (err) {
       console.warn("[Save] 自动存档损坏，已忽略:", (err as Error).message);

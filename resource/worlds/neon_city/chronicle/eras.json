@@ -1,0 +1,50 @@
+[
+  {
+    "id": "era_neon_city_1",
+    "labelKey": "neon_city.era.1",
+    "descKey": "neon_city.era.1.desc",
+    "fromYear": 0,
+    "icon": "🌅",
+    "color": "yellow"
+  },
+  {
+    "id": "era_neon_city_2",
+    "labelKey": "neon_city.era.2",
+    "descKey": "neon_city.era.2.desc",
+    "fromYear": 16,
+    "icon": "⚒",
+    "color": "gray"
+  },
+  {
+    "id": "era_neon_city_3",
+    "labelKey": "neon_city.era.3",
+    "descKey": "neon_city.era.3.desc",
+    "fromYear": 32,
+    "icon": "⚙",
+    "color": "white"
+  },
+  {
+    "id": "era_neon_city_4",
+    "labelKey": "neon_city.era.4",
+    "descKey": "neon_city.era.4.desc",
+    "fromYear": 50,
+    "icon": "⚡",
+    "color": "cyan"
+  },
+  {
+    "id": "era_neon_city_5",
+    "labelKey": "neon_city.era.5",
+    "descKey": "neon_city.era.5.desc",
+    "fromYear": 68,
+    "icon": "✦",
+    "color": "magentaBright"
+  },
+  {
+    "id": "era_neon_city_6",
+    "labelKey": "neon_city.era.6",
+    "descKey": "neon_city.era.6.desc",
+    "fromYear": 86,
+    "icon": "🌌",
+    "color": "blue"
+  }
+]

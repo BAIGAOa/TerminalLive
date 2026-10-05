@@ -1,0 +1,38 @@
+{
+  "id": "plague_years",
+  "nameKey": "world.plague_years",
+  "descriptionKey": "world.plague_years.desc",
+  "icon": "☠",
+  "tags": [
+    "harsh"
+  ],
+  "difficultyIdentification": "expert",
+  "contentVersion": 3,
+  "startPlayer": {
+    "age": 0,
+    "health": 85,
+    "happiness": 55,
+    "fitness": 9,
+    "intelligence": 11,
+    "social": 8,
+    "money": 30
+  },
+  "unlockRequires": [
+    "neon_city"
+  ],
+  "selfContained": true,
+  "worldRules": [
+    "rule_plague"
+  ],
+  "algorithm": "default",
+  "completionConditions": [
+    {
+      "type": "generalPurpose",
+      "params": {
+        "prop": "age",
+        "num": 75,
+        "cat": "greaterThan"
+      }
+    }
+  ]
+}

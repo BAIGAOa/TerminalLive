@@ -1,0 +1,169 @@
+[
+  {
+    "id": "lore_wilds_1",
+    "titleKey": "wilds.lore.1",
+    "bodyKey": "wilds.lore.1.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 1
+    }
+  },
+  {
+    "id": "lore_wilds_2",
+    "titleKey": "wilds.lore.2",
+    "bodyKey": "wilds.lore.2.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 16
+    }
+  },
+  {
+    "id": "lore_wilds_3",
+    "titleKey": "wilds.lore.3",
+    "bodyKey": "wilds.lore.3.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_wilds_3"
+    }
+  },
+  {
+    "id": "lore_wilds_4",
+    "titleKey": "wilds.lore.4",
+    "bodyKey": "wilds.lore.4.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_wilds_5"
+    }
+  },
+  {
+    "id": "lore_wilds_5",
+    "titleKey": "wilds.lore.5",
+    "bodyKey": "wilds.lore.5.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_wilds_6",
+    "titleKey": "wilds.lore.6",
+    "bodyKey": "wilds.lore.6.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_wilds_7",
+    "titleKey": "wilds.lore.7",
+    "bodyKey": "wilds.lore.7.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_wilds_8",
+    "titleKey": "wilds.lore.8",
+    "bodyKey": "wilds.lore.8.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_wilds_9",
+    "titleKey": "wilds.lore.9",
+    "bodyKey": "wilds.lore.9.body",
+    "category": "deed",
+    "unlock": {
+      "kind": "flag",
+      "flag": "traveled"
+    }
+  },
+  {
+    "id": "lore_wilds_10",
+    "titleKey": "wilds.lore.10",
+    "bodyKey": "wilds.lore.10.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 60
+    }
+  },
+  {
+    "id": "lore_wilds_11",
+    "titleKey": "wilds.lore.11",
+    "bodyKey": "wilds.lore.11.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "era",
+      "era": "era_wilds_6"
+    }
+  },
+  {
+    "id": "lore_wilds_12",
+    "titleKey": "wilds.lore.12",
+    "bodyKey": "wilds.lore.12.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_wilds_13",
+    "titleKey": "wilds.lore.13",
+    "bodyKey": "wilds.lore.13.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 30
+    }
+  },
+  {
+    "id": "lore_wilds_14",
+    "titleKey": "wilds.lore.14",
+    "bodyKey": "wilds.lore.14.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 45
+    }
+  },
+  {
+    "id": "lore_wilds_15",
+    "titleKey": "wilds.lore.15",
+    "bodyKey": "wilds.lore.15.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_wilds_16",
+    "titleKey": "wilds.lore.16",
+    "bodyKey": "wilds.lore.16.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 60
+    }
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "reg_golden_age_1",
+    "labelKey": "golden_age.reg.1",
+    "descKey": "golden_age.reg.1.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_golden_age_1"
+    ]
+  },
+  {
+    "id": "reg_golden_age_2",
+    "labelKey": "golden_age.reg.2",
+    "descKey": "golden_age.reg.2.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_golden_age_2"
+    ]
+  },
+  {
+    "id": "reg_golden_age_3",
+    "labelKey": "golden_age.reg.3",
+    "descKey": "golden_age.reg.3.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_golden_age_3"
+    ]
+  },
+  {
+    "id": "reg_golden_age_4",
+    "labelKey": "golden_age.reg.4",
+    "descKey": "golden_age.reg.4.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_golden_age_4"
+    ]
+  },
+  {
+    "id": "reg_golden_age_5",
+    "labelKey": "golden_age.reg.5",
+    "descKey": "golden_age.reg.5.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_golden_age_5"
+    ]
+  },
+  {
+    "id": "reg_golden_age_6",
+    "labelKey": "golden_age.reg.6",
+    "descKey": "golden_age.reg.6.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_golden_age_6"
+    ]
+  },
+  {
+    "id": "reg_golden_age_7",
+    "labelKey": "golden_age.reg.7",
+    "descKey": "golden_age.reg.7.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_golden_age_7"
+    ]
+  }
+]

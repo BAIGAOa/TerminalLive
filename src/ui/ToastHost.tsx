@@ -70,7 +70,7 @@ function Toasts() {
       {toasts.map((toast) => (
         <Box
           key={toast.id}
-          borderStyle="round"
+          borderStyle="bold"
           borderColor={colorFor(toast.kind, colors)}
           paddingX={1}
           marginBottom={0}

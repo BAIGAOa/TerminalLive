@@ -83,7 +83,7 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
               return (
                 <Box
                   flexDirection="column"
-                  borderStyle="round"
+                  borderStyle="bold"
                   borderColor={state.selected ? colors.highlight : colors.muted}
                   paddingX={1}
                 >
@@ -111,7 +111,7 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
       {data.confirmDelete && (
         <Box
           marginTop={1}
-          borderStyle="double"
+          borderStyle="bold"
           borderColor={colors.danger}
           padding={1}
         >

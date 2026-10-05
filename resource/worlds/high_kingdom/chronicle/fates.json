@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fate_high_kingdom_1",
+    "labelKey": "high_kingdom.fate.1",
+    "descKey": "high_kingdom.fate.1.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_high_kingdom_2",
+    "labelKey": "high_kingdom.fate.2",
+    "descKey": "high_kingdom.fate.2.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_high_kingdom_3",
+    "labelKey": "high_kingdom.fate.3",
+    "descKey": "high_kingdom.fate.3.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_high_kingdom_4",
+    "labelKey": "high_kingdom.fate.4",
+    "descKey": "high_kingdom.fate.4.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_high_kingdom_5",
+    "labelKey": "high_kingdom.fate.5",
+    "descKey": "high_kingdom.fate.5.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "year",
+      "year": 50
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_high_kingdom_6",
+    "labelKey": "high_kingdom.fate.6",
+    "descKey": "high_kingdom.fate.6.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "era",
+      "era": "era_high_kingdom_5"
+    },
+    "factor": 2
+  }
+]

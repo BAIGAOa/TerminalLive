@@ -1,0 +1,47 @@
+[
+  {
+    "id": "fac_wilds_1",
+    "labelKey": "wilds.fac.1",
+    "descKey": "wilds.fac.1.desc",
+    "icon": "👑",
+    "rivals": [
+      "fac_wilds_2"
+    ]
+  },
+  {
+    "id": "fac_wilds_2",
+    "labelKey": "wilds.fac.2",
+    "descKey": "wilds.fac.2.desc",
+    "icon": "⚔",
+    "rivals": [
+      "fac_wilds_3"
+    ]
+  },
+  {
+    "id": "fac_wilds_3",
+    "labelKey": "wilds.fac.3",
+    "descKey": "wilds.fac.3.desc",
+    "icon": "🕯",
+    "rivals": [
+      "fac_wilds_4"
+    ]
+  },
+  {
+    "id": "fac_wilds_4",
+    "labelKey": "wilds.fac.4",
+    "descKey": "wilds.fac.4.desc",
+    "icon": "🔧",
+    "rivals": [
+      "fac_wilds_5"
+    ]
+  },
+  {
+    "id": "fac_wilds_5",
+    "labelKey": "wilds.fac.5",
+    "descKey": "wilds.fac.5.desc",
+    "icon": "🕸",
+    "rivals": [
+      "fac_wilds_1"
+    ]
+  }
+]

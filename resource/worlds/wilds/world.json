@@ -1,0 +1,40 @@
+{
+  "id": "wilds",
+  "nameKey": "world.wilds",
+  "descriptionKey": "world.wilds.desc",
+  "icon": "🌲",
+  "tags": [
+    "wild",
+    "harsh"
+  ],
+  "difficultyIdentification": "expert",
+  "contentVersion": 3,
+  "startPlayer": {
+    "age": 0,
+    "health": 96,
+    "happiness": 55,
+    "fitness": 14,
+    "intelligence": 9,
+    "social": 7,
+    "money": 10
+  },
+  "unlockRequires": [
+    "golden_age",
+    "high_kingdom"
+  ],
+  "selfContained": true,
+  "worldRules": [
+    "rule_wilderness"
+  ],
+  "algorithm": "default",
+  "completionConditions": [
+    {
+      "type": "generalPurpose",
+      "params": {
+        "prop": "age",
+        "num": 85,
+        "cat": "greaterThan"
+      }
+    }
+  ]
+}

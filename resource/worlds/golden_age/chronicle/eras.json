@@ -1,0 +1,50 @@
+[
+  {
+    "id": "era_golden_age_1",
+    "labelKey": "golden_age.era.1",
+    "descKey": "golden_age.era.1.desc",
+    "fromYear": 0,
+    "icon": "🌅",
+    "color": "yellow"
+  },
+  {
+    "id": "era_golden_age_2",
+    "labelKey": "golden_age.era.2",
+    "descKey": "golden_age.era.2.desc",
+    "fromYear": 16,
+    "icon": "⚒",
+    "color": "gray"
+  },
+  {
+    "id": "era_golden_age_3",
+    "labelKey": "golden_age.era.3",
+    "descKey": "golden_age.era.3.desc",
+    "fromYear": 32,
+    "icon": "⚙",
+    "color": "white"
+  },
+  {
+    "id": "era_golden_age_4",
+    "labelKey": "golden_age.era.4",
+    "descKey": "golden_age.era.4.desc",
+    "fromYear": 50,
+    "icon": "⚡",
+    "color": "cyan"
+  },
+  {
+    "id": "era_golden_age_5",
+    "labelKey": "golden_age.era.5",
+    "descKey": "golden_age.era.5.desc",
+    "fromYear": 68,
+    "icon": "✦",
+    "color": "magentaBright"
+  },
+  {
+    "id": "era_golden_age_6",
+    "labelKey": "golden_age.era.6",
+    "descKey": "golden_age.era.6.desc",
+    "fromYear": 86,
+    "icon": "🌌",
+    "color": "blue"
+  }
+]

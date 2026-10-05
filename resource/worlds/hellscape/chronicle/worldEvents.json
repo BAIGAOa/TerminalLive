@@ -1,0 +1,62 @@
+[
+  {
+    "id": "we_hellscape_1",
+    "year": 8,
+    "labelKey": "hellscape.we.1",
+    "bodyKey": "hellscape.we.1.body",
+    "pressures": {
+      "pr_hellscape_1": -8,
+      "pr_hellscape_2": 8
+    }
+  },
+  {
+    "id": "we_hellscape_2",
+    "year": 26,
+    "labelKey": "hellscape.we.2",
+    "bodyKey": "hellscape.we.2.body",
+    "pressures": {
+      "pr_hellscape_2": -12,
+      "pr_hellscape_3": 10
+    }
+  },
+  {
+    "id": "we_hellscape_3",
+    "year": 44,
+    "labelKey": "hellscape.we.3",
+    "bodyKey": "hellscape.we.3.body",
+    "pressures": {
+      "pr_hellscape_3": 10,
+      "pr_hellscape_4": -6
+    }
+  },
+  {
+    "id": "we_hellscape_4",
+    "year": 62,
+    "labelKey": "hellscape.we.4",
+    "bodyKey": "hellscape.we.4.body",
+    "pressures": {
+      "pr_hellscape_4": 15,
+      "pr_hellscape_5": -10
+    }
+  },
+  {
+    "id": "we_hellscape_5",
+    "year": 80,
+    "labelKey": "hellscape.we.5",
+    "bodyKey": "hellscape.we.5.body",
+    "pressures": {
+      "pr_hellscape_5": -6,
+      "pr_hellscape_6": 12
+    }
+  },
+  {
+    "id": "we_hellscape_6",
+    "year": 96,
+    "labelKey": "hellscape.we.6",
+    "bodyKey": "hellscape.we.6.body",
+    "pressures": {
+      "pr_hellscape_6": 12,
+      "pr_hellscape_7": -8
+    }
+  }
+]

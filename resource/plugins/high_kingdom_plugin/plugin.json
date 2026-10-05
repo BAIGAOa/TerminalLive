@@ -1,0 +1,1442 @@
+{
+  "id": "high_kingdom_plugin",
+  "nameKey": "high_kingdom.plugin",
+  "descKey": "high_kingdom.plugin.desc",
+  "world": "high_kingdom",
+  "npcBehaviors": [
+    {
+      "id": "high_kingdom_pb_care_1",
+      "labelKey": "high_kingdom.beh.care.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 4,
+        "happiness": 3
+      },
+      "affinity": 3,
+      "resultKey": "high_kingdom.beh.care.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_care_2",
+      "labelKey": "high_kingdom.beh.care.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 6,
+        "happiness": 4
+      },
+      "affinity": 3,
+      "resultKey": "high_kingdom.beh.care.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_care_3",
+      "labelKey": "high_kingdom.beh.care.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 8,
+        "happiness": 6
+      },
+      "affinity": 3,
+      "resultKey": "high_kingdom.beh.care.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_meal_1",
+      "labelKey": "high_kingdom.beh.meal.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 5
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.meal.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_meal_2",
+      "labelKey": "high_kingdom.beh.meal.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 8
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.meal.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_meal_3",
+      "labelKey": "high_kingdom.beh.meal.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 10
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.meal.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_coin_1",
+      "labelKey": "high_kingdom.beh.coin.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 25
+      },
+      "affinity": 1,
+      "resultKey": "high_kingdom.beh.coin.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_coin_2",
+      "labelKey": "high_kingdom.beh.coin.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 38
+      },
+      "affinity": 1,
+      "resultKey": "high_kingdom.beh.coin.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_coin_3",
+      "labelKey": "high_kingdom.beh.coin.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 50
+      },
+      "affinity": 1,
+      "resultKey": "high_kingdom.beh.coin.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_talk_1",
+      "labelKey": "high_kingdom.beh.talk.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 3,
+        "happiness": 2
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.talk.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_talk_2",
+      "labelKey": "high_kingdom.beh.talk.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 4,
+        "happiness": 3
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.talk.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_talk_3",
+      "labelKey": "high_kingdom.beh.talk.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 6,
+        "happiness": 4
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.talk.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_teach_1",
+      "labelKey": "high_kingdom.beh.teach.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 3
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.teach.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_teach_2",
+      "labelKey": "high_kingdom.beh.teach.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 4
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.teach.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_teach_3",
+      "labelKey": "high_kingdom.beh.teach.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 6
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.teach.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_train_1",
+      "labelKey": "high_kingdom.beh.train.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 3
+      },
+      "affinity": 1,
+      "resultKey": "high_kingdom.beh.train.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_train_2",
+      "labelKey": "high_kingdom.beh.train.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 4
+      },
+      "affinity": 1,
+      "resultKey": "high_kingdom.beh.train.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_train_3",
+      "labelKey": "high_kingdom.beh.train.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 6
+      },
+      "affinity": 1,
+      "resultKey": "high_kingdom.beh.train.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_warn_1",
+      "labelKey": "high_kingdom.beh.warn.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 3
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.warn.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_warn_2",
+      "labelKey": "high_kingdom.beh.warn.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 4
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.warn.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_warn_3",
+      "labelKey": "high_kingdom.beh.warn.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 6
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.warn.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_gift_1",
+      "labelKey": "high_kingdom.beh.gift.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 4
+      },
+      "affinity": 4,
+      "resultKey": "high_kingdom.beh.gift.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_gift_2",
+      "labelKey": "high_kingdom.beh.gift.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 6
+      },
+      "affinity": 4,
+      "resultKey": "high_kingdom.beh.gift.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_gift_3",
+      "labelKey": "high_kingdom.beh.gift.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 8
+      },
+      "affinity": 4,
+      "resultKey": "high_kingdom.beh.gift.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_song_1",
+      "labelKey": "high_kingdom.beh.song.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -6,
+        "happiness": 2
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.song.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_song_2",
+      "labelKey": "high_kingdom.beh.song.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -9,
+        "happiness": 3
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.song.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_song_3",
+      "labelKey": "high_kingdom.beh.song.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -12,
+        "happiness": 4
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.song.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_rest_1",
+      "labelKey": "high_kingdom.beh.rest.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -6,
+        "health": 2
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.rest.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_rest_2",
+      "labelKey": "high_kingdom.beh.rest.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -9,
+        "health": 3
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.rest.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_rest_3",
+      "labelKey": "high_kingdom.beh.rest.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -12,
+        "health": 4
+      },
+      "affinity": 2,
+      "resultKey": "high_kingdom.beh.rest.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_debt_1",
+      "labelKey": "high_kingdom.beh.debt.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -30,
+        "happiness": 1
+      },
+      "affinity": -1,
+      "resultKey": "high_kingdom.beh.debt.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_debt_2",
+      "labelKey": "high_kingdom.beh.debt.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -45,
+        "happiness": 2
+      },
+      "affinity": -1,
+      "resultKey": "high_kingdom.beh.debt.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_debt_3",
+      "labelKey": "high_kingdom.beh.debt.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -60,
+        "happiness": 2
+      },
+      "affinity": -1,
+      "resultKey": "high_kingdom.beh.debt.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_rumor_1",
+      "labelKey": "high_kingdom.beh.rumor.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -3,
+        "angerValue": 3
+      },
+      "affinity": -2,
+      "resultKey": "high_kingdom.beh.rumor.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_rumor_2",
+      "labelKey": "high_kingdom.beh.rumor.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -4,
+        "angerValue": 4
+      },
+      "affinity": -2,
+      "resultKey": "high_kingdom.beh.rumor.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_rumor_3",
+      "labelKey": "high_kingdom.beh.rumor.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -6,
+        "angerValue": 6
+      },
+      "affinity": -2,
+      "resultKey": "high_kingdom.beh.rumor.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_taunt_1",
+      "labelKey": "high_kingdom.beh.taunt.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -3
+      },
+      "affinity": -3,
+      "resultKey": "high_kingdom.beh.taunt.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_taunt_2",
+      "labelKey": "high_kingdom.beh.taunt.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -4
+      },
+      "affinity": -3,
+      "resultKey": "high_kingdom.beh.taunt.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_taunt_3",
+      "labelKey": "high_kingdom.beh.taunt.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -6
+      },
+      "affinity": -3,
+      "resultKey": "high_kingdom.beh.taunt.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_scheme_1",
+      "labelKey": "high_kingdom.beh.scheme.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -40,
+        "angerValue": 4
+      },
+      "affinity": -4,
+      "resultKey": "high_kingdom.beh.scheme.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_scheme_2",
+      "labelKey": "high_kingdom.beh.scheme.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -60,
+        "angerValue": 6
+      },
+      "affinity": -4,
+      "resultKey": "high_kingdom.beh.scheme.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_scheme_3",
+      "labelKey": "high_kingdom.beh.scheme.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -80,
+        "angerValue": 8
+      },
+      "affinity": -4,
+      "resultKey": "high_kingdom.beh.scheme.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_pb_upkeep_1",
+      "labelKey": "high_kingdom.beh.upkeep.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 2,
+        "money": 10
+      },
+      "affinity": 1,
+      "resultKey": "high_kingdom.beh.upkeep.1.res"
+    },
+    {
+      "id": "high_kingdom_pb_upkeep_2",
+      "labelKey": "high_kingdom.beh.upkeep.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 3,
+        "money": 15
+      },
+      "affinity": 1,
+      "resultKey": "high_kingdom.beh.upkeep.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_pb_upkeep_3",
+      "labelKey": "high_kingdom.beh.upkeep.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 4,
+        "money": 20
+      },
+      "affinity": 1,
+      "resultKey": "high_kingdom.beh.upkeep.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "high_kingdom_po_visit_1",
+      "labelKey": "high_kingdom.off.visit.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "high_kingdom.off.visit.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.visit.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.visit.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.visit.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.visit.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "high_kingdom_po_visit_2",
+      "labelKey": "high_kingdom.off.visit.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "high_kingdom.off.visit.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.visit.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.visit.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.visit.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.visit.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_po_favor_1",
+      "labelKey": "high_kingdom.off.favor.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "high_kingdom.off.favor.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.favor.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.favor.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.favor.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.favor.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "high_kingdom_po_favor_2",
+      "labelKey": "high_kingdom.off.favor.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "high_kingdom.off.favor.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.favor.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.favor.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.favor.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.favor.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_po_venture_1",
+      "labelKey": "high_kingdom.off.venture.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "high_kingdom.off.venture.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.venture.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.venture.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.venture.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.venture.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "high_kingdom_po_venture_2",
+      "labelKey": "high_kingdom.off.venture.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "high_kingdom.off.venture.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.venture.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.venture.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.venture.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.venture.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_po_feast_1",
+      "labelKey": "high_kingdom.off.feast.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "high_kingdom.off.feast.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.feast.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.feast.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.feast.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.feast.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "high_kingdom_po_feast_2",
+      "labelKey": "high_kingdom.off.feast.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "high_kingdom.off.feast.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.feast.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.feast.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.feast.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.feast.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_po_secret_1",
+      "labelKey": "high_kingdom.off.secret.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "high_kingdom.off.secret.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.secret.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.secret.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.secret.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.secret.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "high_kingdom_po_secret_2",
+      "labelKey": "high_kingdom.off.secret.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "high_kingdom.off.secret.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.secret.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.secret.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.secret.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.secret.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_po_duel_1",
+      "labelKey": "high_kingdom.off.duel.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "high_kingdom.off.duel.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.duel.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.duel.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.duel.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.duel.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "high_kingdom_po_duel_2",
+      "labelKey": "high_kingdom.off.duel.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "high_kingdom.off.duel.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.duel.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.duel.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.duel.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.duel.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_po_trade_1",
+      "labelKey": "high_kingdom.off.trade.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "high_kingdom.off.trade.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.trade.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.trade.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.trade.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.trade.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "high_kingdom_po_trade_2",
+      "labelKey": "high_kingdom.off.trade.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "high_kingdom.off.trade.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.trade.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.trade.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.trade.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.trade.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "high_kingdom_po_journey_1",
+      "labelKey": "high_kingdom.off.journey.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "high_kingdom.off.journey.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.journey.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.journey.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.journey.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.journey.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "high_kingdom_po_journey_2",
+      "labelKey": "high_kingdom.off.journey.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "high_kingdom.off.journey.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "high_kingdom.off.journey.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "high_kingdom.off.journey.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "high_kingdom.off.journey.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "high_kingdom.off.journey.2.no.res"
+        }
+      ],
+      "minAge": 16
+    }
+  ],
+  "pressures": {
+    "axes": [
+      {
+        "id": "pr_high_kingdom_x1",
+        "labelKey": "high_kingdom.px.1",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x2",
+        "labelKey": "high_kingdom.px.2",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x3",
+        "labelKey": "high_kingdom.px.3",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x4",
+        "labelKey": "high_kingdom.px.4",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x5",
+        "labelKey": "high_kingdom.px.5",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x6",
+        "labelKey": "high_kingdom.px.6",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x7",
+        "labelKey": "high_kingdom.px.7",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x8",
+        "labelKey": "high_kingdom.px.8",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x9",
+        "labelKey": "high_kingdom.px.9",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x10",
+        "labelKey": "high_kingdom.px.10",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x11",
+        "labelKey": "high_kingdom.px.11",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x12",
+        "labelKey": "high_kingdom.px.12",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x13",
+        "labelKey": "high_kingdom.px.13",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x14",
+        "labelKey": "high_kingdom.px.14",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x15",
+        "labelKey": "high_kingdom.px.15",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x16",
+        "labelKey": "high_kingdom.px.16",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x17",
+        "labelKey": "high_kingdom.px.17",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x18",
+        "labelKey": "high_kingdom.px.18",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x19",
+        "labelKey": "high_kingdom.px.19",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x20",
+        "labelKey": "high_kingdom.px.20",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x21",
+        "labelKey": "high_kingdom.px.21",
+        "class": "supernatural",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x22",
+        "labelKey": "high_kingdom.px.22",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x23",
+        "labelKey": "high_kingdom.px.23",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x24",
+        "labelKey": "high_kingdom.px.24",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x25",
+        "labelKey": "high_kingdom.px.25",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x26",
+        "labelKey": "high_kingdom.px.26",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x27",
+        "labelKey": "high_kingdom.px.27",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x28",
+        "labelKey": "high_kingdom.px.28",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x29",
+        "labelKey": "high_kingdom.px.29",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_high_kingdom_x30",
+        "labelKey": "high_kingdom.px.30",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      }
+    ],
+    "rules": [
+      {
+        "source": "pr_high_kingdom_x1",
+        "target": "pr_high_kingdom_x3",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x3",
+        "target": "pr_high_kingdom_x5",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x5",
+        "target": "pr_high_kingdom_x7",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x7",
+        "target": "pr_high_kingdom_x9",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x9",
+        "target": "pr_high_kingdom_x11",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x11",
+        "target": "pr_high_kingdom_x13",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x13",
+        "target": "pr_high_kingdom_x15",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x15",
+        "target": "pr_high_kingdom_x17",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x17",
+        "target": "pr_high_kingdom_x19",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x19",
+        "target": "pr_high_kingdom_x21",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x21",
+        "target": "pr_high_kingdom_x23",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x23",
+        "target": "pr_high_kingdom_x25",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x25",
+        "target": "pr_high_kingdom_x27",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x27",
+        "target": "pr_high_kingdom_x29",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_high_kingdom_x29",
+        "target": "pr_high_kingdom_x1",
+        "threshold": 50,
+        "factor": 0.05
+      }
+    ]
+  },
+  "worldRules": []
+}

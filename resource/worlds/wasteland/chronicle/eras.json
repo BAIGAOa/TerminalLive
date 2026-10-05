@@ -1,0 +1,50 @@
+[
+  {
+    "id": "era_wasteland_1",
+    "labelKey": "wasteland.era.1",
+    "descKey": "wasteland.era.1.desc",
+    "fromYear": 0,
+    "icon": "🌅",
+    "color": "yellow"
+  },
+  {
+    "id": "era_wasteland_2",
+    "labelKey": "wasteland.era.2",
+    "descKey": "wasteland.era.2.desc",
+    "fromYear": 16,
+    "icon": "⚒",
+    "color": "gray"
+  },
+  {
+    "id": "era_wasteland_3",
+    "labelKey": "wasteland.era.3",
+    "descKey": "wasteland.era.3.desc",
+    "fromYear": 32,
+    "icon": "⚙",
+    "color": "white"
+  },
+  {
+    "id": "era_wasteland_4",
+    "labelKey": "wasteland.era.4",
+    "descKey": "wasteland.era.4.desc",
+    "fromYear": 50,
+    "icon": "⚡",
+    "color": "cyan"
+  },
+  {
+    "id": "era_wasteland_5",
+    "labelKey": "wasteland.era.5",
+    "descKey": "wasteland.era.5.desc",
+    "fromYear": 68,
+    "icon": "✦",
+    "color": "magentaBright"
+  },
+  {
+    "id": "era_wasteland_6",
+    "labelKey": "wasteland.era.6",
+    "descKey": "wasteland.era.6.desc",
+    "fromYear": 86,
+    "icon": "🌌",
+    "color": "blue"
+  }
+]

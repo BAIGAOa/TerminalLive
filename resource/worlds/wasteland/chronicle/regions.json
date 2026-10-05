@@ -1,0 +1,72 @@
+[
+  {
+    "id": "reg_wasteland_1",
+    "labelKey": "wasteland.reg.1",
+    "descKey": "wasteland.reg.1.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_wasteland_1"
+    ]
+  },
+  {
+    "id": "reg_wasteland_2",
+    "labelKey": "wasteland.reg.2",
+    "descKey": "wasteland.reg.2.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_wasteland_2"
+    ]
+  },
+  {
+    "id": "reg_wasteland_3",
+    "labelKey": "wasteland.reg.3",
+    "descKey": "wasteland.reg.3.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_wasteland_3"
+    ]
+  },
+  {
+    "id": "reg_wasteland_4",
+    "labelKey": "wasteland.reg.4",
+    "descKey": "wasteland.reg.4.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_wasteland_4"
+    ]
+  },
+  {
+    "id": "reg_wasteland_5",
+    "labelKey": "wasteland.reg.5",
+    "descKey": "wasteland.reg.5.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_wasteland_5"
+    ]
+  },
+  {
+    "id": "reg_wasteland_6",
+    "labelKey": "wasteland.reg.6",
+    "descKey": "wasteland.reg.6.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_wasteland_6"
+    ]
+  },
+  {
+    "id": "reg_wasteland_7",
+    "labelKey": "wasteland.reg.7",
+    "descKey": "wasteland.reg.7.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_wasteland_7"
+    ]
+  }
+]

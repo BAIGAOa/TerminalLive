@@ -1,0 +1,1442 @@
+{
+  "id": "wilds_plugin",
+  "nameKey": "wilds.plugin",
+  "descKey": "wilds.plugin.desc",
+  "world": "wilds",
+  "npcBehaviors": [
+    {
+      "id": "wilds_pb_care_1",
+      "labelKey": "wilds.beh.care.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 4,
+        "happiness": 3
+      },
+      "affinity": 3,
+      "resultKey": "wilds.beh.care.1.res"
+    },
+    {
+      "id": "wilds_pb_care_2",
+      "labelKey": "wilds.beh.care.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 6,
+        "happiness": 4
+      },
+      "affinity": 3,
+      "resultKey": "wilds.beh.care.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_care_3",
+      "labelKey": "wilds.beh.care.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 8,
+        "happiness": 6
+      },
+      "affinity": 3,
+      "resultKey": "wilds.beh.care.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_meal_1",
+      "labelKey": "wilds.beh.meal.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 5
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.meal.1.res"
+    },
+    {
+      "id": "wilds_pb_meal_2",
+      "labelKey": "wilds.beh.meal.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 8
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.meal.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_meal_3",
+      "labelKey": "wilds.beh.meal.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 10
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.meal.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_coin_1",
+      "labelKey": "wilds.beh.coin.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 25
+      },
+      "affinity": 1,
+      "resultKey": "wilds.beh.coin.1.res"
+    },
+    {
+      "id": "wilds_pb_coin_2",
+      "labelKey": "wilds.beh.coin.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 38
+      },
+      "affinity": 1,
+      "resultKey": "wilds.beh.coin.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_coin_3",
+      "labelKey": "wilds.beh.coin.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 50
+      },
+      "affinity": 1,
+      "resultKey": "wilds.beh.coin.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_talk_1",
+      "labelKey": "wilds.beh.talk.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 3,
+        "happiness": 2
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.talk.1.res"
+    },
+    {
+      "id": "wilds_pb_talk_2",
+      "labelKey": "wilds.beh.talk.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 4,
+        "happiness": 3
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.talk.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_talk_3",
+      "labelKey": "wilds.beh.talk.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 6,
+        "happiness": 4
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.talk.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_teach_1",
+      "labelKey": "wilds.beh.teach.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 3
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.teach.1.res"
+    },
+    {
+      "id": "wilds_pb_teach_2",
+      "labelKey": "wilds.beh.teach.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 4
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.teach.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_teach_3",
+      "labelKey": "wilds.beh.teach.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 6
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.teach.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_train_1",
+      "labelKey": "wilds.beh.train.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 3
+      },
+      "affinity": 1,
+      "resultKey": "wilds.beh.train.1.res"
+    },
+    {
+      "id": "wilds_pb_train_2",
+      "labelKey": "wilds.beh.train.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 4
+      },
+      "affinity": 1,
+      "resultKey": "wilds.beh.train.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_train_3",
+      "labelKey": "wilds.beh.train.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 6
+      },
+      "affinity": 1,
+      "resultKey": "wilds.beh.train.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_warn_1",
+      "labelKey": "wilds.beh.warn.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 3
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.warn.1.res"
+    },
+    {
+      "id": "wilds_pb_warn_2",
+      "labelKey": "wilds.beh.warn.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 4
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.warn.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_warn_3",
+      "labelKey": "wilds.beh.warn.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 6
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.warn.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_gift_1",
+      "labelKey": "wilds.beh.gift.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 4
+      },
+      "affinity": 4,
+      "resultKey": "wilds.beh.gift.1.res"
+    },
+    {
+      "id": "wilds_pb_gift_2",
+      "labelKey": "wilds.beh.gift.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 6
+      },
+      "affinity": 4,
+      "resultKey": "wilds.beh.gift.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_gift_3",
+      "labelKey": "wilds.beh.gift.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 8
+      },
+      "affinity": 4,
+      "resultKey": "wilds.beh.gift.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_song_1",
+      "labelKey": "wilds.beh.song.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -6,
+        "happiness": 2
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.song.1.res"
+    },
+    {
+      "id": "wilds_pb_song_2",
+      "labelKey": "wilds.beh.song.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -9,
+        "happiness": 3
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.song.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_song_3",
+      "labelKey": "wilds.beh.song.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -12,
+        "happiness": 4
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.song.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_rest_1",
+      "labelKey": "wilds.beh.rest.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -6,
+        "health": 2
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.rest.1.res"
+    },
+    {
+      "id": "wilds_pb_rest_2",
+      "labelKey": "wilds.beh.rest.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -9,
+        "health": 3
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.rest.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_rest_3",
+      "labelKey": "wilds.beh.rest.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -12,
+        "health": 4
+      },
+      "affinity": 2,
+      "resultKey": "wilds.beh.rest.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_debt_1",
+      "labelKey": "wilds.beh.debt.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -30,
+        "happiness": 1
+      },
+      "affinity": -1,
+      "resultKey": "wilds.beh.debt.1.res"
+    },
+    {
+      "id": "wilds_pb_debt_2",
+      "labelKey": "wilds.beh.debt.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -45,
+        "happiness": 2
+      },
+      "affinity": -1,
+      "resultKey": "wilds.beh.debt.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_debt_3",
+      "labelKey": "wilds.beh.debt.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -60,
+        "happiness": 2
+      },
+      "affinity": -1,
+      "resultKey": "wilds.beh.debt.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_rumor_1",
+      "labelKey": "wilds.beh.rumor.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -3,
+        "angerValue": 3
+      },
+      "affinity": -2,
+      "resultKey": "wilds.beh.rumor.1.res"
+    },
+    {
+      "id": "wilds_pb_rumor_2",
+      "labelKey": "wilds.beh.rumor.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -4,
+        "angerValue": 4
+      },
+      "affinity": -2,
+      "resultKey": "wilds.beh.rumor.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_rumor_3",
+      "labelKey": "wilds.beh.rumor.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -6,
+        "angerValue": 6
+      },
+      "affinity": -2,
+      "resultKey": "wilds.beh.rumor.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_taunt_1",
+      "labelKey": "wilds.beh.taunt.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -3
+      },
+      "affinity": -3,
+      "resultKey": "wilds.beh.taunt.1.res"
+    },
+    {
+      "id": "wilds_pb_taunt_2",
+      "labelKey": "wilds.beh.taunt.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -4
+      },
+      "affinity": -3,
+      "resultKey": "wilds.beh.taunt.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_taunt_3",
+      "labelKey": "wilds.beh.taunt.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -6
+      },
+      "affinity": -3,
+      "resultKey": "wilds.beh.taunt.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_scheme_1",
+      "labelKey": "wilds.beh.scheme.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -40,
+        "angerValue": 4
+      },
+      "affinity": -4,
+      "resultKey": "wilds.beh.scheme.1.res"
+    },
+    {
+      "id": "wilds_pb_scheme_2",
+      "labelKey": "wilds.beh.scheme.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -60,
+        "angerValue": 6
+      },
+      "affinity": -4,
+      "resultKey": "wilds.beh.scheme.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_scheme_3",
+      "labelKey": "wilds.beh.scheme.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -80,
+        "angerValue": 8
+      },
+      "affinity": -4,
+      "resultKey": "wilds.beh.scheme.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_pb_upkeep_1",
+      "labelKey": "wilds.beh.upkeep.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 2,
+        "money": 10
+      },
+      "affinity": 1,
+      "resultKey": "wilds.beh.upkeep.1.res"
+    },
+    {
+      "id": "wilds_pb_upkeep_2",
+      "labelKey": "wilds.beh.upkeep.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 3,
+        "money": 15
+      },
+      "affinity": 1,
+      "resultKey": "wilds.beh.upkeep.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "wilds_pb_upkeep_3",
+      "labelKey": "wilds.beh.upkeep.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 4,
+        "money": 20
+      },
+      "affinity": 1,
+      "resultKey": "wilds.beh.upkeep.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "wilds_po_visit_1",
+      "labelKey": "wilds.off.visit.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "wilds.off.visit.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.visit.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.visit.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.visit.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.visit.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "wilds_po_visit_2",
+      "labelKey": "wilds.off.visit.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "wilds.off.visit.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.visit.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.visit.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.visit.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.visit.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "wilds_po_favor_1",
+      "labelKey": "wilds.off.favor.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "wilds.off.favor.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.favor.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.favor.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.favor.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.favor.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "wilds_po_favor_2",
+      "labelKey": "wilds.off.favor.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "wilds.off.favor.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.favor.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.favor.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.favor.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.favor.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "wilds_po_venture_1",
+      "labelKey": "wilds.off.venture.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "wilds.off.venture.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.venture.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.venture.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.venture.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.venture.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "wilds_po_venture_2",
+      "labelKey": "wilds.off.venture.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "wilds.off.venture.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.venture.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.venture.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.venture.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.venture.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "wilds_po_feast_1",
+      "labelKey": "wilds.off.feast.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "wilds.off.feast.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.feast.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.feast.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.feast.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.feast.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "wilds_po_feast_2",
+      "labelKey": "wilds.off.feast.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "wilds.off.feast.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.feast.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.feast.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.feast.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.feast.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "wilds_po_secret_1",
+      "labelKey": "wilds.off.secret.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "wilds.off.secret.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.secret.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.secret.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.secret.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.secret.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "wilds_po_secret_2",
+      "labelKey": "wilds.off.secret.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "wilds.off.secret.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.secret.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.secret.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.secret.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.secret.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "wilds_po_duel_1",
+      "labelKey": "wilds.off.duel.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "wilds.off.duel.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.duel.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.duel.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.duel.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.duel.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "wilds_po_duel_2",
+      "labelKey": "wilds.off.duel.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "wilds.off.duel.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.duel.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.duel.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.duel.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.duel.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "wilds_po_trade_1",
+      "labelKey": "wilds.off.trade.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "wilds.off.trade.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.trade.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.trade.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.trade.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.trade.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "wilds_po_trade_2",
+      "labelKey": "wilds.off.trade.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "wilds.off.trade.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.trade.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.trade.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.trade.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.trade.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "wilds_po_journey_1",
+      "labelKey": "wilds.off.journey.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "wilds.off.journey.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.journey.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.journey.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.journey.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.journey.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "wilds_po_journey_2",
+      "labelKey": "wilds.off.journey.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "wilds.off.journey.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "wilds.off.journey.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "wilds.off.journey.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "wilds.off.journey.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "wilds.off.journey.2.no.res"
+        }
+      ],
+      "minAge": 16
+    }
+  ],
+  "pressures": {
+    "axes": [
+      {
+        "id": "pr_wilds_x1",
+        "labelKey": "wilds.px.1",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x2",
+        "labelKey": "wilds.px.2",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x3",
+        "labelKey": "wilds.px.3",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x4",
+        "labelKey": "wilds.px.4",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x5",
+        "labelKey": "wilds.px.5",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x6",
+        "labelKey": "wilds.px.6",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x7",
+        "labelKey": "wilds.px.7",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x8",
+        "labelKey": "wilds.px.8",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x9",
+        "labelKey": "wilds.px.9",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x10",
+        "labelKey": "wilds.px.10",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x11",
+        "labelKey": "wilds.px.11",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x12",
+        "labelKey": "wilds.px.12",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x13",
+        "labelKey": "wilds.px.13",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x14",
+        "labelKey": "wilds.px.14",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x15",
+        "labelKey": "wilds.px.15",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x16",
+        "labelKey": "wilds.px.16",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x17",
+        "labelKey": "wilds.px.17",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x18",
+        "labelKey": "wilds.px.18",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x19",
+        "labelKey": "wilds.px.19",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x20",
+        "labelKey": "wilds.px.20",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x21",
+        "labelKey": "wilds.px.21",
+        "class": "supernatural",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x22",
+        "labelKey": "wilds.px.22",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x23",
+        "labelKey": "wilds.px.23",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x24",
+        "labelKey": "wilds.px.24",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x25",
+        "labelKey": "wilds.px.25",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x26",
+        "labelKey": "wilds.px.26",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x27",
+        "labelKey": "wilds.px.27",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x28",
+        "labelKey": "wilds.px.28",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x29",
+        "labelKey": "wilds.px.29",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_wilds_x30",
+        "labelKey": "wilds.px.30",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      }
+    ],
+    "rules": [
+      {
+        "source": "pr_wilds_x1",
+        "target": "pr_wilds_x3",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x3",
+        "target": "pr_wilds_x5",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x5",
+        "target": "pr_wilds_x7",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x7",
+        "target": "pr_wilds_x9",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x9",
+        "target": "pr_wilds_x11",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x11",
+        "target": "pr_wilds_x13",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x13",
+        "target": "pr_wilds_x15",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x15",
+        "target": "pr_wilds_x17",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x17",
+        "target": "pr_wilds_x19",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x19",
+        "target": "pr_wilds_x21",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x21",
+        "target": "pr_wilds_x23",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x23",
+        "target": "pr_wilds_x25",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x25",
+        "target": "pr_wilds_x27",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x27",
+        "target": "pr_wilds_x29",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_wilds_x29",
+        "target": "pr_wilds_x1",
+        "threshold": 50,
+        "factor": 0.05
+      }
+    ]
+  },
+  "worldRules": []
+}

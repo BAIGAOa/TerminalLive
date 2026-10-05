@@ -1,0 +1,169 @@
+[
+  {
+    "id": "lore_paradise_isle_1",
+    "titleKey": "paradise_isle.lore.1",
+    "bodyKey": "paradise_isle.lore.1.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 1
+    }
+  },
+  {
+    "id": "lore_paradise_isle_2",
+    "titleKey": "paradise_isle.lore.2",
+    "bodyKey": "paradise_isle.lore.2.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 16
+    }
+  },
+  {
+    "id": "lore_paradise_isle_3",
+    "titleKey": "paradise_isle.lore.3",
+    "bodyKey": "paradise_isle.lore.3.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_paradise_isle_3"
+    }
+  },
+  {
+    "id": "lore_paradise_isle_4",
+    "titleKey": "paradise_isle.lore.4",
+    "bodyKey": "paradise_isle.lore.4.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_paradise_isle_5"
+    }
+  },
+  {
+    "id": "lore_paradise_isle_5",
+    "titleKey": "paradise_isle.lore.5",
+    "bodyKey": "paradise_isle.lore.5.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_paradise_isle_6",
+    "titleKey": "paradise_isle.lore.6",
+    "bodyKey": "paradise_isle.lore.6.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_paradise_isle_7",
+    "titleKey": "paradise_isle.lore.7",
+    "bodyKey": "paradise_isle.lore.7.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_paradise_isle_8",
+    "titleKey": "paradise_isle.lore.8",
+    "bodyKey": "paradise_isle.lore.8.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_paradise_isle_9",
+    "titleKey": "paradise_isle.lore.9",
+    "bodyKey": "paradise_isle.lore.9.body",
+    "category": "deed",
+    "unlock": {
+      "kind": "flag",
+      "flag": "traveled"
+    }
+  },
+  {
+    "id": "lore_paradise_isle_10",
+    "titleKey": "paradise_isle.lore.10",
+    "bodyKey": "paradise_isle.lore.10.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 60
+    }
+  },
+  {
+    "id": "lore_paradise_isle_11",
+    "titleKey": "paradise_isle.lore.11",
+    "bodyKey": "paradise_isle.lore.11.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "era",
+      "era": "era_paradise_isle_6"
+    }
+  },
+  {
+    "id": "lore_paradise_isle_12",
+    "titleKey": "paradise_isle.lore.12",
+    "bodyKey": "paradise_isle.lore.12.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_paradise_isle_13",
+    "titleKey": "paradise_isle.lore.13",
+    "bodyKey": "paradise_isle.lore.13.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 30
+    }
+  },
+  {
+    "id": "lore_paradise_isle_14",
+    "titleKey": "paradise_isle.lore.14",
+    "bodyKey": "paradise_isle.lore.14.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 45
+    }
+  },
+  {
+    "id": "lore_paradise_isle_15",
+    "titleKey": "paradise_isle.lore.15",
+    "bodyKey": "paradise_isle.lore.15.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_paradise_isle_16",
+    "titleKey": "paradise_isle.lore.16",
+    "bodyKey": "paradise_isle.lore.16.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 60
+    }
+  }
+]

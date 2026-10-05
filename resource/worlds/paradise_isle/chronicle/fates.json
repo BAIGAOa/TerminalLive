@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fate_paradise_isle_1",
+    "labelKey": "paradise_isle.fate.1",
+    "descKey": "paradise_isle.fate.1.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paradise_isle_2",
+    "labelKey": "paradise_isle.fate.2",
+    "descKey": "paradise_isle.fate.2.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paradise_isle_3",
+    "labelKey": "paradise_isle.fate.3",
+    "descKey": "paradise_isle.fate.3.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paradise_isle_4",
+    "labelKey": "paradise_isle.fate.4",
+    "descKey": "paradise_isle.fate.4.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paradise_isle_5",
+    "labelKey": "paradise_isle.fate.5",
+    "descKey": "paradise_isle.fate.5.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "year",
+      "year": 50
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paradise_isle_6",
+    "labelKey": "paradise_isle.fate.6",
+    "descKey": "paradise_isle.fate.6.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "era",
+      "era": "era_paradise_isle_5"
+    },
+    "factor": 2
+  }
+]

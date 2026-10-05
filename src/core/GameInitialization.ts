@@ -10,8 +10,8 @@ import { container } from "../Container.js";
 import EventHistory from "../event/EventHistory.js";
 import { ArchiveManager } from "./archive/ArchiveManager.js";
 import AutoSave from "./archive/AutoSave.js";
-import { registerBuiltinRegistrations } from "../level/BuiltinRegistrations.js";
-import LevelManager from "../level/LevelManager.js";
+import { registerBuiltinRegistrations } from "../worlds/BuiltinRegistrations.js";
+import WorldManager from "../worlds/WorldManager.js";
 import Conditions from "../content/Conditions.js";
 import GameStatus from "../content/GameStatus.js";
 import ThemeParser from "./theme/ThemeParser.js";
@@ -20,7 +20,7 @@ import { VersionProvider } from "./version/VersionProvider.js";
 import Effects from "../content/Effects.js";
 import Actions from "../content/Actions.js";
 import Traits from "../content/Traits.js";
-import World from "../content/World.js";
+import Chronicle from "../content/Chronicle.js";
 import Weather from "../content/Weather.js";
 import RelationshipContent from "../content/RelationshipContent.js";
 import PressureLoader from "../world/pressures/PressureLoader.js";
@@ -28,13 +28,18 @@ import ItemLoader from "../world/items/ItemLoader.js";
 import NpcLoader from "../world/relationships/NpcLoader.js";
 import CareerLoader from "../world/careers/CareerLoader.js";
 import NpcRegistry from "../world/relationships/NpcRegistry.js";
+import NpcTypes from "../world/relationships/NpcTypes.js";
+import WorldContentLoader from "../worlds/WorldContentLoader.js";
+import WorldRuleLoader from "../world/rules/WorldRuleLoader.js";
+import WorldRuleRegistry from "../world/rules/WorldRuleRegistry.js";
+import BuiltinPluginRegistry from "./mod/BuiltinPlugin.js";
 import ModMonitor from "./mod/ModMonitor.js";
 import { hasCapability } from "./mod/capabilities.js";
 import AchievementManager from "../achievement/AchievementManager.js";
 import AchievementResolver from "../achievement/AchievementResolver.js";
 import LineageStore from "./store/LineageStore.js";
 import LineageManager from "../world/lineage/LineageManager.js";
-import LevelRecordsStore from "./store/LevelRecordsStore.js";
+import WorldRecordsStore from "./store/WorldRecordsStore.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -47,7 +52,7 @@ export default class GameInitialization {
   public eventHistory: EventHistory;
   public archiveManager: ArchiveManager;
   public modPluginLoader: ModPluginLoader;
-  public levelManager: LevelManager;
+  public levelManager: WorldManager;
 
   constructor() {
     this.configStore = inject(ConfigStore);
@@ -57,26 +62,27 @@ export default class GameInitialization {
     this.eventHistory = inject(EventHistory);
     this.archiveManager = inject(ArchiveManager);
     this.modPluginLoader = inject(ModPluginLoader);
-    this.levelManager = inject(LevelManager);
+    this.levelManager = inject(WorldManager);
   }
 
   private async configurationInitialization() {
     await this.configStore.init();
   }
 
-  private restoreLevelProgress() {
-    const lastLevelId = this.configStore.getSnapshot().lastLevelId;
+  private restoreWorldProgress() {
+    const snap = this.configStore.getSnapshot();
+    const lastWorldId = snap.lastWorldId ?? snap.lastLevelId;
     if (
-      lastLevelId &&
-      lastLevelId !== "none" &&
+      lastWorldId &&
+      lastWorldId !== "none" &&
       // Only resume when an auto-save actually exists — otherwise a finished
-      // life (cleared slot) would boot into its last level with default stats.
+      // life (cleared slot) would boot into its last world with default stats.
       container.resolve(AutoSave).exists() &&
-      this.levelManager.getAllLevels().has(lastLevelId)
+      this.levelManager.getAllWorlds().has(lastWorldId)
     ) {
-      // Resume the saved life on its level WITHOUT re-applying onEnter
-      // (restoreLevel skips it), so the player's saved state is kept.
-      this.levelManager.restoreLevel(lastLevelId, this.player);
+      // Resume the saved life in its world WITHOUT re-applying startPlayer
+      // (restoreWorld skips it), so the player's saved state is kept.
+      this.levelManager.restoreWorld(lastWorldId, this.player);
     }
   }
 
@@ -95,17 +101,28 @@ export default class GameInitialization {
 
   private loadContent(): void {
     EventTypes.registerAll();
-    // Events are loaded per-level by LevelManager.loadEventsFor (built-in +
+    // NPC archetype classes must exist before any NPC JSON is parsed.
+    NpcTypes.registerAll();
+    // Events are loaded per-level by WorldManager.loadEventsFor (built-in +
     // enabled mods), so the global ModLoader pass is intentionally skipped.
     Conditions.load();
     GameStatus.load();
     Effects.load();
     Actions.load();
     Traits.load();
-    World.load();
+    Chronicle.load();
     Weather.load();
     container.resolve(RelationshipContent).load();
     container.resolve(PressureLoader).loadBuiltin();
+    // The global world-rule library; worlds select by id (worldRules).
+    container.resolve(WorldRuleLoader).loadBuiltin();
+    // Built-in plugins (resource/plugins) — toggleable extra content.
+    const builtins = container.resolve(BuiltinPluginRegistry);
+    builtins.load();
+    const ruleRegistry = container.resolve(WorldRuleRegistry);
+    for (const rule of builtins.allWorldRules()) {
+      if (!ruleRegistry.has(rule.id)) ruleRegistry.register(rule.id, rule);
+    }
 
     const itemLoader = container.resolve(ItemLoader);
     const npcLoader = container.resolve(NpcLoader);
@@ -113,7 +130,9 @@ export default class GameInitialization {
     npcLoader.loadBuiltin();
     container.resolve(CareerLoader).loadBuiltin();
 
-    // Enabled mods may ship extra items / npcs / hidden-score axes+rules.
+    // Enabled mods may ship extra items / hidden-score axes+rules. Mod NPCs are
+    // loaded separately (see loadModNpcContent) *after* their plugin types are
+    // registered, so a mod JSON with `type: "xxx"` resolves correctly.
     const pressureLoader = container.resolve(PressureLoader);
     for (const modName of this.configStore.getEnabledMods()) {
       if (!this.modRegistry.isValid(modName)) continue;
@@ -125,12 +144,25 @@ export default class GameInitialization {
       } else if (manifest?.capabilities) {
         console.warn(`[Mod] "${modName}" 未声明 items 能力，跳过 items/`);
       }
-      if (hasCapability(manifest ?? {}, "npcs")) {
-        npcLoader.loadDir(join(dir, "npcs"));
-      }
       if (hasCapability(manifest ?? {}, "world")) {
         pressureLoader.loadModDir(dir);
       }
+    }
+  }
+
+  /**
+   * Load mod `npcs/` directories. Runs *after* `loadEnabled()`, so any NPC
+   * types the mods registered are already in the type registry when their JSON
+   * is parsed.
+   */
+  private loadModNpcContent(): void {
+    const npcLoader = container.resolve(NpcLoader);
+    for (const modName of this.configStore.getEnabledMods()) {
+      if (!this.modRegistry.isValid(modName)) continue;
+      if (!hasCapability(this.modRegistry.getModManifest(modName) ?? {}, "npcs")) {
+        continue;
+      }
+      npcLoader.loadModDir(join(this.modRegistry.getModPath(modName), "npcs"));
     }
   }
 
@@ -183,19 +215,23 @@ export default class GameInitialization {
     this.eventHistory.load();
     this.loadContent();
 
-    // Seed starting relationship affinities now that NPCs are loaded (the
-    // player is constructed before content, so this can't happen in the ctor).
-    this.player.seedRelationships(container.resolve(NpcRegistry).getAll());
-
     registerBuiltinRegistrations();
-    const levelManager = container.resolve(LevelManager);
+    const levelManager = container.resolve(WorldManager);
     levelManager.setPlayer(this.player);
 
     this.modPluginLoader.setPlayer(this.player);
     this.modPluginLoader.loadEnabled();
+    // Mod NPC JSON is parsed only after the mods registered their types.
+    this.loadModNpcContent();
+    // Capture the built-in + mod content baseline that every world layers over.
+    container.resolve(WorldContentLoader).captureBase();
+    // Seed starting relationship affinities now that every NPC (built-in +
+    // mod) is loaded; the player is constructed before content, so this can't
+    // happen in its constructor.
+    this.player.seedRelationships(container.resolve(NpcRegistry).getAll());
     // Let plugins react to the player being created (after they've loaded).
     this.modPluginLoader.firePlayerCreated(this.player);
-    levelManager.loadAllLevels();
+    levelManager.loadAllWorlds();
 
     this.initThemes();
 
@@ -204,13 +240,13 @@ export default class GameInitialization {
     // Load the family line and start listening for life-end captures.
     await container.resolve(LineageStore).init();
     container.resolve(LineageManager).bindPlayer(this.player);
-    await container.resolve(LevelRecordsStore).init();
+    await container.resolve(WorldRecordsStore).init();
 
     // Resume a life in progress: apply the full auto-save first (it sets the
     // current level + player + world), then re-enter that level, then re-offer
     // any choice that was awaiting a decision at quit time.
     const pendingChoice = this.restoreAutoSave();
-    this.restoreLevelProgress();
+    this.restoreWorldProgress();
     if (pendingChoice) {
       this.levelManager.restorePendingChoice(
         pendingChoice.incidentId,

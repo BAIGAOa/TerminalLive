@@ -1,134 +1,51 @@
 import { inject } from "../../Container.js";
 import NpcRegistry from "./NpcRegistry.js";
 import RandomService from "../../core/random/RandomService.js";
-import { NpcDefinition } from "./NpcDefinition.js";
+import WorldRuleEngine from "../rules/WorldRuleEngine.js";
+import type { Npc } from "./Npc.js";
+import { clamp, DEFAULT_TRAITS, goalsFor, stageOf } from "./NpcTraits.js";
+import type {
+  EdgeKind,
+  NpcBond,
+  NpcEdge,
+  NpcLife,
+  NpcSimEvent,
+  NpcSimSnapshot,
+  NpcTraits,
+} from "./NpcState.js";
+import type {
+  NpcEdgeDelta,
+  NpcLifeDelta,
+  NpcPeer,
+  NpcSchemeResult,
+  NpcYearContext,
+} from "./NpcScheme.js";
 
 /**
  * The NPC life simulator: every NPC has a personality, a body of state
  * (age/stage/health/wealth/mood/career/partner) and social ties to other NPCs.
  * A yearly tick advances all of it under condition-driven rules — promotions,
  * illness and death keyed off the NPC's own state, friendships and rivalries
- * forming on the social graph — rather than pure dice. Emergent, and the state
- * is snapshotted into the save so mid-life resumes keep the same cast.
+ * forming on the social graph — rather than pure dice. On top of that, each
+ * NPC's archetype class contributes *schemes* (NPC↔NPC and NPC→player
+ * behaviour), so the cast acts on itself and on the player. Emergent, and the
+ * state is snapshotted into the save so mid-life resumes keep the same cast.
  */
 
-export type NpcStage = "child" | "youth" | "adult" | "elder";
-export type NpcGoal = "love" | "career" | "wealth" | "health" | "family";
-export type EdgeKind = "kin" | "friend" | "rival" | "partner" | "colleague";
-
-export type NpcEventKind =
-  | "married"
-  | "child"
-  | "promote"
-  | "illness"
-  | "recovered"
-  | "moved"
-  | "returned"
-  | "died"
-  | "friendMade"
-  | "rivalMade"
-  | "windfall"
-  | "ruin";
-
-export interface NpcSimEvent {
-  npcId: string;
-  kind: NpcEventKind;
-  /** A tie change may carry the other party. */
-  otherId?: string;
-}
-
-/** Personality axes in [-1, 1]. Derived from role unless the def overrides. */
-export interface NpcTraits {
-  warmth: number;
-  ambition: number;
-  stability: number;
-  sociability: number;
-}
-
-export interface NpcLife {
+/** The minimal player view a scheme needs (kept structural to avoid a DI cycle). */
+export interface NpcPlayerRef {
   age: number;
-  stage: NpcStage;
-  alive: boolean;
-  health: number; // 0..100
-  wealth: number; // 0..100
-  mood: number; // 0..100
-  careerTier: number; // 0..4
-  partnerId: string | null;
-  children: number;
-  moved: boolean;
-  homeRegion: string | null;
-  goals: NpcGoal[];
-}
-
-export interface NpcEdge {
-  kind: EdgeKind;
-  affinity: number; // -100..100
-  trust: number; // 0..100
-}
-
-/** Multi-axis player↔NPC bond, alongside the scalar affinity on the player. */
-export interface NpcBond {
-  trust: number; // 0..100
-  /** Owed/owing — positive means the player is in the NPC's debt. */
-  debt: number; // -100..100
-  conflict: number; // 0..100
-}
-
-/** Serializable form used for save/restore (goals as plain strings). */
-export interface NpcSimSnapshot {
-  lives: Record<string, Omit<NpcLife, "goals"> & { goals: string[] }>;
-  edges: Record<string, NpcEdge>;
-  bonds: Record<string, NpcBond>;
-}
-
-const ROLE_TRAITS: Record<string, NpcTraits> = {
-  "npc.role.family": { warmth: 0.8, ambition: 0.2, stability: 0.75, sociability: 0.5 },
-  "npc.role.friend": { warmth: 0.7, ambition: 0.35, stability: 0.5, sociability: 0.85 },
-  "npc.role.mentor": { warmth: 0.6, ambition: 0.5, stability: 0.85, sociability: 0.4 },
-  "npc.role.partner": { warmth: 0.9, ambition: 0.35, stability: 0.6, sociability: 0.6 },
-  "npc.role.work": { warmth: 0.25, ambition: 0.8, stability: 0.6, sociability: 0.5 },
-  "npc.role.rival": { warmth: -0.4, ambition: 0.9, stability: 0.4, sociability: 0.4 },
-  "npc.role.pet": { warmth: 0.9, ambition: 0.0, stability: 0.5, sociability: 0.7 },
-};
-
-const DEFAULT_TRAITS: NpcTraits = {
-  warmth: 0.3,
-  ambition: 0.4,
-  stability: 0.6,
-  sociability: 0.5,
-};
-
-export function stageOf(age: number): NpcStage {
-  if (age < 14) return "child";
-  if (age < 30) return "youth";
-  if (age < 65) return "adult";
-  return "elder";
-}
-
-function clamp(v: number, lo: number, hi: number): number {
-  return Math.max(lo, Math.min(hi, v));
+  getRelationship(npcId: string): number;
 }
 
 function pairKey(a: string, b: string): string {
   return a < b ? `${a}|${b}` : `${b}|${a}`;
 }
 
-/**
- * Goals an NPC pursues, from role + personality. Goals bias the yearly
- * simulation (an ambitious NPC chases career; a warm one chases love/family).
- */
-function goalsFor(role: string | undefined, traits: NpcTraits): NpcGoal[] {
-  const goals: NpcGoal[] = [];
-  if (traits.ambition > 0.5) goals.push("career", "wealth");
-  if (traits.warmth > 0.5) goals.push("love", "family");
-  if (role === "npc.role.rival") goals.push("career", "wealth");
-  if (goals.length === 0) goals.push("health");
-  return Array.from(new Set(goals));
-}
-
 export default class NpcSimulation {
   private registry: NpcRegistry;
   private random: RandomService;
+  private rules: WorldRuleEngine;
   private lives = new Map<string, NpcLife>();
   private traits = new Map<string, NpcTraits>();
   private edges = new Map<string, NpcEdge>();
@@ -137,6 +54,7 @@ export default class NpcSimulation {
   constructor() {
     this.registry = inject(NpcRegistry);
     this.random = inject(RandomService);
+    this.rules = inject(WorldRuleEngine);
   }
 
   // ── setup ──────────────────────────────────────────────────────
@@ -149,7 +67,7 @@ export default class NpcSimulation {
     const npcs = this.registry.getAll();
     for (const npc of npcs) {
       const age = npc.startAge ?? 30;
-      const t = ROLE_TRAITS[npc.roleKey ?? ""] ?? DEFAULT_TRAITS;
+      const t = npc.traits();
       this.traits.set(npc.id, t);
       this.lives.set(npc.id, {
         age,
@@ -164,6 +82,7 @@ export default class NpcSimulation {
         moved: false,
         homeRegion: null,
         goals: goalsFor(npc.roleKey, t),
+        flags: [],
       });
       this.bonds.set(npc.id, { trust: 40, debt: 0, conflict: 0 });
     }
@@ -171,7 +90,7 @@ export default class NpcSimulation {
   }
 
   /** Seed ties from kinship + shared roles, so the cast already knows itself. */
-  private seedGraph(npcs: NpcDefinition[]): void {
+  private seedGraph(npcs: Npc[]): void {
     for (const npc of npcs) {
       for (const kinId of npc.kinOf ?? []) {
         if (this.registry.has(kinId)) {
@@ -286,7 +205,7 @@ export default class NpcSimulation {
   }
 
   // ── the yearly tick ────────────────────────────────────────────
-  public tickYear(): NpcSimEvent[] {
+  public tickYear(player?: NpcPlayerRef): NpcSimEvent[] {
     const events: NpcSimEvent[] = [];
     for (const [npcId, life] of this.lives) {
       if (!life.alive) continue;
@@ -299,6 +218,10 @@ export default class NpcSimulation {
       this.lifeGoals(npcId, life, t, events);
     }
     this.socialPass(events);
+    // The life events collected so far are what peers may *react* to.
+    const lifeEvents = events.slice();
+    this.schemePass(player, events);
+    this.reactions(lifeEvents, player, events);
     this.playerCoupling(events);
     return events;
   }
@@ -313,7 +236,8 @@ export default class NpcSimulation {
     const ageHazard =
       life.age >= 85 ? 0.12 : life.age >= 72 ? 0.06 : life.age >= 60 ? 0.025 : 0.003;
     const frailty = life.health < 30 ? 2.5 : life.health < 50 ? 1.4 : 1;
-    if (this.chance(ageHazard * frailty)) {
+    const hazard = ageHazard * frailty * this.rules.mortalityHazardMul();
+    if (this.chance(hazard)) {
       life.alive = false;
       events.push({ npcId, kind: "died" });
     }
@@ -453,6 +377,117 @@ export default class NpcSimulation {
     }
   }
 
+  // ── behaviour: NPC↔NPC / NPC→player schemes ───────────────────
+  /** A read-only world view handed to each archetype's scheme hooks. */
+  private makeContext(player: NpcPlayerRef | undefined): NpcYearContext {
+    const playerAge = player?.age ?? 0;
+    const peers: NpcPeer[] = [];
+    for (const [id, life] of this.lives) {
+      if (!life.alive) continue;
+      const npc = this.registry.get(id);
+      if (npc) peers.push({ npc, life });
+    }
+    return {
+      random: this.random,
+      playerAge,
+      peers,
+      life: (id) => this.lives.get(id),
+      edge: (a, b) => this.edges.get(pairKey(a, b)),
+      bond: (id) => this.bond(id),
+      playerAffinity: (id) => player?.getRelationship(id) ?? 0,
+      knowsPlayer: (id) => this.registry.get(id)?.knowsAt(playerAge) ?? false,
+    };
+  }
+
+  /** Every living archetype gets a chance to scheme against a peer/player. */
+  private schemePass(player: NpcPlayerRef | undefined, out: NpcSimEvent[]): void {
+    const ctx = this.makeContext(player);
+    for (const [id, life] of this.lives) {
+      if (!life.alive) continue;
+      const npc = this.registry.get(id);
+      if (!npc) continue;
+      // The active world's rules scale how often this archetype schemes.
+      const factor = this.rules.npcSchemeFactor(
+        npc.roleKey,
+        new Set([npc.roleKey ?? ""]),
+      );
+      if (factor <= 0) continue;
+      if (factor < 1 && this.random.next() >= factor) continue;
+      const runs = factor > 1 ? Math.min(3, Math.round(factor)) : 1;
+      for (let k = 0; k < runs; k++) {
+        for (const result of npc.peerScheme(ctx)) {
+          this.applyScheme(result);
+          out.push(this.toSchemeEvent(result));
+        }
+      }
+    }
+  }
+
+  /** Peers react to the year's life events (consolation, envy, care…). */
+  private reactions(
+    causes: NpcSimEvent[],
+    player: NpcPlayerRef | undefined,
+    out: NpcSimEvent[],
+  ): void {
+    if (causes.length === 0) return;
+    const ctx = this.makeContext(player);
+    for (const cause of causes) {
+      if (cause.kind === "scheme" || cause.kind === "died") continue;
+      for (const { npcId } of this.neighbors(cause.npcId)) {
+        const npc = this.registry.get(npcId);
+        if (!npc) continue;
+        const result = npc.reactToPeer(cause, ctx);
+        if (!result) continue;
+        this.applyScheme(result);
+        out.push(this.toSchemeEvent(result));
+      }
+    }
+  }
+
+  private toSchemeEvent(r: NpcSchemeResult): NpcSimEvent {
+    return {
+      npcId: r.actorId,
+      kind: "scheme",
+      otherId: r.targetId,
+      logKey: r.logKey,
+      toastKey: r.player?.toastKey,
+      player: r.player,
+    };
+  }
+
+  private applyScheme(r: NpcSchemeResult): void {
+    const actor = this.lives.get(r.actorId);
+    if (actor) this.applyLifeDelta(actor, r.actor);
+    if (r.targetId) {
+      const target = this.lives.get(r.targetId);
+      if (target) this.applyLifeDelta(target, r.target);
+      if (r.edge) this.applyEdgeDelta(r.actorId, r.targetId, r.edge);
+    }
+  }
+
+  private applyLifeDelta(life: NpcLife, d: NpcLifeDelta | undefined): void {
+    if (!d) return;
+    if (d.health !== undefined) life.health = clamp(life.health + d.health, 0, 100);
+    if (d.wealth !== undefined) life.wealth = clamp(life.wealth + d.wealth, 0, 100);
+    if (d.mood !== undefined) life.mood = clamp(life.mood + d.mood, 0, 100);
+    if (d.careerTier !== undefined) life.careerTier = clamp(life.careerTier + d.careerTier, 0, 4);
+    if (d.children !== undefined) life.children = Math.max(0, life.children + d.children);
+    if (d.alive !== undefined) life.alive = d.alive;
+    if (d.moved !== undefined) life.moved = d.moved;
+    if (d.partnerId !== undefined) life.partnerId = d.partnerId;
+    if (d.flags) {
+      for (const f of d.flags) if (!life.flags.includes(f)) life.flags.push(f);
+    }
+  }
+
+  private applyEdgeDelta(a: string, b: string, d: NpcEdgeDelta): void {
+    const edge = this.edges.get(pairKey(a, b));
+    if (!edge) return;
+    if (d.kind) edge.kind = d.kind;
+    if (d.affinity !== undefined) edge.affinity = clamp(edge.affinity + d.affinity, -100, 100);
+    if (d.trust !== undefined) edge.trust = clamp(edge.trust + d.trust, 0, 100);
+  }
+
   /**
    * Fold NPC life events into the player's bonds for NPCs the player knows:
    * a friend's good news warms trust, a rival's rise breeds conflict, and
@@ -460,6 +495,7 @@ export default class NpcSimulation {
    */
   private playerCoupling(events: NpcSimEvent[]): void {
     for (const ev of events) {
+      if (ev.kind === "scheme") continue; // schemes carry their own bond deltas
       const b = this.bonds.get(ev.npcId);
       if (!b) continue;
       switch (ev.kind) {
@@ -504,11 +540,11 @@ export default class NpcSimulation {
       for (const [id, l] of Object.entries(snap.lives)) {
         this.lives.set(id, {
           ...l,
-          goals: [...(l.goals ?? [])] as NpcGoal[],
+          goals: [...(l.goals ?? [])] as NpcLife["goals"],
+          flags: [...(l.flags ?? [])],
         });
         if (!this.traits.has(id)) {
-          const npc = this.registry.get(id);
-          this.traits.set(id, ROLE_TRAITS[npc?.roleKey ?? ""] ?? DEFAULT_TRAITS);
+          this.traits.set(id, this.registry.get(id)?.traits() ?? DEFAULT_TRAITS);
         }
       }
     }
@@ -520,3 +556,17 @@ export default class NpcSimulation {
     }
   }
 }
+
+export type {
+  EdgeKind,
+  NpcBond,
+  NpcEdge,
+  NpcEventKind,
+  NpcGoal,
+  NpcLife,
+  NpcSimEvent,
+  NpcSimSnapshot,
+  NpcStage,
+  NpcTraits,
+} from "./NpcState.js";
+export { DEFAULT_TRAITS, ROLE_TRAITS, goalsFor, stageOf } from "./NpcTraits.js";

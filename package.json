@@ -20,7 +20,7 @@
     },
     "scripts": {
         "build": "tsc --locale zh-CN",
-        "start": "node dist/main.js",
+        "start": "bun dist/main.js",
         "dev": "npm run build && npm run start",
         "watch": "tsc --watch --locale zh-CN",
         "clean": "rm -rf dist",

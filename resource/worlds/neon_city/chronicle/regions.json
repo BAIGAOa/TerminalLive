@@ -1,0 +1,72 @@
+[
+  {
+    "id": "reg_neon_city_1",
+    "labelKey": "neon_city.reg.1",
+    "descKey": "neon_city.reg.1.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_neon_city_1"
+    ]
+  },
+  {
+    "id": "reg_neon_city_2",
+    "labelKey": "neon_city.reg.2",
+    "descKey": "neon_city.reg.2.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_neon_city_2"
+    ]
+  },
+  {
+    "id": "reg_neon_city_3",
+    "labelKey": "neon_city.reg.3",
+    "descKey": "neon_city.reg.3.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_neon_city_3"
+    ]
+  },
+  {
+    "id": "reg_neon_city_4",
+    "labelKey": "neon_city.reg.4",
+    "descKey": "neon_city.reg.4.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_neon_city_4"
+    ]
+  },
+  {
+    "id": "reg_neon_city_5",
+    "labelKey": "neon_city.reg.5",
+    "descKey": "neon_city.reg.5.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_neon_city_5"
+    ]
+  },
+  {
+    "id": "reg_neon_city_6",
+    "labelKey": "neon_city.reg.6",
+    "descKey": "neon_city.reg.6.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_neon_city_6"
+    ]
+  },
+  {
+    "id": "reg_neon_city_7",
+    "labelKey": "neon_city.reg.7",
+    "descKey": "neon_city.reg.7.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_neon_city_7"
+    ]
+  }
+]

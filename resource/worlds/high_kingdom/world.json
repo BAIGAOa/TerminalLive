@@ -1,0 +1,38 @@
+{
+  "id": "high_kingdom",
+  "nameKey": "world.high_kingdom",
+  "descriptionKey": "world.high_kingdom.desc",
+  "icon": "🏰",
+  "tags": [
+    "order"
+  ],
+  "difficultyIdentification": "normal",
+  "contentVersion": 3,
+  "startPlayer": {
+    "age": 0,
+    "health": 98,
+    "happiness": 62,
+    "intelligence": 10,
+    "social": 11,
+    "fitness": 10,
+    "money": 40
+  },
+  "unlockRequires": [
+    "classic"
+  ],
+  "selfContained": true,
+  "worldRules": [
+    "rule_feudal"
+  ],
+  "algorithm": "default",
+  "completionConditions": [
+    {
+      "type": "generalPurpose",
+      "params": {
+        "prop": "age",
+        "num": 100,
+        "cat": "greaterThan"
+      }
+    }
+  ]
+}

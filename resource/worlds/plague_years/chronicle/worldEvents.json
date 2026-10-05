@@ -1,0 +1,62 @@
+[
+  {
+    "id": "we_plague_years_1",
+    "year": 8,
+    "labelKey": "plague_years.we.1",
+    "bodyKey": "plague_years.we.1.body",
+    "pressures": {
+      "pr_plague_years_1": -8,
+      "pr_plague_years_2": 8
+    }
+  },
+  {
+    "id": "we_plague_years_2",
+    "year": 26,
+    "labelKey": "plague_years.we.2",
+    "bodyKey": "plague_years.we.2.body",
+    "pressures": {
+      "pr_plague_years_2": -12,
+      "pr_plague_years_3": 10
+    }
+  },
+  {
+    "id": "we_plague_years_3",
+    "year": 44,
+    "labelKey": "plague_years.we.3",
+    "bodyKey": "plague_years.we.3.body",
+    "pressures": {
+      "pr_plague_years_3": 10,
+      "pr_plague_years_4": -6
+    }
+  },
+  {
+    "id": "we_plague_years_4",
+    "year": 62,
+    "labelKey": "plague_years.we.4",
+    "bodyKey": "plague_years.we.4.body",
+    "pressures": {
+      "pr_plague_years_4": 15,
+      "pr_plague_years_5": -10
+    }
+  },
+  {
+    "id": "we_plague_years_5",
+    "year": 80,
+    "labelKey": "plague_years.we.5",
+    "bodyKey": "plague_years.we.5.body",
+    "pressures": {
+      "pr_plague_years_5": -6,
+      "pr_plague_years_6": 12
+    }
+  },
+  {
+    "id": "we_plague_years_6",
+    "year": 96,
+    "labelKey": "plague_years.we.6",
+    "bodyKey": "plague_years.we.6.body",
+    "pressures": {
+      "pr_plague_years_6": 12,
+      "pr_plague_years_7": -8
+    }
+  }
+]

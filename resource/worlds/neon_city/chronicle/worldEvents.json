@@ -1,0 +1,62 @@
+[
+  {
+    "id": "we_neon_city_1",
+    "year": 8,
+    "labelKey": "neon_city.we.1",
+    "bodyKey": "neon_city.we.1.body",
+    "pressures": {
+      "pr_neon_city_1": -8,
+      "pr_neon_city_2": 8
+    }
+  },
+  {
+    "id": "we_neon_city_2",
+    "year": 26,
+    "labelKey": "neon_city.we.2",
+    "bodyKey": "neon_city.we.2.body",
+    "pressures": {
+      "pr_neon_city_2": -12,
+      "pr_neon_city_3": 10
+    }
+  },
+  {
+    "id": "we_neon_city_3",
+    "year": 44,
+    "labelKey": "neon_city.we.3",
+    "bodyKey": "neon_city.we.3.body",
+    "pressures": {
+      "pr_neon_city_3": 10,
+      "pr_neon_city_4": -6
+    }
+  },
+  {
+    "id": "we_neon_city_4",
+    "year": 62,
+    "labelKey": "neon_city.we.4",
+    "bodyKey": "neon_city.we.4.body",
+    "pressures": {
+      "pr_neon_city_4": 15,
+      "pr_neon_city_5": -10
+    }
+  },
+  {
+    "id": "we_neon_city_5",
+    "year": 80,
+    "labelKey": "neon_city.we.5",
+    "bodyKey": "neon_city.we.5.body",
+    "pressures": {
+      "pr_neon_city_5": -6,
+      "pr_neon_city_6": 12
+    }
+  },
+  {
+    "id": "we_neon_city_6",
+    "year": 96,
+    "labelKey": "neon_city.we.6",
+    "bodyKey": "neon_city.we.6.body",
+    "pressures": {
+      "pr_neon_city_6": 12,
+      "pr_neon_city_7": -8
+    }
+  }
+]

@@ -44,7 +44,7 @@ export default function Setting() {
       height={data.rows}
     >
       <Box width={clampWidth(columns, 44)} flexDirection="column">
-        <Box height={3} borderColor={colors.text} borderStyle="round">
+        <Box height={3} borderColor={colors.text} borderStyle="bold">
           <Box justifyContent="center" width="100%">
             <Text color={colors.settingTitle} bold>
               {data.t("setting.title")}
@@ -59,7 +59,7 @@ export default function Setting() {
             renderItem={(item, state) => (
               <Box
                 flexGrow={1}
-                borderStyle="round"
+                borderStyle="bold"
                 borderColor={state.selected ? colors.highlight : colors.muted}
                 paddingX={1}
                 justifyContent="center"

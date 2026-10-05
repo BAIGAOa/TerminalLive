@@ -1,0 +1,12 @@
+[
+  {
+    "id": "npc_example_guardian",
+    "type": "example_guardian",
+    "labelKey": "example.npc.guardian",
+    "descKey": "example.npc.guardian.desc",
+    "roleKey": "npc.role.mentor",
+    "initial": 25,
+    "params": { "favor": "shield" },
+    "dialogueKeys": ["example.npc.guardian.line1"]
+  }
+]

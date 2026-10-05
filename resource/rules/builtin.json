@@ -1,0 +1,112 @@
+[
+  {
+    "id": "rule_hostile",
+    "labelKey": "worldrule.hostile",
+    "tags": ["harsh"],
+    "statDrift": { "happiness": -0.6 },
+    "mortality": { "hazardMul": 1.2 },
+    "eventWeight": [
+      { "match": { "tag": "challenge" }, "factor": 1.6 },
+      { "match": { "tag": "loss" }, "factor": 1.4 }
+    ]
+  },
+  {
+    "id": "rule_paranoid",
+    "labelKey": "worldrule.paranoid",
+    "tags": ["intrigue"],
+    "statDrift": { "social": -0.4 },
+    "eventWeight": [
+      { "match": { "tag": "betrayal" }, "factor": 2 },
+      { "match": { "tag": "scheme" }, "factor": 2 },
+      { "match": { "tag": "rumor" }, "factor": 2 },
+      { "match": { "tag": "trust" }, "factor": 0.4 }
+    ],
+    "npcSchemeFrequency": [
+      { "match": { "role": "npc.role.rival" }, "factor": 2 },
+      { "match": { "role": "npc.role.friend" }, "factor": 0.3 }
+    ]
+  },
+  {
+    "id": "rule_idyllic",
+    "labelKey": "worldrule.idyllic",
+    "tags": ["gentle"],
+    "statDrift": { "happiness": 0.8, "health": 0.3 },
+    "mortality": { "hazardMul": 0.6 },
+    "eventWeight": [
+      { "match": { "tag": "boon" }, "factor": 1.5 },
+      { "match": { "tag": "challenge" }, "factor": 0.5 }
+    ]
+  },
+  {
+    "id": "rule_plague",
+    "labelKey": "worldrule.plague",
+    "tags": ["harsh"],
+    "mortality": { "hazardMul": 2 },
+    "economy": { "marketBias": -0.1 },
+    "onWorldStart": { "pressureSeed": { "pr_plague": 70 } },
+    "eventWeight": [{ "match": { "tag": "illness" }, "factor": 2 }]
+  },
+  {
+    "id": "rule_wasteland",
+    "labelKey": "worldrule.wasteland",
+    "tags": ["harsh"],
+    "statDrift": { "fitness": 0.2, "health": -0.5 },
+    "economy": { "inflationBias": 0.05, "wageMul": 0.7 },
+    "weatherBias": { "weather_drought": 3, "weather_heat": 2, "weather_rain": 0.3 }
+  },
+  {
+    "id": "rule_paradise",
+    "labelKey": "worldrule.paradise",
+    "tags": ["gentle"],
+    "statDrift": { "happiness": 0.5 },
+    "onWorldStart": { "money": 200 },
+    "weatherBias": { "weather_clear": 1.5, "weather_storm": 0.4 }
+  },
+  {
+    "id": "rule_neon",
+    "labelKey": "worldrule.neon",
+    "tags": ["intrigue"],
+    "statDrift": { "angerValue": 0.3 },
+    "economy": { "marketBias": 0.08 },
+    "eventWeight": [
+      { "match": { "tag": "tech" }, "factor": 1.8 },
+      { "match": { "tag": "online" }, "factor": 1.8 }
+    ],
+    "npcSchemeFrequency": [{ "match": { "role": "npc.role.work" }, "factor": 1.5 }]
+  },
+  {
+    "id": "rule_feudal",
+    "labelKey": "worldrule.feudal",
+    "tags": ["order"],
+    "economy": { "wageMul": 0.85 },
+    "onWorldStart": { "flags": ["rigid_order"] },
+    "eventWeight": [
+      { "match": { "tag": "fate" }, "factor": 1.5 },
+      { "match": { "tag": "faction" }, "factor": 1.5 }
+    ],
+    "npcSchemeFrequency": [{ "match": { "role": "npc.role.family" }, "factor": 1.4 }]
+  },
+  {
+    "id": "rule_wilderness",
+    "labelKey": "worldrule.wilderness",
+    "tags": ["harsh"],
+    "statDrift": { "fitness": 0.4 },
+    "mortality": { "hazardMul": 1.4 },
+    "weatherBias": { "weather_storm": 1.8, "weather_snow": 1.5 },
+    "eventWeight": [
+      { "match": { "tag": "nature" }, "factor": 2 },
+      { "match": { "tag": "explore" }, "factor": 2 }
+    ]
+  },
+  {
+    "id": "rule_court",
+    "labelKey": "worldrule.court",
+    "tags": ["intrigue"],
+    "economy": { "marketBias": 0.05 },
+    "eventWeight": [
+      { "match": { "tag": "scheme" }, "factor": 1.8 },
+      { "match": { "tag": "romance" }, "factor": 1.8 }
+    ],
+    "npcSchemeFrequency": [{ "match": { "tag": "noble" }, "factor": 2 }]
+  }
+]

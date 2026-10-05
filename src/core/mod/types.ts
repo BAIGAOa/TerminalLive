@@ -1,6 +1,16 @@
 import type Player from "../../world/Player.js";
 import type { Incident, IncidentParameter } from "../../world/Incident.js";
 import type EventTypeRegistry from "./EventTypeRegistry.js";
+import type NpcTypeRegistry from "../../world/relationships/NpcTypeRegistry.js";
+import type { Npc, NpcConstructor } from "../../world/relationships/Npc.js";
+import type {
+  NpcSchemeResult,
+  NpcYearContext,
+} from "../../world/relationships/NpcScheme.js";
+import type {
+  NpcSimEvent,
+  NpcTraits,
+} from "../../world/relationships/NpcState.js";
 import type ConfigStore from "../store/ConfigStore.js";
 import z from "zod";
 import IncidentFilter from "../../event/IncidentFilter.js";
@@ -15,6 +25,7 @@ import type { WorldEventDefinition } from "../../world/chronicle/worldEvents.js"
 import type { TraitDefinition } from "../../world/traits/TraitDefinition.js";
 import type { RandomSource } from "../random/RandomSource.js";
 import type { WeightRule } from "../../event/EventDirector.js";
+import type { WorldRuleDef } from "../../world/rules/WorldRule.js";
 
 /** The API version this build of the game speaks. */
 export const MOD_API_VERSION = 1;
@@ -66,6 +77,12 @@ export interface ModContext {
   createEventClass: (
     def: ModEventClassDef,
   ) => new (params: IncidentParameter) => Incident;
+  /** Register an NPC archetype: JSON `type` → class. Needs the "npcs" capability. */
+  registerNpcType: (name: string, ctor: NpcConstructor) => void;
+  /** Build an Npc subclass from plain behaviour hooks. Needs "npcs". */
+  createNpcClass: (def: ModNpcClassDef) => NpcConstructor;
+  /** The base Npc class, for mods that would rather `extends` it directly. */
+  npcBase: typeof Npc;
   registerScreen: (
     key: string,
     entry: {
@@ -106,11 +123,39 @@ export interface ModContext {
    * alongside the built-in director rules; return 1 for "no opinion".
    */
   addWeightRule: (rule: WeightRule) => void;
+  /** Register a world rule (a world may then list its id in `worldRules`). */
+  addWorldRule: (def: WorldRuleDef) => void;
 }
 
 export interface ModEventClassDef {
   apply: (player: Player, self: Incident) => void;
   getWeight?: (player: Player, self: Incident) => number;
+}
+
+/**
+ * A mod NPC archetype defined with plain behaviour hooks — no manual subclass
+ * needed (mirrors `ModEventClassDef`). Mods that want full control can instead
+ * `extends ctx.npcBase` and register the class directly via `registerNpcType`.
+ */
+export interface ModNpcClassDef {
+  /** Parse custom `params` fields onto the instance (self). */
+  parseParams?: (self: Npc, params: Record<string, unknown>) => void;
+  /** Overrides the role/type personality. */
+  traits?: NpcTraits;
+  /** Player age at which the player comes to know this NPC. */
+  knowsFromAge?: number;
+  knowsUntilAge?: number;
+  /** Age window applied to the NPC's autonomy. */
+  autonomyMinAge?: number;
+  autonomyMaxAge?: number;
+  /** A yearly behaviour against a peer and/or the player. */
+  peerScheme?: (self: Npc, ctx: NpcYearContext) => NpcSchemeResult[];
+  /** React to a peer's life event this year. */
+  reactToPeer?: (
+    self: Npc,
+    ev: NpcSimEvent,
+    ctx: NpcYearContext,
+  ) => NpcSchemeResult | null;
 }
 
 /** Lifecycle hooks. All optional; called in load order of the mods. */
@@ -144,5 +189,7 @@ export interface ModHooks {
 export interface ModPlugin {
   id: string;
   registerEventTypes?: (registry: EventTypeRegistry, ctx: ModContext) => void;
+  /** Register mod NPC archetypes. Needs the "npcs" capability. */
+  registerNpcTypes?: (registry: NpcTypeRegistry, ctx: ModContext) => void;
   hooks?: ModHooks;
 }

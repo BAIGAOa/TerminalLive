@@ -1,0 +1,122 @@
+[
+  {
+    "id": "npc_golden_age_1",
+    "roleKey": "npc.role.family",
+    "initial": 50,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.1",
+    "descKey": "golden_age.npc.1.desc",
+    "dialogueKeys": [
+      "golden_age.npc.1.l1",
+      "golden_age.npc.1.l2"
+    ]
+  },
+  {
+    "id": "npc_golden_age_2",
+    "roleKey": "npc.role.friend",
+    "initial": 46,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.2",
+    "descKey": "golden_age.npc.2.desc",
+    "dialogueKeys": [
+      "golden_age.npc.2.l1",
+      "golden_age.npc.2.l2"
+    ]
+  },
+  {
+    "id": "npc_golden_age_3",
+    "roleKey": "npc.role.mentor",
+    "initial": 42,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.3",
+    "descKey": "golden_age.npc.3.desc",
+    "dialogueKeys": [
+      "golden_age.npc.3.l1",
+      "golden_age.npc.3.l2"
+    ]
+  },
+  {
+    "id": "npc_golden_age_4",
+    "roleKey": "npc.role.rival",
+    "initial": 38,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.4",
+    "descKey": "golden_age.npc.4.desc",
+    "dialogueKeys": [
+      "golden_age.npc.4.l1",
+      "golden_age.npc.4.l2"
+    ]
+  },
+  {
+    "id": "npc_golden_age_5",
+    "roleKey": "npc.role.work",
+    "initial": 34,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.5",
+    "descKey": "golden_age.npc.5.desc",
+    "dialogueKeys": [
+      "golden_age.npc.5.l1",
+      "golden_age.npc.5.l2"
+    ]
+  },
+  {
+    "id": "npc_golden_age_6",
+    "roleKey": "npc.role.family",
+    "initial": 30,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.6",
+    "descKey": "golden_age.npc.6.desc",
+    "dialogueKeys": [
+      "golden_age.npc.6.l1",
+      "golden_age.npc.6.l2"
+    ]
+  },
+  {
+    "id": "npc_golden_age_7",
+    "roleKey": "npc.role.rival",
+    "initial": 26,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.7",
+    "descKey": "golden_age.npc.7.desc",
+    "dialogueKeys": [
+      "golden_age.npc.7.l1",
+      "golden_age.npc.7.l2"
+    ]
+  },
+  {
+    "id": "npc_golden_age_8",
+    "roleKey": "npc.role.friend",
+    "initial": 22,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.8",
+    "descKey": "golden_age.npc.8.desc",
+    "dialogueKeys": [
+      "golden_age.npc.8.l1",
+      "golden_age.npc.8.l2"
+    ]
+  },
+  {
+    "id": "npc_golden_age_9",
+    "roleKey": "npc.role.mentor",
+    "initial": 18,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.9",
+    "descKey": "golden_age.npc.9.desc",
+    "dialogueKeys": [
+      "golden_age.npc.9.l1",
+      "golden_age.npc.9.l2"
+    ]
+  },
+  {
+    "id": "npc_golden_age_10",
+    "roleKey": "npc.role.work",
+    "initial": 14,
+    "startAge": 30,
+    "labelKey": "golden_age.npc.10",
+    "descKey": "golden_age.npc.10.desc",
+    "dialogueKeys": [
+      "golden_age.npc.10.l1",
+      "golden_age.npc.10.l2"
+    ]
+  }
+]

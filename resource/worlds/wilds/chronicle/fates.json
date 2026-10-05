@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fate_wilds_1",
+    "labelKey": "wilds.fate.1",
+    "descKey": "wilds.fate.1.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wilds_2",
+    "labelKey": "wilds.fate.2",
+    "descKey": "wilds.fate.2.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wilds_3",
+    "labelKey": "wilds.fate.3",
+    "descKey": "wilds.fate.3.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wilds_4",
+    "labelKey": "wilds.fate.4",
+    "descKey": "wilds.fate.4.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wilds_5",
+    "labelKey": "wilds.fate.5",
+    "descKey": "wilds.fate.5.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "year",
+      "year": 50
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wilds_6",
+    "labelKey": "wilds.fate.6",
+    "descKey": "wilds.fate.6.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "era",
+      "era": "era_wilds_5"
+    },
+    "factor": 2
+  }
+]

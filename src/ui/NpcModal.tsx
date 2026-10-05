@@ -51,7 +51,9 @@ export default function NpcModal({ npcId }: { npcId: string }) {
         ? t("npc.it.reason.age")
         : reason === "gone"
           ? t("npc.it.reason.gone")
-          : t("npc.it.reason.require");
+          : reason === "unknown"
+            ? t("npc.it.reason.unknown")
+            : t("npc.it.reason.require");
 
   const choose = (id: string) => {
     if (id === CLOSE_ID) {

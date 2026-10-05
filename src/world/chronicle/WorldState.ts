@@ -1,5 +1,5 @@
 import { container } from "../../Container.js";
-import WorldRegistry from "./WorldRegistry.js";
+import ChronicleRegistry from "./ChronicleRegistry.js";
 import { eraForYear } from "./eras.js";
 import { applyKarma, emptyKarma, KarmaDelta, KarmaState } from "./karma.js";
 import { unlockedLore } from "./lore.js";
@@ -46,7 +46,7 @@ const STANDING_MAX = 100;
  * A container singleton, reset for each new life via {@link begin}.
  */
 export default class WorldState {
-  private registry: WorldRegistry;
+  private registry: ChronicleRegistry;
   private random: RandomService;
 
   public year = 0;
@@ -65,7 +65,7 @@ export default class WorldState {
   private version = 0;
 
   constructor() {
-    this.registry = container.resolve(WorldRegistry);
+    this.registry = container.resolve(ChronicleRegistry);
     this.random = container.resolve(RandomService);
   }
 

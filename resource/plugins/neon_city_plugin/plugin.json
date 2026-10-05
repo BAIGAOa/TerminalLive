@@ -1,0 +1,1442 @@
+{
+  "id": "neon_city_plugin",
+  "nameKey": "neon_city.plugin",
+  "descKey": "neon_city.plugin.desc",
+  "world": "neon_city",
+  "npcBehaviors": [
+    {
+      "id": "neon_city_pb_care_1",
+      "labelKey": "neon_city.beh.care.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 4,
+        "happiness": 3
+      },
+      "affinity": 3,
+      "resultKey": "neon_city.beh.care.1.res"
+    },
+    {
+      "id": "neon_city_pb_care_2",
+      "labelKey": "neon_city.beh.care.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 6,
+        "happiness": 4
+      },
+      "affinity": 3,
+      "resultKey": "neon_city.beh.care.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_care_3",
+      "labelKey": "neon_city.beh.care.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "health": 8,
+        "happiness": 6
+      },
+      "affinity": 3,
+      "resultKey": "neon_city.beh.care.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_meal_1",
+      "labelKey": "neon_city.beh.meal.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 5
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.meal.1.res"
+    },
+    {
+      "id": "neon_city_pb_meal_2",
+      "labelKey": "neon_city.beh.meal.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 8
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.meal.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_meal_3",
+      "labelKey": "neon_city.beh.meal.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 10
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.meal.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_coin_1",
+      "labelKey": "neon_city.beh.coin.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 25
+      },
+      "affinity": 1,
+      "resultKey": "neon_city.beh.coin.1.res"
+    },
+    {
+      "id": "neon_city_pb_coin_2",
+      "labelKey": "neon_city.beh.coin.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 38
+      },
+      "affinity": 1,
+      "resultKey": "neon_city.beh.coin.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_coin_3",
+      "labelKey": "neon_city.beh.coin.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": 50
+      },
+      "affinity": 1,
+      "resultKey": "neon_city.beh.coin.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_talk_1",
+      "labelKey": "neon_city.beh.talk.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 3,
+        "happiness": 2
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.talk.1.res"
+    },
+    {
+      "id": "neon_city_pb_talk_2",
+      "labelKey": "neon_city.beh.talk.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 4,
+        "happiness": 3
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.talk.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_talk_3",
+      "labelKey": "neon_city.beh.talk.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "social": 6,
+        "happiness": 4
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.talk.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_teach_1",
+      "labelKey": "neon_city.beh.teach.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 3
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.teach.1.res"
+    },
+    {
+      "id": "neon_city_pb_teach_2",
+      "labelKey": "neon_city.beh.teach.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 4
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.teach.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_teach_3",
+      "labelKey": "neon_city.beh.teach.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "intelligence": 6
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.teach.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_train_1",
+      "labelKey": "neon_city.beh.train.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 3
+      },
+      "affinity": 1,
+      "resultKey": "neon_city.beh.train.1.res"
+    },
+    {
+      "id": "neon_city_pb_train_2",
+      "labelKey": "neon_city.beh.train.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 4
+      },
+      "affinity": 1,
+      "resultKey": "neon_city.beh.train.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_train_3",
+      "labelKey": "neon_city.beh.train.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "fitness": 6
+      },
+      "affinity": 1,
+      "resultKey": "neon_city.beh.train.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_warn_1",
+      "labelKey": "neon_city.beh.warn.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 3
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.warn.1.res"
+    },
+    {
+      "id": "neon_city_pb_warn_2",
+      "labelKey": "neon_city.beh.warn.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 4
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.warn.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_warn_3",
+      "labelKey": "neon_city.beh.warn.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 6
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.warn.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_gift_1",
+      "labelKey": "neon_city.beh.gift.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 4
+      },
+      "affinity": 4,
+      "resultKey": "neon_city.beh.gift.1.res"
+    },
+    {
+      "id": "neon_city_pb_gift_2",
+      "labelKey": "neon_city.beh.gift.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 6
+      },
+      "affinity": 4,
+      "resultKey": "neon_city.beh.gift.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_gift_3",
+      "labelKey": "neon_city.beh.gift.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": 8
+      },
+      "affinity": 4,
+      "resultKey": "neon_city.beh.gift.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_song_1",
+      "labelKey": "neon_city.beh.song.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -6,
+        "happiness": 2
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.song.1.res"
+    },
+    {
+      "id": "neon_city_pb_song_2",
+      "labelKey": "neon_city.beh.song.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -9,
+        "happiness": 3
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.song.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_song_3",
+      "labelKey": "neon_city.beh.song.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "depressionValue": -12,
+        "happiness": 4
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.song.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_rest_1",
+      "labelKey": "neon_city.beh.rest.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -6,
+        "health": 2
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.rest.1.res"
+    },
+    {
+      "id": "neon_city_pb_rest_2",
+      "labelKey": "neon_city.beh.rest.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -9,
+        "health": 3
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.rest.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_rest_3",
+      "labelKey": "neon_city.beh.rest.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "weakValue": -12,
+        "health": 4
+      },
+      "affinity": 2,
+      "resultKey": "neon_city.beh.rest.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_debt_1",
+      "labelKey": "neon_city.beh.debt.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -30,
+        "happiness": 1
+      },
+      "affinity": -1,
+      "resultKey": "neon_city.beh.debt.1.res"
+    },
+    {
+      "id": "neon_city_pb_debt_2",
+      "labelKey": "neon_city.beh.debt.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -45,
+        "happiness": 2
+      },
+      "affinity": -1,
+      "resultKey": "neon_city.beh.debt.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_debt_3",
+      "labelKey": "neon_city.beh.debt.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -60,
+        "happiness": 2
+      },
+      "affinity": -1,
+      "resultKey": "neon_city.beh.debt.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_rumor_1",
+      "labelKey": "neon_city.beh.rumor.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -3,
+        "angerValue": 3
+      },
+      "affinity": -2,
+      "resultKey": "neon_city.beh.rumor.1.res"
+    },
+    {
+      "id": "neon_city_pb_rumor_2",
+      "labelKey": "neon_city.beh.rumor.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -4,
+        "angerValue": 4
+      },
+      "affinity": -2,
+      "resultKey": "neon_city.beh.rumor.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_rumor_3",
+      "labelKey": "neon_city.beh.rumor.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": -6,
+        "angerValue": 6
+      },
+      "affinity": -2,
+      "resultKey": "neon_city.beh.rumor.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_taunt_1",
+      "labelKey": "neon_city.beh.taunt.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -3
+      },
+      "affinity": -3,
+      "resultKey": "neon_city.beh.taunt.1.res"
+    },
+    {
+      "id": "neon_city_pb_taunt_2",
+      "labelKey": "neon_city.beh.taunt.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -4
+      },
+      "affinity": -3,
+      "resultKey": "neon_city.beh.taunt.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_taunt_3",
+      "labelKey": "neon_city.beh.taunt.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "happiness": -6
+      },
+      "affinity": -3,
+      "resultKey": "neon_city.beh.taunt.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_scheme_1",
+      "labelKey": "neon_city.beh.scheme.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -40,
+        "angerValue": 4
+      },
+      "affinity": -4,
+      "resultKey": "neon_city.beh.scheme.1.res"
+    },
+    {
+      "id": "neon_city_pb_scheme_2",
+      "labelKey": "neon_city.beh.scheme.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -60,
+        "angerValue": 6
+      },
+      "affinity": -4,
+      "resultKey": "neon_city.beh.scheme.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_scheme_3",
+      "labelKey": "neon_city.beh.scheme.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "money": -80,
+        "angerValue": 8
+      },
+      "affinity": -4,
+      "resultKey": "neon_city.beh.scheme.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_pb_upkeep_1",
+      "labelKey": "neon_city.beh.upkeep.1",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 2,
+        "money": 10
+      },
+      "affinity": 1,
+      "resultKey": "neon_city.beh.upkeep.1.res"
+    },
+    {
+      "id": "neon_city_pb_upkeep_2",
+      "labelKey": "neon_city.beh.upkeep.2",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 3,
+        "money": 15
+      },
+      "affinity": 1,
+      "resultKey": "neon_city.beh.upkeep.2.res",
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_pb_upkeep_3",
+      "labelKey": "neon_city.beh.upkeep.3",
+      "weight": 1,
+      "kind": "passive",
+      "effects": {
+        "reputation": 4,
+        "money": 20
+      },
+      "affinity": 1,
+      "resultKey": "neon_city.beh.upkeep.3.res",
+      "maxAge": 30
+    },
+    {
+      "id": "neon_city_po_visit_1",
+      "labelKey": "neon_city.off.visit.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "neon_city.off.visit.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.visit.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.visit.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.visit.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.visit.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "neon_city_po_visit_2",
+      "labelKey": "neon_city.off.visit.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "neon_city.off.visit.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.visit.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.visit.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.visit.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.visit.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_po_favor_1",
+      "labelKey": "neon_city.off.favor.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "neon_city.off.favor.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.favor.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.favor.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.favor.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.favor.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "neon_city_po_favor_2",
+      "labelKey": "neon_city.off.favor.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "neon_city.off.favor.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.favor.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.favor.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.favor.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.favor.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_po_venture_1",
+      "labelKey": "neon_city.off.venture.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "neon_city.off.venture.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.venture.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.venture.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.venture.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.venture.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "neon_city_po_venture_2",
+      "labelKey": "neon_city.off.venture.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "neon_city.off.venture.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.venture.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.venture.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.venture.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.venture.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_po_feast_1",
+      "labelKey": "neon_city.off.feast.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "neon_city.off.feast.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.feast.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.feast.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.feast.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.feast.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "neon_city_po_feast_2",
+      "labelKey": "neon_city.off.feast.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "neon_city.off.feast.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.feast.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.feast.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.feast.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.feast.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_po_secret_1",
+      "labelKey": "neon_city.off.secret.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "neon_city.off.secret.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.secret.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.secret.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.secret.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.secret.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "neon_city_po_secret_2",
+      "labelKey": "neon_city.off.secret.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "neon_city.off.secret.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.secret.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.secret.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.secret.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.secret.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_po_duel_1",
+      "labelKey": "neon_city.off.duel.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "neon_city.off.duel.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.duel.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.duel.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.duel.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.duel.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "neon_city_po_duel_2",
+      "labelKey": "neon_city.off.duel.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "neon_city.off.duel.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.duel.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.duel.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.duel.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.duel.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_po_trade_1",
+      "labelKey": "neon_city.off.trade.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "neon_city.off.trade.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.trade.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.trade.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.trade.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.trade.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "neon_city_po_trade_2",
+      "labelKey": "neon_city.off.trade.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "neon_city.off.trade.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.trade.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.trade.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.trade.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.trade.2.no.res"
+        }
+      ],
+      "minAge": 16
+    },
+    {
+      "id": "neon_city_po_journey_1",
+      "labelKey": "neon_city.off.journey.1",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 20,
+      "offerTextKey": "neon_city.off.journey.1.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.journey.1.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.journey.1.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.journey.1.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.journey.1.no.res"
+        }
+      ]
+    },
+    {
+      "id": "neon_city_po_journey_2",
+      "labelKey": "neon_city.off.journey.2",
+      "weight": 1,
+      "kind": "offer",
+      "minAffinity": 40,
+      "offerTextKey": "neon_city.off.journey.2.text",
+      "options": [
+        {
+          "id": "yes",
+          "labelKey": "neon_city.off.journey.2.yes",
+          "effects": {
+            "happiness": 6,
+            "reputation": 3
+          },
+          "affinity": 6,
+          "resultKey": "neon_city.off.journey.2.yes.res"
+        },
+        {
+          "id": "no",
+          "labelKey": "neon_city.off.journey.2.no",
+          "effects": {
+            "happiness": -2,
+            "angerValue": 2
+          },
+          "affinity": -4,
+          "resultKey": "neon_city.off.journey.2.no.res"
+        }
+      ],
+      "minAge": 16
+    }
+  ],
+  "pressures": {
+    "axes": [
+      {
+        "id": "pr_neon_city_x1",
+        "labelKey": "neon_city.px.1",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x2",
+        "labelKey": "neon_city.px.2",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x3",
+        "labelKey": "neon_city.px.3",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x4",
+        "labelKey": "neon_city.px.4",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x5",
+        "labelKey": "neon_city.px.5",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x6",
+        "labelKey": "neon_city.px.6",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x7",
+        "labelKey": "neon_city.px.7",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x8",
+        "labelKey": "neon_city.px.8",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x9",
+        "labelKey": "neon_city.px.9",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x10",
+        "labelKey": "neon_city.px.10",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x11",
+        "labelKey": "neon_city.px.11",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x12",
+        "labelKey": "neon_city.px.12",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x13",
+        "labelKey": "neon_city.px.13",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x14",
+        "labelKey": "neon_city.px.14",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x15",
+        "labelKey": "neon_city.px.15",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x16",
+        "labelKey": "neon_city.px.16",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x17",
+        "labelKey": "neon_city.px.17",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x18",
+        "labelKey": "neon_city.px.18",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x19",
+        "labelKey": "neon_city.px.19",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x20",
+        "labelKey": "neon_city.px.20",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x21",
+        "labelKey": "neon_city.px.21",
+        "class": "supernatural",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x22",
+        "labelKey": "neon_city.px.22",
+        "class": "meta",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x23",
+        "labelKey": "neon_city.px.23",
+        "class": "culture",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x24",
+        "labelKey": "neon_city.px.24",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x25",
+        "labelKey": "neon_city.px.25",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x26",
+        "labelKey": "neon_city.px.26",
+        "class": "economy",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x27",
+        "labelKey": "neon_city.px.27",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x28",
+        "labelKey": "neon_city.px.28",
+        "class": "nature",
+        "min": 0,
+        "max": 100,
+        "initial": 50,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x29",
+        "labelKey": "neon_city.px.29",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 40,
+        "baseline": 50,
+        "drift": 0.05
+      },
+      {
+        "id": "pr_neon_city_x30",
+        "labelKey": "neon_city.px.30",
+        "class": "society",
+        "min": 0,
+        "max": 100,
+        "initial": 60,
+        "baseline": 50,
+        "drift": 0.05
+      }
+    ],
+    "rules": [
+      {
+        "source": "pr_neon_city_x1",
+        "target": "pr_neon_city_x3",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x3",
+        "target": "pr_neon_city_x5",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x5",
+        "target": "pr_neon_city_x7",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x7",
+        "target": "pr_neon_city_x9",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x9",
+        "target": "pr_neon_city_x11",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x11",
+        "target": "pr_neon_city_x13",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x13",
+        "target": "pr_neon_city_x15",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x15",
+        "target": "pr_neon_city_x17",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x17",
+        "target": "pr_neon_city_x19",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x19",
+        "target": "pr_neon_city_x21",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x21",
+        "target": "pr_neon_city_x23",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x23",
+        "target": "pr_neon_city_x25",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x25",
+        "target": "pr_neon_city_x27",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x27",
+        "target": "pr_neon_city_x29",
+        "threshold": 50,
+        "factor": 0.05
+      },
+      {
+        "source": "pr_neon_city_x29",
+        "target": "pr_neon_city_x1",
+        "threshold": 50,
+        "factor": 0.05
+      }
+    ]
+  },
+  "worldRules": []
+}

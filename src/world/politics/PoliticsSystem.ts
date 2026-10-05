@@ -1,6 +1,6 @@
 import { inject } from "../../Container.js";
 import Player from "../Player.js";
-import WorldRegistry from "../chronicle/WorldRegistry.js";
+import ChronicleRegistry from "../chronicle/ChronicleRegistry.js";
 import WorldState from "../chronicle/WorldState.js";
 import RandomService from "../../core/random/RandomService.js";
 import TypedEventBus from "../../core/TypedEventBus.js";
@@ -21,14 +21,14 @@ import {
  * and feeds a market bias to the economy. Rules live in the pure engine.
  */
 export default class PoliticsSystem {
-  private registry: WorldRegistry;
+  private registry: ChronicleRegistry;
   private world: WorldState;
   private random: RandomService;
   private eventBus: TypedEventBus;
   private state: PoliticsState = { factions: {}, tension: 30, policies: [], playerLean: null };
 
   constructor() {
-    this.registry = inject(WorldRegistry);
+    this.registry = inject(ChronicleRegistry);
     this.world = inject(WorldState);
     this.random = inject(RandomService);
     this.eventBus = inject(TypedEventBus);

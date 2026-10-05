@@ -1,0 +1,258 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_hermit_1",
+    "nameKey": "neon_city.ev.hermit.1",
+    "textKey": "neon_city.ev.hermit.1.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "neon_city.ev.hermit.1.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.hermit.1.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "neon_city.ev.hermit.1.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.hermit.1.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_hermit_2",
+    "nameKey": "neon_city.ev.hermit.2",
+    "textKey": "neon_city.ev.hermit.2.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "neon_city.ev.hermit.2.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.hermit.2.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "neon_city.ev.hermit.2.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.hermit.2.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_hermit_3",
+    "nameKey": "neon_city.ev.hermit.3",
+    "textKey": "neon_city.ev.hermit.3.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "neon_city.ev.hermit.3.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.hermit.3.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "neon_city.ev.hermit.3.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.hermit.3.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_hermit_4",
+    "nameKey": "neon_city.ev.hermit.4",
+    "textKey": "neon_city.ev.hermit.4.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "neon_city.ev.hermit.4.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.hermit.4.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "neon_city.ev.hermit.4.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.hermit.4.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "EffectEvent",
+    "id": "neon_city_ev_quiet",
+    "nameKey": "neon_city.ev.quiet",
+    "textKey": "neon_city.ev.quiet.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "neon_city_ev_omen",
+    "nameKey": "neon_city.ev.omen",
+    "textKey": "neon_city.ev.omen.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 3,
+        "reputation": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "neon_city_ev_hard",
+    "nameKey": "neon_city.ev.hard",
+    "textKey": "neon_city.ev.hard.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "happiness": -2,
+        "health": -2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "neon_city_ev_dread",
+    "nameKey": "neon_city.ev.dread",
+    "textKey": "neon_city.ev.dread.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "depressionValue": 4
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "neon_city_ev_bounty",
+    "nameKey": "neon_city.ev.bounty",
+    "textKey": "neon_city.ev.bounty.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "money": 20
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "neon_city_ev_weariness",
+    "nameKey": "neon_city.ev.weariness",
+    "textKey": "neon_city.ev.weariness.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "weakValue": 4
+      }
+    }
+  }
+]

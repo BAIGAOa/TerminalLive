@@ -1,0 +1,1406 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_stranger_1",
+    "nameKey": "neon_city.ev.stranger.1",
+    "textKey": "neon_city.ev.stranger.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "social"
+    ],
+    "choices": [
+      {
+        "id": "listen",
+        "labelKey": "neon_city.ev.stranger.1.listen",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.stranger.1.listen.note"
+      },
+      {
+        "id": "turn",
+        "labelKey": "neon_city.ev.stranger.1.turn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.stranger.1.turn.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_stranger_2",
+    "nameKey": "neon_city.ev.stranger.2",
+    "textKey": "neon_city.ev.stranger.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "social"
+    ],
+    "choices": [
+      {
+        "id": "listen",
+        "labelKey": "neon_city.ev.stranger.2.listen",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.stranger.2.listen.note"
+      },
+      {
+        "id": "turn",
+        "labelKey": "neon_city.ev.stranger.2.turn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.stranger.2.turn.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_stranger_3",
+    "nameKey": "neon_city.ev.stranger.3",
+    "textKey": "neon_city.ev.stranger.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "social"
+    ],
+    "choices": [
+      {
+        "id": "listen",
+        "labelKey": "neon_city.ev.stranger.3.listen",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.stranger.3.listen.note"
+      },
+      {
+        "id": "turn",
+        "labelKey": "neon_city.ev.stranger.3.turn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.stranger.3.turn.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_stranger_4",
+    "nameKey": "neon_city.ev.stranger.4",
+    "textKey": "neon_city.ev.stranger.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "social"
+    ],
+    "choices": [
+      {
+        "id": "listen",
+        "labelKey": "neon_city.ev.stranger.4.listen",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.stranger.4.listen.note"
+      },
+      {
+        "id": "turn",
+        "labelKey": "neon_city.ev.stranger.4.turn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.stranger.4.turn.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_theft_1",
+    "nameKey": "neon_city.ev.theft.1",
+    "textKey": "neon_city.ev.theft.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "chase",
+        "labelKey": "neon_city.ev.theft.1.chase",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "neon_city.ev.theft.1.chase.note"
+      },
+      {
+        "id": "yield",
+        "labelKey": "neon_city.ev.theft.1.yield",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.theft.1.yield.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_theft_2",
+    "nameKey": "neon_city.ev.theft.2",
+    "textKey": "neon_city.ev.theft.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "chase",
+        "labelKey": "neon_city.ev.theft.2.chase",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "neon_city.ev.theft.2.chase.note"
+      },
+      {
+        "id": "yield",
+        "labelKey": "neon_city.ev.theft.2.yield",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.theft.2.yield.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_theft_3",
+    "nameKey": "neon_city.ev.theft.3",
+    "textKey": "neon_city.ev.theft.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "chase",
+        "labelKey": "neon_city.ev.theft.3.chase",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "neon_city.ev.theft.3.chase.note"
+      },
+      {
+        "id": "yield",
+        "labelKey": "neon_city.ev.theft.3.yield",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.theft.3.yield.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_theft_4",
+    "nameKey": "neon_city.ev.theft.4",
+    "textKey": "neon_city.ev.theft.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "chase",
+        "labelKey": "neon_city.ev.theft.4.chase",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "neon_city.ev.theft.4.chase.note"
+      },
+      {
+        "id": "yield",
+        "labelKey": "neon_city.ev.theft.4.yield",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.theft.4.yield.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_illness_1",
+    "nameKey": "neon_city.ev.illness.1",
+    "textKey": "neon_city.ev.illness.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "nurse",
+        "labelKey": "neon_city.ev.illness.1.nurse",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "neon_city.ev.illness.1.nurse.note"
+      },
+      {
+        "id": "avoid",
+        "labelKey": "neon_city.ev.illness.1.avoid",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.illness.1.avoid.note"
+      }
+    ],
+    "category": "health"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_illness_2",
+    "nameKey": "neon_city.ev.illness.2",
+    "textKey": "neon_city.ev.illness.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "nurse",
+        "labelKey": "neon_city.ev.illness.2.nurse",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "neon_city.ev.illness.2.nurse.note"
+      },
+      {
+        "id": "avoid",
+        "labelKey": "neon_city.ev.illness.2.avoid",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.illness.2.avoid.note"
+      }
+    ],
+    "category": "health"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_illness_3",
+    "nameKey": "neon_city.ev.illness.3",
+    "textKey": "neon_city.ev.illness.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "nurse",
+        "labelKey": "neon_city.ev.illness.3.nurse",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "neon_city.ev.illness.3.nurse.note"
+      },
+      {
+        "id": "avoid",
+        "labelKey": "neon_city.ev.illness.3.avoid",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.illness.3.avoid.note"
+      }
+    ],
+    "category": "health"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_illness_4",
+    "nameKey": "neon_city.ev.illness.4",
+    "textKey": "neon_city.ev.illness.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "nurse",
+        "labelKey": "neon_city.ev.illness.4.nurse",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "neon_city.ev.illness.4.nurse.note"
+      },
+      {
+        "id": "avoid",
+        "labelKey": "neon_city.ev.illness.4.avoid",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.illness.4.avoid.note"
+      }
+    ],
+    "category": "health"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_windfall_1",
+    "nameKey": "neon_city.ev.windfall.1",
+    "textKey": "neon_city.ev.windfall.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "invest",
+        "labelKey": "neon_city.ev.windfall.1.invest",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.windfall.1.invest.note"
+      },
+      {
+        "id": "save",
+        "labelKey": "neon_city.ev.windfall.1.save",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.windfall.1.save.note"
+      }
+    ],
+    "category": "money"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_windfall_2",
+    "nameKey": "neon_city.ev.windfall.2",
+    "textKey": "neon_city.ev.windfall.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "invest",
+        "labelKey": "neon_city.ev.windfall.2.invest",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.windfall.2.invest.note"
+      },
+      {
+        "id": "save",
+        "labelKey": "neon_city.ev.windfall.2.save",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.windfall.2.save.note"
+      }
+    ],
+    "category": "money"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_windfall_3",
+    "nameKey": "neon_city.ev.windfall.3",
+    "textKey": "neon_city.ev.windfall.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "invest",
+        "labelKey": "neon_city.ev.windfall.3.invest",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.windfall.3.invest.note"
+      },
+      {
+        "id": "save",
+        "labelKey": "neon_city.ev.windfall.3.save",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.windfall.3.save.note"
+      }
+    ],
+    "category": "money"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_windfall_4",
+    "nameKey": "neon_city.ev.windfall.4",
+    "textKey": "neon_city.ev.windfall.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "invest",
+        "labelKey": "neon_city.ev.windfall.4.invest",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.windfall.4.invest.note"
+      },
+      {
+        "id": "save",
+        "labelKey": "neon_city.ev.windfall.4.save",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.windfall.4.save.note"
+      }
+    ],
+    "category": "money"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_betrayal_1",
+    "nameKey": "neon_city.ev.betrayal.1",
+    "textKey": "neon_city.ev.betrayal.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scheme"
+    ],
+    "choices": [
+      {
+        "id": "confront",
+        "labelKey": "neon_city.ev.betrayal.1.confront",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "angerValue": 4
+        },
+        "noteKey": "neon_city.ev.betrayal.1.confront.note"
+      },
+      {
+        "id": "plan",
+        "labelKey": "neon_city.ev.betrayal.1.plan",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "angerValue": 4
+        },
+        "noteKey": "neon_city.ev.betrayal.1.plan.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_betrayal_2",
+    "nameKey": "neon_city.ev.betrayal.2",
+    "textKey": "neon_city.ev.betrayal.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scheme"
+    ],
+    "choices": [
+      {
+        "id": "confront",
+        "labelKey": "neon_city.ev.betrayal.2.confront",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "angerValue": 4
+        },
+        "noteKey": "neon_city.ev.betrayal.2.confront.note"
+      },
+      {
+        "id": "plan",
+        "labelKey": "neon_city.ev.betrayal.2.plan",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "angerValue": 4
+        },
+        "noteKey": "neon_city.ev.betrayal.2.plan.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_betrayal_3",
+    "nameKey": "neon_city.ev.betrayal.3",
+    "textKey": "neon_city.ev.betrayal.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scheme"
+    ],
+    "choices": [
+      {
+        "id": "confront",
+        "labelKey": "neon_city.ev.betrayal.3.confront",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "angerValue": 4
+        },
+        "noteKey": "neon_city.ev.betrayal.3.confront.note"
+      },
+      {
+        "id": "plan",
+        "labelKey": "neon_city.ev.betrayal.3.plan",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "angerValue": 4
+        },
+        "noteKey": "neon_city.ev.betrayal.3.plan.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_betrayal_4",
+    "nameKey": "neon_city.ev.betrayal.4",
+    "textKey": "neon_city.ev.betrayal.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scheme"
+    ],
+    "choices": [
+      {
+        "id": "confront",
+        "labelKey": "neon_city.ev.betrayal.4.confront",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "angerValue": 4
+        },
+        "noteKey": "neon_city.ev.betrayal.4.confront.note"
+      },
+      {
+        "id": "plan",
+        "labelKey": "neon_city.ev.betrayal.4.plan",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "angerValue": 4
+        },
+        "noteKey": "neon_city.ev.betrayal.4.plan.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_festival_1",
+    "nameKey": "neon_city.ev.festival.1",
+    "textKey": "neon_city.ev.festival.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "neon_city.ev.festival.1.join",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.festival.1.join.note"
+      },
+      {
+        "id": "work",
+        "labelKey": "neon_city.ev.festival.1.work",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.festival.1.work.note"
+      }
+    ],
+    "category": "social"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_festival_2",
+    "nameKey": "neon_city.ev.festival.2",
+    "textKey": "neon_city.ev.festival.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "neon_city.ev.festival.2.join",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.festival.2.join.note"
+      },
+      {
+        "id": "work",
+        "labelKey": "neon_city.ev.festival.2.work",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.festival.2.work.note"
+      }
+    ],
+    "category": "social"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_festival_3",
+    "nameKey": "neon_city.ev.festival.3",
+    "textKey": "neon_city.ev.festival.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "neon_city.ev.festival.3.join",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.festival.3.join.note"
+      },
+      {
+        "id": "work",
+        "labelKey": "neon_city.ev.festival.3.work",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.festival.3.work.note"
+      }
+    ],
+    "category": "social"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_festival_4",
+    "nameKey": "neon_city.ev.festival.4",
+    "textKey": "neon_city.ev.festival.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "neon_city.ev.festival.4.join",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.festival.4.join.note"
+      },
+      {
+        "id": "work",
+        "labelKey": "neon_city.ev.festival.4.work",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "money": 15
+        },
+        "noteKey": "neon_city.ev.festival.4.work.note"
+      }
+    ],
+    "category": "social"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_rumor_1",
+    "nameKey": "neon_city.ev.rumor.1",
+    "textKey": "neon_city.ev.rumor.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "rumor"
+    ],
+    "choices": [
+      {
+        "id": "trace",
+        "labelKey": "neon_city.ev.rumor.1.trace",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.rumor.1.trace.note"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "neon_city.ev.rumor.1.ignore",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.rumor.1.ignore.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_rumor_2",
+    "nameKey": "neon_city.ev.rumor.2",
+    "textKey": "neon_city.ev.rumor.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "rumor"
+    ],
+    "choices": [
+      {
+        "id": "trace",
+        "labelKey": "neon_city.ev.rumor.2.trace",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.rumor.2.trace.note"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "neon_city.ev.rumor.2.ignore",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.rumor.2.ignore.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_rumor_3",
+    "nameKey": "neon_city.ev.rumor.3",
+    "textKey": "neon_city.ev.rumor.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "rumor"
+    ],
+    "choices": [
+      {
+        "id": "trace",
+        "labelKey": "neon_city.ev.rumor.3.trace",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.rumor.3.trace.note"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "neon_city.ev.rumor.3.ignore",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.rumor.3.ignore.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_rumor_4",
+    "nameKey": "neon_city.ev.rumor.4",
+    "textKey": "neon_city.ev.rumor.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "rumor"
+    ],
+    "choices": [
+      {
+        "id": "trace",
+        "labelKey": "neon_city.ev.rumor.4.trace",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.rumor.4.trace.note"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "neon_city.ev.rumor.4.ignore",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.rumor.4.ignore.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_journey_1",
+    "nameKey": "neon_city.ev.journey.1",
+    "textKey": "neon_city.ev.journey.1.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "explore"
+    ],
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "neon_city.ev.journey.1.go",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.journey.1.go.note"
+      },
+      {
+        "id": "stay",
+        "labelKey": "neon_city.ev.journey.1.stay",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.journey.1.stay.note"
+      }
+    ],
+    "category": "explore"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_journey_2",
+    "nameKey": "neon_city.ev.journey.2",
+    "textKey": "neon_city.ev.journey.2.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "explore"
+    ],
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "neon_city.ev.journey.2.go",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.journey.2.go.note"
+      },
+      {
+        "id": "stay",
+        "labelKey": "neon_city.ev.journey.2.stay",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.journey.2.stay.note"
+      }
+    ],
+    "category": "explore"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_journey_3",
+    "nameKey": "neon_city.ev.journey.3",
+    "textKey": "neon_city.ev.journey.3.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "explore"
+    ],
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "neon_city.ev.journey.3.go",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.journey.3.go.note"
+      },
+      {
+        "id": "stay",
+        "labelKey": "neon_city.ev.journey.3.stay",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.journey.3.stay.note"
+      }
+    ],
+    "category": "explore"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_journey_4",
+    "nameKey": "neon_city.ev.journey.4",
+    "textKey": "neon_city.ev.journey.4.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "explore"
+    ],
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "neon_city.ev.journey.4.go",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.journey.4.go.note"
+      },
+      {
+        "id": "stay",
+        "labelKey": "neon_city.ev.journey.4.stay",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "neon_city.ev.journey.4.stay.note"
+      }
+    ],
+    "category": "explore"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_duel_1",
+    "nameKey": "neon_city.ev.duel.1",
+    "textKey": "neon_city.ev.duel.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "fight",
+        "labelKey": "neon_city.ev.duel.1.fight",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "neon_city.ev.duel.1.fight.note"
+      },
+      {
+        "id": "decline",
+        "labelKey": "neon_city.ev.duel.1.decline",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.duel.1.decline.note"
+      }
+    ],
+    "category": "combat"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_duel_2",
+    "nameKey": "neon_city.ev.duel.2",
+    "textKey": "neon_city.ev.duel.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "fight",
+        "labelKey": "neon_city.ev.duel.2.fight",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "neon_city.ev.duel.2.fight.note"
+      },
+      {
+        "id": "decline",
+        "labelKey": "neon_city.ev.duel.2.decline",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.duel.2.decline.note"
+      }
+    ],
+    "category": "combat"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_duel_3",
+    "nameKey": "neon_city.ev.duel.3",
+    "textKey": "neon_city.ev.duel.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "fight",
+        "labelKey": "neon_city.ev.duel.3.fight",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "neon_city.ev.duel.3.fight.note"
+      },
+      {
+        "id": "decline",
+        "labelKey": "neon_city.ev.duel.3.decline",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.duel.3.decline.note"
+      }
+    ],
+    "category": "combat"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_duel_4",
+    "nameKey": "neon_city.ev.duel.4",
+    "textKey": "neon_city.ev.duel.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "fight",
+        "labelKey": "neon_city.ev.duel.4.fight",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "neon_city.ev.duel.4.fight.note"
+      },
+      {
+        "id": "decline",
+        "labelKey": "neon_city.ev.duel.4.decline",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "neon_city.ev.duel.4.decline.note"
+      }
+    ],
+    "category": "combat"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_harvest_1",
+    "nameKey": "neon_city.ev.harvest.1",
+    "textKey": "neon_city.ev.harvest.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "nature"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "neon_city.ev.harvest.1.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.harvest.1.share.note"
+      },
+      {
+        "id": "hoard",
+        "labelKey": "neon_city.ev.harvest.1.hoard",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.harvest.1.hoard.note"
+      }
+    ],
+    "category": "nature"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_harvest_2",
+    "nameKey": "neon_city.ev.harvest.2",
+    "textKey": "neon_city.ev.harvest.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "nature"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "neon_city.ev.harvest.2.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.harvest.2.share.note"
+      },
+      {
+        "id": "hoard",
+        "labelKey": "neon_city.ev.harvest.2.hoard",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.harvest.2.hoard.note"
+      }
+    ],
+    "category": "nature"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_harvest_3",
+    "nameKey": "neon_city.ev.harvest.3",
+    "textKey": "neon_city.ev.harvest.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "nature"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "neon_city.ev.harvest.3.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.harvest.3.share.note"
+      },
+      {
+        "id": "hoard",
+        "labelKey": "neon_city.ev.harvest.3.hoard",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.harvest.3.hoard.note"
+      }
+    ],
+    "category": "nature"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "neon_city_ev_harvest_4",
+    "nameKey": "neon_city.ev.harvest.4",
+    "textKey": "neon_city.ev.harvest.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "nature"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "neon_city.ev.harvest.4.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "neon_city.ev.harvest.4.share.note"
+      },
+      {
+        "id": "hoard",
+        "labelKey": "neon_city.ev.harvest.4.hoard",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "neon_city.ev.harvest.4.hoard.note"
+      }
+    ],
+    "category": "nature"
+  }
+]

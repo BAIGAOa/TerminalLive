@@ -65,9 +65,10 @@ export default function RelationshipsView({
       npcReg
         .getAll()
         .map((npc) => ({ npc, value: player.getRelationship(npc.id) }))
-        .filter((k) => k.value > 0)
+        // Only NPCs the player has actually met *and* is old enough to know.
+        .filter((k) => k.value > 0 && system.isKnown(k.npc.id))
         .sort((a, b) => b.value - a.value),
-    [npcReg, player.relationships],
+    [npcReg, player.relationships, system],
   );
 
   if (known.length === 0) {
@@ -132,7 +133,7 @@ export default function RelationshipsView({
           return (
             <Box
               flexDirection="row"
-              borderStyle="round"
+              borderStyle="bold"
               borderColor={active ? "greenBright" : "gray"}
               paddingX={1}
               width="100%"
@@ -163,7 +164,7 @@ export default function RelationshipsView({
       {showDetail ? (
         <Box
           flexDirection="column"
-          borderStyle="round"
+          borderStyle="bold"
           borderColor="cyan"
           paddingX={1}
           flexGrow={1}

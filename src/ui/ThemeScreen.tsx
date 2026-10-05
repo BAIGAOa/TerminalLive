@@ -41,7 +41,7 @@ export default function ThemeScreen({ onBack }: { onBack?: () => void }) {
         width="100%"
         height={3}
         borderColor={colors.menuTitle}
-        borderStyle="round"
+        borderStyle="bold"
         justifyContent="center"
         marginBottom={1}
       >
@@ -73,7 +73,7 @@ export default function ThemeScreen({ onBack }: { onBack?: () => void }) {
               <Box
                 flexDirection="row"
                 justifyContent="space-between"
-                borderStyle="round"
+                borderStyle="bold"
                 borderColor={borderColor}
                 flexGrow={1}
                 paddingX={1}

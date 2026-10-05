@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeMenuLayout } from "../../ui/menuLayout.js";
+import { computeMenuLayout, fitPanelSections } from "../../ui/menuLayout.js";
 
 const ITEMS = 9;
 
@@ -45,5 +45,54 @@ describe("computeMenuLayout", () => {
 
   it("never returns fewer than 1 column", () => {
     expect(computeMenuLayout(5, 5, ITEMS).cols).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("fitPanelSections", () => {
+  // Defaults: reserved 14, border 2, gap 1 → budget = rows - 28 - menuHeight.
+  // Costs with gap: 3+1=4, 5+1=6, 5+1=6 (cumulative 4 / 10 / 16).
+  const SECTIONS = [
+    { key: "effects", height: 3 },
+    { key: "progress", height: 5 },
+    { key: "legend", height: 5 },
+  ];
+  const MENU = 12;
+
+  it("shows every section when there is ample room", () => {
+    expect(fitPanelSections(50, MENU, SECTIONS)).toEqual([
+      "effects",
+      "progress",
+      "legend",
+    ]);
+  });
+
+  it("stops after the sections that fit, in priority order", () => {
+    expect(fitPanelSections(40, MENU, SECTIONS)).toEqual(["effects", "progress"]);
+    expect(fitPanelSections(34, MENU, SECTIONS)).toEqual(["effects"]);
+  });
+
+  it("includes a section when the budget is exactly its cost", () => {
+    expect(fitPanelSections(38, MENU, SECTIONS)).toEqual(["effects", "progress"]);
+    expect(fitPanelSections(32, MENU, SECTIONS)).toEqual(["effects"]);
+  });
+
+  it("hides the panel when even the first section will not fit", () => {
+    expect(fitPanelSections(24, MENU, SECTIONS)).toEqual([]);
+  });
+
+  it("never emits sections for a tiny or overflowing layout", () => {
+    expect(fitPanelSections(5, MENU, SECTIONS)).toEqual([]);
+    expect(fitPanelSections(0, 0, SECTIONS)).toEqual([]);
+  });
+
+  it("honors overrides for reserved rows, border and gap", () => {
+    // budget = 30 - 10 - 6 - 0 = 14; costs without gap: 3, 5, 5 → 3+5=8, +5=13.
+    expect(
+      fitPanelSections(30, 6, SECTIONS, {
+        reservedRows: 10,
+        panelBorder: 0,
+        gap: 0,
+      }),
+    ).toEqual(["effects", "progress", "legend"]);
   });
 });

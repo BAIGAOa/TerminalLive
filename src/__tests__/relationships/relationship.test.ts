@@ -5,7 +5,7 @@ import NpcRegistry from "../../world/relationships/NpcRegistry.js";
 import RelationshipContent from "../../content/RelationshipContent.js";
 import RelationshipSystem from "../../world/relationships/RelationshipSystem.js";
 import TypedEventBus from "../../core/TypedEventBus.js";
-import LevelManager from "../../level/LevelManager.js";
+import WorldManager from "../../worlds/WorldManager.js";
 import WorldState from "../../world/chronicle/WorldState.js";
 import RandomService from "../../core/random/RandomService.js";
 import type { RandomSource } from "../../core/random/RandomSource.js";
@@ -33,7 +33,8 @@ interface Harness {
 }
 
 function setup(): Harness {
-  const player = new Player({ playerName: "Tester" });
+  // An adult, so the friend role is within its "known from age 3" window.
+  const player = new Player({ playerName: "Tester", age: 20 });
   player.actionPoints = 3;
 
   const npcReg = new NpcRegistry();
@@ -66,7 +67,7 @@ function setup(): Harness {
   container.register(NpcRegistry, npcReg);
   container.register(RelationshipContent, content);
   container.register(TypedEventBus, new TypedEventBus());
-  container.register(LevelManager, levelManager as unknown as LevelManager);
+  container.register(WorldManager, levelManager as unknown as WorldManager);
   container.register(WorldState, {} as unknown as WorldState);
   container.register(RandomService, alwaysLow as unknown as RandomService);
 

@@ -28,6 +28,7 @@ import WeatherFilter, {
 } from "../world/weather/WeatherFilter.js";
 import type WeatherState from "../world/weather/WeatherState.js";
 import RandomService from "../core/random/RandomService.js";
+import WorldRuleEngine from "../world/rules/WorldRuleEngine.js";
 import {
   buildWeighted,
   logFactors,
@@ -125,9 +126,9 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
 
   public reset(): void {
     // NOTE: do NOT reset eventHistory here — it is a shared, life-scoped
-    // singleton (see LevelLoader). reset() runs on every level dispose, so
+    // singleton (see WorldManifestLoader). reset() runs on every level dispose, so
     // clearing it would let once-per-life events refire across stage boundaries.
-    // The shared history is reset only at a new life's start (LevelManager).
+    // The shared history is reset only at a new life's start (WorldManager).
     this.postEventScheduler.reset();
     this.pendingChoice = null;
     this.forcedId = null;
@@ -451,6 +452,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
       weather: this.weather,
     };
     const currentWeather = this.weather?.currentIdValue() ?? null;
+    const ruleEngine = container.resolve(WorldRuleEngine);
 
     const entries: WeightedEntry<{ incident: Incident; rangeKey: string }>[] =
       buildWeighted(list, (item) => {
@@ -468,6 +470,12 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
         const category = this.categoryFactor(incident, player.age);
         const repeat = this.repeatFactor(incident);
         const director = this.director.factor(incident, ctx);
+        // The active world's rules bias the roll by tag/category/id.
+        const rule = ruleEngine.eventFactor(
+          this.director.tagsOf(incident),
+          incident.id,
+          incident.category,
+        );
         return logFactors(
           base,
           fate,
@@ -477,6 +485,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
           category,
           repeat,
           director,
+          rule,
         );
       });
 

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fate_hellscape_1",
+    "labelKey": "hellscape.fate.1",
+    "descKey": "hellscape.fate.1.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_hellscape_2",
+    "labelKey": "hellscape.fate.2",
+    "descKey": "hellscape.fate.2.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_hellscape_3",
+    "labelKey": "hellscape.fate.3",
+    "descKey": "hellscape.fate.3.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_hellscape_4",
+    "labelKey": "hellscape.fate.4",
+    "descKey": "hellscape.fate.4.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_hellscape_5",
+    "labelKey": "hellscape.fate.5",
+    "descKey": "hellscape.fate.5.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "year",
+      "year": 50
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_hellscape_6",
+    "labelKey": "hellscape.fate.6",
+    "descKey": "hellscape.fate.6.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "era",
+      "era": "era_hellscape_5"
+    },
+    "factor": 2
+  }
+]

@@ -70,3 +70,44 @@ export function computeMenuLayout(
 
   return { cols, btnW, showLogo };
 }
+
+export interface PanelSection {
+  key: string;
+  /** Terminal rows the section's content needs (excluding the panel border). */
+  height: number;
+}
+
+export interface FitPanelOptions {
+  /** Rows consumed below/around the panel (title, detail box, footer, padding). */
+  reservedRows?: number;
+  /** Rows the panel's own border occupies. */
+  panelBorder?: number;
+  /** Blank rows inserted between adjacent sections. */
+  gap?: number;
+}
+
+/**
+ * Picks which info-panel sections fit in the space left under a list. Sections
+ * are tried in priority order; the first that doesn't fit ends the list (no
+ * out-of-order skipping), and an empty result means the panel is hidden.
+ */
+export function fitPanelSections(
+  termRows: number,
+  menuHeight: number,
+  sections: PanelSection[],
+  opts: FitPanelOptions = {},
+): string[] {
+  const reserved = opts.reservedRows ?? 14;
+  const border = opts.panelBorder ?? 2;
+  const gap = opts.gap ?? 1;
+  const budget = Math.max(0, termRows - reserved - menuHeight - border);
+  const keys: string[] = [];
+  let used = 0;
+  for (const section of sections) {
+    const cost = section.height + gap;
+    if (used + cost > budget) break;
+    keys.push(section.key);
+    used += cost;
+  }
+  return keys;
+}

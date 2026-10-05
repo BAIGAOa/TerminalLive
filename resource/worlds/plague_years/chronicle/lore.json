@@ -1,0 +1,169 @@
+[
+  {
+    "id": "lore_plague_years_1",
+    "titleKey": "plague_years.lore.1",
+    "bodyKey": "plague_years.lore.1.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 1
+    }
+  },
+  {
+    "id": "lore_plague_years_2",
+    "titleKey": "plague_years.lore.2",
+    "bodyKey": "plague_years.lore.2.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 16
+    }
+  },
+  {
+    "id": "lore_plague_years_3",
+    "titleKey": "plague_years.lore.3",
+    "bodyKey": "plague_years.lore.3.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_plague_years_3"
+    }
+  },
+  {
+    "id": "lore_plague_years_4",
+    "titleKey": "plague_years.lore.4",
+    "bodyKey": "plague_years.lore.4.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_plague_years_5"
+    }
+  },
+  {
+    "id": "lore_plague_years_5",
+    "titleKey": "plague_years.lore.5",
+    "bodyKey": "plague_years.lore.5.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_plague_years_6",
+    "titleKey": "plague_years.lore.6",
+    "bodyKey": "plague_years.lore.6.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_plague_years_7",
+    "titleKey": "plague_years.lore.7",
+    "bodyKey": "plague_years.lore.7.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_plague_years_8",
+    "titleKey": "plague_years.lore.8",
+    "bodyKey": "plague_years.lore.8.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_plague_years_9",
+    "titleKey": "plague_years.lore.9",
+    "bodyKey": "plague_years.lore.9.body",
+    "category": "deed",
+    "unlock": {
+      "kind": "flag",
+      "flag": "traveled"
+    }
+  },
+  {
+    "id": "lore_plague_years_10",
+    "titleKey": "plague_years.lore.10",
+    "bodyKey": "plague_years.lore.10.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 60
+    }
+  },
+  {
+    "id": "lore_plague_years_11",
+    "titleKey": "plague_years.lore.11",
+    "bodyKey": "plague_years.lore.11.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "era",
+      "era": "era_plague_years_6"
+    }
+  },
+  {
+    "id": "lore_plague_years_12",
+    "titleKey": "plague_years.lore.12",
+    "bodyKey": "plague_years.lore.12.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_plague_years_13",
+    "titleKey": "plague_years.lore.13",
+    "bodyKey": "plague_years.lore.13.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 30
+    }
+  },
+  {
+    "id": "lore_plague_years_14",
+    "titleKey": "plague_years.lore.14",
+    "bodyKey": "plague_years.lore.14.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 45
+    }
+  },
+  {
+    "id": "lore_plague_years_15",
+    "titleKey": "plague_years.lore.15",
+    "bodyKey": "plague_years.lore.15.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_plague_years_16",
+    "titleKey": "plague_years.lore.16",
+    "bodyKey": "plague_years.lore.16.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 60
+    }
+  }
+]

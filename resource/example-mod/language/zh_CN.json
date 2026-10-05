@@ -3,5 +3,9 @@
   "example.lore.title": "一则示例传说",
   "example.lore.body": "这是由示例模组添加的传说条目，用来展示模组如何扩展世界。",
   "example.toast.decade": "又一个十年过去了。",
-  "example.ev.kindness": "一次小小的善意"
+  "example.ev.kindness": "一次小小的善意",
+  "example.npc.guardian": "守护者",
+  "example.npc.guardian.desc": "由示例模组添加的一位警觉的守护者。",
+  "example.npc.guardian.line1": "靠近些，我会替你盯着。",
+  "example.npc.guardian.watch": "守护者悄悄护住了你。"
 }

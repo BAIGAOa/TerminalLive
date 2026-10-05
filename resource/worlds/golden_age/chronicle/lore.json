@@ -1,0 +1,169 @@
+[
+  {
+    "id": "lore_golden_age_1",
+    "titleKey": "golden_age.lore.1",
+    "bodyKey": "golden_age.lore.1.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 1
+    }
+  },
+  {
+    "id": "lore_golden_age_2",
+    "titleKey": "golden_age.lore.2",
+    "bodyKey": "golden_age.lore.2.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 16
+    }
+  },
+  {
+    "id": "lore_golden_age_3",
+    "titleKey": "golden_age.lore.3",
+    "bodyKey": "golden_age.lore.3.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_golden_age_3"
+    }
+  },
+  {
+    "id": "lore_golden_age_4",
+    "titleKey": "golden_age.lore.4",
+    "bodyKey": "golden_age.lore.4.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_golden_age_5"
+    }
+  },
+  {
+    "id": "lore_golden_age_5",
+    "titleKey": "golden_age.lore.5",
+    "bodyKey": "golden_age.lore.5.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_golden_age_6",
+    "titleKey": "golden_age.lore.6",
+    "bodyKey": "golden_age.lore.6.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_golden_age_7",
+    "titleKey": "golden_age.lore.7",
+    "bodyKey": "golden_age.lore.7.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_golden_age_8",
+    "titleKey": "golden_age.lore.8",
+    "bodyKey": "golden_age.lore.8.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_golden_age_9",
+    "titleKey": "golden_age.lore.9",
+    "bodyKey": "golden_age.lore.9.body",
+    "category": "deed",
+    "unlock": {
+      "kind": "flag",
+      "flag": "traveled"
+    }
+  },
+  {
+    "id": "lore_golden_age_10",
+    "titleKey": "golden_age.lore.10",
+    "bodyKey": "golden_age.lore.10.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 60
+    }
+  },
+  {
+    "id": "lore_golden_age_11",
+    "titleKey": "golden_age.lore.11",
+    "bodyKey": "golden_age.lore.11.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "era",
+      "era": "era_golden_age_6"
+    }
+  },
+  {
+    "id": "lore_golden_age_12",
+    "titleKey": "golden_age.lore.12",
+    "bodyKey": "golden_age.lore.12.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_golden_age_13",
+    "titleKey": "golden_age.lore.13",
+    "bodyKey": "golden_age.lore.13.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 30
+    }
+  },
+  {
+    "id": "lore_golden_age_14",
+    "titleKey": "golden_age.lore.14",
+    "bodyKey": "golden_age.lore.14.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 45
+    }
+  },
+  {
+    "id": "lore_golden_age_15",
+    "titleKey": "golden_age.lore.15",
+    "bodyKey": "golden_age.lore.15.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_golden_age_16",
+    "titleKey": "golden_age.lore.16",
+    "bodyKey": "golden_age.lore.16.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 60
+    }
+  }
+]

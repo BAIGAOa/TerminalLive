@@ -32,7 +32,7 @@ function AchievementCard({
   return (
     <Box
       height={CARD_HEIGHT}
-      borderStyle="round"
+      borderStyle="bold"
       borderColor={selected ? colors.highlight : accent}
       paddingX={1}
       flexDirection="column"
@@ -116,7 +116,7 @@ export default function AchievementScreen() {
             }}
             renderItem={(item, state) => (
               <Box
-                borderStyle="double"
+                borderStyle="bold"
                 borderColor={state.selected ? colors.highlight : colors.muted}
                 paddingX={1}
                 justifyContent="center"
@@ -130,7 +130,7 @@ export default function AchievementScreen() {
         <Box
           flexDirection="column"
           width="72%"
-          borderStyle="single"
+          borderStyle="bold"
           borderColor={colors.info}
           paddingX={1}
         >

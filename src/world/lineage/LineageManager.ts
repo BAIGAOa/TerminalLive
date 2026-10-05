@@ -16,8 +16,8 @@ import {
  * Reads live singletons only (never `life.json`), so it is unaffected by the
  * AutoSave listener that clears the life slot on the same `game:over` event.
  * `AchievementManager` is resolved lazily inside `capture` (not injected in the
- * constructor) to avoid a `LevelManager → LineageManager → AchievementManager →
- * LevelManager` construction cycle.
+ * constructor) to avoid a `WorldManager → LineageManager → AchievementManager →
+ * WorldManager` construction cycle.
  */
 export default class LineageManager {
   private store: LineageStore;

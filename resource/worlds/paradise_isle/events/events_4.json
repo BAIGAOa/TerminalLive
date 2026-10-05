@@ -1,0 +1,258 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "paradise_isle_ev_hermit_1",
+    "nameKey": "paradise_isle.ev.hermit.1",
+    "textKey": "paradise_isle.ev.hermit.1.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "paradise_isle.ev.hermit.1.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paradise_isle.ev.hermit.1.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "paradise_isle.ev.hermit.1.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paradise_isle.ev.hermit.1.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paradise_isle_ev_hermit_2",
+    "nameKey": "paradise_isle.ev.hermit.2",
+    "textKey": "paradise_isle.ev.hermit.2.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "paradise_isle.ev.hermit.2.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paradise_isle.ev.hermit.2.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "paradise_isle.ev.hermit.2.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paradise_isle.ev.hermit.2.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paradise_isle_ev_hermit_3",
+    "nameKey": "paradise_isle.ev.hermit.3",
+    "textKey": "paradise_isle.ev.hermit.3.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "paradise_isle.ev.hermit.3.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paradise_isle.ev.hermit.3.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "paradise_isle.ev.hermit.3.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paradise_isle.ev.hermit.3.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paradise_isle_ev_hermit_4",
+    "nameKey": "paradise_isle.ev.hermit.4",
+    "textKey": "paradise_isle.ev.hermit.4.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "paradise_isle.ev.hermit.4.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paradise_isle.ev.hermit.4.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "paradise_isle.ev.hermit.4.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paradise_isle.ev.hermit.4.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paradise_isle_ev_quiet",
+    "nameKey": "paradise_isle.ev.quiet",
+    "textKey": "paradise_isle.ev.quiet.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paradise_isle_ev_omen",
+    "nameKey": "paradise_isle.ev.omen",
+    "textKey": "paradise_isle.ev.omen.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 3,
+        "reputation": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paradise_isle_ev_hard",
+    "nameKey": "paradise_isle.ev.hard",
+    "textKey": "paradise_isle.ev.hard.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "happiness": -2,
+        "health": -2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paradise_isle_ev_dread",
+    "nameKey": "paradise_isle.ev.dread",
+    "textKey": "paradise_isle.ev.dread.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "depressionValue": 4
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paradise_isle_ev_bounty",
+    "nameKey": "paradise_isle.ev.bounty",
+    "textKey": "paradise_isle.ev.bounty.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "money": 20
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paradise_isle_ev_weariness",
+    "nameKey": "paradise_isle.ev.weariness",
+    "textKey": "paradise_isle.ev.weariness.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "weakValue": 4
+      }
+    }
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "fac_paradise_isle_1",
+    "labelKey": "paradise_isle.fac.1",
+    "descKey": "paradise_isle.fac.1.desc",
+    "icon": "👑",
+    "rivals": [
+      "fac_paradise_isle_2"
+    ]
+  },
+  {
+    "id": "fac_paradise_isle_2",
+    "labelKey": "paradise_isle.fac.2",
+    "descKey": "paradise_isle.fac.2.desc",
+    "icon": "⚔",
+    "rivals": [
+      "fac_paradise_isle_3"
+    ]
+  },
+  {
+    "id": "fac_paradise_isle_3",
+    "labelKey": "paradise_isle.fac.3",
+    "descKey": "paradise_isle.fac.3.desc",
+    "icon": "🕯",
+    "rivals": [
+      "fac_paradise_isle_4"
+    ]
+  },
+  {
+    "id": "fac_paradise_isle_4",
+    "labelKey": "paradise_isle.fac.4",
+    "descKey": "paradise_isle.fac.4.desc",
+    "icon": "🔧",
+    "rivals": [
+      "fac_paradise_isle_5"
+    ]
+  },
+  {
+    "id": "fac_paradise_isle_5",
+    "labelKey": "paradise_isle.fac.5",
+    "descKey": "paradise_isle.fac.5.desc",
+    "icon": "🕸",
+    "rivals": [
+      "fac_paradise_isle_1"
+    ]
+  }
+]

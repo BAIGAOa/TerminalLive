@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Text } from "ink";
 import { useFocusState } from "ink-cartridge";
 import { ScrollList } from "./kit/index.js";
-import type { GameScreenData } from "../hooks/useLevelGameScreen.js";
+import type { GameScreenData } from "../hooks/useWorldGameScreen.js";
 
 /**
  * The action list for the current year, virtualised: only the visible rows are

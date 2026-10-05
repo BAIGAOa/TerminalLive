@@ -2,14 +2,16 @@ import { gotoScreen } from "ink-cartridge";
 import { container } from "../../../Container.js";
 import ReplRegistry from "../ReplRegistry.js";
 import { ReplContext } from "../types.js";
-import LevelManager from "../../../level/LevelManager.js";
+import WorldManager from "../../../worlds/WorldManager.js";
 import DifficultyRegistry from "../../registry/DifficultyRegistry.js";
-import { sortLevelsLinearly } from "../../../level/levelChain.js";
+import { sortWorldsLinearly } from "../../../worlds/worldChain.js";
 import CareerSystem from "../../../world/careers/CareerSystem.js";
-import LevelGame from "../../../ui/LevelGame.js";
+import WorldGame from "../../../ui/WorldGame.js";
+import ConfigStore from "../../store/ConfigStore.js";
+import BuiltinPluginRegistry from "../../mod/BuiltinPlugin.js";
 
 function startAndEnter(ctx: ReplContext, levelId: string): boolean {
-  const lm = container.resolve(LevelManager);
+  const lm = container.resolve(WorldManager);
   const level = lm.getLevel(levelId);
   if (!level) {
     ctx.print(ctx.t("repl.play.unknownLevel", { id: levelId }), "error");
@@ -18,7 +20,7 @@ function startAndEnter(ctx: ReplContext, levelId: string): boolean {
   ctx.print(ctx.t("repl.play.started", { level: ctx.t(level.nameKey) }), "success");
   lm.start(levelId);
   ctx.close?.();
-  gotoScreen(LevelGame, {});
+  gotoScreen(WorldGame, {});
   return true;
 }
 
@@ -30,10 +32,10 @@ export function registerGameCommands(reg: ReplRegistry): void {
     summary: "repl.cmd.play",
     usage: "play [levelId]",
     complete: () =>
-      [...container.resolve(LevelManager).getAllLevels().keys()],
+      [...container.resolve(WorldManager).getAllWorlds().keys()],
     run: (ctx) => {
-      const lm = container.resolve(LevelManager);
-      const id = ctx.args[0] ?? lm.getRootLevelIds()[0];
+      const lm = container.resolve(WorldManager);
+      const id = ctx.args[0] ?? lm.getRootWorldIds()[0];
       if (!id) {
         ctx.print(ctx.t("repl.play.noLevels"), "error");
         return;
@@ -48,14 +50,14 @@ export function registerGameCommands(reg: ReplRegistry): void {
     summary: "repl.cmd.continue",
     usage: "continue",
     run: (ctx) => {
-      const lm = container.resolve(LevelManager);
-      if (!lm.hasActiveLevel()) {
+      const lm = container.resolve(WorldManager);
+      if (!lm.hasActiveWorld()) {
         ctx.print(ctx.t("repl.continue.none"), "error");
         return;
       }
       ctx.print(ctx.t("repl.enter.game"), "dim");
       ctx.close?.();
-      gotoScreen(LevelGame, {});
+      gotoScreen(WorldGame, {});
     },
   });
 
@@ -66,15 +68,15 @@ export function registerGameCommands(reg: ReplRegistry): void {
     usage: "levels [difficulty]",
     complete: () => container.resolve(DifficultyRegistry).getDifficulties(),
     run: (ctx) => {
-      const lm = container.resolve(LevelManager);
+      const lm = container.resolve(WorldManager);
       const diff = container.resolve(DifficultyRegistry);
       const difficulties = ctx.args[0] ? [ctx.args[0]] : diff.getDifficulties();
       for (const d of difficulties) {
-        const ordered = sortLevelsLinearly(diff.getLevels(d));
+        const ordered = sortWorldsLinearly(diff.getLevels(d));
         if (ordered.length === 0) continue;
         ctx.print(`${d}:`, "dim");
         for (const level of ordered) {
-          const done = lm.isLevelCompleted(level.id);
+          const done = lm.isWorldCompleted(level.id);
           const mark = done ? "✓" : "·";
           ctx.print(`  ${mark} ${level.id}  ${ctx.t(level.nameKey)}`);
         }
@@ -88,8 +90,8 @@ export function registerGameCommands(reg: ReplRegistry): void {
     summary: "repl.cmd.career",
     usage: "career",
     run: (ctx) => {
-      const lm = container.resolve(LevelManager);
-      if (!lm.hasActiveLevel()) {
+      const lm = container.resolve(WorldManager);
+      if (!lm.hasActiveWorld()) {
         ctx.print(ctx.t("repl.career.none"), "error");
         return;
       }
@@ -112,6 +114,39 @@ export function registerGameCommands(reg: ReplRegistry): void {
       } else {
         ctx.print(ctx.t("career.max"), "dim");
       }
+    },
+  });
+
+  reg.register({
+    name: "builtins",
+    aliases: ["plugins"],
+    summary: "repl.cmd.builtins",
+    usage: "builtins [id]",
+    complete: () => container.resolve(BuiltinPluginRegistry).available(),
+    run: (ctx) => {
+      const bp = container.resolve(BuiltinPluginRegistry);
+      const cfg = container.resolve(ConfigStore);
+      const all = bp.available();
+      const id = ctx.args[0];
+      if (id) {
+        if (!all.includes(id)) {
+          ctx.print(`未知内置插件 / unknown built-in plugin: ${id}`, "error");
+          return;
+        }
+        const enabled = cfg.getEnabledBuiltinPlugins() ?? all;
+        const next = enabled.includes(id)
+          ? enabled.filter((x) => x !== id)
+          : [...enabled, id];
+        void cfg.setEnabledBuiltinPlugins(next);
+        ctx.print(`${id}: ${next.includes(id) ? "ON" : "OFF"}  (下一次进入世界生效)`, "success");
+        return;
+      }
+      const enabled = cfg.getEnabledBuiltinPlugins();
+      for (const pid of all) {
+        const on = enabled === null ? true : enabled.includes(pid);
+        ctx.print(`${on ? "●" : "○"} ${pid}`, on ? "success" : "dim");
+      }
+      ctx.print(ctx.t("repl.cmd.builtins.hint") || "builtins <id> to toggle", "dim");
     },
   });
 }

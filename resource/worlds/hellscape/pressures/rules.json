@@ -1,0 +1,50 @@
+[
+  {
+    "source": "pr_hellscape_1",
+    "target": "pr_hellscape_2",
+    "threshold": 50,
+    "factor": 0.1
+  },
+  {
+    "source": "pr_hellscape_2",
+    "target": "pr_hellscape_3",
+    "threshold": 50,
+    "factor": 0.08
+  },
+  {
+    "source": "pr_hellscape_3",
+    "target": "pr_hellscape_4",
+    "threshold": 50,
+    "factor": 0.07
+  },
+  {
+    "source": "pr_hellscape_4",
+    "target": "pr_hellscape_5",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_hellscape_5",
+    "target": "pr_hellscape_6",
+    "threshold": 50,
+    "factor": -0.05
+  },
+  {
+    "source": "pr_hellscape_6",
+    "target": "pr_hellscape_7",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_hellscape_7",
+    "target": "pr_hellscape_8",
+    "threshold": 50,
+    "factor": 0.05
+  },
+  {
+    "source": "pr_hellscape_8",
+    "target": "pr_hellscape_1",
+    "threshold": 50,
+    "factor": 0.05
+  }
+]

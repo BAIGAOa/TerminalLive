@@ -1,0 +1,169 @@
+[
+  {
+    "id": "lore_wasteland_1",
+    "titleKey": "wasteland.lore.1",
+    "bodyKey": "wasteland.lore.1.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 1
+    }
+  },
+  {
+    "id": "lore_wasteland_2",
+    "titleKey": "wasteland.lore.2",
+    "bodyKey": "wasteland.lore.2.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 16
+    }
+  },
+  {
+    "id": "lore_wasteland_3",
+    "titleKey": "wasteland.lore.3",
+    "bodyKey": "wasteland.lore.3.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_wasteland_3"
+    }
+  },
+  {
+    "id": "lore_wasteland_4",
+    "titleKey": "wasteland.lore.4",
+    "bodyKey": "wasteland.lore.4.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_wasteland_5"
+    }
+  },
+  {
+    "id": "lore_wasteland_5",
+    "titleKey": "wasteland.lore.5",
+    "bodyKey": "wasteland.lore.5.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_wasteland_6",
+    "titleKey": "wasteland.lore.6",
+    "bodyKey": "wasteland.lore.6.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_wasteland_7",
+    "titleKey": "wasteland.lore.7",
+    "bodyKey": "wasteland.lore.7.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_wasteland_8",
+    "titleKey": "wasteland.lore.8",
+    "bodyKey": "wasteland.lore.8.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_wasteland_9",
+    "titleKey": "wasteland.lore.9",
+    "bodyKey": "wasteland.lore.9.body",
+    "category": "deed",
+    "unlock": {
+      "kind": "flag",
+      "flag": "traveled"
+    }
+  },
+  {
+    "id": "lore_wasteland_10",
+    "titleKey": "wasteland.lore.10",
+    "bodyKey": "wasteland.lore.10.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 60
+    }
+  },
+  {
+    "id": "lore_wasteland_11",
+    "titleKey": "wasteland.lore.11",
+    "bodyKey": "wasteland.lore.11.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "era",
+      "era": "era_wasteland_6"
+    }
+  },
+  {
+    "id": "lore_wasteland_12",
+    "titleKey": "wasteland.lore.12",
+    "bodyKey": "wasteland.lore.12.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_wasteland_13",
+    "titleKey": "wasteland.lore.13",
+    "bodyKey": "wasteland.lore.13.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 30
+    }
+  },
+  {
+    "id": "lore_wasteland_14",
+    "titleKey": "wasteland.lore.14",
+    "bodyKey": "wasteland.lore.14.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 45
+    }
+  },
+  {
+    "id": "lore_wasteland_15",
+    "titleKey": "wasteland.lore.15",
+    "bodyKey": "wasteland.lore.15.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_wasteland_16",
+    "titleKey": "wasteland.lore.16",
+    "bodyKey": "wasteland.lore.16.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 60
+    }
+  }
+]

@@ -38,7 +38,8 @@ export default class PressureLoader {
   }
 
   public loadBuiltin(): void {
-    this.loadDir(resourcePath("pressures"));
+    // The classic world holds the built-in axes/rules; other worlds layer their own.
+    this.loadDir(join(resourcePath("worlds"), "classic", "pressures"));
     this.registry.pruneInvalidRules();
   }
 

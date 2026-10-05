@@ -1,0 +1,50 @@
+[
+  {
+    "source": "pr_neon_city_1",
+    "target": "pr_neon_city_2",
+    "threshold": 50,
+    "factor": 0.1
+  },
+  {
+    "source": "pr_neon_city_2",
+    "target": "pr_neon_city_3",
+    "threshold": 50,
+    "factor": 0.08
+  },
+  {
+    "source": "pr_neon_city_3",
+    "target": "pr_neon_city_4",
+    "threshold": 50,
+    "factor": 0.07
+  },
+  {
+    "source": "pr_neon_city_4",
+    "target": "pr_neon_city_5",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_neon_city_5",
+    "target": "pr_neon_city_6",
+    "threshold": 50,
+    "factor": -0.05
+  },
+  {
+    "source": "pr_neon_city_6",
+    "target": "pr_neon_city_7",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_neon_city_7",
+    "target": "pr_neon_city_8",
+    "threshold": 50,
+    "factor": 0.05
+  },
+  {
+    "source": "pr_neon_city_8",
+    "target": "pr_neon_city_1",
+    "threshold": 50,
+    "factor": 0.05
+  }
+]

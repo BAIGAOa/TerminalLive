@@ -1,0 +1,47 @@
+[
+  {
+    "id": "fac_neon_city_1",
+    "labelKey": "neon_city.fac.1",
+    "descKey": "neon_city.fac.1.desc",
+    "icon": "👑",
+    "rivals": [
+      "fac_neon_city_2"
+    ]
+  },
+  {
+    "id": "fac_neon_city_2",
+    "labelKey": "neon_city.fac.2",
+    "descKey": "neon_city.fac.2.desc",
+    "icon": "⚔",
+    "rivals": [
+      "fac_neon_city_3"
+    ]
+  },
+  {
+    "id": "fac_neon_city_3",
+    "labelKey": "neon_city.fac.3",
+    "descKey": "neon_city.fac.3.desc",
+    "icon": "🕯",
+    "rivals": [
+      "fac_neon_city_4"
+    ]
+  },
+  {
+    "id": "fac_neon_city_4",
+    "labelKey": "neon_city.fac.4",
+    "descKey": "neon_city.fac.4.desc",
+    "icon": "🔧",
+    "rivals": [
+      "fac_neon_city_5"
+    ]
+  },
+  {
+    "id": "fac_neon_city_5",
+    "labelKey": "neon_city.fac.5",
+    "descKey": "neon_city.fac.5.desc",
+    "icon": "🕸",
+    "rivals": [
+      "fac_neon_city_1"
+    ]
+  }
+]

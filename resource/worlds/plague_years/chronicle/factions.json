@@ -1,0 +1,47 @@
+[
+  {
+    "id": "fac_plague_years_1",
+    "labelKey": "plague_years.fac.1",
+    "descKey": "plague_years.fac.1.desc",
+    "icon": "👑",
+    "rivals": [
+      "fac_plague_years_2"
+    ]
+  },
+  {
+    "id": "fac_plague_years_2",
+    "labelKey": "plague_years.fac.2",
+    "descKey": "plague_years.fac.2.desc",
+    "icon": "⚔",
+    "rivals": [
+      "fac_plague_years_3"
+    ]
+  },
+  {
+    "id": "fac_plague_years_3",
+    "labelKey": "plague_years.fac.3",
+    "descKey": "plague_years.fac.3.desc",
+    "icon": "🕯",
+    "rivals": [
+      "fac_plague_years_4"
+    ]
+  },
+  {
+    "id": "fac_plague_years_4",
+    "labelKey": "plague_years.fac.4",
+    "descKey": "plague_years.fac.4.desc",
+    "icon": "🔧",
+    "rivals": [
+      "fac_plague_years_5"
+    ]
+  },
+  {
+    "id": "fac_plague_years_5",
+    "labelKey": "plague_years.fac.5",
+    "descKey": "plague_years.fac.5.desc",
+    "icon": "🕸",
+    "rivals": [
+      "fac_plague_years_1"
+    ]
+  }
+]

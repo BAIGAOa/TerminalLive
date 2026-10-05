@@ -147,3 +147,6 @@ AI.md
 
 # Auto-saved current life (runtime state, not source)
 resource/life.json
+
+# CodeGraph local index
+.codegraph/

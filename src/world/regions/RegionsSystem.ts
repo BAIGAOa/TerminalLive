@@ -1,6 +1,6 @@
 import { inject } from "../../Container.js";
 import Player from "../Player.js";
-import WorldRegistry from "../chronicle/WorldRegistry.js";
+import ChronicleRegistry from "../chronicle/ChronicleRegistry.js";
 import WorldState from "../chronicle/WorldState.js";
 import RandomService from "../../core/random/RandomService.js";
 import TypedEventBus from "../../core/TypedEventBus.js";
@@ -22,7 +22,7 @@ import {
  * (karma, favoured faction, mood). Rules live in the pure `regionEngine`.
  */
 export default class RegionsSystem {
-  private registry: WorldRegistry;
+  private registry: ChronicleRegistry;
   private world: WorldState;
   private random: RandomService;
   private eventBus: TypedEventBus;
@@ -30,7 +30,7 @@ export default class RegionsSystem {
   private state: RegionsState = { regions: {}, currentId: "", visits: {} };
 
   constructor() {
-    this.registry = inject(WorldRegistry);
+    this.registry = inject(ChronicleRegistry);
     this.world = inject(WorldState);
     this.random = inject(RandomService);
     this.eventBus = inject(TypedEventBus);

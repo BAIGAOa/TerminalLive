@@ -1,0 +1,62 @@
+[
+  {
+    "id": "we_paradise_isle_1",
+    "year": 8,
+    "labelKey": "paradise_isle.we.1",
+    "bodyKey": "paradise_isle.we.1.body",
+    "pressures": {
+      "pr_paradise_isle_1": -8,
+      "pr_paradise_isle_2": 8
+    }
+  },
+  {
+    "id": "we_paradise_isle_2",
+    "year": 26,
+    "labelKey": "paradise_isle.we.2",
+    "bodyKey": "paradise_isle.we.2.body",
+    "pressures": {
+      "pr_paradise_isle_2": -12,
+      "pr_paradise_isle_3": 10
+    }
+  },
+  {
+    "id": "we_paradise_isle_3",
+    "year": 44,
+    "labelKey": "paradise_isle.we.3",
+    "bodyKey": "paradise_isle.we.3.body",
+    "pressures": {
+      "pr_paradise_isle_3": 10,
+      "pr_paradise_isle_4": -6
+    }
+  },
+  {
+    "id": "we_paradise_isle_4",
+    "year": 62,
+    "labelKey": "paradise_isle.we.4",
+    "bodyKey": "paradise_isle.we.4.body",
+    "pressures": {
+      "pr_paradise_isle_4": 15,
+      "pr_paradise_isle_5": -10
+    }
+  },
+  {
+    "id": "we_paradise_isle_5",
+    "year": 80,
+    "labelKey": "paradise_isle.we.5",
+    "bodyKey": "paradise_isle.we.5.body",
+    "pressures": {
+      "pr_paradise_isle_5": -6,
+      "pr_paradise_isle_6": 12
+    }
+  },
+  {
+    "id": "we_paradise_isle_6",
+    "year": 96,
+    "labelKey": "paradise_isle.we.6",
+    "bodyKey": "paradise_isle.we.6.body",
+    "pressures": {
+      "pr_paradise_isle_6": 12,
+      "pr_paradise_isle_7": -8
+    }
+  }
+]

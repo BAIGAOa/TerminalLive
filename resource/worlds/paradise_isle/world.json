@@ -1,0 +1,38 @@
+{
+  "id": "paradise_isle",
+  "nameKey": "world.paradise_isle",
+  "descriptionKey": "world.paradise_isle.desc",
+  "icon": "🌺",
+  "tags": [
+    "gentle"
+  ],
+  "difficultyIdentification": "easy",
+  "contentVersion": 3,
+  "startPlayer": {
+    "age": 0,
+    "health": 100,
+    "happiness": 82,
+    "intelligence": 9,
+    "social": 12,
+    "fitness": 11,
+    "money": 60
+  },
+  "unlockRequires": [
+    "classic"
+  ],
+  "selfContained": true,
+  "worldRules": [
+    "rule_paradise"
+  ],
+  "algorithm": "default",
+  "completionConditions": [
+    {
+      "type": "generalPurpose",
+      "params": {
+        "prop": "age",
+        "num": 100,
+        "cat": "greaterThan"
+      }
+    }
+  ]
+}

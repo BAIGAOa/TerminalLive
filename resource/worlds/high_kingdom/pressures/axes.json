@@ -1,0 +1,82 @@
+[
+  {
+    "id": "pr_high_kingdom_1",
+    "labelKey": "high_kingdom.pr.1",
+    "class": "nature",
+    "min": 0,
+    "max": 100,
+    "initial": 70,
+    "baseline": 50,
+    "drift": 0.05
+  },
+  {
+    "id": "pr_high_kingdom_2",
+    "labelKey": "high_kingdom.pr.2",
+    "class": "society",
+    "min": 0,
+    "max": 100,
+    "initial": 55,
+    "baseline": 50,
+    "drift": 0.05
+  },
+  {
+    "id": "pr_high_kingdom_3",
+    "labelKey": "high_kingdom.pr.3",
+    "class": "economy",
+    "min": 0,
+    "max": 100,
+    "initial": 60,
+    "baseline": 50,
+    "drift": 0.05
+  },
+  {
+    "id": "pr_high_kingdom_4",
+    "labelKey": "high_kingdom.pr.4",
+    "class": "culture",
+    "min": 0,
+    "max": 100,
+    "initial": 55,
+    "baseline": 50,
+    "drift": 0.05
+  },
+  {
+    "id": "pr_high_kingdom_5",
+    "labelKey": "high_kingdom.pr.5",
+    "class": "supernatural",
+    "min": 0,
+    "max": 100,
+    "initial": 35,
+    "baseline": 50,
+    "drift": 0.05
+  },
+  {
+    "id": "pr_high_kingdom_6",
+    "labelKey": "high_kingdom.pr.6",
+    "class": "meta",
+    "min": 0,
+    "max": 100,
+    "initial": 50,
+    "baseline": 50,
+    "drift": 0.05
+  },
+  {
+    "id": "pr_high_kingdom_7",
+    "labelKey": "high_kingdom.pr.7",
+    "class": "society",
+    "min": 0,
+    "max": 100,
+    "initial": 58,
+    "baseline": 50,
+    "drift": 0.05
+  },
+  {
+    "id": "pr_high_kingdom_8",
+    "labelKey": "high_kingdom.pr.8",
+    "class": "economy",
+    "min": 0,
+    "max": 100,
+    "initial": 52,
+    "baseline": 50,
+    "drift": 0.05
+  }
+]

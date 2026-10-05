@@ -1,0 +1,72 @@
+[
+  {
+    "id": "reg_plague_years_1",
+    "labelKey": "plague_years.reg.1",
+    "descKey": "plague_years.reg.1.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_plague_years_1"
+    ]
+  },
+  {
+    "id": "reg_plague_years_2",
+    "labelKey": "plague_years.reg.2",
+    "descKey": "plague_years.reg.2.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_plague_years_2"
+    ]
+  },
+  {
+    "id": "reg_plague_years_3",
+    "labelKey": "plague_years.reg.3",
+    "descKey": "plague_years.reg.3.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_plague_years_3"
+    ]
+  },
+  {
+    "id": "reg_plague_years_4",
+    "labelKey": "plague_years.reg.4",
+    "descKey": "plague_years.reg.4.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_plague_years_4"
+    ]
+  },
+  {
+    "id": "reg_plague_years_5",
+    "labelKey": "plague_years.reg.5",
+    "descKey": "plague_years.reg.5.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_plague_years_5"
+    ]
+  },
+  {
+    "id": "reg_plague_years_6",
+    "labelKey": "plague_years.reg.6",
+    "descKey": "plague_years.reg.6.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_plague_years_6"
+    ]
+  },
+  {
+    "id": "reg_plague_years_7",
+    "labelKey": "plague_years.reg.7",
+    "descKey": "plague_years.reg.7.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_plague_years_7"
+    ]
+  }
+]

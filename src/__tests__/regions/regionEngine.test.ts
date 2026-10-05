@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { container } from "../../Container.js";
-import WorldRegistry from "../../world/chronicle/WorldRegistry.js";
+import ChronicleRegistry from "../../world/chronicle/ChronicleRegistry.js";
 import RegionsSystem from "../../world/regions/RegionsSystem.js";
 import {
   bestRegion,
@@ -73,7 +73,7 @@ describe("yearly drift", () => {
 
 describe("RegionsSystem restore", () => {
   it("rebuilds adjacency from the registry on restore (no reset needed)", () => {
-    const reg = container.resolve(WorldRegistry);
+    const reg = container.resolve(ChronicleRegistry);
     if (!reg.getRegion("t_reg_a")) {
       reg.registerRegion({ id: "t_reg_a", labelKey: "t_reg_a", descKey: "", neighbors: ["t_reg_b"] });
       reg.registerRegion({ id: "t_reg_b", labelKey: "t_reg_b", descKey: "", neighbors: ["t_reg_a"] });

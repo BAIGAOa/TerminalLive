@@ -1,0 +1,50 @@
+[
+  {
+    "id": "era_hellscape_1",
+    "labelKey": "hellscape.era.1",
+    "descKey": "hellscape.era.1.desc",
+    "fromYear": 0,
+    "icon": "🌅",
+    "color": "yellow"
+  },
+  {
+    "id": "era_hellscape_2",
+    "labelKey": "hellscape.era.2",
+    "descKey": "hellscape.era.2.desc",
+    "fromYear": 16,
+    "icon": "⚒",
+    "color": "gray"
+  },
+  {
+    "id": "era_hellscape_3",
+    "labelKey": "hellscape.era.3",
+    "descKey": "hellscape.era.3.desc",
+    "fromYear": 32,
+    "icon": "⚙",
+    "color": "white"
+  },
+  {
+    "id": "era_hellscape_4",
+    "labelKey": "hellscape.era.4",
+    "descKey": "hellscape.era.4.desc",
+    "fromYear": 50,
+    "icon": "⚡",
+    "color": "cyan"
+  },
+  {
+    "id": "era_hellscape_5",
+    "labelKey": "hellscape.era.5",
+    "descKey": "hellscape.era.5.desc",
+    "fromYear": 68,
+    "icon": "✦",
+    "color": "magentaBright"
+  },
+  {
+    "id": "era_hellscape_6",
+    "labelKey": "hellscape.era.6",
+    "descKey": "hellscape.era.6.desc",
+    "fromYear": 86,
+    "icon": "🌌",
+    "color": "blue"
+  }
+]

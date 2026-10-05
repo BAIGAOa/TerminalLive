@@ -36,7 +36,7 @@ export default function Language() {
           renderItem={(item, state) => (
             <Box
               flexGrow={1}
-              borderStyle="double"
+              borderStyle="bold"
               borderColor={state.selected ? colors.highlight : colors.muted}
               paddingX={1}
               justifyContent="center"

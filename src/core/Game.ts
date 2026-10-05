@@ -1,6 +1,6 @@
 import { inject } from "../Container.js";
 import Player from "../world/Player.js";
-import LevelManager from "../level/LevelManager.js";
+import WorldManager from "../worlds/WorldManager.js";
 import ActionRegistry from "../game/actions/ActionRegistry.js";
 import { ActionDefinition } from "../game/actions/ActionDefinition.js";
 import { meetsRequirements } from "../world/requirements.js";
@@ -8,7 +8,7 @@ import { applyEffectPayload } from "../world/effects/applyEffects.js";
 import TypedEventBus from "./TypedEventBus.js";
 import { PendingChoice } from "../event/PendingChoice.js";
 import WorldState from "../world/chronicle/WorldState.js";
-import WorldRegistry from "../world/chronicle/WorldRegistry.js";
+import ChronicleRegistry from "../world/chronicle/ChronicleRegistry.js";
 import PressureState from "../world/pressures/PressureState.js";
 import WeatherState from "../world/weather/WeatherState.js";
 import RelationshipSystem from "../world/relationships/RelationshipSystem.js";
@@ -20,6 +20,7 @@ import RegionsSystem from "../world/regions/RegionsSystem.js";
 import WorldChainSystem from "../world/chains/WorldChainSystem.js";
 import NarrativeSystem from "../world/narrative/NarrativeSystem.js";
 import RandomService from "./random/RandomService.js";
+import WorldRuleEngine from "../world/rules/WorldRuleEngine.js";
 
 export type ActionUnavailableReason = "ap" | "age" | "require" | "once";
 
@@ -35,11 +36,11 @@ export type GameStatusKind = "playing" | "dead" | "cleared";
  * The gameplay facade: action-point turns, choice resolution, and life status.
  */
 export default class Game {
-  private levelManager: LevelManager;
+  private levelManager: WorldManager;
   private actions: ActionRegistry;
   private eventBus: TypedEventBus;
   private world: WorldState;
-  private worldRegistry: WorldRegistry;
+  private worldRegistry: ChronicleRegistry;
   private pressures: PressureState;
   private weather: WeatherState;
   private relationships: RelationshipSystem;
@@ -51,13 +52,14 @@ export default class Game {
   private chains: WorldChainSystem;
   private narrative: NarrativeSystem;
   private random: RandomService;
+  private rules: WorldRuleEngine;
 
   constructor() {
-    this.levelManager = inject(LevelManager);
+    this.levelManager = inject(WorldManager);
     this.actions = inject(ActionRegistry);
     this.eventBus = inject(TypedEventBus);
     this.world = inject(WorldState);
-    this.worldRegistry = inject(WorldRegistry);
+    this.worldRegistry = inject(ChronicleRegistry);
     this.pressures = inject(PressureState);
     this.weather = inject(WeatherState);
     this.relationships = inject(RelationshipSystem);
@@ -69,6 +71,7 @@ export default class Game {
     this.narrative = inject(NarrativeSystem);
     this.health = inject(HealthSystem);
     this.random = inject(RandomService);
+    this.rules = inject(WorldRuleEngine);
   }
 
   public get player(): Player {
@@ -190,6 +193,10 @@ export default class Game {
     // The pressure web rolls first so this year's weather + events read fresh state.
     this.pressures.tick(this.random.rand, 0.4);
 
+    // The world's rules impose a flat per-year drift on the player.
+    const drift = this.rules.drift();
+    if (Object.keys(drift).length > 0) this.player.applyDelta(drift);
+
     // Weather: drawn from the current state, biased by climate/season/pressures.
     const weather = this.weather.advance(
       this.player.age,
@@ -267,17 +274,7 @@ export default class Game {
     return "playing";
   }
 
-  public getCurrentLevelId(): string | null {
-    return this.levelManager.getCurrentLevelId();
-  }
-
-  public goToNextLevel(): boolean {
-    return this.levelManager.goToNextLevel();
-  }
-
-  public hasNextLevel(): boolean {
-    return (
-      this.levelManager.resolveNextLevelId(this.levelManager.current) !== null
-    );
+  public getCurrentWorldId(): string | null {
+    return this.levelManager.getCurrentWorldId();
   }
 }

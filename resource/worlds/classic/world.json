@@ -1,0 +1,26 @@
+{
+  "id": "classic",
+  "nameKey": "world.classic",
+  "descriptionKey": "world.classic.desc",
+  "icon": "🌍",
+  "tags": ["classic", "balanced"],
+  "difficultyIdentification": "normal",
+  "contentVersion": 1,
+  "startPlayer": {
+    "age": 0,
+    "health": 100,
+    "happiness": 70,
+    "intelligence": 6,
+    "social": 6,
+    "fitness": 10,
+    "money": 0
+  },
+  "unlockRequires": [],
+  "completionConditions": [
+    {
+      "type": "generalPurpose",
+      "params": { "prop": "age", "num": 100, "cat": "greaterThan" }
+    }
+  ],
+  "algorithm": "default"
+}

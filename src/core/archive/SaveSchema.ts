@@ -61,17 +61,20 @@ export const saveDataSchema = z.object({
     enabledMods: z.array(z.string()),
     traits: z.array(z.string()).default([]),
   }),
-  levels: z.object({
-    currentLevel: z.string(),
-    completedLevels: z.array(z.string()),
-  }),
-  /** Objective progress on the current level, so a resume can't re-grant them. */
-  levelObjectives: z
+  /** Which world this run is in, plus its content identity for save guarding. */
+  run: z
     .object({
-      levelId: z.string().nullable().default(null),
+      worldId: z.string().nullable().default(null),
+      worldContentVersion: z.number().default(1),
+    })
+    .default({ worldId: null, worldContentVersion: 1 }),
+  /** Objective progress in the current world, so a resume can't re-grant them. */
+  worldObjectives: z
+    .object({
+      worldId: z.string().nullable().default(null),
       completed: z.array(z.string()).default([]),
     })
-    .default({ levelId: null, completed: [] }),
+    .default({ worldId: null, completed: [] }),
   world: z
     .object({
       year: z.number().default(0),
@@ -114,6 +117,8 @@ export const saveDataSchema = z.object({
             moved: z.boolean().default(false),
             homeRegion: z.string().nullable().default(null),
             goals: z.array(z.string()).default([]),
+            // Behaviour flags a scheme may set; additive, so old saves load.
+            flags: z.array(z.string()).default([]),
           }),
         )
         .default({}),

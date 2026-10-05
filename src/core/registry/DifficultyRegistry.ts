@@ -1,9 +1,9 @@
-import Level from "../../level/Level.js";
+import World from "../../worlds/World.js";
 
 export default class DifficultyRegistry {
-  private readonly map = new Map<string, Map<string, Level>>();
+  private readonly map = new Map<string, Map<string, World>>();
 
-  public register(difficulty: string, level: Level): void {
+  public register(difficulty: string, level: World): void {
     if (!this.map.has(difficulty)) {
       this.map.set(difficulty, new Map());
     }
@@ -20,7 +20,7 @@ export default class DifficultyRegistry {
     return Array.from(this.map.keys());
   }
 
-  public getLevels(difficulty: string): Level[] {
+  public getLevels(difficulty: string): World[] {
     const inner = this.map.get(difficulty);
     return inner ? Array.from(inner.values()) : [];
   }

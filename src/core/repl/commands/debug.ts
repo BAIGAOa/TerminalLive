@@ -3,7 +3,7 @@ import { container } from "../../../Container.js";
 import ReplRegistry from "../ReplRegistry.js";
 import RandomService from "../../random/RandomService.js";
 import EventDirector from "../../../event/EventDirector.js";
-import LevelManager from "../../../level/LevelManager.js";
+import WorldManager from "../../../worlds/WorldManager.js";
 import WorldState from "../../../world/chronicle/WorldState.js";
 import PoliticsSystem from "../../../world/politics/PoliticsSystem.js";
 import EconomySystem from "../../../world/economy/EconomySystem.js";
@@ -102,7 +102,7 @@ export function registerDebugCommands(reg: ReplRegistry): void {
         ctx.print(ctx.t("console.cmd.forceEventUsage"), "error");
         return;
       }
-      if (!container.resolve(LevelManager).forceEvent(id)) {
+      if (!container.resolve(WorldManager).forceEvent(id)) {
         ctx.print(ctx.t("console.cmd.forceEventUnknown", { id }), "error");
         return;
       }
@@ -116,7 +116,7 @@ export function registerDebugCommands(reg: ReplRegistry): void {
     summary: "repl.cmd.debug",
     usage: "debug",
     run: (ctx) => {
-      const lm = container.resolve(LevelManager);
+      const lm = container.resolve(WorldManager);
       const player = lm.getPlayer();
       const world = container.resolve(WorldState);
       const politics = container.resolve(PoliticsSystem);
@@ -197,7 +197,7 @@ export function registerDebugCommands(reg: ReplRegistry): void {
         ctx.print("usage: venture <industry> <capital>", "error");
         return;
       }
-      const player = container.resolve(LevelManager).getPlayer();
+      const player = container.resolve(WorldManager).getPlayer();
       const events = container
         .resolve(CareerSystem)
         .investVenture(player, industry, capital);

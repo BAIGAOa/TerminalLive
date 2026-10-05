@@ -8,7 +8,7 @@
  */
 import { container } from "../Container.js";
 import GameInitialization from "../core/GameInitialization.js";
-import LevelManager from "../level/LevelManager.js";
+import WorldManager from "../worlds/WorldManager.js";
 import ItemRegistry from "../world/items/ItemRegistry.js";
 import NpcRegistry from "../world/relationships/NpcRegistry.js";
 import AchievementRegistry from "../core/registry/AchievementRegistry.js";
@@ -80,11 +80,11 @@ process.on("exit", restoreConfig);
 async function main() {
   backupPersisted();
   await container.resolve(GameInitialization).init();
-  const lm = container.resolve(LevelManager);
+  const lm = container.resolve(WorldManager);
   const game = container.resolve(Game);
 
   console.log("[content]");
-  const levels = lm.getAllLevels();
+  const levels = lm.getAllWorlds();
   check("levels loaded", levels.size >= 5, [...levels.keys()].join(","));
   check("items loaded", container.resolve(ItemRegistry).getAll().length >= 10);
   check("npcs loaded", container.resolve(NpcRegistry).getAll().length >= 6);
@@ -95,21 +95,16 @@ async function main() {
     container.resolve(AchievementRegistry).getAllAchievements().length >= 10,
   );
 
-  // Level chain must resolve childhood → ... → none.
-  let id: string | "none" = "childhood";
-  const seen = new Set<string>();
-  while (id !== "none" && levels.has(id) && !seen.has(id)) {
-    seen.add(id);
-    id = levels.get(id)!.nextLevel;
-  }
-  check("level chain resolves to the end", id === "none", `ended at ${id}`);
+  // One world = one life: all worlds load, and there is a startable root.
+  check("worlds loaded", levels.size >= 10, `${levels.size}`);
+  check("a root world exists", lm.getRootWorldIds().length >= 1, lm.getRootWorldIds().join(","));
 
   console.log("[simulation]");
   // Pin the seeded RNG (the game no longer reads Math.random), so this life is
   // byte-for-byte reproducible run to run.
   container.resolve(RandomService).reseed(0x2f6e2b1);
   container.resolve(RandomService).setNextSeed(0x2f6e2b1);
-  lm.start("childhood");
+  lm.start("classic");
   const ranges = lm.current.eventCenter.getAllRanges();
   check("events registered for the level", ranges.length >= 20, `${ranges.length}`);
 
@@ -136,14 +131,14 @@ async function main() {
     guard++;
 
     // Mid-life: prove the auto-save round-trips the live state.
-    if (guard === 12 && player.alive && lm.hasActiveLevel()) {
+    if (guard === 12 && player.alive && lm.hasActiveWorld()) {
       autoSave.save();
       check("auto-save written mid-life", autoSave.exists());
       const blob = JSON.parse(readFileSync(AUTOSAVE_TMP, "utf8"));
       check("auto-save age matches live player", blob.player.age === player.age);
       check(
-        "auto-save records the current level",
-        blob.levels.currentLevel === lm.getCurrentLevelId(),
+        "auto-save records the current world",
+        blob.run.worldId === lm.getCurrentWorldId(),
       );
       const reloaded = autoSave.load();
       check(
@@ -173,10 +168,6 @@ async function main() {
       const avail = game.getActionViews().find((a) => a.available);
       if (avail && game.performAction(avail.def.id)) actions++;
       game.endTurn();
-    }
-
-    if (lm.isCurrentCleared() && lm.current.nextLevel !== "none") {
-      if (!game.goToNextLevel()) break;
     }
   }
 

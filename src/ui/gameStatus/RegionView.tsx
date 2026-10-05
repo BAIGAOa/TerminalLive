@@ -2,7 +2,7 @@ import React, { useSyncExternalStore } from "react";
 import { Text } from "ink";
 import { container } from "../../Container.js";
 import WorldState from "../../world/chronicle/WorldState.js";
-import WorldRegistry from "../../world/chronicle/WorldRegistry.js";
+import ChronicleRegistry from "../../world/chronicle/ChronicleRegistry.js";
 import RegionsSystem from "../../world/regions/RegionsSystem.js";
 import { prosperityTier } from "../../world/regions/regionEngine.js";
 import { bar, StatusScroll } from "./common.js";
@@ -16,7 +16,7 @@ export default function RegionView({
   height?: number;
 }) {
   const world = container.resolve(WorldState);
-  const reg = container.resolve(WorldRegistry);
+  const reg = container.resolve(ChronicleRegistry);
   const regions = container.resolve(RegionsSystem);
   useSyncExternalStore(world.subscribe, world.getSnapshot);
 

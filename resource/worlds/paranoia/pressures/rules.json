@@ -1,0 +1,50 @@
+[
+  {
+    "source": "pr_paranoia_1",
+    "target": "pr_paranoia_2",
+    "threshold": 50,
+    "factor": 0.1
+  },
+  {
+    "source": "pr_paranoia_2",
+    "target": "pr_paranoia_3",
+    "threshold": 50,
+    "factor": 0.08
+  },
+  {
+    "source": "pr_paranoia_3",
+    "target": "pr_paranoia_4",
+    "threshold": 50,
+    "factor": 0.07
+  },
+  {
+    "source": "pr_paranoia_4",
+    "target": "pr_paranoia_5",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_paranoia_5",
+    "target": "pr_paranoia_6",
+    "threshold": 50,
+    "factor": -0.05
+  },
+  {
+    "source": "pr_paranoia_6",
+    "target": "pr_paranoia_7",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_paranoia_7",
+    "target": "pr_paranoia_8",
+    "threshold": 50,
+    "factor": 0.05
+  },
+  {
+    "source": "pr_paranoia_8",
+    "target": "pr_paranoia_1",
+    "threshold": 50,
+    "factor": 0.05
+  }
+]

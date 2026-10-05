@@ -80,7 +80,7 @@ export function Button({
   return (
     <Box ref={ref}>
       <Box
-        borderStyle="round"
+        borderStyle="bold"
         borderColor={active ? hoverColor : "gray"}
         paddingX={paddingX}
       >

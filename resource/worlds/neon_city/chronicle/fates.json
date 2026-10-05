@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fate_neon_city_1",
+    "labelKey": "neon_city.fate.1",
+    "descKey": "neon_city.fate.1.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_neon_city_2",
+    "labelKey": "neon_city.fate.2",
+    "descKey": "neon_city.fate.2.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_neon_city_3",
+    "labelKey": "neon_city.fate.3",
+    "descKey": "neon_city.fate.3.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_neon_city_4",
+    "labelKey": "neon_city.fate.4",
+    "descKey": "neon_city.fate.4.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_neon_city_5",
+    "labelKey": "neon_city.fate.5",
+    "descKey": "neon_city.fate.5.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "year",
+      "year": 50
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_neon_city_6",
+    "labelKey": "neon_city.fate.6",
+    "descKey": "neon_city.fate.6.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "era",
+      "era": "era_neon_city_5"
+    },
+    "factor": 2
+  }
+]

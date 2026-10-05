@@ -1,0 +1,47 @@
+[
+  {
+    "id": "fac_hellscape_1",
+    "labelKey": "hellscape.fac.1",
+    "descKey": "hellscape.fac.1.desc",
+    "icon": "👑",
+    "rivals": [
+      "fac_hellscape_2"
+    ]
+  },
+  {
+    "id": "fac_hellscape_2",
+    "labelKey": "hellscape.fac.2",
+    "descKey": "hellscape.fac.2.desc",
+    "icon": "⚔",
+    "rivals": [
+      "fac_hellscape_3"
+    ]
+  },
+  {
+    "id": "fac_hellscape_3",
+    "labelKey": "hellscape.fac.3",
+    "descKey": "hellscape.fac.3.desc",
+    "icon": "🕯",
+    "rivals": [
+      "fac_hellscape_4"
+    ]
+  },
+  {
+    "id": "fac_hellscape_4",
+    "labelKey": "hellscape.fac.4",
+    "descKey": "hellscape.fac.4.desc",
+    "icon": "🔧",
+    "rivals": [
+      "fac_hellscape_5"
+    ]
+  },
+  {
+    "id": "fac_hellscape_5",
+    "labelKey": "hellscape.fac.5",
+    "descKey": "hellscape.fac.5.desc",
+    "icon": "🕸",
+    "rivals": [
+      "fac_hellscape_1"
+    ]
+  }
+]

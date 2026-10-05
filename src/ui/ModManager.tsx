@@ -39,7 +39,7 @@ export default function ModManager({ onBack }: { onBack?: () => void }) {
           onSelect={(item) => toggleMod(item.value)}
           renderItem={(item, state) => (
             <Box
-              borderStyle="round"
+              borderStyle="bold"
               borderColor={state.selected ? colors.highlight : colors.muted}
               paddingX={1}
             >

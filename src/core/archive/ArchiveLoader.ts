@@ -16,7 +16,11 @@ export class ArchiveLoader {
     const data = this.readArchiveData(archiveDir);
 
     this.loadMod(archiveDir, container.resolve(ModMonitor).MOD_ROOT);
-    applySaveData(data);
+    if (!applySaveData(data)) {
+      throw new Error(
+        "存档所指的世界不存在或内容已变更，无法加载。 The save's world is missing or changed; cannot load.",
+      );
+    }
 
     // Make this the life the next launch resumes, so the reload lands on it.
     container.resolve(AutoSave).writeData(data);

@@ -7,6 +7,7 @@ import {
 } from "./WeatherDefinition.js";
 import { StatDelta } from "../stats.js";
 import type PressureState from "../pressures/PressureState.js";
+import WorldRuleEngine from "../rules/WorldRuleEngine.js";
 
 export interface WeatherTickResult {
   /** New weather id when it changed this turn. */
@@ -108,6 +109,8 @@ export default class WeatherState {
     const season = seasonOf(year);
     const candidates = this.registry.getBase(this.currentId);
     const from = this.currentId;
+    // The active world's rules bias which weather states arise.
+    const wm = container.resolve(WorldRuleEngine).weatherMultipliers();
 
     let total = 0;
     const weighted = candidates.map((c) => {
@@ -115,7 +118,8 @@ export default class WeatherState {
         0,
         c.weight *
           this.registry.multiplier(climate, season, c.to) *
-          this.pressureFactor(c.to, pressures),
+          this.pressureFactor(c.to, pressures) *
+          (wm[c.to] ?? 1),
       );
       total += w;
       return { to: c.to, w };

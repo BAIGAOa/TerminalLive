@@ -1,0 +1,47 @@
+[
+  {
+    "id": "fac_wasteland_1",
+    "labelKey": "wasteland.fac.1",
+    "descKey": "wasteland.fac.1.desc",
+    "icon": "👑",
+    "rivals": [
+      "fac_wasteland_2"
+    ]
+  },
+  {
+    "id": "fac_wasteland_2",
+    "labelKey": "wasteland.fac.2",
+    "descKey": "wasteland.fac.2.desc",
+    "icon": "⚔",
+    "rivals": [
+      "fac_wasteland_3"
+    ]
+  },
+  {
+    "id": "fac_wasteland_3",
+    "labelKey": "wasteland.fac.3",
+    "descKey": "wasteland.fac.3.desc",
+    "icon": "🕯",
+    "rivals": [
+      "fac_wasteland_4"
+    ]
+  },
+  {
+    "id": "fac_wasteland_4",
+    "labelKey": "wasteland.fac.4",
+    "descKey": "wasteland.fac.4.desc",
+    "icon": "🔧",
+    "rivals": [
+      "fac_wasteland_5"
+    ]
+  },
+  {
+    "id": "fac_wasteland_5",
+    "labelKey": "wasteland.fac.5",
+    "descKey": "wasteland.fac.5.desc",
+    "icon": "🕸",
+    "rivals": [
+      "fac_wasteland_1"
+    ]
+  }
+]

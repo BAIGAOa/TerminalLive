@@ -70,7 +70,11 @@ const ConfigSchema = z.object({
   theme: z.string().default("default"),
   player: PlayerConfigSchema.default({ ...DEFAULT_PLAYER_CONFIG }),
   enabledMods: z.array(z.string()).default([]),
+  /** Built-in plugin ids that are ON. Absent = every built-in plugin on. */
+  enabledBuiltinPlugins: z.array(z.string()).optional(),
   lastLevelId: z.string().optional(),
+  /** The world to resume into (one world = one life). */
+  lastWorldId: z.string().optional(),
   completedLevels: z.array(z.string()).default([]),
   keyBindings: z.record(z.string(), z.string()).default({}),
   traits: z.array(z.string()).default([]),

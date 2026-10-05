@@ -1,0 +1,72 @@
+[
+  {
+    "id": "reg_hellscape_1",
+    "labelKey": "hellscape.reg.1",
+    "descKey": "hellscape.reg.1.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_hellscape_1"
+    ]
+  },
+  {
+    "id": "reg_hellscape_2",
+    "labelKey": "hellscape.reg.2",
+    "descKey": "hellscape.reg.2.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_hellscape_2"
+    ]
+  },
+  {
+    "id": "reg_hellscape_3",
+    "labelKey": "hellscape.reg.3",
+    "descKey": "hellscape.reg.3.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_hellscape_3"
+    ]
+  },
+  {
+    "id": "reg_hellscape_4",
+    "labelKey": "hellscape.reg.4",
+    "descKey": "hellscape.reg.4.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_hellscape_4"
+    ]
+  },
+  {
+    "id": "reg_hellscape_5",
+    "labelKey": "hellscape.reg.5",
+    "descKey": "hellscape.reg.5.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_hellscape_5"
+    ]
+  },
+  {
+    "id": "reg_hellscape_6",
+    "labelKey": "hellscape.reg.6",
+    "descKey": "hellscape.reg.6.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_hellscape_6"
+    ]
+  },
+  {
+    "id": "reg_hellscape_7",
+    "labelKey": "hellscape.reg.7",
+    "descKey": "hellscape.reg.7.desc",
+    "icon": "📍",
+    "climate": "arid",
+    "neighbors": [
+      "reg_hellscape_7"
+    ]
+  }
+]

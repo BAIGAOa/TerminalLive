@@ -1,0 +1,62 @@
+[
+  {
+    "id": "we_high_kingdom_1",
+    "year": 8,
+    "labelKey": "high_kingdom.we.1",
+    "bodyKey": "high_kingdom.we.1.body",
+    "pressures": {
+      "pr_high_kingdom_1": -8,
+      "pr_high_kingdom_2": 8
+    }
+  },
+  {
+    "id": "we_high_kingdom_2",
+    "year": 26,
+    "labelKey": "high_kingdom.we.2",
+    "bodyKey": "high_kingdom.we.2.body",
+    "pressures": {
+      "pr_high_kingdom_2": -12,
+      "pr_high_kingdom_3": 10
+    }
+  },
+  {
+    "id": "we_high_kingdom_3",
+    "year": 44,
+    "labelKey": "high_kingdom.we.3",
+    "bodyKey": "high_kingdom.we.3.body",
+    "pressures": {
+      "pr_high_kingdom_3": 10,
+      "pr_high_kingdom_4": -6
+    }
+  },
+  {
+    "id": "we_high_kingdom_4",
+    "year": 62,
+    "labelKey": "high_kingdom.we.4",
+    "bodyKey": "high_kingdom.we.4.body",
+    "pressures": {
+      "pr_high_kingdom_4": 15,
+      "pr_high_kingdom_5": -10
+    }
+  },
+  {
+    "id": "we_high_kingdom_5",
+    "year": 80,
+    "labelKey": "high_kingdom.we.5",
+    "bodyKey": "high_kingdom.we.5.body",
+    "pressures": {
+      "pr_high_kingdom_5": -6,
+      "pr_high_kingdom_6": 12
+    }
+  },
+  {
+    "id": "we_high_kingdom_6",
+    "year": 96,
+    "labelKey": "high_kingdom.we.6",
+    "bodyKey": "high_kingdom.we.6.body",
+    "pressures": {
+      "pr_high_kingdom_6": 12,
+      "pr_high_kingdom_7": -8
+    }
+  }
+]

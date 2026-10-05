@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fate_paranoia_1",
+    "labelKey": "paranoia.fate.1",
+    "descKey": "paranoia.fate.1.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paranoia_2",
+    "labelKey": "paranoia.fate.2",
+    "descKey": "paranoia.fate.2.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paranoia_3",
+    "labelKey": "paranoia.fate.3",
+    "descKey": "paranoia.fate.3.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paranoia_4",
+    "labelKey": "paranoia.fate.4",
+    "descKey": "paranoia.fate.4.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paranoia_5",
+    "labelKey": "paranoia.fate.5",
+    "descKey": "paranoia.fate.5.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "year",
+      "year": 50
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_paranoia_6",
+    "labelKey": "paranoia.fate.6",
+    "descKey": "paranoia.fate.6.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "era",
+      "era": "era_paranoia_5"
+    },
+    "factor": 2
+  }
+]

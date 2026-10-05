@@ -1,0 +1,50 @@
+[
+  {
+    "id": "era_plague_years_1",
+    "labelKey": "plague_years.era.1",
+    "descKey": "plague_years.era.1.desc",
+    "fromYear": 0,
+    "icon": "🌅",
+    "color": "yellow"
+  },
+  {
+    "id": "era_plague_years_2",
+    "labelKey": "plague_years.era.2",
+    "descKey": "plague_years.era.2.desc",
+    "fromYear": 16,
+    "icon": "⚒",
+    "color": "gray"
+  },
+  {
+    "id": "era_plague_years_3",
+    "labelKey": "plague_years.era.3",
+    "descKey": "plague_years.era.3.desc",
+    "fromYear": 32,
+    "icon": "⚙",
+    "color": "white"
+  },
+  {
+    "id": "era_plague_years_4",
+    "labelKey": "plague_years.era.4",
+    "descKey": "plague_years.era.4.desc",
+    "fromYear": 50,
+    "icon": "⚡",
+    "color": "cyan"
+  },
+  {
+    "id": "era_plague_years_5",
+    "labelKey": "plague_years.era.5",
+    "descKey": "plague_years.era.5.desc",
+    "fromYear": 68,
+    "icon": "✦",
+    "color": "magentaBright"
+  },
+  {
+    "id": "era_plague_years_6",
+    "labelKey": "plague_years.era.6",
+    "descKey": "plague_years.era.6.desc",
+    "fromYear": 86,
+    "icon": "🌌",
+    "color": "blue"
+  }
+]

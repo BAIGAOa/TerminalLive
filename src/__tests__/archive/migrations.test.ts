@@ -9,7 +9,10 @@ describe("migrateSave", () => {
 
   it("backfills fields older saves lack", () => {
     const out = migrateSave({ version: 5, config: { language: "en_US" } });
-    expect(out.levelObjectives).toEqual({ levelId: null, completed: [] });
+    // v7 replaced the multi-level chain with a single-world run.
+    expect(out.worldObjectives).toEqual({ worldId: null, completed: [] });
+    expect(out.run).toEqual({ worldId: null, worldContentVersion: 1 });
+    expect(out.levels).toBeUndefined();
     expect((out.config as Record<string, unknown>).traits).toEqual([]);
   });
 

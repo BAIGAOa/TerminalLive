@@ -1,0 +1,50 @@
+[
+  {
+    "source": "pr_high_kingdom_1",
+    "target": "pr_high_kingdom_2",
+    "threshold": 50,
+    "factor": 0.1
+  },
+  {
+    "source": "pr_high_kingdom_2",
+    "target": "pr_high_kingdom_3",
+    "threshold": 50,
+    "factor": 0.08
+  },
+  {
+    "source": "pr_high_kingdom_3",
+    "target": "pr_high_kingdom_4",
+    "threshold": 50,
+    "factor": 0.07
+  },
+  {
+    "source": "pr_high_kingdom_4",
+    "target": "pr_high_kingdom_5",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_high_kingdom_5",
+    "target": "pr_high_kingdom_6",
+    "threshold": 50,
+    "factor": -0.05
+  },
+  {
+    "source": "pr_high_kingdom_6",
+    "target": "pr_high_kingdom_7",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_high_kingdom_7",
+    "target": "pr_high_kingdom_8",
+    "threshold": 50,
+    "factor": 0.05
+  },
+  {
+    "source": "pr_high_kingdom_8",
+    "target": "pr_high_kingdom_1",
+    "threshold": 50,
+    "factor": 0.05
+  }
+]

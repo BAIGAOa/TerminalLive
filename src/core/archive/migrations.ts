@@ -6,7 +6,7 @@
 
 export type RawSave = Record<string, unknown>;
 
-export const SAVE_VERSION = 6;
+export const SAVE_VERSION = 7;
 
 export interface Migration {
   /** Version this migration produces. */
@@ -39,6 +39,23 @@ export const MIGRATIONS: Migration[] = [
       }
       const config = asObject(out.config);
       if (!Array.isArray(config.traits)) out.config = { ...config, traits: [] };
+      return out;
+    },
+  },
+  {
+    // v6 → v7: "levels" became "worlds" — one world = one entire life. The old
+    // multi-stage chain progress can't map to the new model, so it is dropped;
+    // the world identity guard in SaveCodec refuses a mismatched world and the
+    // player starts a fresh life instead.
+    to: 7,
+    up: (raw) => {
+      const out = { ...raw };
+      delete out.levels;
+      delete out.levelObjectives;
+      if (out.run === undefined) out.run = { worldId: null, worldContentVersion: 1 };
+      if (out.worldObjectives === undefined) {
+        out.worldObjectives = { worldId: null, completed: [] };
+      }
       return out;
     },
   },

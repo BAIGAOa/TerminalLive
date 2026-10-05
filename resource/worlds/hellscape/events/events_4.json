@@ -1,0 +1,258 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_hermit_1",
+    "nameKey": "hellscape.ev.hermit.1",
+    "textKey": "hellscape.ev.hermit.1.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "hellscape.ev.hermit.1.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.hermit.1.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "hellscape.ev.hermit.1.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.hermit.1.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_hermit_2",
+    "nameKey": "hellscape.ev.hermit.2",
+    "textKey": "hellscape.ev.hermit.2.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "hellscape.ev.hermit.2.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.hermit.2.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "hellscape.ev.hermit.2.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.hermit.2.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_hermit_3",
+    "nameKey": "hellscape.ev.hermit.3",
+    "textKey": "hellscape.ev.hermit.3.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "hellscape.ev.hermit.3.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.hermit.3.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "hellscape.ev.hermit.3.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.hermit.3.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_hermit_4",
+    "nameKey": "hellscape.ev.hermit.4",
+    "textKey": "hellscape.ev.hermit.4.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "hellscape.ev.hermit.4.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.hermit.4.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "hellscape.ev.hermit.4.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.hermit.4.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "EffectEvent",
+    "id": "hellscape_ev_quiet",
+    "nameKey": "hellscape.ev.quiet",
+    "textKey": "hellscape.ev.quiet.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "hellscape_ev_omen",
+    "nameKey": "hellscape.ev.omen",
+    "textKey": "hellscape.ev.omen.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 3,
+        "reputation": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "hellscape_ev_hard",
+    "nameKey": "hellscape.ev.hard",
+    "textKey": "hellscape.ev.hard.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "happiness": -2,
+        "health": -2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "hellscape_ev_dread",
+    "nameKey": "hellscape.ev.dread",
+    "textKey": "hellscape.ev.dread.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "depressionValue": 4
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "hellscape_ev_bounty",
+    "nameKey": "hellscape.ev.bounty",
+    "textKey": "hellscape.ev.bounty.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "money": 20
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "hellscape_ev_weariness",
+    "nameKey": "hellscape.ev.weariness",
+    "textKey": "hellscape.ev.weariness.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "weakValue": 4
+      }
+    }
+  }
+]

@@ -4,7 +4,7 @@ import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { ScrollList } from "./kit/index.js";
 import { container } from "../Container.js";
 import ItemRegistry from "../world/items/ItemRegistry.js";
-import LevelManager from "../level/LevelManager.js";
+import WorldManager from "../worlds/WorldManager.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
@@ -17,7 +17,7 @@ export default function Shop() {
   const { boundKeyboard } = useKeyboard();
   const { back } = useScreenSystem();
   const reg = container.resolve(ItemRegistry);
-  const player = container.resolve(LevelManager).getPlayer();
+  const player = container.resolve(WorldManager).getPlayer();
   const { columns, rows } = useTerminalSize();
   const [message, setMessage] = useState<string | null>(null);
 
@@ -82,7 +82,7 @@ export default function Shop() {
                 flexDirection="row"
                 flexGrow={1}
                 justifyContent="space-between"
-                borderStyle="round"
+                borderStyle="bold"
                 borderColor={state.selected ? colors.highlight : colors.muted}
                 paddingX={1}
               >

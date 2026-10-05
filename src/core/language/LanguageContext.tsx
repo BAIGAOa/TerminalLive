@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import ConfigStore from "../store/ConfigStore.js";
 import { container } from "../../Container.js";
 import ModMonitor from "../mod/ModMonitor.js";
+import { worldTranslation } from "./WorldTranslations.js";
 
 
 const _filename = fileURLToPath(import.meta.url);
@@ -109,6 +110,11 @@ export const useI18n = () => {
 
   const t = (key: string, params?: Record<string, string | number>) => {
     let text: string | undefined = context.translations[key];
+
+    // World-scoped overlay (the active world's own language pack).
+    if (text === undefined) {
+      text = worldTranslation(key, context.langCode);
+    }
 
     if (text === undefined) {
       for (const modTrans of context.modTranslations) {

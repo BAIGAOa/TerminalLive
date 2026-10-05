@@ -77,7 +77,7 @@ export default function Traits() {
             return (
               <Box
                 flexDirection="column"
-                borderStyle="round"
+                borderStyle="bold"
                 borderColor={on ? colors.success : colors.muted}
                 paddingX={1}
               >

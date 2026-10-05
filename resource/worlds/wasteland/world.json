@@ -1,0 +1,39 @@
+{
+  "id": "wasteland",
+  "nameKey": "world.wasteland",
+  "descriptionKey": "world.wasteland.desc",
+  "icon": "🏜",
+  "tags": [
+    "harsh",
+    "wild"
+  ],
+  "difficultyIdentification": "expert",
+  "contentVersion": 3,
+  "startPlayer": {
+    "age": 0,
+    "health": 95,
+    "happiness": 50,
+    "fitness": 13,
+    "intelligence": 9,
+    "social": 7,
+    "money": 0
+  },
+  "unlockRequires": [
+    "wilds"
+  ],
+  "selfContained": true,
+  "worldRules": [
+    "rule_wasteland"
+  ],
+  "algorithm": "default",
+  "completionConditions": [
+    {
+      "type": "generalPurpose",
+      "params": {
+        "prop": "age",
+        "num": 80,
+        "cat": "greaterThan"
+      }
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import { NpcInteractionDef } from "../world/relationships/NpcInteraction.js";
 import { NpcAutonomyDef } from "../world/relationships/NpcAutonomy.js";
+import { ROLE_KNOW_WINDOW } from "../world/relationships/NpcRoles.js";
 
 /**
  * Role-driven content for the relationship system: which interactions an NPC
@@ -22,7 +23,18 @@ export default class RelationshipContent {
       this.roleInteractions.set(role, ids);
     }
     for (const [role, defs] of Object.entries(ROLE_AUTONOMY)) {
-      this.roleAutonomy.set(role, defs);
+      // Belt-and-braces: a role's autonomy can't fire before the player would
+      // even know an NPC of that role (work ≥18, mentor ≥6, …). Individual
+      // defs may override; the type class's window is layered on top by
+      // RelationshipSystem. This is the guard against a boss "asking a toddler
+      // to work overtime".
+      const minAge = ROLE_KNOW_WINDOW[role]?.min;
+      this.roleAutonomy.set(
+        role,
+        defs.map((d) =>
+          d.minAge === undefined && minAge !== undefined ? { ...d, minAge } : d,
+        ),
+      );
     }
   }
 

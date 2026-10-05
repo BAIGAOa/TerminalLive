@@ -2,7 +2,7 @@ import React, { useSyncExternalStore } from "react";
 import { Text } from "ink";
 import { container } from "../../Container.js";
 import WorldState from "../../world/chronicle/WorldState.js";
-import WorldRegistry from "../../world/chronicle/WorldRegistry.js";
+import ChronicleRegistry from "../../world/chronicle/ChronicleRegistry.js";
 import { KARMA_AXES, KarmaAxis } from "../../world/chronicle/karma.js";
 import WeatherState from "../../world/weather/WeatherState.js";
 import { seasonOf } from "../../world/weather/WeatherDefinition.js";
@@ -27,7 +27,7 @@ export default function WorldView({
   height?: number;
 }) {
   const world = container.resolve(WorldState);
-  const reg = container.resolve(WorldRegistry);
+  const reg = container.resolve(ChronicleRegistry);
   const weather = container.resolve(WeatherState);
   const configStore = container.resolve(ConfigStore);
   useSyncExternalStore(world.subscribe, world.getSnapshot);

@@ -16,6 +16,7 @@ TerminalLive mods live in `~/.mod_live/`. A mod can add **custom events**, **tra
   - [The `ModPlugin` Object](#the-modplugin-object)
   - [Lifecycle Hooks](#lifecycle-hooks)
   - [Registering Custom Event Types](#registering-custom-event-types)
+  - [Registering Custom NPC Types](#registering-custom-npc-types)
   - [Registering Custom UI Screens](#registering-custom-ui-screens)
   - [Registering Achievements](#registering-achievements)
   - [Registering Filters, Algorithms & Conditions](#registering-filters-algorithms--conditions)
@@ -337,6 +338,67 @@ registerEventTypes(registry, ctx) {
 | `getWeight` | — | `(player: Player, self: Incident) => number` | Override the JSON `weight` with a dynamic value computed from player state. |
 
 The returned constructor can be passed directly to `registry.register()`.
+
+### Registering Custom NPC Types
+
+NPCs work exactly like events: an NPC's JSON `type` field picks its class. Use
+`registerNpcTypes(registry, ctx)` to add your own archetype. When `type` is
+omitted the game infers one from `roleKey` (family / friend / rival / …), so old
+JSON keeps working.
+
+```javascript
+registerNpcTypes(registry, ctx) {
+  const Guardian = ctx.createNpcClass({
+    // Custom fields are read from the NPC's JSON `params`.
+    parseParams(self, params) {
+      self.favor = typeof params.favor === "string" ? params.favor : "shield";
+    },
+    traits: { warmth: 0.85, ambition: 0.3, stability: 0.9, sociability: 0.4 },
+    knowsFromAge: 6,   // the player only meets them at age 6 — gates all agency
+    autonomyMinAge: 6,
+    // A yearly behaviour against a peer and/or the player.
+    peerScheme(self, view) {
+      if (ctx.random.next() >= 0.08) return [];
+      return [{
+        actorId: self.id,
+        player: { effects: { health: 4, happiness: 3 }, toastKey: "my.npc.watch" },
+        logKey: "my.npc.watch",
+      }];
+    },
+    // React to another NPC's life event this year (optional).
+    reactToPeer(self, ev, view) { return null; },
+  });
+  registry.register("my_guardian", Guardian);
+}
+```
+
+Then reference it from an `npcs/` file:
+
+```json
+[{ "id": "npc_guardian", "type": "my_guardian", "labelKey": "my.npc",
+   "descKey": "my.npc.desc", "initial": 25, "params": { "favor": "hearth" } }]
+```
+
+`ctx.createNpcClass(def)` accepts:
+
+| Field | Description |
+|-------|-------------|
+| `parseParams(self, params)` | Read custom fields out of the JSON `params`. |
+| `traits` | Personality `{ warmth, ambition, stability, sociability }` (−1…1). |
+| `knowsFromAge` / `knowsUntilAge` | The player-age window in which the player knows this NPC. Outside it the NPC is hidden and never acts. |
+| `autonomyMinAge` / `autonomyMaxAge` | Age window applied to this NPC's autonomy. |
+| `peerScheme(self, view)` | Yearly behaviour; return `NpcSchemeResult[]` to act on a peer (`targetId` + `edge` / `target` deltas) and/or the player (`player: { effects, karma, buff, bond, flags, … }`). |
+| `reactToPeer(self, ev, view)` | React to another NPC's life event this year. |
+
+The `view` argument exposes `random`, `peers`, `life(id)`, `edge(a, b)`,
+`bond(id)`, `playerAffinity(id)` and `knowsPlayer(id)`. A scheme's `player`
+impact is applied only when the player actually knows the acting NPC, so age
+gating comes for free. A mod that wants full control can instead
+`class MyNpc extends ctx.npcBase { … }` and pass the class to
+`registry.register(name, MyNpc)`.
+
+> Requires the **`npcs`** capability. Mod `npcs/` JSON is parsed only after
+> `registerNpcTypes` has run, so `"type": "my_guardian"` always resolves.
 
 ### Registering Custom UI Screens
 

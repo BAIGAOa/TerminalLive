@@ -72,7 +72,7 @@ export default function Lineage() {
           <Box
             flexDirection="column"
             width="60%"
-            borderStyle="round"
+            borderStyle="bold"
             borderColor={colors.info}
             paddingX={1}
           >

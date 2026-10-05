@@ -1,0 +1,1406 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_stranger_1",
+    "nameKey": "paranoia.ev.stranger.1",
+    "textKey": "paranoia.ev.stranger.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "social"
+    ],
+    "choices": [
+      {
+        "id": "listen",
+        "labelKey": "paranoia.ev.stranger.1.listen",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.stranger.1.listen.note"
+      },
+      {
+        "id": "turn",
+        "labelKey": "paranoia.ev.stranger.1.turn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.stranger.1.turn.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_stranger_2",
+    "nameKey": "paranoia.ev.stranger.2",
+    "textKey": "paranoia.ev.stranger.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "social"
+    ],
+    "choices": [
+      {
+        "id": "listen",
+        "labelKey": "paranoia.ev.stranger.2.listen",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.stranger.2.listen.note"
+      },
+      {
+        "id": "turn",
+        "labelKey": "paranoia.ev.stranger.2.turn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.stranger.2.turn.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_stranger_3",
+    "nameKey": "paranoia.ev.stranger.3",
+    "textKey": "paranoia.ev.stranger.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "social"
+    ],
+    "choices": [
+      {
+        "id": "listen",
+        "labelKey": "paranoia.ev.stranger.3.listen",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.stranger.3.listen.note"
+      },
+      {
+        "id": "turn",
+        "labelKey": "paranoia.ev.stranger.3.turn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.stranger.3.turn.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_stranger_4",
+    "nameKey": "paranoia.ev.stranger.4",
+    "textKey": "paranoia.ev.stranger.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "social"
+    ],
+    "choices": [
+      {
+        "id": "listen",
+        "labelKey": "paranoia.ev.stranger.4.listen",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.stranger.4.listen.note"
+      },
+      {
+        "id": "turn",
+        "labelKey": "paranoia.ev.stranger.4.turn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.stranger.4.turn.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_theft_1",
+    "nameKey": "paranoia.ev.theft.1",
+    "textKey": "paranoia.ev.theft.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "chase",
+        "labelKey": "paranoia.ev.theft.1.chase",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "paranoia.ev.theft.1.chase.note"
+      },
+      {
+        "id": "yield",
+        "labelKey": "paranoia.ev.theft.1.yield",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.theft.1.yield.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_theft_2",
+    "nameKey": "paranoia.ev.theft.2",
+    "textKey": "paranoia.ev.theft.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "chase",
+        "labelKey": "paranoia.ev.theft.2.chase",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "paranoia.ev.theft.2.chase.note"
+      },
+      {
+        "id": "yield",
+        "labelKey": "paranoia.ev.theft.2.yield",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.theft.2.yield.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_theft_3",
+    "nameKey": "paranoia.ev.theft.3",
+    "textKey": "paranoia.ev.theft.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "chase",
+        "labelKey": "paranoia.ev.theft.3.chase",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "paranoia.ev.theft.3.chase.note"
+      },
+      {
+        "id": "yield",
+        "labelKey": "paranoia.ev.theft.3.yield",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.theft.3.yield.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_theft_4",
+    "nameKey": "paranoia.ev.theft.4",
+    "textKey": "paranoia.ev.theft.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "chase",
+        "labelKey": "paranoia.ev.theft.4.chase",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "paranoia.ev.theft.4.chase.note"
+      },
+      {
+        "id": "yield",
+        "labelKey": "paranoia.ev.theft.4.yield",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.theft.4.yield.note"
+      }
+    ]
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_illness_1",
+    "nameKey": "paranoia.ev.illness.1",
+    "textKey": "paranoia.ev.illness.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "nurse",
+        "labelKey": "paranoia.ev.illness.1.nurse",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "paranoia.ev.illness.1.nurse.note"
+      },
+      {
+        "id": "avoid",
+        "labelKey": "paranoia.ev.illness.1.avoid",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.illness.1.avoid.note"
+      }
+    ],
+    "category": "health"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_illness_2",
+    "nameKey": "paranoia.ev.illness.2",
+    "textKey": "paranoia.ev.illness.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "nurse",
+        "labelKey": "paranoia.ev.illness.2.nurse",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "paranoia.ev.illness.2.nurse.note"
+      },
+      {
+        "id": "avoid",
+        "labelKey": "paranoia.ev.illness.2.avoid",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.illness.2.avoid.note"
+      }
+    ],
+    "category": "health"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_illness_3",
+    "nameKey": "paranoia.ev.illness.3",
+    "textKey": "paranoia.ev.illness.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "nurse",
+        "labelKey": "paranoia.ev.illness.3.nurse",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "paranoia.ev.illness.3.nurse.note"
+      },
+      {
+        "id": "avoid",
+        "labelKey": "paranoia.ev.illness.3.avoid",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.illness.3.avoid.note"
+      }
+    ],
+    "category": "health"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_illness_4",
+    "nameKey": "paranoia.ev.illness.4",
+    "textKey": "paranoia.ev.illness.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "nurse",
+        "labelKey": "paranoia.ev.illness.4.nurse",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "paranoia.ev.illness.4.nurse.note"
+      },
+      {
+        "id": "avoid",
+        "labelKey": "paranoia.ev.illness.4.avoid",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.illness.4.avoid.note"
+      }
+    ],
+    "category": "health"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_windfall_1",
+    "nameKey": "paranoia.ev.windfall.1",
+    "textKey": "paranoia.ev.windfall.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "invest",
+        "labelKey": "paranoia.ev.windfall.1.invest",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.windfall.1.invest.note"
+      },
+      {
+        "id": "save",
+        "labelKey": "paranoia.ev.windfall.1.save",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.windfall.1.save.note"
+      }
+    ],
+    "category": "money"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_windfall_2",
+    "nameKey": "paranoia.ev.windfall.2",
+    "textKey": "paranoia.ev.windfall.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "invest",
+        "labelKey": "paranoia.ev.windfall.2.invest",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.windfall.2.invest.note"
+      },
+      {
+        "id": "save",
+        "labelKey": "paranoia.ev.windfall.2.save",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.windfall.2.save.note"
+      }
+    ],
+    "category": "money"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_windfall_3",
+    "nameKey": "paranoia.ev.windfall.3",
+    "textKey": "paranoia.ev.windfall.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "invest",
+        "labelKey": "paranoia.ev.windfall.3.invest",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.windfall.3.invest.note"
+      },
+      {
+        "id": "save",
+        "labelKey": "paranoia.ev.windfall.3.save",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.windfall.3.save.note"
+      }
+    ],
+    "category": "money"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_windfall_4",
+    "nameKey": "paranoia.ev.windfall.4",
+    "textKey": "paranoia.ev.windfall.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "invest",
+        "labelKey": "paranoia.ev.windfall.4.invest",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.windfall.4.invest.note"
+      },
+      {
+        "id": "save",
+        "labelKey": "paranoia.ev.windfall.4.save",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.windfall.4.save.note"
+      }
+    ],
+    "category": "money"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_betrayal_1",
+    "nameKey": "paranoia.ev.betrayal.1",
+    "textKey": "paranoia.ev.betrayal.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scheme"
+    ],
+    "choices": [
+      {
+        "id": "confront",
+        "labelKey": "paranoia.ev.betrayal.1.confront",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "angerValue": 4
+        },
+        "noteKey": "paranoia.ev.betrayal.1.confront.note"
+      },
+      {
+        "id": "plan",
+        "labelKey": "paranoia.ev.betrayal.1.plan",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "angerValue": 4
+        },
+        "noteKey": "paranoia.ev.betrayal.1.plan.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_betrayal_2",
+    "nameKey": "paranoia.ev.betrayal.2",
+    "textKey": "paranoia.ev.betrayal.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scheme"
+    ],
+    "choices": [
+      {
+        "id": "confront",
+        "labelKey": "paranoia.ev.betrayal.2.confront",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "angerValue": 4
+        },
+        "noteKey": "paranoia.ev.betrayal.2.confront.note"
+      },
+      {
+        "id": "plan",
+        "labelKey": "paranoia.ev.betrayal.2.plan",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "angerValue": 4
+        },
+        "noteKey": "paranoia.ev.betrayal.2.plan.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_betrayal_3",
+    "nameKey": "paranoia.ev.betrayal.3",
+    "textKey": "paranoia.ev.betrayal.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scheme"
+    ],
+    "choices": [
+      {
+        "id": "confront",
+        "labelKey": "paranoia.ev.betrayal.3.confront",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "angerValue": 4
+        },
+        "noteKey": "paranoia.ev.betrayal.3.confront.note"
+      },
+      {
+        "id": "plan",
+        "labelKey": "paranoia.ev.betrayal.3.plan",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "angerValue": 4
+        },
+        "noteKey": "paranoia.ev.betrayal.3.plan.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_betrayal_4",
+    "nameKey": "paranoia.ev.betrayal.4",
+    "textKey": "paranoia.ev.betrayal.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scheme"
+    ],
+    "choices": [
+      {
+        "id": "confront",
+        "labelKey": "paranoia.ev.betrayal.4.confront",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "angerValue": 4
+        },
+        "noteKey": "paranoia.ev.betrayal.4.confront.note"
+      },
+      {
+        "id": "plan",
+        "labelKey": "paranoia.ev.betrayal.4.plan",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3,
+          "angerValue": 4
+        },
+        "noteKey": "paranoia.ev.betrayal.4.plan.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_festival_1",
+    "nameKey": "paranoia.ev.festival.1",
+    "textKey": "paranoia.ev.festival.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "paranoia.ev.festival.1.join",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.festival.1.join.note"
+      },
+      {
+        "id": "work",
+        "labelKey": "paranoia.ev.festival.1.work",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.festival.1.work.note"
+      }
+    ],
+    "category": "social"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_festival_2",
+    "nameKey": "paranoia.ev.festival.2",
+    "textKey": "paranoia.ev.festival.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "paranoia.ev.festival.2.join",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.festival.2.join.note"
+      },
+      {
+        "id": "work",
+        "labelKey": "paranoia.ev.festival.2.work",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.festival.2.work.note"
+      }
+    ],
+    "category": "social"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_festival_3",
+    "nameKey": "paranoia.ev.festival.3",
+    "textKey": "paranoia.ev.festival.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "paranoia.ev.festival.3.join",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.festival.3.join.note"
+      },
+      {
+        "id": "work",
+        "labelKey": "paranoia.ev.festival.3.work",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.festival.3.work.note"
+      }
+    ],
+    "category": "social"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_festival_4",
+    "nameKey": "paranoia.ev.festival.4",
+    "textKey": "paranoia.ev.festival.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "boon"
+    ],
+    "choices": [
+      {
+        "id": "join",
+        "labelKey": "paranoia.ev.festival.4.join",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.festival.4.join.note"
+      },
+      {
+        "id": "work",
+        "labelKey": "paranoia.ev.festival.4.work",
+        "effects": {
+          "happiness": -4,
+          "health": -2,
+          "money": 15
+        },
+        "noteKey": "paranoia.ev.festival.4.work.note"
+      }
+    ],
+    "category": "social"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_rumor_1",
+    "nameKey": "paranoia.ev.rumor.1",
+    "textKey": "paranoia.ev.rumor.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "rumor"
+    ],
+    "choices": [
+      {
+        "id": "trace",
+        "labelKey": "paranoia.ev.rumor.1.trace",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.rumor.1.trace.note"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "paranoia.ev.rumor.1.ignore",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.rumor.1.ignore.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_rumor_2",
+    "nameKey": "paranoia.ev.rumor.2",
+    "textKey": "paranoia.ev.rumor.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "rumor"
+    ],
+    "choices": [
+      {
+        "id": "trace",
+        "labelKey": "paranoia.ev.rumor.2.trace",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.rumor.2.trace.note"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "paranoia.ev.rumor.2.ignore",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.rumor.2.ignore.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_rumor_3",
+    "nameKey": "paranoia.ev.rumor.3",
+    "textKey": "paranoia.ev.rumor.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "rumor"
+    ],
+    "choices": [
+      {
+        "id": "trace",
+        "labelKey": "paranoia.ev.rumor.3.trace",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.rumor.3.trace.note"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "paranoia.ev.rumor.3.ignore",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.rumor.3.ignore.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_rumor_4",
+    "nameKey": "paranoia.ev.rumor.4",
+    "textKey": "paranoia.ev.rumor.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "rumor"
+    ],
+    "choices": [
+      {
+        "id": "trace",
+        "labelKey": "paranoia.ev.rumor.4.trace",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.rumor.4.trace.note"
+      },
+      {
+        "id": "ignore",
+        "labelKey": "paranoia.ev.rumor.4.ignore",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.rumor.4.ignore.note"
+      }
+    ],
+    "category": "intrigue"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_journey_1",
+    "nameKey": "paranoia.ev.journey.1",
+    "textKey": "paranoia.ev.journey.1.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "explore"
+    ],
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "paranoia.ev.journey.1.go",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.journey.1.go.note"
+      },
+      {
+        "id": "stay",
+        "labelKey": "paranoia.ev.journey.1.stay",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.journey.1.stay.note"
+      }
+    ],
+    "category": "explore"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_journey_2",
+    "nameKey": "paranoia.ev.journey.2",
+    "textKey": "paranoia.ev.journey.2.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "explore"
+    ],
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "paranoia.ev.journey.2.go",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.journey.2.go.note"
+      },
+      {
+        "id": "stay",
+        "labelKey": "paranoia.ev.journey.2.stay",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.journey.2.stay.note"
+      }
+    ],
+    "category": "explore"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_journey_3",
+    "nameKey": "paranoia.ev.journey.3",
+    "textKey": "paranoia.ev.journey.3.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "explore"
+    ],
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "paranoia.ev.journey.3.go",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.journey.3.go.note"
+      },
+      {
+        "id": "stay",
+        "labelKey": "paranoia.ev.journey.3.stay",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.journey.3.stay.note"
+      }
+    ],
+    "category": "explore"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_journey_4",
+    "nameKey": "paranoia.ev.journey.4",
+    "textKey": "paranoia.ev.journey.4.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "explore"
+    ],
+    "choices": [
+      {
+        "id": "go",
+        "labelKey": "paranoia.ev.journey.4.go",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.journey.4.go.note"
+      },
+      {
+        "id": "stay",
+        "labelKey": "paranoia.ev.journey.4.stay",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "paranoia.ev.journey.4.stay.note"
+      }
+    ],
+    "category": "explore"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_duel_1",
+    "nameKey": "paranoia.ev.duel.1",
+    "textKey": "paranoia.ev.duel.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "fight",
+        "labelKey": "paranoia.ev.duel.1.fight",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "paranoia.ev.duel.1.fight.note"
+      },
+      {
+        "id": "decline",
+        "labelKey": "paranoia.ev.duel.1.decline",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.duel.1.decline.note"
+      }
+    ],
+    "category": "combat"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_duel_2",
+    "nameKey": "paranoia.ev.duel.2",
+    "textKey": "paranoia.ev.duel.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "fight",
+        "labelKey": "paranoia.ev.duel.2.fight",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "paranoia.ev.duel.2.fight.note"
+      },
+      {
+        "id": "decline",
+        "labelKey": "paranoia.ev.duel.2.decline",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.duel.2.decline.note"
+      }
+    ],
+    "category": "combat"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_duel_3",
+    "nameKey": "paranoia.ev.duel.3",
+    "textKey": "paranoia.ev.duel.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "fight",
+        "labelKey": "paranoia.ev.duel.3.fight",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "paranoia.ev.duel.3.fight.note"
+      },
+      {
+        "id": "decline",
+        "labelKey": "paranoia.ev.duel.3.decline",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.duel.3.decline.note"
+      }
+    ],
+    "category": "combat"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_duel_4",
+    "nameKey": "paranoia.ev.duel.4",
+    "textKey": "paranoia.ev.duel.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "fight",
+        "labelKey": "paranoia.ev.duel.4.fight",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "paranoia.ev.duel.4.fight.note"
+      },
+      {
+        "id": "decline",
+        "labelKey": "paranoia.ev.duel.4.decline",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "paranoia.ev.duel.4.decline.note"
+      }
+    ],
+    "category": "combat"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_harvest_1",
+    "nameKey": "paranoia.ev.harvest.1",
+    "textKey": "paranoia.ev.harvest.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "nature"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "paranoia.ev.harvest.1.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.harvest.1.share.note"
+      },
+      {
+        "id": "hoard",
+        "labelKey": "paranoia.ev.harvest.1.hoard",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.harvest.1.hoard.note"
+      }
+    ],
+    "category": "nature"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_harvest_2",
+    "nameKey": "paranoia.ev.harvest.2",
+    "textKey": "paranoia.ev.harvest.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "nature"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "paranoia.ev.harvest.2.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.harvest.2.share.note"
+      },
+      {
+        "id": "hoard",
+        "labelKey": "paranoia.ev.harvest.2.hoard",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.harvest.2.hoard.note"
+      }
+    ],
+    "category": "nature"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_harvest_3",
+    "nameKey": "paranoia.ev.harvest.3",
+    "textKey": "paranoia.ev.harvest.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "nature"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "paranoia.ev.harvest.3.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.harvest.3.share.note"
+      },
+      {
+        "id": "hoard",
+        "labelKey": "paranoia.ev.harvest.3.hoard",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.harvest.3.hoard.note"
+      }
+    ],
+    "category": "nature"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_harvest_4",
+    "nameKey": "paranoia.ev.harvest.4",
+    "textKey": "paranoia.ev.harvest.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "nature"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "paranoia.ev.harvest.4.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.harvest.4.share.note"
+      },
+      {
+        "id": "hoard",
+        "labelKey": "paranoia.ev.harvest.4.hoard",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.harvest.4.hoard.note"
+      }
+    ],
+    "category": "nature"
+  }
+]

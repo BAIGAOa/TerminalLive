@@ -1,0 +1,62 @@
+[
+  {
+    "id": "we_wasteland_1",
+    "year": 8,
+    "labelKey": "wasteland.we.1",
+    "bodyKey": "wasteland.we.1.body",
+    "pressures": {
+      "pr_wasteland_1": -8,
+      "pr_wasteland_2": 8
+    }
+  },
+  {
+    "id": "we_wasteland_2",
+    "year": 26,
+    "labelKey": "wasteland.we.2",
+    "bodyKey": "wasteland.we.2.body",
+    "pressures": {
+      "pr_wasteland_2": -12,
+      "pr_wasteland_3": 10
+    }
+  },
+  {
+    "id": "we_wasteland_3",
+    "year": 44,
+    "labelKey": "wasteland.we.3",
+    "bodyKey": "wasteland.we.3.body",
+    "pressures": {
+      "pr_wasteland_3": 10,
+      "pr_wasteland_4": -6
+    }
+  },
+  {
+    "id": "we_wasteland_4",
+    "year": 62,
+    "labelKey": "wasteland.we.4",
+    "bodyKey": "wasteland.we.4.body",
+    "pressures": {
+      "pr_wasteland_4": 15,
+      "pr_wasteland_5": -10
+    }
+  },
+  {
+    "id": "we_wasteland_5",
+    "year": 80,
+    "labelKey": "wasteland.we.5",
+    "bodyKey": "wasteland.we.5.body",
+    "pressures": {
+      "pr_wasteland_5": -6,
+      "pr_wasteland_6": 12
+    }
+  },
+  {
+    "id": "we_wasteland_6",
+    "year": 96,
+    "labelKey": "wasteland.we.6",
+    "bodyKey": "wasteland.we.6.body",
+    "pressures": {
+      "pr_wasteland_6": 12,
+      "pr_wasteland_7": -8
+    }
+  }
+]

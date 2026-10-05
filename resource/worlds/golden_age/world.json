@@ -1,0 +1,38 @@
+{
+  "id": "golden_age",
+  "nameKey": "world.golden_age",
+  "descriptionKey": "world.golden_age.desc",
+  "icon": "🎨",
+  "tags": [
+    "gentle"
+  ],
+  "difficultyIdentification": "easy",
+  "contentVersion": 3,
+  "startPlayer": {
+    "age": 0,
+    "health": 100,
+    "happiness": 80,
+    "intelligence": 10,
+    "social": 10,
+    "fitness": 10,
+    "money": 100
+  },
+  "unlockRequires": [
+    "classic"
+  ],
+  "selfContained": true,
+  "worldRules": [
+    "rule_idyllic"
+  ],
+  "algorithm": "default",
+  "completionConditions": [
+    {
+      "type": "generalPurpose",
+      "params": {
+        "prop": "age",
+        "num": 100,
+        "cat": "greaterThan"
+      }
+    }
+  ]
+}

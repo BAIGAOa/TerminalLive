@@ -9,13 +9,16 @@ import {
 import { NpcAutonomyDef } from "./NpcAutonomy.js";
 import { NpcLogIncident } from "./NpcLogIncident.js";
 import { NpcOfferIncident } from "./NpcOfferIncident.js";
+import { stampWindow } from "./AgeWindow.js";
+import type { NpcPlayerImpact } from "./NpcState.js";
 import { applyEffectPayload } from "../effects/applyEffects.js";
 import { meetsRequirements } from "../requirements.js";
-import LevelManager from "../../level/LevelManager.js";
+import WorldManager from "../../worlds/WorldManager.js";
 import WorldState from "../chronicle/WorldState.js";
 import TypedEventBus from "../../core/TypedEventBus.js";
 import RandomService from "../../core/random/RandomService.js";
 import NpcSimulation from "./NpcSimulation.js";
+import BuiltinPluginRegistry from "../../core/mod/BuiltinPlugin.js";
 
 /** Odds/limits for the once-a-year NPC agency pass. */
 const PASSIVE_CHANCE = 0.45;
@@ -51,11 +54,12 @@ export interface NpcDetail {
 export default class RelationshipSystem {
   private registry: NpcRegistry;
   private content: RelationshipContent;
-  private levelManager: LevelManager;
+  private levelManager: WorldManager;
   private world: WorldState;
   private eventBus: TypedEventBus;
   private random: RandomService;
   private sim: NpcSimulation;
+  private builtins: BuiltinPluginRegistry;
 
   private logSeq = 0;
   /** Offers awaiting an answer, so we can narrate the chosen outcome. */
@@ -64,11 +68,12 @@ export default class RelationshipSystem {
   constructor() {
     this.registry = inject(NpcRegistry);
     this.content = inject(RelationshipContent);
-    this.levelManager = inject(LevelManager);
+    this.levelManager = inject(WorldManager);
     this.world = inject(WorldState);
     this.eventBus = inject(TypedEventBus);
     this.random = inject(RandomService);
     this.sim = inject(NpcSimulation);
+    this.builtins = inject(BuiltinPluginRegistry);
 
     this.eventBus.on("choice:resolved", ({ incidentId, optionId }) => {
       const rec = this.pendingOffers.get(incidentId);
@@ -80,12 +85,22 @@ export default class RelationshipSystem {
   }
 
   // ── lookups ────────────────────────────────────────────────────
+  /** Whether the player knows this NPC at their current age. */
+  public isKnown(npcId: string): boolean {
+    const npc = this.registry.get(npcId);
+    if (!npc) return false;
+    return npc.knowsAt(this.levelManager.getPlayer().age);
+  }
+
   private resolvedInteractions(npcId: string): NpcInteractionDef[] {
     const npc = this.registry.get(npcId);
     if (!npc) return [];
-    return npc.interactions && npc.interactions.length > 0
-      ? npc.interactions
-      : this.content.interactionsForRole(npc.roleKey);
+    const base =
+      npc.interactions && npc.interactions.length > 0
+        ? npc.interactions
+        : this.content.interactionsForRole(npc.roleKey);
+    const window = npc.interactionAgeWindow();
+    return [...base, ...npc.extraInteractions()].map((d) => stampWindow(d, window));
   }
 
   private resolvedAutonomy(npcId: string, kind: "passive" | "offer"): NpcAutonomyDef[] {
@@ -95,16 +110,25 @@ export default class RelationshipSystem {
       npc.autonomy && npc.autonomy.length > 0
         ? npc.autonomy
         : this.content.autonomyForRole(npc.roleKey);
-    return base.filter((d) => d.kind === kind);
+    const window = npc.autonomyAgeWindow();
+    // Built-in plugins contribute extra behaviours for the active world.
+    const behaviors = this.builtins.behaviorsFor(
+      this.levelManager.getCurrentWorldId?.() ?? "",
+    );
+    return [...base, ...npc.extraAutonomy(), ...behaviors]
+      .filter((d) => d.kind === kind)
+      .map((d) => stampWindow(d, window));
   }
 
   public getInteractionsFor(npcId: string): InteractionView[] {
     const player = this.levelManager.getPlayer();
     const gone = !this.sim.isAvailable(npcId);
+    const unknown = !this.isKnown(npcId);
     return this.resolvedInteractions(npcId).map((def) => {
       let reason: InteractionView["reason"];
       const aff = player.getRelationship(npcId);
-      if (gone) reason = "gone";
+      if (unknown) reason = "unknown";
+      else if (gone) reason = "gone";
       else if (def.minAge !== undefined && player.age < def.minAge) reason = "age";
       else if (def.maxAge !== undefined && player.age > def.maxAge) reason = "age";
       else if (def.minAffinity !== undefined && aff < def.minAffinity) reason = "require";
@@ -183,16 +207,27 @@ export default class RelationshipSystem {
   // ── yearly agency ──────────────────────────────────────────────
   /** Every known NPC with a beating heart may act; returns nothing. */
   public tickYear(player: Player): void {
+    // "Known" = the player has met them (affinity > 0) *and* the meeting is
+    // age-appropriate. The second clause is what keeps a boss or rival out of a
+    // toddler's year entirely.
     const known = this.registry
       .getAll()
       .map((n) => n.id)
-      .filter((id) => player.getRelationship(id) > 0);
+      .filter((id) => player.getRelationship(id) > 0 && this.isKnown(id));
     if (known.length === 0) return;
+    const knownSet = new Set(known);
 
     // NPCs live their own lives first: age + life events (marriage, promotion,
-    // illness, moving away, death). Only known faces are narrated.
-    for (const ev of this.sim.tickYear()) {
-      if (player.getRelationship(ev.npcId) > 0) this.log(`npc.life.${ev.kind}`);
+    // illness, moving away, death) and archetype schemes. Only known faces are
+    // narrated, and only their schemes can touch the player.
+    for (const ev of this.sim.tickYear(player)) {
+      if (!knownSet.has(ev.npcId)) continue;
+      if (ev.kind === "scheme") {
+        if (ev.logKey) this.log(ev.logKey);
+        if (ev.player) this.applyPlayerImpact(ev.npcId, ev.player, player);
+      } else {
+        this.log(`npc.life.${ev.kind}`);
+      }
     }
 
     const present = known.filter((id) => this.sim.isAvailable(id));
@@ -253,6 +288,30 @@ export default class RelationshipSystem {
     const incident = new NpcOfferIncident(npcId, def);
     this.pendingOffers.set(incident.id, { npcId, def });
     this.levelManager.offerNpcChoice(incident);
+  }
+
+  /** Apply an archetype scheme's impact to the player and the NPC's bond. */
+  private applyPlayerImpact(
+    npcId: string,
+    impact: NpcPlayerImpact,
+    player: Player,
+  ): void {
+    applyEffectPayload(
+      player,
+      {
+        effects: impact.effects,
+        items: impact.items,
+        buff: impact.buff,
+        karma: impact.karma,
+      },
+      this.world,
+    );
+    if (impact.flags) for (const f of impact.flags) player.setFlag(f);
+    if (impact.bond) this.sim.adjustBond(npcId, impact.bond);
+    if (impact.toastKey) {
+      this.eventBus.emit("toast", { textKey: impact.toastKey, kind: "info" });
+    }
+    player.notify();
   }
 
   private log(nameKey: string): void {

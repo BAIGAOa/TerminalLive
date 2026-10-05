@@ -1,0 +1,72 @@
+[
+  {
+    "id": "reg_paranoia_1",
+    "labelKey": "paranoia.reg.1",
+    "descKey": "paranoia.reg.1.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_paranoia_1"
+    ]
+  },
+  {
+    "id": "reg_paranoia_2",
+    "labelKey": "paranoia.reg.2",
+    "descKey": "paranoia.reg.2.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_paranoia_2"
+    ]
+  },
+  {
+    "id": "reg_paranoia_3",
+    "labelKey": "paranoia.reg.3",
+    "descKey": "paranoia.reg.3.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_paranoia_3"
+    ]
+  },
+  {
+    "id": "reg_paranoia_4",
+    "labelKey": "paranoia.reg.4",
+    "descKey": "paranoia.reg.4.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_paranoia_4"
+    ]
+  },
+  {
+    "id": "reg_paranoia_5",
+    "labelKey": "paranoia.reg.5",
+    "descKey": "paranoia.reg.5.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_paranoia_5"
+    ]
+  },
+  {
+    "id": "reg_paranoia_6",
+    "labelKey": "paranoia.reg.6",
+    "descKey": "paranoia.reg.6.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_paranoia_6"
+    ]
+  },
+  {
+    "id": "reg_paranoia_7",
+    "labelKey": "paranoia.reg.7",
+    "descKey": "paranoia.reg.7.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_paranoia_7"
+    ]
+  }
+]

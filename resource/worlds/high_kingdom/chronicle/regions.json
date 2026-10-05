@@ -1,0 +1,72 @@
+[
+  {
+    "id": "reg_high_kingdom_1",
+    "labelKey": "high_kingdom.reg.1",
+    "descKey": "high_kingdom.reg.1.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_high_kingdom_1"
+    ]
+  },
+  {
+    "id": "reg_high_kingdom_2",
+    "labelKey": "high_kingdom.reg.2",
+    "descKey": "high_kingdom.reg.2.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_high_kingdom_2"
+    ]
+  },
+  {
+    "id": "reg_high_kingdom_3",
+    "labelKey": "high_kingdom.reg.3",
+    "descKey": "high_kingdom.reg.3.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_high_kingdom_3"
+    ]
+  },
+  {
+    "id": "reg_high_kingdom_4",
+    "labelKey": "high_kingdom.reg.4",
+    "descKey": "high_kingdom.reg.4.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_high_kingdom_4"
+    ]
+  },
+  {
+    "id": "reg_high_kingdom_5",
+    "labelKey": "high_kingdom.reg.5",
+    "descKey": "high_kingdom.reg.5.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_high_kingdom_5"
+    ]
+  },
+  {
+    "id": "reg_high_kingdom_6",
+    "labelKey": "high_kingdom.reg.6",
+    "descKey": "high_kingdom.reg.6.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_high_kingdom_6"
+    ]
+  },
+  {
+    "id": "reg_high_kingdom_7",
+    "labelKey": "high_kingdom.reg.7",
+    "descKey": "high_kingdom.reg.7.desc",
+    "icon": "📍",
+    "climate": "temperate",
+    "neighbors": [
+      "reg_high_kingdom_7"
+    ]
+  }
+]

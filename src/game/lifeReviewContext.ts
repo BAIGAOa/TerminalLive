@@ -1,5 +1,5 @@
 import { container } from "../Container.js";
-import LevelManager from "../level/LevelManager.js";
+import WorldManager from "../worlds/WorldManager.js";
 import WorldState from "../world/chronicle/WorldState.js";
 import HealthSystem from "../world/health/HealthSystem.js";
 import EconomySystem from "../world/economy/EconomySystem.js";
@@ -15,7 +15,7 @@ import { buildLifeReview, LifeReview } from "./lifeReview.js";
 export function buildLifeReviewFromContainer(
   reason?: "death" | "complete",
 ): LifeReview {
-  const levelManager = container.resolve(LevelManager);
+  const levelManager = container.resolve(WorldManager);
   const player = levelManager.getPlayer();
   const world = container.resolve(WorldState);
   const achievements = container

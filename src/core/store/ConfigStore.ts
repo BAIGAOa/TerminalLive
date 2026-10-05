@@ -99,6 +99,17 @@ export default class ConfigStore {
     this.emitChange();
   }
 
+  /** Enabled built-in plugin ids; `null` means "all built-ins enabled". */
+  public getEnabledBuiltinPlugins(): string[] | null {
+    return this.config.enabledBuiltinPlugins ?? null;
+  }
+
+  public async setEnabledBuiltinPlugins(ids: string[]): Promise<void> {
+    this.config = { ...this.config, enabledBuiltinPlugins: ids };
+    await this.persist();
+    this.emitChange();
+  }
+
   public getKeyBindings(): Record<string, string> {
     return this.config.keyBindings ?? {};
   }

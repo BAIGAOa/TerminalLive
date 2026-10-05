@@ -1,0 +1,50 @@
+[
+  {
+    "source": "pr_golden_age_1",
+    "target": "pr_golden_age_2",
+    "threshold": 50,
+    "factor": 0.1
+  },
+  {
+    "source": "pr_golden_age_2",
+    "target": "pr_golden_age_3",
+    "threshold": 50,
+    "factor": 0.08
+  },
+  {
+    "source": "pr_golden_age_3",
+    "target": "pr_golden_age_4",
+    "threshold": 50,
+    "factor": 0.07
+  },
+  {
+    "source": "pr_golden_age_4",
+    "target": "pr_golden_age_5",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_golden_age_5",
+    "target": "pr_golden_age_6",
+    "threshold": 50,
+    "factor": -0.05
+  },
+  {
+    "source": "pr_golden_age_6",
+    "target": "pr_golden_age_7",
+    "threshold": 50,
+    "factor": 0.06
+  },
+  {
+    "source": "pr_golden_age_7",
+    "target": "pr_golden_age_8",
+    "threshold": 50,
+    "factor": 0.05
+  },
+  {
+    "source": "pr_golden_age_8",
+    "target": "pr_golden_age_1",
+    "threshold": 50,
+    "factor": 0.05
+  }
+]

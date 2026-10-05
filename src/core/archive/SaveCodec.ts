@@ -1,7 +1,7 @@
 import { container } from "../../Container.js";
 import Player from "../../world/Player.js";
 import ConfigStore from "../store/ConfigStore.js";
-import LevelManager from "../../level/LevelManager.js";
+import WorldManager from "../../worlds/WorldManager.js";
 import ThemeManager from "../theme/ThemeManager.js";
 import AchievementManager from "../../achievement/AchievementManager.js";
 import { VersionProvider } from "../version/VersionProvider.js";
@@ -27,7 +27,7 @@ import { SAVE_VERSION } from "./migrations.js";
  * from the container so archives and the auto-save share one source of truth.
  */
 export function captureSaveData(): SaveData {
-  const levelManager = container.resolve(LevelManager);
+  const levelManager = container.resolve(WorldManager);
   const configStore = container.resolve(ConfigStore);
   const achievementManager = container.resolve(AchievementManager);
   const versionProvider = container.resolve(VersionProvider);
@@ -79,12 +79,12 @@ export function captureSaveData(): SaveData {
       enabledMods: configStore.getEnabledMods(),
       traits: configStore.getTraits(),
     },
-    levels: {
-      currentLevel: levelManager.getCurrentLevelId() ?? "none",
-      completedLevels: levelManager.getCompletedLevelIds(),
+    run: {
+      worldId: levelManager.getCurrentWorldId(),
+      worldContentVersion: levelManager.getCurrentWorld()?.contentVersion ?? 1,
     },
-    levelObjectives: {
-      levelId: levelManager.getCurrentLevelId(),
+    worldObjectives: {
+      worldId: levelManager.getCurrentWorldId(),
       completed: levelManager.getCompletedObjectiveIds(),
     },
     world: container.resolve(WorldState).toSnapshot(),
@@ -111,11 +111,24 @@ export function captureSaveData(): SaveData {
  * Apply a `SaveData` onto the live singletons in place (no restart). The caller
  * is responsible for re-entering the saved level afterwards.
  */
-export function applySaveData(data: SaveData): void {
+export function applySaveData(data: SaveData): boolean {
   const configStore = container.resolve(ConfigStore);
   const themeManager = container.resolve(ThemeManager);
-  const levelManager = container.resolve(LevelManager);
+  const levelManager = container.resolve(WorldManager);
   const achievementManager = container.resolve(AchievementManager);
+
+  // Identity guard: refuse a save whose world is gone or has changed content.
+  const worldId = data.run.worldId;
+  if (worldId) {
+    const world = levelManager.getWorld(worldId);
+    if (!world || world.contentVersion !== data.run.worldContentVersion) {
+      console.warn(
+        `[Save] 世界 "${worldId}" 不存在或内容版本不符（存档 v${data.run.worldContentVersion}），已放弃加载`,
+      );
+      return false;
+    }
+  }
+
   const player: Player = levelManager.getPlayer();
 
   configStore.update({
@@ -124,8 +137,9 @@ export function applySaveData(data: SaveData): void {
     enabledMods: data.config.enabledMods,
     traits: data.config.traits,
     player: data.player,
-    lastLevelId: data.levels.currentLevel,
-    completedLevels: data.levels.completedLevels,
+    lastWorldId: data.run.worldId ?? undefined,
+    // Kept as a one-release alias for older readers.
+    lastLevelId: data.run.worldId ?? undefined,
   });
 
   if (data.config.theme) {
@@ -166,18 +180,18 @@ export function applySaveData(data: SaveData): void {
   container.resolve(EventDirector).restore(data.director);
 
   // Per-level event history is restored when the level is re-entered (each
-  // level owns its own EventHistory), so hand the blob to LevelManager.
+  // level owns its own EventHistory), so hand the blob to WorldManager.
   levelManager.setPendingHistory(data.history);
 
   achievementManager.setState(data.achievements);
   achievementManager.persist();
 
-  levelManager.initCompletedLevels(data.levels.completedLevels);
-  // Restore per-level objective progress so rewards aren't granted twice.
-  if (data.levelObjectives.levelId) {
+  // Restore per-world objective progress so rewards aren't granted twice.
+  if (data.worldObjectives.worldId) {
     levelManager.restoreObjectives(
-      data.levelObjectives.levelId,
-      data.levelObjectives.completed,
+      data.worldObjectives.worldId,
+      data.worldObjectives.completed,
     );
   }
+  return true;
 }

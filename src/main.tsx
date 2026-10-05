@@ -24,8 +24,8 @@ import ConfigStore from "./core/store/ConfigStore.js";
 import { SettingRegistry } from "./core/registry/SettingRegistry.js";
 import { resolveKeymap } from "./ui/keymap.js";
 import MainMenu from "./ui/MainMenu.js";
-import LevelSelection from "./ui/LevelSelection.js";
-import LevelGame from "./ui/LevelGame.js";
+import WorldSelection from "./ui/WorldSelection.js";
+import WorldGame from "./ui/WorldGame.js";
 import Setting from "./ui/Setting.js";
 import PlayerConfig from "./ui/PlayerConfig.js";
 import ModManager from "./ui/ModManager.js";
@@ -49,8 +49,8 @@ await container.resolve(GameInitialization).init();
 
 // ── 注册屏幕树 ──
 registerComponent(MainMenu, {});
-registerComponent(LevelSelection, {}, { parent: MainMenu });
-registerComponent(LevelGame, {}, { parent: LevelSelection });
+registerComponent(WorldSelection, {}, { parent: MainMenu });
+registerComponent(WorldGame, {}, { parent: WorldSelection });
 registerComponent(Setting, {}, { parent: MainMenu });
 registerComponent(PlayerConfig, {}, { parent: Setting });
 registerComponent(ModManager, {}, { parent: Setting });
@@ -93,7 +93,7 @@ function NotificationBanner() {
   );
   if (snap.visible || snap.unreadCount === 0) return null;
   return (
-    <Box height={3} width="100%" borderStyle="round" borderColor="cyanBright">
+    <Box height={3} width="100%" borderStyle="bold" borderColor="cyanBright">
       <Box justifyContent="center">
         <Text color={colors.warning}>
           {"📢 "}

@@ -1,0 +1,169 @@
+[
+  {
+    "id": "lore_high_kingdom_1",
+    "titleKey": "high_kingdom.lore.1",
+    "bodyKey": "high_kingdom.lore.1.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 1
+    }
+  },
+  {
+    "id": "lore_high_kingdom_2",
+    "titleKey": "high_kingdom.lore.2",
+    "bodyKey": "high_kingdom.lore.2.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 16
+    }
+  },
+  {
+    "id": "lore_high_kingdom_3",
+    "titleKey": "high_kingdom.lore.3",
+    "bodyKey": "high_kingdom.lore.3.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_high_kingdom_3"
+    }
+  },
+  {
+    "id": "lore_high_kingdom_4",
+    "titleKey": "high_kingdom.lore.4",
+    "bodyKey": "high_kingdom.lore.4.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_high_kingdom_5"
+    }
+  },
+  {
+    "id": "lore_high_kingdom_5",
+    "titleKey": "high_kingdom.lore.5",
+    "bodyKey": "high_kingdom.lore.5.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_high_kingdom_6",
+    "titleKey": "high_kingdom.lore.6",
+    "bodyKey": "high_kingdom.lore.6.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_high_kingdom_7",
+    "titleKey": "high_kingdom.lore.7",
+    "bodyKey": "high_kingdom.lore.7.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_high_kingdom_8",
+    "titleKey": "high_kingdom.lore.8",
+    "bodyKey": "high_kingdom.lore.8.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_high_kingdom_9",
+    "titleKey": "high_kingdom.lore.9",
+    "bodyKey": "high_kingdom.lore.9.body",
+    "category": "deed",
+    "unlock": {
+      "kind": "flag",
+      "flag": "traveled"
+    }
+  },
+  {
+    "id": "lore_high_kingdom_10",
+    "titleKey": "high_kingdom.lore.10",
+    "bodyKey": "high_kingdom.lore.10.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 60
+    }
+  },
+  {
+    "id": "lore_high_kingdom_11",
+    "titleKey": "high_kingdom.lore.11",
+    "bodyKey": "high_kingdom.lore.11.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "era",
+      "era": "era_high_kingdom_6"
+    }
+  },
+  {
+    "id": "lore_high_kingdom_12",
+    "titleKey": "high_kingdom.lore.12",
+    "bodyKey": "high_kingdom.lore.12.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_high_kingdom_13",
+    "titleKey": "high_kingdom.lore.13",
+    "bodyKey": "high_kingdom.lore.13.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 30
+    }
+  },
+  {
+    "id": "lore_high_kingdom_14",
+    "titleKey": "high_kingdom.lore.14",
+    "bodyKey": "high_kingdom.lore.14.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 45
+    }
+  },
+  {
+    "id": "lore_high_kingdom_15",
+    "titleKey": "high_kingdom.lore.15",
+    "bodyKey": "high_kingdom.lore.15.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_high_kingdom_16",
+    "titleKey": "high_kingdom.lore.16",
+    "bodyKey": "high_kingdom.lore.16.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 60
+    }
+  }
+]

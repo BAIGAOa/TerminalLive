@@ -7,7 +7,7 @@ import { usePlayerConfig } from "../hooks/usePlayerConfig.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { container } from "../Container.js";
-import LevelManager from "../level/LevelManager.js";
+import WorldManager from "../worlds/WorldManager.js";
 
 interface PlayerConfigProps {
   player?: Player;
@@ -15,7 +15,7 @@ interface PlayerConfigProps {
 }
 
 export default function PlayerConfig({ player: playerProp, onBack }: PlayerConfigProps) {
-  const player = playerProp ?? container.resolve(LevelManager).getPlayer();
+  const player = playerProp ?? container.resolve(WorldManager).getPlayer();
   const data = usePlayerConfig(player, onBack);
   const { rows } = useTerminalSize();
   const colors = useThemeColors();
@@ -66,7 +66,7 @@ export default function PlayerConfig({ player: playerProp, onBack }: PlayerConfi
               }}
               renderItem={(item, state) => (
                 <Box
-                  borderStyle="double"
+                  borderStyle="bold"
                   borderColor={state.selected ? colors.highlight : colors.muted}
                   paddingX={1}
                   justifyContent="center"
@@ -82,7 +82,7 @@ export default function PlayerConfig({ player: playerProp, onBack }: PlayerConfi
           flexDirection="column"
           padding={1}
           width={data.isEditing ? "100%" : "70%"}
-          borderStyle="single"
+          borderStyle="bold"
           borderColor={colors.info}
         >
           {data.activeCategory === null ? (
@@ -129,7 +129,7 @@ export default function PlayerConfig({ player: playerProp, onBack }: PlayerConfi
                     flexDirection="row"
                     flexGrow={1}
                     justifyContent="space-between"
-                    borderStyle="round"
+                    borderStyle="bold"
                     borderColor={state.selected ? colors.success : colors.muted}
                     paddingX={1}
                   >

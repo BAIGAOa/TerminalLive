@@ -1,0 +1,47 @@
+[
+  {
+    "id": "fac_golden_age_1",
+    "labelKey": "golden_age.fac.1",
+    "descKey": "golden_age.fac.1.desc",
+    "icon": "👑",
+    "rivals": [
+      "fac_golden_age_2"
+    ]
+  },
+  {
+    "id": "fac_golden_age_2",
+    "labelKey": "golden_age.fac.2",
+    "descKey": "golden_age.fac.2.desc",
+    "icon": "⚔",
+    "rivals": [
+      "fac_golden_age_3"
+    ]
+  },
+  {
+    "id": "fac_golden_age_3",
+    "labelKey": "golden_age.fac.3",
+    "descKey": "golden_age.fac.3.desc",
+    "icon": "🕯",
+    "rivals": [
+      "fac_golden_age_4"
+    ]
+  },
+  {
+    "id": "fac_golden_age_4",
+    "labelKey": "golden_age.fac.4",
+    "descKey": "golden_age.fac.4.desc",
+    "icon": "🔧",
+    "rivals": [
+      "fac_golden_age_5"
+    ]
+  },
+  {
+    "id": "fac_golden_age_5",
+    "labelKey": "golden_age.fac.5",
+    "descKey": "golden_age.fac.5.desc",
+    "icon": "🕸",
+    "rivals": [
+      "fac_golden_age_1"
+    ]
+  }
+]

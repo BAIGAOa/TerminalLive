@@ -12,12 +12,27 @@ export interface NpcDefinition {
   id: string;
   labelKey: string;
   descKey: string;
+  /**
+   * Archetype-type selecting the NPC class (Mindustry-style). Optional: when
+   * absent it is inferred from `roleKey` (see ROLE_TO_TYPE / NpcTypeRegistry).
+   */
+  type?: string;
+  /** Free-form custom fields parsed by the type's class (see Npc.parseParams). */
+  params?: Record<string, unknown>;
   /** e.g. family / friend / rival — drives the default affinity. */
   roleKey?: string;
   /** Affinity the player starts with (0–100). */
   initial?: number;
   /** Age at the start of a life; NPCs age each year (see NpcSimulation). */
   startAge?: number;
+  /**
+   * Player age at which the player comes to know this NPC (overrides the role
+   * default). Below it the NPC is absent from the relationship UI and never runs
+   * its autonomy — the fix for age-inappropriate NPC events in childhood.
+   */
+  knownFromAge?: number;
+  /** Player age after which the NPC is no longer part of the player's life. */
+  knownUntilAge?: number;
   /** NPC ids this one is kin to — seeds the social graph. */
   kinOf?: string[];
   /** NPC id this one is partnered with at the start of a life. */
@@ -62,7 +77,7 @@ const offerOptionSchema = z.object({
   resultKey: z.string().optional(),
 });
 
-const autonomySchema = z.object({
+export const autonomySchema = z.object({
   id: z.string(),
   labelKey: z.string(),
   weight: z.number().default(1),
@@ -85,9 +100,15 @@ export const npcSchema = z.object({
   id: z.string(),
   labelKey: z.string(),
   descKey: z.string(),
+  // Optional: inferred from roleKey when absent (backward compatible).
+  type: z.string().optional(),
+  // Free-form; a type's class reads/validates its own custom fields.
+  params: z.record(z.string(), z.unknown()).optional(),
   roleKey: z.string().optional(),
   initial: z.number().min(0).max(100).default(30),
   startAge: z.number().optional(),
+  knownFromAge: z.number().optional(),
+  knownUntilAge: z.number().optional(),
   kinOf: z.array(z.string()).optional(),
   partnerOf: z.string().optional(),
   temperamentKey: z.string().optional(),

@@ -8,10 +8,10 @@ import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
 import { computeMenuLayout } from "./menuLayout.js";
 import { container } from "../Container.js";
-import LevelManager from "../level/LevelManager.js";
+import WorldManager from "../worlds/WorldManager.js";
 import LineageStore from "../core/store/LineageStore.js";
-import LevelSelection from "./LevelSelection.js";
-import LevelGame from "./LevelGame.js";
+import WorldSelection from "./WorldSelection.js";
+import WorldGame from "./WorldGame.js";
 import Setting from "./Setting.js";
 import Language from "./Language.js";
 import AchievementScreen from "./Achievement.js";
@@ -27,7 +27,7 @@ export default function MainMenu() {
   const { skip } = useScreenSystem();
   const { columns: termCols, rows: termRows } = useTerminalSize();
 
-  const hasActiveLife = container.resolve(LevelManager).hasActiveLevel();
+  const hasActiveLife = container.resolve(WorldManager).hasActiveWorld();
 
   // Responsive grid: buttons stay a uniform width and fan out into fewer
   // columns (3 → 2 → 1) as the terminal narrows, staying centered and on-screen.
@@ -64,10 +64,10 @@ export default function MainMenu() {
     (item: { value: string }) => {
       switch (item.value) {
         case "continue":
-          gotoScreen(LevelGame, {});
+          gotoScreen(WorldGame, {});
           break;
         case "start":
-          skip(LevelSelection, {});
+          skip(WorldSelection, {});
           break;
         case "traits":
           skip(Traits, {});
@@ -130,7 +130,7 @@ export default function MainMenu() {
         renderItem={(item, state) => (
           <Box
             flexGrow={1}
-            borderStyle="round"
+            borderStyle="bold"
            
             borderColor={state.selected ? colors.highlight : colors.muted}
             paddingX={1}

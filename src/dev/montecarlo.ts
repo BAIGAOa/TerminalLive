@@ -11,7 +11,7 @@
  */
 import { container } from "../Container.js";
 import GameInitialization from "../core/GameInitialization.js";
-import LevelManager from "../level/LevelManager.js";
+import WorldManager from "../worlds/WorldManager.js";
 import Game from "../core/Game.js";
 import TypedEventBus from "../core/TypedEventBus.js";
 import RandomService from "../core/random/RandomService.js";
@@ -70,13 +70,13 @@ async function main() {
   backup();
   await container.resolve(GameInitialization).init();
 
-  const lm = container.resolve(LevelManager);
+  const lm = container.resolve(WorldManager);
   const game = container.resolve(Game);
   const random = container.resolve(RandomService);
   const bus = container.resolve(TypedEventBus);
   const achievements = container.resolve(AchievementRegistry);
 
-  const rootId = lm.getRootLevelIds()[0] ?? "childhood";
+  const rootId = lm.getRootWorldIds()[0] ?? "classic";
 
   const eventHits = new Map<string, number>();
   bus.on("incident:executed", ({ incidentId }) => {
@@ -117,9 +117,6 @@ async function main() {
         const avail = game.getActionViews().find((a) => a.available);
         if (avail) game.performAction(avail.def.id);
         game.endTurn();
-      }
-      if (lm.isCurrentCleared() && lm.current.nextLevel !== "none") {
-        if (!game.goToNextLevel()) break;
       }
     }
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { container } from "../../Container.js";
-import World from "../../content/World.js";
-import WorldRegistry from "../../world/chronicle/WorldRegistry.js";
+import Chronicle from "../../content/Chronicle.js";
+import ChronicleRegistry from "../../world/chronicle/ChronicleRegistry.js";
 import WorldState from "../../world/chronicle/WorldState.js";
 import WorldFilter, {
   meetsWorldGate,
@@ -12,7 +12,7 @@ import { evaluateFates, fateWeightFactor } from "../../world/chronicle/fate.js";
 import FilterContext from "../../event/FilterContext.js";
 import { Incident } from "../../world/Incident.js";
 
-beforeEach(() => World.load());
+beforeEach(() => Chronicle.load());
 
 function freshWorld(regionId = "reg_highland"): WorldState {
   const w = new WorldState();
@@ -22,7 +22,7 @@ function freshWorld(regionId = "reg_highland"): WorldState {
 
 describe("chronicle — eras", () => {
   it("maps a year to the latest era that has begun", () => {
-    const eras = container.resolve(WorldRegistry).getEras();
+    const eras = container.resolve(ChronicleRegistry).getEras();
     expect(eraForYear(eras, 0)?.id).toBe("era_dawn");
     expect(eraForYear(eras, 19)?.id).toBe("era_dawn");
     expect(eraForYear(eras, 20)?.id).toBe("era_iron");
@@ -70,7 +70,7 @@ describe("chronicle — unlock conditions", () => {
 
 describe("chronicle — fate arcs", () => {
   it("evaluates which arcs are active and biases weights", () => {
-    const defs = container.resolve(WorldRegistry).getFates();
+    const defs = container.resolve(ChronicleRegistry).getFates();
     const ctx = {
       year: 30,
       eraId: "era_iron",

@@ -1,0 +1,258 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "wilds_ev_hermit_1",
+    "nameKey": "wilds.ev.hermit.1",
+    "textKey": "wilds.ev.hermit.1.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "wilds.ev.hermit.1.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "wilds.ev.hermit.1.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "wilds.ev.hermit.1.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "wilds.ev.hermit.1.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "wilds_ev_hermit_2",
+    "nameKey": "wilds.ev.hermit.2",
+    "textKey": "wilds.ev.hermit.2.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "wilds.ev.hermit.2.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "wilds.ev.hermit.2.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "wilds.ev.hermit.2.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "wilds.ev.hermit.2.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "wilds_ev_hermit_3",
+    "nameKey": "wilds.ev.hermit.3",
+    "textKey": "wilds.ev.hermit.3.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "wilds.ev.hermit.3.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "wilds.ev.hermit.3.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "wilds.ev.hermit.3.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "wilds.ev.hermit.3.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "wilds_ev_hermit_4",
+    "nameKey": "wilds.ev.hermit.4",
+    "textKey": "wilds.ev.hermit.4.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "wilds.ev.hermit.4.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "wilds.ev.hermit.4.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "wilds.ev.hermit.4.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "wilds.ev.hermit.4.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "EffectEvent",
+    "id": "wilds_ev_quiet",
+    "nameKey": "wilds.ev.quiet",
+    "textKey": "wilds.ev.quiet.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "wilds_ev_omen",
+    "nameKey": "wilds.ev.omen",
+    "textKey": "wilds.ev.omen.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 3,
+        "reputation": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "wilds_ev_hard",
+    "nameKey": "wilds.ev.hard",
+    "textKey": "wilds.ev.hard.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "happiness": -2,
+        "health": -2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "wilds_ev_dread",
+    "nameKey": "wilds.ev.dread",
+    "textKey": "wilds.ev.dread.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "depressionValue": 4
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "wilds_ev_bounty",
+    "nameKey": "wilds.ev.bounty",
+    "textKey": "wilds.ev.bounty.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "money": 20
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "wilds_ev_weariness",
+    "nameKey": "wilds.ev.weariness",
+    "textKey": "wilds.ev.weariness.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "weakValue": 4
+      }
+    }
+  }
+]

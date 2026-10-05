@@ -1,0 +1,72 @@
+[
+  {
+    "id": "reg_wilds_1",
+    "labelKey": "wilds.reg.1",
+    "descKey": "wilds.reg.1.desc",
+    "icon": "📍",
+    "climate": "highland",
+    "neighbors": [
+      "reg_wilds_1"
+    ]
+  },
+  {
+    "id": "reg_wilds_2",
+    "labelKey": "wilds.reg.2",
+    "descKey": "wilds.reg.2.desc",
+    "icon": "📍",
+    "climate": "highland",
+    "neighbors": [
+      "reg_wilds_2"
+    ]
+  },
+  {
+    "id": "reg_wilds_3",
+    "labelKey": "wilds.reg.3",
+    "descKey": "wilds.reg.3.desc",
+    "icon": "📍",
+    "climate": "highland",
+    "neighbors": [
+      "reg_wilds_3"
+    ]
+  },
+  {
+    "id": "reg_wilds_4",
+    "labelKey": "wilds.reg.4",
+    "descKey": "wilds.reg.4.desc",
+    "icon": "📍",
+    "climate": "highland",
+    "neighbors": [
+      "reg_wilds_4"
+    ]
+  },
+  {
+    "id": "reg_wilds_5",
+    "labelKey": "wilds.reg.5",
+    "descKey": "wilds.reg.5.desc",
+    "icon": "📍",
+    "climate": "highland",
+    "neighbors": [
+      "reg_wilds_5"
+    ]
+  },
+  {
+    "id": "reg_wilds_6",
+    "labelKey": "wilds.reg.6",
+    "descKey": "wilds.reg.6.desc",
+    "icon": "📍",
+    "climate": "highland",
+    "neighbors": [
+      "reg_wilds_6"
+    ]
+  },
+  {
+    "id": "reg_wilds_7",
+    "labelKey": "wilds.reg.7",
+    "descKey": "wilds.reg.7.desc",
+    "icon": "📍",
+    "climate": "highland",
+    "neighbors": [
+      "reg_wilds_7"
+    ]
+  }
+]

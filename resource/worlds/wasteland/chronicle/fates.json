@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fate_wasteland_1",
+    "labelKey": "wasteland.fate.1",
+    "descKey": "wasteland.fate.1.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wasteland_2",
+    "labelKey": "wasteland.fate.2",
+    "descKey": "wasteland.fate.2.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wasteland_3",
+    "labelKey": "wasteland.fate.3",
+    "descKey": "wasteland.fate.3.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wasteland_4",
+    "labelKey": "wasteland.fate.4",
+    "descKey": "wasteland.fate.4.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wasteland_5",
+    "labelKey": "wasteland.fate.5",
+    "descKey": "wasteland.fate.5.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "year",
+      "year": 50
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_wasteland_6",
+    "labelKey": "wasteland.fate.6",
+    "descKey": "wasteland.fate.6.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "era",
+      "era": "era_wasteland_5"
+    },
+    "factor": 2
+  }
+]

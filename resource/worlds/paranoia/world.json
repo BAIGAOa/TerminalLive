@@ -1,0 +1,39 @@
+{
+  "id": "paranoia",
+  "nameKey": "world.paranoia",
+  "descriptionKey": "world.paranoia.desc",
+  "icon": "👁",
+  "tags": [
+    "intrigue"
+  ],
+  "difficultyIdentification": "normal",
+  "contentVersion": 3,
+  "startPlayer": {
+    "age": 0,
+    "health": 95,
+    "happiness": 55,
+    "intelligence": 12,
+    "social": 10,
+    "fitness": 8,
+    "money": 50
+  },
+  "unlockRequires": [
+    "neon_city",
+    "plague_years"
+  ],
+  "selfContained": true,
+  "worldRules": [
+    "rule_paranoid"
+  ],
+  "algorithm": "default",
+  "completionConditions": [
+    {
+      "type": "generalPurpose",
+      "params": {
+        "prop": "age",
+        "num": 80,
+        "cat": "greaterThan"
+      }
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+[
+  {
+    "id": "lore_paranoia_1",
+    "titleKey": "paranoia.lore.1",
+    "bodyKey": "paranoia.lore.1.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 1
+    }
+  },
+  {
+    "id": "lore_paranoia_2",
+    "titleKey": "paranoia.lore.2",
+    "bodyKey": "paranoia.lore.2.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 16
+    }
+  },
+  {
+    "id": "lore_paranoia_3",
+    "titleKey": "paranoia.lore.3",
+    "bodyKey": "paranoia.lore.3.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_paranoia_3"
+    }
+  },
+  {
+    "id": "lore_paranoia_4",
+    "titleKey": "paranoia.lore.4",
+    "bodyKey": "paranoia.lore.4.body",
+    "category": "era",
+    "unlock": {
+      "kind": "era",
+      "era": "era_paranoia_5"
+    }
+  },
+  {
+    "id": "lore_paranoia_5",
+    "titleKey": "paranoia.lore.5",
+    "bodyKey": "paranoia.lore.5.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_paranoia_6",
+    "titleKey": "paranoia.lore.6",
+    "bodyKey": "paranoia.lore.6.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_paranoia_7",
+    "titleKey": "paranoia.lore.7",
+    "bodyKey": "paranoia.lore.7.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_paranoia_8",
+    "titleKey": "paranoia.lore.8",
+    "bodyKey": "paranoia.lore.8.body",
+    "category": "karma",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 30
+    }
+  },
+  {
+    "id": "lore_paranoia_9",
+    "titleKey": "paranoia.lore.9",
+    "bodyKey": "paranoia.lore.9.body",
+    "category": "deed",
+    "unlock": {
+      "kind": "flag",
+      "flag": "traveled"
+    }
+  },
+  {
+    "id": "lore_paranoia_10",
+    "titleKey": "paranoia.lore.10",
+    "bodyKey": "paranoia.lore.10.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 60
+    }
+  },
+  {
+    "id": "lore_paranoia_11",
+    "titleKey": "paranoia.lore.11",
+    "bodyKey": "paranoia.lore.11.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "era",
+      "era": "era_paranoia_6"
+    }
+  },
+  {
+    "id": "lore_paranoia_12",
+    "titleKey": "paranoia.lore.12",
+    "bodyKey": "paranoia.lore.12.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_paranoia_13",
+    "titleKey": "paranoia.lore.13",
+    "bodyKey": "paranoia.lore.13.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 30
+    }
+  },
+  {
+    "id": "lore_paranoia_14",
+    "titleKey": "paranoia.lore.14",
+    "bodyKey": "paranoia.lore.14.body",
+    "category": "era",
+    "unlock": {
+      "kind": "year",
+      "year": 45
+    }
+  },
+  {
+    "id": "lore_paranoia_15",
+    "titleKey": "paranoia.lore.15",
+    "bodyKey": "paranoia.lore.15.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 60
+    }
+  },
+  {
+    "id": "lore_paranoia_16",
+    "titleKey": "paranoia.lore.16",
+    "bodyKey": "paranoia.lore.16.body",
+    "category": "secret",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 60
+    }
+  }
+]

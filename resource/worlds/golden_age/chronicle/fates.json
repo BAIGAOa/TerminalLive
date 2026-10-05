@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fate_golden_age_1",
+    "labelKey": "golden_age.fate.1",
+    "descKey": "golden_age.fate.1.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "wisdom",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_golden_age_2",
+    "labelKey": "golden_age.fate.2",
+    "descKey": "golden_age.fate.2.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "ambition",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_golden_age_3",
+    "labelKey": "golden_age.fate.3",
+    "descKey": "golden_age.fate.3.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "benevolence",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_golden_age_4",
+    "labelKey": "golden_age.fate.4",
+    "descKey": "golden_age.fate.4.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "karma",
+      "axis": "rebellion",
+      "gte": 40
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_golden_age_5",
+    "labelKey": "golden_age.fate.5",
+    "descKey": "golden_age.fate.5.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "year",
+      "year": 50
+    },
+    "factor": 2
+  },
+  {
+    "id": "fate_golden_age_6",
+    "labelKey": "golden_age.fate.6",
+    "descKey": "golden_age.fate.6.desc",
+    "icon": "✦",
+    "unlock": {
+      "kind": "era",
+      "era": "era_golden_age_5"
+    },
+    "factor": 2
+  }
+]

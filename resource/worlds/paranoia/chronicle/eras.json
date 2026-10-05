@@ -1,0 +1,50 @@
+[
+  {
+    "id": "era_paranoia_1",
+    "labelKey": "paranoia.era.1",
+    "descKey": "paranoia.era.1.desc",
+    "fromYear": 0,
+    "icon": "🌅",
+    "color": "yellow"
+  },
+  {
+    "id": "era_paranoia_2",
+    "labelKey": "paranoia.era.2",
+    "descKey": "paranoia.era.2.desc",
+    "fromYear": 16,
+    "icon": "⚒",
+    "color": "gray"
+  },
+  {
+    "id": "era_paranoia_3",
+    "labelKey": "paranoia.era.3",
+    "descKey": "paranoia.era.3.desc",
+    "fromYear": 32,
+    "icon": "⚙",
+    "color": "white"
+  },
+  {
+    "id": "era_paranoia_4",
+    "labelKey": "paranoia.era.4",
+    "descKey": "paranoia.era.4.desc",
+    "fromYear": 50,
+    "icon": "⚡",
+    "color": "cyan"
+  },
+  {
+    "id": "era_paranoia_5",
+    "labelKey": "paranoia.era.5",
+    "descKey": "paranoia.era.5.desc",
+    "fromYear": 68,
+    "icon": "✦",
+    "color": "magentaBright"
+  },
+  {
+    "id": "era_paranoia_6",
+    "labelKey": "paranoia.era.6",
+    "descKey": "paranoia.era.6.desc",
+    "fromYear": 86,
+    "icon": "🌌",
+    "color": "blue"
+  }
+]

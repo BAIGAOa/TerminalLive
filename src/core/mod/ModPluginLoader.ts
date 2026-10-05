@@ -3,26 +3,41 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ComponentType } from "react";
 import EventTypeRegistry from "./EventTypeRegistry.js";
+import NpcTypeRegistry from "../../world/relationships/NpcTypeRegistry.js";
+import { Npc, type NpcConstructor } from "../../world/relationships/Npc.js";
+import { inWindow, type AgeWindow } from "../../world/relationships/AgeWindow.js";
+import type {
+  NpcSchemeResult,
+  NpcYearContext,
+} from "../../world/relationships/NpcScheme.js";
+import type { NpcSimEvent, NpcTraits } from "../../world/relationships/NpcState.js";
 import ConfigStore from "../store/ConfigStore.js";
 import Player from "../../world/Player.js";
 import { Incident, IncidentParameter } from "../../world/Incident.js";
-import { ModContext, ModPlugin, ModEventClassDef, ResolvedMod } from "./types.js";
+import {
+  ModContext,
+  ModPlugin,
+  ModEventClassDef,
+  ModNpcClassDef,
+  ResolvedMod,
+} from "./types.js";
 import { gotoScreen, registerComponent } from "ink-cartridge";
 import TypedEventBus from "../TypedEventBus.js";
 import ModMonitor from "./ModMonitor.js";
 import AlgorithmRegistry from "../registry/AlgorithmRegistry.js";
 import FilterRegistry from "../registry/FilterRegistry.js";
-import LevelConditionRegistry from "../registry/LevelConditionRegistry.js";
+import WorldConditionRegistry from "../registry/WorldConditionRegistry.js";
 import { SettingRegistry } from "../registry/SettingRegistry.js";
 import AchievementResolver from "../../achievement/AchievementResolver.js";
 import { Achievement } from "../../achievement/AchievementDefinition.js";
 import PressureRegistry from "../../world/pressures/PressureRegistry.js";
-import WorldRegistry from "../../world/chronicle/WorldRegistry.js";
+import ChronicleRegistry from "../../world/chronicle/ChronicleRegistry.js";
 import TraitRegistry from "../../world/traits/TraitRegistry.js";
 import { resolveLoadOrder } from "./loadOrder.js";
 import { loadModModule } from "./sandbox.js";
 import RandomService from "../random/RandomService.js";
 import EventDirector from "../../event/EventDirector.js";
+import WorldRuleRegistry from "../../world/rules/WorldRuleRegistry.js";
 import { hasCapability } from "./capabilities.js";
 
 interface HookEntry {
@@ -52,15 +67,16 @@ function safe(label: string, fn: () => unknown): unknown {
 export default class ModPluginLoader {
   private registry: ModMonitor;
   private eventTypeRegistry: EventTypeRegistry;
+  private npcTypeRegistry: NpcTypeRegistry;
   private eventBus: TypedEventBus;
   private configStore: ConfigStore;
-  private conditionReg: LevelConditionRegistry;
+  private conditionReg: WorldConditionRegistry;
   private algoRegister: AlgorithmRegistry;
   private filterRegister: FilterRegistry;
   private settingCenter: SettingRegistry;
   private achievementResolver: AchievementResolver;
   private pressureRegistry: PressureRegistry;
-  private worldRegistry: WorldRegistry;
+  private worldRegistry: ChronicleRegistry;
   private traitRegistry: TraitRegistry;
 
   private playerRef: Player | null = null;
@@ -76,19 +92,31 @@ export default class ModPluginLoader {
   private choiceHooks: HookEntry[] = [];
   private weightRuleSeq = 0;
   private weightRuleDisposers: Array<() => void> = [];
+  /**
+   * Mod-defined chronicle/pressure content, remembered so it can be re-applied
+   * after a world replaces (clears) that category's registry.
+   */
+  private scopedOverlay = {
+    lore: [] as unknown[],
+    fates: [] as unknown[],
+    worldEvents: [] as unknown[],
+    pressureAxes: [] as unknown[],
+    pressureRules: [] as unknown[],
+  };
 
   constructor() {
     this.registry = inject(ModMonitor);
     this.eventTypeRegistry = inject(EventTypeRegistry);
+    this.npcTypeRegistry = inject(NpcTypeRegistry);
     this.eventBus = inject(TypedEventBus);
     this.configStore = inject(ConfigStore);
-    this.conditionReg = inject(LevelConditionRegistry);
+    this.conditionReg = inject(WorldConditionRegistry);
     this.algoRegister = inject(AlgorithmRegistry);
     this.filterRegister = inject(FilterRegistry);
     this.settingCenter = inject(SettingRegistry);
     this.achievementResolver = inject(AchievementResolver);
     this.pressureRegistry = inject(PressureRegistry);
-    this.worldRegistry = inject(WorldRegistry);
+    this.worldRegistry = inject(ChronicleRegistry);
     this.traitRegistry = inject(TraitRegistry);
   }
 
@@ -134,6 +162,51 @@ export default class ModPluginLoader {
     return this.loadedMods;
   }
 
+  /**
+   * Re-apply mod chronicle/pressure content after a world cleared a category's
+   * registry (`cleared` says which categories that was). Non-cleared categories
+   * keep the mod content that is already in the restored baseline.
+   */
+  public applyScopedOverlay(cleared: {
+    chronicle?: boolean;
+    pressures?: boolean;
+  } = {}): void {
+    if (cleared.chronicle) {
+      for (const def of this.scopedOverlay.lore) {
+        try {
+          this.worldRegistry.registerLore(def as never);
+        } catch {
+          /* already present */
+        }
+      }
+      for (const def of this.scopedOverlay.fates) {
+        try {
+          this.worldRegistry.registerFate(def as never);
+        } catch {
+          /* already present */
+        }
+      }
+      for (const def of this.scopedOverlay.worldEvents) {
+        try {
+          this.worldRegistry.registerWorldEvent(def as never);
+        } catch {
+          /* already present */
+        }
+      }
+    }
+    if (cleared.pressures) {
+      for (const def of this.scopedOverlay.pressureAxes) {
+        const id = (def as { id: string }).id;
+        if (!this.pressureRegistry.hasAxis(id)) {
+          this.pressureRegistry.registerAxis(def as never);
+        }
+      }
+      for (const rule of this.scopedOverlay.pressureRules) {
+        this.pressureRegistry.registerRule(rule as never);
+      }
+    }
+  }
+
   private loadOne(mod: ResolvedMod): void {
     const mainPath = join(this.registry.getModPath(mod.dirName), mod.manifest.main);
     let exported: any;
@@ -163,6 +236,14 @@ export default class ModPluginLoader {
       );
     } else if (plugin.registerEventTypes) {
       console.warn(`[Mod] "${mod.dirName}" 未声明 "events" 能力，忽略 registerEventTypes`);
+    }
+    // Capability-gated like event types: NPC archetypes need "npcs".
+    if (hasCapability(manifest, "npcs")) {
+      safe(`${mod.dirName}.registerNpcTypes`, () =>
+        plugin.registerNpcTypes?.(this.npcTypeRegistry, ctx),
+      );
+    } else if (plugin.registerNpcTypes) {
+      console.warn(`[Mod] "${mod.dirName}" 未声明 "npcs" 能力，忽略 registerNpcTypes`);
     }
     this.registerHooks(plugin, ctx, mod.dirName);
     safe(`${mod.dirName}.onInit`, () => plugin.hooks?.onInit?.(ctx));
@@ -265,6 +346,15 @@ export default class ModPluginLoader {
         if (!can("events")) return this.makeEventClass({ apply: () => {} });
         return this.makeEventClass(def);
       },
+      registerNpcType: (name, ctor) => {
+        if (!can("npcs")) return;
+        reg(() => this.npcTypeRegistry.register(name, ctor), "npcType");
+      },
+      createNpcClass: (def: ModNpcClassDef) => {
+        if (!can("npcs")) return this.makeNpcClass({});
+        return this.makeNpcClass(def);
+      },
+      npcBase: Npc,
 
       registerScreen: (key, entry) => {
         if (!can("ui")) return;
@@ -301,21 +391,30 @@ export default class ModPluginLoader {
       },
       addPressureAxis: (def) => {
         if (!can("world")) return;
+        this.scopedOverlay.pressureAxes.push(def);
         if (!this.pressureRegistry.hasAxis(def.id)) {
           reg(() => this.pressureRegistry.registerAxis(def), "pressureAxis");
         }
       },
       addPressureRule: (rule) => {
-        if (can("world")) reg(() => this.pressureRegistry.registerRule(rule), "pressureRule");
+        if (!can("world")) return;
+        this.scopedOverlay.pressureRules.push(rule);
+        reg(() => this.pressureRegistry.registerRule(rule), "pressureRule");
       },
       addLore: (def) => {
-        if (can("world")) reg(() => this.worldRegistry.registerLore(def), "lore");
+        if (!can("world")) return;
+        this.scopedOverlay.lore.push(def);
+        reg(() => this.worldRegistry.registerLore(def), "lore");
       },
       addFateArc: (def) => {
-        if (can("world")) reg(() => this.worldRegistry.registerFate(def), "fate");
+        if (!can("world")) return;
+        this.scopedOverlay.fates.push(def);
+        reg(() => this.worldRegistry.registerFate(def), "fate");
       },
       addWorldEvent: (def) => {
-        if (can("world")) reg(() => this.worldRegistry.registerWorldEvent(def), "worldEvent");
+        if (!can("world")) return;
+        this.scopedOverlay.worldEvents.push(def);
+        reg(() => this.worldRegistry.registerWorldEvent(def), "worldEvent");
       },
       addTrait: (def) => {
         if (!can("world")) return;
@@ -328,6 +427,13 @@ export default class ModPluginLoader {
       addWeightRule: (rule) => {
         const id = `mod:${modName}:rule${++this.weightRuleSeq}`;
         this.weightRuleDisposers.push(inject(EventDirector).addRule(id, rule));
+      },
+      addWorldRule: (def) => {
+        if (!can("world")) return;
+        const registry = inject(WorldRuleRegistry);
+        reg(() => {
+          if (!registry.has(def.id)) registry.register(def.id, def);
+        }, "worldRule");
       },
     };
   }
@@ -344,6 +450,39 @@ export default class ModPluginLoader {
       }
       getWeight(player: Player): number {
         return def.getWeight?.(player, this) ?? this.weight;
+      }
+    };
+  }
+
+  /** Adaptation of {@link ModNpcClassDef} into a concrete Npc subclass. */
+  private makeNpcClass(def: ModNpcClassDef): NpcConstructor {
+    return class ModDynamicNpc extends Npc {
+      protected parseParams(params: Record<string, unknown>): void {
+        def.parseParams?.(this, params);
+      }
+      public traits(): NpcTraits {
+        return def.traits ?? super.traits();
+      }
+      public knowsAt(playerAge: number): boolean {
+        if (def.knowsFromAge !== undefined || def.knowsUntilAge !== undefined) {
+          return inWindow(playerAge, {
+            min: def.knowsFromAge,
+            max: def.knowsUntilAge,
+          });
+        }
+        return super.knowsAt(playerAge);
+      }
+      public autonomyAgeWindow(): AgeWindow {
+        return { min: def.autonomyMinAge, max: def.autonomyMaxAge };
+      }
+      public peerScheme(ctx: NpcYearContext): NpcSchemeResult[] {
+        return def.peerScheme ? def.peerScheme(this, ctx) : [];
+      }
+      public reactToPeer(
+        ev: NpcSimEvent,
+        ctx: NpcYearContext,
+      ): NpcSchemeResult | null {
+        return def.reactToPeer ? def.reactToPeer(this, ev, ctx) : null;
       }
     };
   }

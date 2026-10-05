@@ -1,0 +1,258 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_hermit_1",
+    "nameKey": "paranoia.ev.hermit.1",
+    "textKey": "paranoia.ev.hermit.1.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "paranoia.ev.hermit.1.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.hermit.1.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "paranoia.ev.hermit.1.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.hermit.1.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_hermit_2",
+    "nameKey": "paranoia.ev.hermit.2",
+    "textKey": "paranoia.ev.hermit.2.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "paranoia.ev.hermit.2.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.hermit.2.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "paranoia.ev.hermit.2.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.hermit.2.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_hermit_3",
+    "nameKey": "paranoia.ev.hermit.3",
+    "textKey": "paranoia.ev.hermit.3.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "paranoia.ev.hermit.3.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.hermit.3.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "paranoia.ev.hermit.3.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.hermit.3.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "paranoia_ev_hermit_4",
+    "nameKey": "paranoia.ev.hermit.4",
+    "textKey": "paranoia.ev.hermit.4.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "wisdom"
+    ],
+    "choices": [
+      {
+        "id": "learn",
+        "labelKey": "paranoia.ev.hermit.4.learn",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "paranoia.ev.hermit.4.learn.note"
+      },
+      {
+        "id": "mock",
+        "labelKey": "paranoia.ev.hermit.4.mock",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "paranoia.ev.hermit.4.mock.note"
+      }
+    ],
+    "category": "wisdom"
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paranoia_ev_quiet",
+    "nameKey": "paranoia.ev.quiet",
+    "textKey": "paranoia.ev.quiet.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paranoia_ev_omen",
+    "nameKey": "paranoia.ev.omen",
+    "textKey": "paranoia.ev.omen.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "happiness": 3,
+        "reputation": 2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paranoia_ev_hard",
+    "nameKey": "paranoia.ev.hard",
+    "textKey": "paranoia.ev.hard.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "happiness": -2,
+        "health": -2
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paranoia_ev_dread",
+    "nameKey": "paranoia.ev.dread",
+    "textKey": "paranoia.ev.dread.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "depressionValue": 4
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paranoia_ev_bounty",
+    "nameKey": "paranoia.ev.bounty",
+    "textKey": "paranoia.ev.bounty.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "boon",
+      "comfort"
+    ],
+    "params": {
+      "effects": {
+        "money": 20
+      }
+    }
+  },
+  {
+    "type": "EffectEvent",
+    "id": "paranoia_ev_weariness",
+    "nameKey": "paranoia.ev.weariness",
+    "textKey": "paranoia.ev.weariness.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 0.5,
+    "tags": [
+      "challenge",
+      "stress"
+    ],
+    "params": {
+      "effects": {
+        "weakValue": 4
+      }
+    }
+  }
+]

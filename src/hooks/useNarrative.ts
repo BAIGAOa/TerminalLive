@@ -6,7 +6,7 @@ import PressureState from "../world/pressures/PressureState.js";
 import PressureRegistry from "../world/pressures/PressureRegistry.js";
 import WeatherState from "../world/weather/WeatherState.js";
 import { seasonOf } from "../world/weather/WeatherDefinition.js";
-import LevelManager from "../level/LevelManager.js";
+import WorldManager from "../worlds/WorldManager.js";
 import NpcRegistry from "../world/relationships/NpcRegistry.js";
 import CareerSystem from "../world/careers/CareerSystem.js";
 import NarrativeSystem from "../world/narrative/NarrativeSystem.js";
@@ -29,7 +29,7 @@ const NO_SNAP = () => EMPTY_LOGS;
 
 export default function useNarrative(): string[] {
   const { t } = useI18n();
-  const levelManager = container.resolve(LevelManager);
+  const levelManager = container.resolve(WorldManager);
   const world = container.resolve(WorldState);
   const pressures = container.resolve(PressureState);
   const pressureReg = container.resolve(PressureRegistry);

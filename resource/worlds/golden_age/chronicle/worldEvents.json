@@ -1,0 +1,62 @@
+[
+  {
+    "id": "we_golden_age_1",
+    "year": 8,
+    "labelKey": "golden_age.we.1",
+    "bodyKey": "golden_age.we.1.body",
+    "pressures": {
+      "pr_golden_age_1": -8,
+      "pr_golden_age_2": 8
+    }
+  },
+  {
+    "id": "we_golden_age_2",
+    "year": 26,
+    "labelKey": "golden_age.we.2",
+    "bodyKey": "golden_age.we.2.body",
+    "pressures": {
+      "pr_golden_age_2": -12,
+      "pr_golden_age_3": 10
+    }
+  },
+  {
+    "id": "we_golden_age_3",
+    "year": 44,
+    "labelKey": "golden_age.we.3",
+    "bodyKey": "golden_age.we.3.body",
+    "pressures": {
+      "pr_golden_age_3": 10,
+      "pr_golden_age_4": -6
+    }
+  },
+  {
+    "id": "we_golden_age_4",
+    "year": 62,
+    "labelKey": "golden_age.we.4",
+    "bodyKey": "golden_age.we.4.body",
+    "pressures": {
+      "pr_golden_age_4": 15,
+      "pr_golden_age_5": -10
+    }
+  },
+  {
+    "id": "we_golden_age_5",
+    "year": 80,
+    "labelKey": "golden_age.we.5",
+    "bodyKey": "golden_age.we.5.body",
+    "pressures": {
+      "pr_golden_age_5": -6,
+      "pr_golden_age_6": 12
+    }
+  },
+  {
+    "id": "we_golden_age_6",
+    "year": 96,
+    "labelKey": "golden_age.we.6",
+    "bodyKey": "golden_age.we.6.body",
+    "pressures": {
+      "pr_golden_age_6": 12,
+      "pr_golden_age_7": -8
+    }
+  }
+]

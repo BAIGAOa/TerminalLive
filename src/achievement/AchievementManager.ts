@@ -2,7 +2,7 @@ import { inject } from "../Container.js";
 import AchievementRegistry from "../core/registry/AchievementRegistry.js";
 import AchievementPersistence from "./AchievementPersistence.js";
 import TypedEventBus from "../core/TypedEventBus.js";
-import LevelManager from "../level/LevelManager.js";
+import WorldManager from "../worlds/WorldManager.js";
 import Player from "../world/Player.js";
 import { Achievement } from "./AchievementDefinition.js";
 
@@ -17,7 +17,7 @@ export default class AchievementManager {
   private registry: AchievementRegistry;
   private persistence: AchievementPersistence;
   private eventBus: TypedEventBus;
-  private levelManager: LevelManager;
+  private levelManager: WorldManager;
 
   private states = new Map<string, { unlocked: boolean; unlockedAt: number | null }>();
   private listeners = new Set<Listener>();
@@ -28,7 +28,7 @@ export default class AchievementManager {
     this.registry = inject(AchievementRegistry);
     this.persistence = inject(AchievementPersistence);
     this.eventBus = inject(TypedEventBus);
-    this.levelManager = inject(LevelManager);
+    this.levelManager = inject(WorldManager);
 
     this.eventBus.on("incident:executed", () => this.checkAll());
     this.eventBus.on("player:updated", () => this.checkAll());

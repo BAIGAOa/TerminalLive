@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { container } from "../../Container.js";
-import World from "../../content/World.js";
+import Chronicle from "../../content/Chronicle.js";
 import WorldState from "../../world/chronicle/WorldState.js";
 import EventCenter from "../../event/EventCenter.js";
 import EventHistory from "../../event/EventHistory.js";
@@ -12,7 +12,7 @@ import Player from "../../world/Player.js";
 import Effects from "../../content/Effects.js";
 
 beforeEach(() => {
-  World.load();
+  Chronicle.load();
   Effects.load();
 });
 

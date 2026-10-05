@@ -93,7 +93,7 @@ export function GameOver({
           <Box
             marginTop={1}
             flexDirection="column"
-            borderStyle="round"
+            borderStyle="bold"
             borderColor="magenta"
             paddingX={1}
           >

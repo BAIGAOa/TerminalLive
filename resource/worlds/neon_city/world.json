@@ -1,0 +1,39 @@
+{
+  "id": "neon_city",
+  "nameKey": "world.neon_city",
+  "descriptionKey": "world.neon_city.desc",
+  "icon": "🌃",
+  "tags": [
+    "intrigue",
+    "industrial"
+  ],
+  "difficultyIdentification": "normal",
+  "contentVersion": 3,
+  "startPlayer": {
+    "age": 0,
+    "health": 92,
+    "happiness": 52,
+    "intelligence": 13,
+    "social": 11,
+    "fitness": 8,
+    "money": 80
+  },
+  "unlockRequires": [
+    "high_kingdom"
+  ],
+  "selfContained": true,
+  "worldRules": [
+    "rule_neon"
+  ],
+  "algorithm": "default",
+  "completionConditions": [
+    {
+      "type": "generalPurpose",
+      "params": {
+        "prop": "age",
+        "num": 90,
+        "cat": "greaterThan"
+      }
+    }
+  ]
+}

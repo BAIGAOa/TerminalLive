@@ -4,7 +4,7 @@ import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { MenuList, ScrollPanel } from "./kit/index.js";
 import { container } from "../Container.js";
 import WorldState from "../world/chronicle/WorldState.js";
-import WorldRegistry from "../world/chronicle/WorldRegistry.js";
+import ChronicleRegistry from "../world/chronicle/ChronicleRegistry.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { useTerminalSize } from "./TerminalSizeContext.js";
@@ -17,7 +17,7 @@ export default function Codex() {
   const { boundKeyboard } = useKeyboard();
   const { back } = useScreenSystem();
   const world = container.resolve(WorldState);
-  const reg = container.resolve(WorldRegistry);
+  const reg = container.resolve(ChronicleRegistry);
 
   useSyncExternalStore(world.subscribe, world.getSnapshot);
   const [selected, setSelected] = useState(0);
@@ -66,7 +66,7 @@ export default function Codex() {
         <Box
           flexDirection="column"
           width="62%"
-          borderStyle="round"
+          borderStyle="bold"
           borderColor={colors.info}
           paddingX={1}
         >

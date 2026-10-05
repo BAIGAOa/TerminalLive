@@ -1,0 +1,50 @@
+[
+  {
+    "id": "era_high_kingdom_1",
+    "labelKey": "high_kingdom.era.1",
+    "descKey": "high_kingdom.era.1.desc",
+    "fromYear": 0,
+    "icon": "🌅",
+    "color": "yellow"
+  },
+  {
+    "id": "era_high_kingdom_2",
+    "labelKey": "high_kingdom.era.2",
+    "descKey": "high_kingdom.era.2.desc",
+    "fromYear": 16,
+    "icon": "⚒",
+    "color": "gray"
+  },
+  {
+    "id": "era_high_kingdom_3",
+    "labelKey": "high_kingdom.era.3",
+    "descKey": "high_kingdom.era.3.desc",
+    "fromYear": 32,
+    "icon": "⚙",
+    "color": "white"
+  },
+  {
+    "id": "era_high_kingdom_4",
+    "labelKey": "high_kingdom.era.4",
+    "descKey": "high_kingdom.era.4.desc",
+    "fromYear": 50,
+    "icon": "⚡",
+    "color": "cyan"
+  },
+  {
+    "id": "era_high_kingdom_5",
+    "labelKey": "high_kingdom.era.5",
+    "descKey": "high_kingdom.era.5.desc",
+    "fromYear": 68,
+    "icon": "✦",
+    "color": "magentaBright"
+  },
+  {
+    "id": "era_high_kingdom_6",
+    "labelKey": "high_kingdom.era.6",
+    "descKey": "high_kingdom.era.6.desc",
+    "fromYear": 86,
+    "icon": "🌌",
+    "color": "blue"
+  }
+]

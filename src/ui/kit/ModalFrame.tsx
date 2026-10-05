@@ -97,7 +97,7 @@ export function ModalFrame({
       left={pos.left}
       width={w}
       height={h}
-      borderStyle="round"
+      borderStyle="bold"
       borderColor={borderColor}
       backgroundColor={backgroundColor}
       flexDirection="column"

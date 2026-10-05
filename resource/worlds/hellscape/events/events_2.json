@@ -1,0 +1,1394 @@
+[
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_law_1",
+    "nameKey": "hellscape.ev.law.1",
+    "textKey": "hellscape.ev.law.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "order"
+    ],
+    "choices": [
+      {
+        "id": "obey",
+        "labelKey": "hellscape.ev.law.1.obey",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.law.1.obey.note"
+      },
+      {
+        "id": "defy",
+        "labelKey": "hellscape.ev.law.1.defy",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.law.1.defy.note"
+      }
+    ],
+    "category": "order"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_law_2",
+    "nameKey": "hellscape.ev.law.2",
+    "textKey": "hellscape.ev.law.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "order"
+    ],
+    "choices": [
+      {
+        "id": "obey",
+        "labelKey": "hellscape.ev.law.2.obey",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.law.2.obey.note"
+      },
+      {
+        "id": "defy",
+        "labelKey": "hellscape.ev.law.2.defy",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.law.2.defy.note"
+      }
+    ],
+    "category": "order"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_law_3",
+    "nameKey": "hellscape.ev.law.3",
+    "textKey": "hellscape.ev.law.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "order"
+    ],
+    "choices": [
+      {
+        "id": "obey",
+        "labelKey": "hellscape.ev.law.3.obey",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.law.3.obey.note"
+      },
+      {
+        "id": "defy",
+        "labelKey": "hellscape.ev.law.3.defy",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.law.3.defy.note"
+      }
+    ],
+    "category": "order"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_law_4",
+    "nameKey": "hellscape.ev.law.4",
+    "textKey": "hellscape.ev.law.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "order"
+    ],
+    "choices": [
+      {
+        "id": "obey",
+        "labelKey": "hellscape.ev.law.4.obey",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.law.4.obey.note"
+      },
+      {
+        "id": "defy",
+        "labelKey": "hellscape.ev.law.4.defy",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.law.4.defy.note"
+      }
+    ],
+    "category": "order"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_first_love_1",
+    "nameKey": "hellscape.ev.first_love.1",
+    "textKey": "hellscape.ev.first_love.1.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "romance"
+    ],
+    "choices": [
+      {
+        "id": "woo",
+        "labelKey": "hellscape.ev.first_love.1.woo",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.first_love.1.woo.note"
+      },
+      {
+        "id": "friend",
+        "labelKey": "hellscape.ev.first_love.1.friend",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.first_love.1.friend.note"
+      }
+    ],
+    "category": "romance"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_first_love_2",
+    "nameKey": "hellscape.ev.first_love.2",
+    "textKey": "hellscape.ev.first_love.2.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "romance"
+    ],
+    "choices": [
+      {
+        "id": "woo",
+        "labelKey": "hellscape.ev.first_love.2.woo",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.first_love.2.woo.note"
+      },
+      {
+        "id": "friend",
+        "labelKey": "hellscape.ev.first_love.2.friend",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.first_love.2.friend.note"
+      }
+    ],
+    "category": "romance"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_first_love_3",
+    "nameKey": "hellscape.ev.first_love.3",
+    "textKey": "hellscape.ev.first_love.3.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "romance"
+    ],
+    "choices": [
+      {
+        "id": "woo",
+        "labelKey": "hellscape.ev.first_love.3.woo",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.first_love.3.woo.note"
+      },
+      {
+        "id": "friend",
+        "labelKey": "hellscape.ev.first_love.3.friend",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.first_love.3.friend.note"
+      }
+    ],
+    "category": "romance"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_first_love_4",
+    "nameKey": "hellscape.ev.first_love.4",
+    "textKey": "hellscape.ev.first_love.4.text",
+    "rangeKey": [
+      "13-29"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "romance"
+    ],
+    "choices": [
+      {
+        "id": "woo",
+        "labelKey": "hellscape.ev.first_love.4.woo",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.first_love.4.woo.note"
+      },
+      {
+        "id": "friend",
+        "labelKey": "hellscape.ev.first_love.4.friend",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.first_love.4.friend.note"
+      }
+    ],
+    "category": "romance"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_grief_1",
+    "nameKey": "hellscape.ev.grief.1",
+    "textKey": "hellscape.ev.grief.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "loss"
+    ],
+    "choices": [
+      {
+        "id": "mourn",
+        "labelKey": "hellscape.ev.grief.1.mourn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.grief.1.mourn.note"
+      },
+      {
+        "id": "carry",
+        "labelKey": "hellscape.ev.grief.1.carry",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.grief.1.carry.note"
+      }
+    ],
+    "category": "loss"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_grief_2",
+    "nameKey": "hellscape.ev.grief.2",
+    "textKey": "hellscape.ev.grief.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "loss"
+    ],
+    "choices": [
+      {
+        "id": "mourn",
+        "labelKey": "hellscape.ev.grief.2.mourn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.grief.2.mourn.note"
+      },
+      {
+        "id": "carry",
+        "labelKey": "hellscape.ev.grief.2.carry",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.grief.2.carry.note"
+      }
+    ],
+    "category": "loss"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_grief_3",
+    "nameKey": "hellscape.ev.grief.3",
+    "textKey": "hellscape.ev.grief.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "loss"
+    ],
+    "choices": [
+      {
+        "id": "mourn",
+        "labelKey": "hellscape.ev.grief.3.mourn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.grief.3.mourn.note"
+      },
+      {
+        "id": "carry",
+        "labelKey": "hellscape.ev.grief.3.carry",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.grief.3.carry.note"
+      }
+    ],
+    "category": "loss"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_grief_4",
+    "nameKey": "hellscape.ev.grief.4",
+    "textKey": "hellscape.ev.grief.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "loss"
+    ],
+    "choices": [
+      {
+        "id": "mourn",
+        "labelKey": "hellscape.ev.grief.4.mourn",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.grief.4.mourn.note"
+      },
+      {
+        "id": "carry",
+        "labelKey": "hellscape.ev.grief.4.carry",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.grief.4.carry.note"
+      }
+    ],
+    "category": "loss"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_craft_1",
+    "nameKey": "hellscape.ev.craft.1",
+    "textKey": "hellscape.ev.craft.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "work"
+    ],
+    "choices": [
+      {
+        "id": "take",
+        "labelKey": "hellscape.ev.craft.1.take",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.craft.1.take.note"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "hellscape.ev.craft.1.refuse",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.craft.1.refuse.note"
+      }
+    ],
+    "category": "work"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_craft_2",
+    "nameKey": "hellscape.ev.craft.2",
+    "textKey": "hellscape.ev.craft.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "work"
+    ],
+    "choices": [
+      {
+        "id": "take",
+        "labelKey": "hellscape.ev.craft.2.take",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.craft.2.take.note"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "hellscape.ev.craft.2.refuse",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.craft.2.refuse.note"
+      }
+    ],
+    "category": "work"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_craft_3",
+    "nameKey": "hellscape.ev.craft.3",
+    "textKey": "hellscape.ev.craft.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "work"
+    ],
+    "choices": [
+      {
+        "id": "take",
+        "labelKey": "hellscape.ev.craft.3.take",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.craft.3.take.note"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "hellscape.ev.craft.3.refuse",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.craft.3.refuse.note"
+      }
+    ],
+    "category": "work"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_craft_4",
+    "nameKey": "hellscape.ev.craft.4",
+    "textKey": "hellscape.ev.craft.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "work"
+    ],
+    "choices": [
+      {
+        "id": "take",
+        "labelKey": "hellscape.ev.craft.4.take",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.craft.4.take.note"
+      },
+      {
+        "id": "refuse",
+        "labelKey": "hellscape.ev.craft.4.refuse",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.craft.4.refuse.note"
+      }
+    ],
+    "category": "work"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_secret_1",
+    "nameKey": "hellscape.ev.secret.1",
+    "textKey": "hellscape.ev.secret.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "mystery"
+    ],
+    "choices": [
+      {
+        "id": "open",
+        "labelKey": "hellscape.ev.secret.1.open",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.secret.1.open.note"
+      },
+      {
+        "id": "leave",
+        "labelKey": "hellscape.ev.secret.1.leave",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.secret.1.leave.note"
+      }
+    ],
+    "category": "mystery"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_secret_2",
+    "nameKey": "hellscape.ev.secret.2",
+    "textKey": "hellscape.ev.secret.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "mystery"
+    ],
+    "choices": [
+      {
+        "id": "open",
+        "labelKey": "hellscape.ev.secret.2.open",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.secret.2.open.note"
+      },
+      {
+        "id": "leave",
+        "labelKey": "hellscape.ev.secret.2.leave",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.secret.2.leave.note"
+      }
+    ],
+    "category": "mystery"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_secret_3",
+    "nameKey": "hellscape.ev.secret.3",
+    "textKey": "hellscape.ev.secret.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "mystery"
+    ],
+    "choices": [
+      {
+        "id": "open",
+        "labelKey": "hellscape.ev.secret.3.open",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.secret.3.open.note"
+      },
+      {
+        "id": "leave",
+        "labelKey": "hellscape.ev.secret.3.leave",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.secret.3.leave.note"
+      }
+    ],
+    "category": "mystery"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_secret_4",
+    "nameKey": "hellscape.ev.secret.4",
+    "textKey": "hellscape.ev.secret.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "mystery"
+    ],
+    "choices": [
+      {
+        "id": "open",
+        "labelKey": "hellscape.ev.secret.4.open",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.secret.4.open.note"
+      },
+      {
+        "id": "leave",
+        "labelKey": "hellscape.ev.secret.4.leave",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.secret.4.leave.note"
+      }
+    ],
+    "category": "mystery"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_drought_1",
+    "nameKey": "hellscape.ev.drought.1",
+    "textKey": "hellscape.ev.drought.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scarcity"
+    ],
+    "choices": [
+      {
+        "id": "ration",
+        "labelKey": "hellscape.ev.drought.1.ration",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.drought.1.ration.note"
+      },
+      {
+        "id": "take",
+        "labelKey": "hellscape.ev.drought.1.take",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.drought.1.take.note"
+      }
+    ],
+    "category": "scarcity"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_drought_2",
+    "nameKey": "hellscape.ev.drought.2",
+    "textKey": "hellscape.ev.drought.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scarcity"
+    ],
+    "choices": [
+      {
+        "id": "ration",
+        "labelKey": "hellscape.ev.drought.2.ration",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.drought.2.ration.note"
+      },
+      {
+        "id": "take",
+        "labelKey": "hellscape.ev.drought.2.take",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.drought.2.take.note"
+      }
+    ],
+    "category": "scarcity"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_drought_3",
+    "nameKey": "hellscape.ev.drought.3",
+    "textKey": "hellscape.ev.drought.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scarcity"
+    ],
+    "choices": [
+      {
+        "id": "ration",
+        "labelKey": "hellscape.ev.drought.3.ration",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.drought.3.ration.note"
+      },
+      {
+        "id": "take",
+        "labelKey": "hellscape.ev.drought.3.take",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.drought.3.take.note"
+      }
+    ],
+    "category": "scarcity"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_drought_4",
+    "nameKey": "hellscape.ev.drought.4",
+    "textKey": "hellscape.ev.drought.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "scarcity"
+    ],
+    "choices": [
+      {
+        "id": "ration",
+        "labelKey": "hellscape.ev.drought.4.ration",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.drought.4.ration.note"
+      },
+      {
+        "id": "take",
+        "labelKey": "hellscape.ev.drought.4.take",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.drought.4.take.note"
+      }
+    ],
+    "category": "scarcity"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_gift_1",
+    "nameKey": "hellscape.ev.gift.1",
+    "textKey": "hellscape.ev.gift.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "comfort"
+    ],
+    "choices": [
+      {
+        "id": "accept",
+        "labelKey": "hellscape.ev.gift.1.accept",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.gift.1.accept.note"
+      },
+      {
+        "id": "suspect",
+        "labelKey": "hellscape.ev.gift.1.suspect",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.gift.1.suspect.note"
+      }
+    ],
+    "category": "comfort"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_gift_2",
+    "nameKey": "hellscape.ev.gift.2",
+    "textKey": "hellscape.ev.gift.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "comfort"
+    ],
+    "choices": [
+      {
+        "id": "accept",
+        "labelKey": "hellscape.ev.gift.2.accept",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.gift.2.accept.note"
+      },
+      {
+        "id": "suspect",
+        "labelKey": "hellscape.ev.gift.2.suspect",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.gift.2.suspect.note"
+      }
+    ],
+    "category": "comfort"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_gift_3",
+    "nameKey": "hellscape.ev.gift.3",
+    "textKey": "hellscape.ev.gift.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "comfort"
+    ],
+    "choices": [
+      {
+        "id": "accept",
+        "labelKey": "hellscape.ev.gift.3.accept",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.gift.3.accept.note"
+      },
+      {
+        "id": "suspect",
+        "labelKey": "hellscape.ev.gift.3.suspect",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.gift.3.suspect.note"
+      }
+    ],
+    "category": "comfort"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_gift_4",
+    "nameKey": "hellscape.ev.gift.4",
+    "textKey": "hellscape.ev.gift.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "comfort"
+    ],
+    "choices": [
+      {
+        "id": "accept",
+        "labelKey": "hellscape.ev.gift.4.accept",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.gift.4.accept.note"
+      },
+      {
+        "id": "suspect",
+        "labelKey": "hellscape.ev.gift.4.suspect",
+        "effects": {
+          "happiness": -4,
+          "health": -2
+        },
+        "noteKey": "hellscape.ev.gift.4.suspect.note"
+      }
+    ],
+    "category": "comfort"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_war_1",
+    "nameKey": "hellscape.ev.war.1",
+    "textKey": "hellscape.ev.war.1.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "serve",
+        "labelKey": "hellscape.ev.war.1.serve",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "hellscape.ev.war.1.serve.note"
+      },
+      {
+        "id": "hide",
+        "labelKey": "hellscape.ev.war.1.hide",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "hellscape.ev.war.1.hide.note"
+      }
+    ],
+    "category": "war"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_war_2",
+    "nameKey": "hellscape.ev.war.2",
+    "textKey": "hellscape.ev.war.2.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "serve",
+        "labelKey": "hellscape.ev.war.2.serve",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "hellscape.ev.war.2.serve.note"
+      },
+      {
+        "id": "hide",
+        "labelKey": "hellscape.ev.war.2.hide",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "hellscape.ev.war.2.hide.note"
+      }
+    ],
+    "category": "war"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_war_3",
+    "nameKey": "hellscape.ev.war.3",
+    "textKey": "hellscape.ev.war.3.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "serve",
+        "labelKey": "hellscape.ev.war.3.serve",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "hellscape.ev.war.3.serve.note"
+      },
+      {
+        "id": "hide",
+        "labelKey": "hellscape.ev.war.3.hide",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "hellscape.ev.war.3.hide.note"
+      }
+    ],
+    "category": "war"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_war_4",
+    "nameKey": "hellscape.ev.war.4",
+    "textKey": "hellscape.ev.war.4.text",
+    "rangeKey": [
+      "30-59"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "serve",
+        "labelKey": "hellscape.ev.war.4.serve",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "hellscape.ev.war.4.serve.note"
+      },
+      {
+        "id": "hide",
+        "labelKey": "hellscape.ev.war.4.hide",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2,
+          "health": -3
+        },
+        "noteKey": "hellscape.ev.war.4.hide.note"
+      }
+    ],
+    "category": "war"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_famine_1",
+    "nameKey": "hellscape.ev.famine.1",
+    "textKey": "hellscape.ev.famine.1.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "hellscape.ev.famine.1.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "hellscape.ev.famine.1.share.note"
+      },
+      {
+        "id": "close",
+        "labelKey": "hellscape.ev.famine.1.close",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "hellscape.ev.famine.1.close.note"
+      }
+    ],
+    "category": "scarcity"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_famine_2",
+    "nameKey": "hellscape.ev.famine.2",
+    "textKey": "hellscape.ev.famine.2.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "hellscape.ev.famine.2.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "hellscape.ev.famine.2.share.note"
+      },
+      {
+        "id": "close",
+        "labelKey": "hellscape.ev.famine.2.close",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "hellscape.ev.famine.2.close.note"
+      }
+    ],
+    "category": "scarcity"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_famine_3",
+    "nameKey": "hellscape.ev.famine.3",
+    "textKey": "hellscape.ev.famine.3.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "hellscape.ev.famine.3.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "hellscape.ev.famine.3.share.note"
+      },
+      {
+        "id": "close",
+        "labelKey": "hellscape.ev.famine.3.close",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "hellscape.ev.famine.3.close.note"
+      }
+    ],
+    "category": "scarcity"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_famine_4",
+    "nameKey": "hellscape.ev.famine.4",
+    "textKey": "hellscape.ev.famine.4.text",
+    "rangeKey": [
+      "3-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "challenge"
+    ],
+    "choices": [
+      {
+        "id": "share",
+        "labelKey": "hellscape.ev.famine.4.share",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 0
+        },
+        "noteKey": "hellscape.ev.famine.4.share.note"
+      },
+      {
+        "id": "close",
+        "labelKey": "hellscape.ev.famine.4.close",
+        "effects": {
+          "happiness": -4,
+          "health": -5
+        },
+        "noteKey": "hellscape.ev.famine.4.close.note"
+      }
+    ],
+    "category": "scarcity"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_tradition_1",
+    "nameKey": "hellscape.ev.tradition.1",
+    "textKey": "hellscape.ev.tradition.1.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "order"
+    ],
+    "choices": [
+      {
+        "id": "keep",
+        "labelKey": "hellscape.ev.tradition.1.keep",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.tradition.1.keep.note"
+      },
+      {
+        "id": "break",
+        "labelKey": "hellscape.ev.tradition.1.break",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.tradition.1.break.note"
+      }
+    ],
+    "category": "order"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_tradition_2",
+    "nameKey": "hellscape.ev.tradition.2",
+    "textKey": "hellscape.ev.tradition.2.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "order"
+    ],
+    "choices": [
+      {
+        "id": "keep",
+        "labelKey": "hellscape.ev.tradition.2.keep",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.tradition.2.keep.note"
+      },
+      {
+        "id": "break",
+        "labelKey": "hellscape.ev.tradition.2.break",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.tradition.2.break.note"
+      }
+    ],
+    "category": "order"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_tradition_3",
+    "nameKey": "hellscape.ev.tradition.3",
+    "textKey": "hellscape.ev.tradition.3.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "order"
+    ],
+    "choices": [
+      {
+        "id": "keep",
+        "labelKey": "hellscape.ev.tradition.3.keep",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.tradition.3.keep.note"
+      },
+      {
+        "id": "break",
+        "labelKey": "hellscape.ev.tradition.3.break",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.tradition.3.break.note"
+      }
+    ],
+    "category": "order"
+  },
+  {
+    "type": "ChoiceEvent",
+    "id": "hellscape_ev_tradition_4",
+    "nameKey": "hellscape.ev.tradition.4",
+    "textKey": "hellscape.ev.tradition.4.text",
+    "rangeKey": [
+      "60-100"
+    ],
+    "weight": 1.0,
+    "tags": [
+      "order"
+    ],
+    "choices": [
+      {
+        "id": "keep",
+        "labelKey": "hellscape.ev.tradition.4.keep",
+        "effects": {
+          "happiness": 4,
+          "reputation": 2
+        },
+        "noteKey": "hellscape.ev.tradition.4.keep.note"
+      },
+      {
+        "id": "break",
+        "labelKey": "hellscape.ev.tradition.4.break",
+        "effects": {
+          "happiness": 6,
+          "reputation": 5,
+          "health": 3
+        },
+        "noteKey": "hellscape.ev.tradition.4.break.note"
+      }
+    ],
+    "category": "order"
+  }
+]
