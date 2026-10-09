@@ -2,7 +2,7 @@ import { useSyncExternalStore, useCallback, useMemo, useState } from "react";
 import { container } from "../Container.js";
 import { AchievementCategory } from "../types/AchievementCategory.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import { useTerminalSize } from "../ui/TerminalSizeContext.js";
+import { useWindowSize } from "ink";
 import AchievementManager from "../achievement/AchievementManager.js";
 
 export interface CategoryMenuItem {
@@ -29,7 +29,7 @@ export function useAchievementScreen(): AchievementScreenData {
     manager.subscribe,
     manager.getSnapshot,
   );
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
 
   const [activeCategory, setActiveCategory] = useState<AchievementCategory>(
     AchievementCategory.base,

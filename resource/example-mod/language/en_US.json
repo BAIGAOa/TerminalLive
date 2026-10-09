@@ -1,11 +1,13 @@
 {
-  "example.pressure.wonder": "Wonder",
-  "example.lore.title": "An Example Legend",
-  "example.lore.body": "A codex entry added by the example mod, showing how a mod extends the world.",
-  "example.toast.decade": "Another decade passes.",
-  "example.ev.kindness": "A Small Kindness",
-  "example.npc.guardian": "The Guardian",
-  "example.npc.guardian.desc": "A watchful figure added by the example mod.",
-  "example.npc.guardian.line1": "Stay close. I'll keep an eye out.",
-  "example.npc.guardian.watch": "The Guardian quietly shielded you."
+    "example.pressure.wonder": "Wonder",
+    "example.lore.title": "An Example Legend",
+    "example.lore.body": "A codex entry added by the example mod, showing how a mod extends the world.",
+    "example.toast.decade": "Another decade passes.",
+    "example.ev.kindness": "A Small Kindness",
+    "example.npc.guardian": "The Guardian",
+    "example.npc.guardian.desc": "A watchful figure added by the example mod.",
+    "example.npc.guardian.line1": "Stay close. I'll keep an eye out.",
+    "example.npc.guardian.watch": "The Guardian quietly shielded you.",
+    "example.cmd.wonder": "Wish #{count} (kept in the plugin's own storage)",
+    "example.panel.title": "Wonder"
 }

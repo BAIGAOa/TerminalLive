@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { Theme } from "../../core/theme/ThemeDefinition.js";
 import { useI18n } from "../../core/language/LanguageContext.js";
-import { useTerminalSize } from "../../ui/TerminalSizeContext.js";
+import { useWindowSize } from "ink";
 import { container } from "../../Container.js";
 import ThemeCenter from "../../core/theme/ThemeCenter.js";
 import ThemeManager from "../../core/theme/ThemeManager.js";
@@ -24,7 +24,7 @@ export interface ThemeScreenData {
 
 export function useThemeScreen(): ThemeScreenData {
   const { t } = useI18n();
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
 
   const themeCenter = container.resolve(ThemeCenter);
   const themeManager = container.resolve(ThemeManager);

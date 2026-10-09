@@ -1,0 +1,8 @@
+{
+  "minimal_hud.name": "ミニマル画面（任意）",
+  "minimal_hud.desc": "ゲーム画面をコンパクトな 1 枚に置き換えます：状態・行動・直近の出来事を 1 行ずつ。小さい端末や、画面をすっきりさせたい人向け。",
+  "minimal_hud.years": "歳",
+  "minimal_hud.stat.health": "健康",
+  "minimal_hud.stat.happiness": "気分",
+  "minimal_hud.stat.money": "資産"
+}

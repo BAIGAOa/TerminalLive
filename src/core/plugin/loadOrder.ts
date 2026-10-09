@@ -1,22 +1,30 @@
-import { ResolvedMod } from "./types.js";
+/** The minimum a plugin must expose to be ordered: an id and its dependencies. */
+export interface LoadablePlugin {
+  /** Folder name inside its root — what a skip message points the user at. */
+  dirName: string;
+  id: string;
+  manifest: { dependencies: Record<string, string> };
+}
 
-export interface LoadOrderResult {
-  /** Mods in dependency order (dependencies first). */
-  order: ResolvedMod[];
-  /** Mods that could not be loaded, with why. */
+export interface LoadOrderResult<T extends LoadablePlugin> {
+  /** Plugins in dependency order (dependencies first). */
+  order: T[];
+  /** Plugins that could not be loaded, with why. */
   skipped: Array<{ dirName: string; reason: string }>;
 }
 
 /**
- * Topologically sort mods so dependencies load first. A mod that depends on a
- * missing mod — or that sits on a dependency cycle — is skipped rather than
- * crashing the game.
+ * Topologically sort plugins so dependencies load first. A plugin that depends
+ * on a missing plugin — or that sits on a dependency cycle — is skipped rather
+ * than crashing the game. Pure, so the ordering rules stay testable.
  */
-export function resolveLoadOrder(mods: ResolvedMod[]): LoadOrderResult {
-  const byId = new Map<string, ResolvedMod>();
+export function resolveLoadOrder<T extends LoadablePlugin>(
+  plugins: T[],
+): LoadOrderResult<T> {
+  const byId = new Map<string, T>();
   const skipped: Array<{ dirName: string; reason: string }> = [];
 
-  for (const m of mods) {
+  for (const m of plugins) {
     if (byId.has(m.id)) {
       skipped.push({ dirName: m.dirName, reason: `重复 id "${m.id}"` });
       continue;
@@ -24,7 +32,7 @@ export function resolveLoadOrder(mods: ResolvedMod[]): LoadOrderResult {
     byId.set(m.id, m);
   }
 
-  const order: ResolvedMod[] = [];
+  const order: T[] = [];
   const status = new Map<string, 0 | 1 | 2>(); // unvisited | visiting | done
   const failed = new Set<string>();
 
@@ -64,6 +72,5 @@ export function resolveLoadOrder(mods: ResolvedMod[]): LoadOrderResult {
 
   for (const id of byId.keys()) visit(id, []);
 
-  // de-dupe skip messages (a cycle reports each member once already; keep as-is)
   return { order, skipped };
 }

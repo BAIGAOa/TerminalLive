@@ -1,7 +1,8 @@
-import { useSyncExternalStore, useState, useMemo, useCallback } from "react";
+import React, { useSyncExternalStore, useState, useMemo, useCallback, useEffect } from "react";
+import { Text } from "ink";
 import { container } from "../Container.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import { useTerminalSize } from "../ui/TerminalSizeContext.js";
+import { useWindowSize } from "ink";
 import WorldManager from "../worlds/WorldManager.js";
 import Player from "../world/Player.js";
 import type { LogEntry } from "../core/store/LogStore.js";
@@ -11,6 +12,8 @@ import { PendingChoice } from "../event/PendingChoice.js";
 import { describeCondition } from "../world/conditionText.js";
 import { formatLogEntries, type LogDisplayEntry } from "../ui/logFormat.js";
 import { relationshipDigest } from "../ui/playerSnapshot.js";
+import { ChoiceModal } from "../ui/ChoiceModal.js";
+import { dismissModal, presentModal } from "../ui/layers/modalBus.js";
 
 export type { LogDisplayEntry } from "../ui/logFormat.js";
 
@@ -51,7 +54,7 @@ export interface GameScreenData {
 
 export default function useWorldGameScreen(): GameScreenData {
   const { t, langCode } = useI18n();
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
 
   const levelManager = container.resolve(WorldManager);
   const game = container.resolve(Game);
@@ -98,13 +101,15 @@ export default function useWorldGameScreen(): GameScreenData {
   const viewIds: string[] = useMemo(() => {
     const ids: string[] = [];
     gameStatusMap.getMap().forEach((_, id) => ids.push(id));
-    return ids.length > 0 ? ids : ["attributes"];
+    // No panels installed (the status-views plugin is off): an empty list is
+    // the truth. Naming a panel here would only make the render below throw.
+    return ids;
   }, [gameStatusMap]);
 
   const [currentViewIndex, setCurrentViewIndex] = useState(0);
   const safeIndex =
     viewIds.length > 0 ? Math.min(currentViewIndex, viewIds.length - 1) : 0;
-  const currentViewId = viewIds[safeIndex] ?? "attributes";
+  const currentViewId = viewIds[safeIndex] ?? "";
   const viewCount = viewIds.length;
 
   const level = (() => {
@@ -155,8 +160,18 @@ export default function useWorldGameScreen(): GameScreenData {
 
   const renderCurrentView = useCallback(
     (height: number): React.ReactNode => {
-      const renderFn = gameStatusMap.get(currentViewId);
-      return renderFn ? renderFn({ player, t, height }) : null;
+      // `tryGet`, not `get`: the panels are registered by a plugin now, so a
+      // player who switches that plugin off leaves this registry empty — and a
+      // throw here lands in the middle of the game screen's render.
+      const renderFn = gameStatusMap.tryGet(currentViewId);
+      if (!renderFn) {
+        return React.createElement(
+          Text,
+          { dimColor: true },
+          t("game.status.none"),
+        );
+      }
+      return renderFn({ player, t, height });
     },
     [gameStatusMap, currentViewId, player, t],
   );
@@ -198,6 +213,24 @@ export default function useWorldGameScreen(): GameScreenData {
 
   const status = game.getStatus();
   const pendingChoice = game.getPendingChoice();
+
+  // Offer the choice dialog from here, not from the screen.
+  //
+  // It is a modal *layer*: it belongs to the game (an event is waiting on the
+  // player), not to the layout that happens to be on screen. A plugin that
+  // replaces the in-game screen would otherwise strand the player at a choice
+  // with nothing to answer.
+  useEffect(() => {
+    if (pendingChoice) {
+      presentModal("choice-modal", ChoiceModal, {
+        choice: pendingChoice,
+        onResolve: resolveChoiceStable,
+      });
+    } else {
+      dismissModal("choice-modal");
+    }
+    return () => dismissModal("choice-modal");
+  }, [pendingChoice, resolveChoiceStable]);
 
   return {
     player,

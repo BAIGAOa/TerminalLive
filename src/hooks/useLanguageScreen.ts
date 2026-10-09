@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { container } from "../Container.js";
 import ConfigStore from "../core/store/ConfigStore.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import { useTerminalSize } from "../ui/TerminalSizeContext.js";
+import { useWindowSize } from "ink";
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -20,7 +20,7 @@ export interface LanguageScreenData {
 
 export function useLanguageScreen(): LanguageScreenData {
   const { t, langCode, setLanguage } = useI18n();
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
 
   const items = useMemo(() => {
     const dir = join(_dirname, "..", "..", "resource", "language");

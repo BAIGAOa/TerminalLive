@@ -3,7 +3,7 @@ import { container } from "../Container.js";
 import { ArchiveManager } from "../core/archive/ArchiveManager.js";
 import { SaveMeta } from "../core/archive/SaveSchema.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import { useTerminalSize } from "../ui/TerminalSizeContext.js";
+import { useWindowSize } from "ink";
 import { useFlash } from "./useFlash.js";
 
 export interface ArchiveScreenData {
@@ -27,7 +27,7 @@ export interface ArchiveScreenData {
 
 export function useArchiveScreen(onBack?: () => void): ArchiveScreenData {
   const { t } = useI18n();
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   const store = container.resolve(ArchiveManager);
 
   const [saves, setSaves] = useState<SaveMeta[]>(() => store.listSaves());

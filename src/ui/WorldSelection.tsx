@@ -1,17 +1,16 @@
 import React, { useEffect } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { MenuList, ScrollList } from "./kit/index.js";
 import { useWorldSelection } from "../hooks/useWorldSelection.js";
 import { fitPanelSections } from "./menuLayout.js";
 import { statusViewHeight } from "./kit/viewport.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
-import WorldGame from "./WorldGame.js";
+import { WorldGameScreen as WorldGame } from "./slots/screens.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 
 export default function WorldSelection() {
   const data = useWorldSelection();
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   const colors = useThemeColors();
   const { boundKeyboard, focusSet } = useKeyboard();
   const { skip, back } = useScreenSystem();

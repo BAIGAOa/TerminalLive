@@ -27,6 +27,14 @@ export default class NpcTypeRegistry {
     return true;
   }
 
+  /**
+   * Forget a type. Idempotent, because it runs on the unload path: a plugin
+   * being torn down must not fail because its type was already gone.
+   */
+  public unregister(name: string): void {
+    this.types.delete(name);
+  }
+
   public has(name: string): boolean {
     return this.types.has(name);
   }

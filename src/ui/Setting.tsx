@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { MenuList } from "./kit/index.js";
 import { useSettingScreen } from "../hooks/useSettingScreen.js";
 import { container } from "../Container.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { SettingRegistry } from "../core/registry/SettingRegistry.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
 import { clampWidth } from "./kit/viewport.js";
 
 export default function Setting() {
@@ -14,7 +13,7 @@ export default function Setting() {
   const registry = container.resolve(SettingRegistry);
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
-  const { columns } = useTerminalSize();
+  const { columns } = useWindowSize();
   const { back } = useScreenSystem();
 
   // Root screen: Esc leaves settings (as the footer promises). Sub-screens bind

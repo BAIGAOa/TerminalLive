@@ -1,11 +1,13 @@
 {
-  "example.pressure.wonder": "好奇心",
-  "example.lore.title": "サンプルの伝承",
-  "example.lore.body": "サンプルMODが追加した図鑑項目。MODが世界を拡張する方法を示します。",
-  "example.toast.decade": "また十年が過ぎた。",
-  "example.ev.kindness": "小さな親切",
-  "example.npc.guardian": "守護者",
-  "example.npc.guardian.desc": "サンプルMODが追加した、見張りの人物。",
-  "example.npc.guardian.line1": "そばにいて。見張っている。",
-  "example.npc.guardian.watch": "守護者がそっとあなたを守った。"
+    "example.pressure.wonder": "好奇心",
+    "example.lore.title": "サンプルの伝承",
+    "example.lore.body": "サンプルMODが追加した図鑑項目。MODが世界を拡張する方法を示します。",
+    "example.toast.decade": "また十年が過ぎた。",
+    "example.ev.kindness": "小さな親切",
+    "example.npc.guardian": "守護者",
+    "example.npc.guardian.desc": "サンプルMODが追加した、見張りの人物。",
+    "example.npc.guardian.line1": "そばにいて。見張っている。",
+    "example.npc.guardian.watch": "守護者がそっとあなたを守った。",
+    "example.cmd.wonder": "{count} 回目の願い（プラグイン自身のストレージに保存）",
+    "example.panel.title": "ワンダー"
 }

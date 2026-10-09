@@ -13,6 +13,7 @@ export const CAPABILITIES = [
   "random",
   "ui",
   "storage",
+  "kernel",
 ] as const;
 export type Capability = (typeof CAPABILITIES)[number];
 

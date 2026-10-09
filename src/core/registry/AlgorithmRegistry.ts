@@ -2,7 +2,7 @@ import BaseRegistry from "./BaseRegistry.js";
 import EventCenter from "../../event/EventCenter.js";
 import LogStore from "../store/LogStore.js";
 import EventHistory from "../../event/EventHistory.js";
-import ModPluginLoader from "../mod/ModPluginLoader.js";
+import PluginHost from "../plugin/PluginHost.js";
 import IncidentFilter from "../../event/IncidentFilter.js";
 import { IEventAlgorithm } from "../../event/IEventAlgorithm.js";
 import type WorldState from "../../world/chronicle/WorldState.js";
@@ -13,7 +13,7 @@ export type AlgorithmFactory = (deps: {
   eventCenter: EventCenter;
   logStore: LogStore;
   eventHistory: EventHistory;
-  modPluginLoader: ModPluginLoader;
+  pluginHost: PluginHost;
   filters?: IncidentFilter[];
   world?: WorldState | null;
   pressures?: PressureState | null;

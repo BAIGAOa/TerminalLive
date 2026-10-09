@@ -6,7 +6,7 @@ import WorldManager from "../../../worlds/WorldManager.js";
 import DifficultyRegistry from "../../registry/DifficultyRegistry.js";
 import { sortWorldsLinearly } from "../../../worlds/worldChain.js";
 import CareerSystem from "../../../world/careers/CareerSystem.js";
-import WorldGame from "../../../ui/WorldGame.js";
+import { WorldGameScreen as WorldGame } from "../../../ui/slots/screens.js";
 import ConfigStore from "../../store/ConfigStore.js";
 import BuiltinPluginRegistry from "../../mod/BuiltinPlugin.js";
 
@@ -31,8 +31,13 @@ export function registerGameCommands(reg: ReplRegistry): void {
     aliases: ["new", "start"],
     summary: "repl.cmd.play",
     usage: "play [levelId]",
+    // Each world id carries its own name, so highlighting one in the menu
+    // explains what that level is.
     complete: () =>
-      [...container.resolve(WorldManager).getAllWorlds().keys()],
+      [...container.resolve(WorldManager).getAllWorlds().values()].map((w) => ({
+        value: w.id,
+        detailKey: w.nameKey,
+      })),
     run: (ctx) => {
       const lm = container.resolve(WorldManager);
       const id = ctx.args[0] ?? lm.getRootWorldIds()[0];
@@ -130,7 +135,7 @@ export function registerGameCommands(reg: ReplRegistry): void {
       const id = ctx.args[0];
       if (id) {
         if (!all.includes(id)) {
-          ctx.print(`未知内置插件 / unknown built-in plugin: ${id}`, "error");
+          ctx.print(ctx.t("console.cmd.builtinsUnknown", { id }), "error");
           return;
         }
         const enabled = cfg.getEnabledBuiltinPlugins() ?? all;
@@ -138,7 +143,13 @@ export function registerGameCommands(reg: ReplRegistry): void {
           ? enabled.filter((x) => x !== id)
           : [...enabled, id];
         void cfg.setEnabledBuiltinPlugins(next);
-        ctx.print(`${id}: ${next.includes(id) ? "ON" : "OFF"}  (下一次进入世界生效)`, "success");
+        ctx.print(
+          ctx.t("console.cmd.builtinsToggled", {
+            id,
+            state: next.includes(id) ? "ON" : "OFF",
+          }),
+          "success",
+        );
         return;
       }
       const enabled = cfg.getEnabledBuiltinPlugins();

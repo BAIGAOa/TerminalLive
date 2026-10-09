@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { gotoScreen, useKeyboard } from "ink-cartridge";
 import useWorldGameScreen from "../hooks/useWorldGameScreen.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
@@ -7,18 +7,19 @@ import { container } from "../Container.js";
 import AchievementManager from "../achievement/AchievementManager.js";
 import { ActionPanel } from "./ActionPanel.js";
 import { ScrollPanel } from "./kit/index.js";
-import { ChoiceModal } from "./ChoiceModal.js";
 import { GameOver } from "./GameOver.js";
 import { dismissModal, presentModal } from "./layers/modalBus.js";
 import useNarrative from "../hooks/useNarrative.js";
-import MainMenu from "./MainMenu.js";
-import WorldSelection from "./WorldSelection.js";
+import {
+  MainMenuScreen as MainMenu,
+  WorldSelectionScreen as WorldSelection,
+} from "./slots/screens.js";
 import ConfigStore from "../core/store/ConfigStore.js";
 import TypedEventBus from "../core/TypedEventBus.js";
 import { computeLifeScore } from "../game/score.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
 import { computeWorldGameLayout } from "./worldGameLayout.js";
-import { resolveKeymap } from "./keymap.js";
+import { bindingsFor } from "./keymap.js";
+import { useKeymap } from "../hooks/useKeymap.js";
 import LineageStore from "../core/store/LineageStore.js";
 import WorldState from "../world/chronicle/WorldState.js";
 import {
@@ -35,7 +36,7 @@ export default function WorldGame() {
   const colors = useThemeColors();
   const { boundKeyboard, focusSet, focusNext } = useKeyboard();
   const narrative = useNarrative().join(" ");
-  const keymap = resolveKeymap(container.resolve(ConfigStore).getKeyBindings());
+  const { keymap } = useKeymap();
   const endTurnKey = keymap.endTurn;
   const consoleKey = keymap.console.toUpperCase();
   const menuKey = keymap.menu.toUpperCase();
@@ -45,8 +46,8 @@ export default function WorldGame() {
     const uEnd = boundKeyboard([endTurnKey], () => {
       if (data.status === "playing" && !data.pendingChoice) data.endTurn();
     });
-    const uLeft = boundKeyboard(["left"], () => data.onPrevView());
-    const uRight = boundKeyboard(["right"], () => data.onNextView());
+    const uLeft = boundKeyboard(bindingsFor(keymap.viewPrev), () => data.onPrevView());
+    const uRight = boundKeyboard(bindingsFor(keymap.viewNext), () => data.onNextView());
     return () => {
       uEnd();
       uLeft();
@@ -96,19 +97,6 @@ export default function WorldGame() {
     }
     safeFocus("game-actions", "game-main");
   }, [data.currentViewId, safeFocus]);
-
-  // Choice dialog (modal layer — owns input while open).
-  useEffect(() => {
-    if (data.pendingChoice) {
-      presentModal("choice-modal", ChoiceModal, {
-        choice: data.pendingChoice,
-        onResolve: data.resolveChoice,
-      });
-    } else {
-      dismissModal("choice-modal");
-    }
-    return () => dismissModal("choice-modal");
-  }, [data.pendingChoice, data.resolveChoice]);
 
   // Records the current level's outcome once per status transition.
   const recordedRef = useRef<string | null>(null);
@@ -214,7 +202,7 @@ export default function WorldGame() {
   // Never assume more rows than the terminal actually has — a forced minimum
   // used to make the layout taller than the screen and spill out of the boxes.
   const rows = Math.max(1, data.rows);
-  const { columns } = useTerminalSize();
+  const { columns } = useWindowSize();
 
   // Deterministic, size-driven layout — extracted to a pure module (see
   // `worldGameLayout.ts`) so the arithmetic is unit-testable without rendering.
@@ -238,16 +226,16 @@ export default function WorldGame() {
   // Journal keyboard scrolling (PageUp/PageDown/Home/End). Offset 0 = newest.
   const [journalOffset, setJournalOffset] = useState(0);
   useEffect(() => {
-    const up = boundKeyboard(["pageup"], () =>
+    const up = boundKeyboard(bindingsFor(keymap.logScrollUp), () =>
       setJournalOffset((o) => Math.max(0, o - 1)),
     );
-    const down = boundKeyboard(["pagedown"], () =>
+    const down = boundKeyboard(bindingsFor(keymap.logScrollDown), () =>
       setJournalOffset((o) => o + 1),
     );
-    const home = boundKeyboard(["home"], () => setJournalOffset(0));
+    const home = boundKeyboard(bindingsFor(keymap.logTop), () => setJournalOffset(0));
     // Clamp stored End offset so a following PageUp moves immediately instead
     // of counting down from an absurd value.
-    const end = boundKeyboard(["end"], () =>
+    const end = boundKeyboard(bindingsFor(keymap.logBottom), () =>
       setJournalOffset(maxJournalOffset),
     );
     return () => {

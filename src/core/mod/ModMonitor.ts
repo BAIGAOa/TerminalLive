@@ -1,7 +1,8 @@
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
-import { ModManifest, modManifestSchema, ResolvedMod } from "./types.js";
+import { ModManifest, modManifestSchema } from "./types.js";
+import { PLUGIN_CONTENT_DIRS } from "../plugin/discovery.js";
 
 /**
  * Discovers mods under `~/.mod_live/` and answers path/structure questions.
@@ -10,16 +11,13 @@ import { ModManifest, modManifestSchema, ResolvedMod } from "./types.js";
 export default class ModMonitor {
   public readonly MOD_ROOT: string;
 
-  /** Resource sub-directories a mod may ship. */
-  private static readonly RESOURCE_DIRS = [
-    "events",
-    "language",
-    "items",
-    "npcs",
-    "levels",
-    "achievements",
-    "pressures",
-  ];
+  /**
+   * Resource sub-directories a mod may ship.
+   *
+   * Shared with the kernel — two copies of this list is how discovery and
+   * validity quietly start disagreeing about what a mod is allowed to contain.
+   */
+  private static readonly RESOURCE_DIRS = PLUGIN_CONTENT_DIRS;
 
   constructor() {
     this.MOD_ROOT = join(homedir(), ".mod_live");
@@ -49,23 +47,8 @@ export default class ModMonitor {
   public getModEventsPath(modName: string): string {
     return join(this.MOD_ROOT, modName, "events");
   }
-  public getModLanguagePath(modName: string): string {
-    return join(this.MOD_ROOT, modName, "language");
-  }
-  public getModItemsPath(modName: string): string {
-    return join(this.MOD_ROOT, modName, "items");
-  }
-  public getModNpcsPath(modName: string): string {
-    return join(this.MOD_ROOT, modName, "npcs");
-  }
-  public getModLevelsPath(modName: string): string {
-    return join(this.MOD_ROOT, modName, "levels");
-  }
   public getModAchievementsPath(modName: string): string {
     return join(this.MOD_ROOT, modName, "achievements");
-  }
-  public getModPressuresPath(modName: string): string {
-    return join(this.MOD_ROOT, modName, "pressures");
   }
   public getModMainPath(modName: string): string {
     return join(this.MOD_ROOT, modName, "index.js");
@@ -95,16 +78,4 @@ export default class ModMonitor {
     }
   }
 
-  /** Every valid mod, resolved to { dirName, id, manifest }. */
-  public getAllResolved(): ResolvedMod[] {
-    const result: ResolvedMod[] = [];
-    for (const dirName of this.getAllMods()) {
-      if (!this.isValid(dirName)) continue;
-      const manifest =
-        this.getModManifest(dirName) ??
-        modManifestSchema.parse({ name: dirName });
-      result.push({ dirName, id: manifest.id ?? dirName, manifest });
-    }
-    return result;
-  }
 }

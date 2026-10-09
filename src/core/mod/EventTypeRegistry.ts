@@ -23,6 +23,18 @@ export default class EventTypeRegistry {
     return new ctor(params);
   }
 
+  /**
+   * Forget a type. Idempotent, because it runs on the unload path: a plugin
+   * being torn down must not fail because its type was already gone.
+   *
+   * Without this a hot reload cannot replace a plugin's event class — the
+   * re-registration throws as a duplicate, the error is isolated, and the
+   * freshly-edited class is silently discarded in favour of the stale one.
+   */
+  public unregister(name: string): void {
+    this.types.delete(name);
+  }
+
   //检查事件类型是否存在
   public has(name: string): boolean {
     return this.types.has(name);

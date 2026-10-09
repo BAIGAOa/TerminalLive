@@ -13,6 +13,8 @@ export default class ConfigStore {
     theme: "default",
     player: { ...DEFAULT_PLAYER_CONFIG },
     enabledMods: [],
+    trustedPlugins: [],
+    disabledPlugins: [],
     completedLevels: [],
     keyBindings: {},
     traits: [],
@@ -110,8 +112,37 @@ export default class ConfigStore {
     this.emitChange();
   }
 
+  /** Ids of the game's own plugins the player switched off. */
+  public getDisabledPlugins(): string[] {
+    return this.config.disabledPlugins ?? [];
+  }
+
+  public async setDisabledPlugins(ids: string[]): Promise<void> {
+    this.config = { ...this.config, disabledPlugins: ids };
+    await this.persist();
+    this.emitChange();
+  }
+
+  /** Plugin ids the player trusts to run outside the sandbox. */
+  public getTrustedPlugins(): string[] {
+    return this.config.trustedPlugins ?? [];
+  }
+
+  public async setTrustedPlugins(ids: string[]): Promise<void> {
+    this.config = { ...this.config, trustedPlugins: ids };
+    await this.persist();
+    this.emitChange();
+  }
+
   public getKeyBindings(): Record<string, string> {
     return this.config.keyBindings ?? {};
+  }
+
+  /** Drop every override, restoring the defaults. */
+  public async setKeyBindings(bindings: Record<string, string>): Promise<void> {
+    this.config = { ...this.config, keyBindings: bindings };
+    await this.persist();
+    this.emitChange();
   }
 
   public async setKeyBinding(action: string, key: string): Promise<void> {

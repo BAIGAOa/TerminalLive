@@ -1,8 +1,7 @@
 import React from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import Player from "../../world/Player.js";
 import { StatBar, StatusScroll } from "./common.js";
-import { useTerminalSize } from "../TerminalSizeContext.js";
 import { barWidthFor } from "../kit/viewport.js";
 
 export default function AttributesView({
@@ -14,7 +13,7 @@ export default function AttributesView({
   t: (key: string, params?: Record<string, string | number>) => string;
   height?: number;
 }) {
-  const { columns } = useTerminalSize();
+  const { columns } = useWindowSize();
   const barW = barWidthFor(columns);
 
   const lines: React.ReactNode[] = [

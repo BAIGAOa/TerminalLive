@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useSyncExternalStore } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { ScrollList } from "./kit/index.js";
 import { container } from "../Container.js";
@@ -7,7 +7,6 @@ import ConfigStore from "../core/store/ConfigStore.js";
 import TraitRegistry from "../world/traits/TraitRegistry.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
 import { clampWidth, statusViewHeight } from "./kit/viewport.js";
 
 const MAX_TRAITS = 2;
@@ -18,7 +17,7 @@ export default function Traits() {
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
   const { back } = useScreenSystem();
-  const { columns, rows } = useTerminalSize();
+  const { columns, rows } = useWindowSize();
   const configStore = container.resolve(ConfigStore);
   const reg = container.resolve(TraitRegistry);
 

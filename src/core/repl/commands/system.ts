@@ -7,7 +7,7 @@ import type { ReplContext } from "../types.js";
 import ThemeCenter from "../../theme/ThemeCenter.js";
 import ThemeManager from "../../theme/ThemeManager.js";
 import ModMonitor from "../../mod/ModMonitor.js";
-import ModPluginLoader from "../../mod/ModPluginLoader.js";
+import PluginHost from "../../plugin/PluginHost.js";
 import ModWatcher from "../../mod/ModWatcher.js";
 import { VersionProvider } from "../../version/VersionProvider.js";
 import { resourcePath } from "../../paths.js";
@@ -21,7 +21,10 @@ export function registerSystemCommands(reg: ReplRegistry): void {
     aliases: ["?", "man"],
     summary: "repl.cmd.help",
     usage: "help [command]",
-    complete: () => reg.visible().map((c) => c.name),
+    // Each name carries its own summary, so hovering it under `help` explains
+    // that command instead of re-explaining `help`.
+    complete: () =>
+      reg.visible().map((c) => ({ value: c.name, detailKey: c.summary })),
     run: (ctx) => {
       const target = ctx.args[0]?.toLowerCase();
       if (target) {
@@ -59,7 +62,11 @@ export function registerSystemCommands(reg: ReplRegistry): void {
     aliases: ["skin"],
     summary: "repl.cmd.theme",
     usage: "theme [id]",
-    complete: () => container.resolve(ThemeCenter).getAllTheme().map((t) => t.id),
+    complete: () =>
+      container.resolve(ThemeCenter).getAllTheme().map((t) => ({
+        value: t.id,
+        detailKey: t.nameKey,
+      })),
     run: (ctx) => {
       const id = ctx.args[0];
       if (!id) {
@@ -87,7 +94,7 @@ export function registerSystemCommands(reg: ReplRegistry): void {
   };
 
   const reloadMods = (ctx: ReplContext) => {
-    const loader = container.resolve(ModPluginLoader);
+    const loader = container.resolve(PluginHost);
     // Reload first, then report: the pre-reload count is stale.
     loader.reloadEnabled();
     const count = loader.getLoadedMods().length;

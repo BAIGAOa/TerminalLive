@@ -1,10 +1,9 @@
 import React, { useSyncExternalStore } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { container } from "../../Container.js";
 import PressureState from "../../world/pressures/PressureState.js";
 import { PRESSURE_CLASSES } from "../../world/pressures/PressureDefinition.js";
 import { ScrollPanel } from "../kit/index.js";
-import { useTerminalSize } from "../TerminalSizeContext.js";
 import { statusViewHeight } from "../kit/viewport.js";
 import { CLASS_COLOR } from "./palettes.js";
 
@@ -18,7 +17,7 @@ export default function PressuresView({
   height?: number;
 }) {
   const pressures = container.resolve(PressureState);
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   useSyncExternalStore(pressures.subscribe, pressures.getSnapshot);
 
   const lines: React.ReactNode[] = [

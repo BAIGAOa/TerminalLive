@@ -1,0 +1,8 @@
+{
+  "minimal_hud.name": "极简界面（可选）",
+  "minimal_hud.desc": "用一屏紧凑布局替换游戏主界面：状态、行动、最近事件，一行一个。适合小终端或想要清爽的人。",
+  "minimal_hud.years": "岁",
+  "minimal_hud.stat.health": "健康",
+  "minimal_hud.stat.happiness": "心情",
+  "minimal_hud.stat.money": "资产"
+}

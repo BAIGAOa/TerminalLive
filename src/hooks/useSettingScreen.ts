@@ -1,7 +1,7 @@
 import { useCallback, useState, useMemo } from "react";
 import { container } from "../Container.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import { useTerminalSize } from "../ui/TerminalSizeContext.js";
+import { useWindowSize } from "ink";
 import { SettingRegistry } from "../core/registry/SettingRegistry.js";
 
 export type SettingMenuId = string;
@@ -23,7 +23,7 @@ export interface SettingScreenData {
 
 export function useSettingScreen(): SettingScreenData {
   const { t } = useI18n();
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   const [activeMenu, setActiveMenu] = useState<SettingMenuId | "">("");
 
   const registry = container.resolve(SettingRegistry);

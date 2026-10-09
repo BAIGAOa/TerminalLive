@@ -72,6 +72,14 @@ const ConfigSchema = z.object({
   enabledMods: z.array(z.string()).default([]),
   /** Built-in plugin ids that are ON. Absent = every built-in plugin on. */
   enabledBuiltinPlugins: z.array(z.string()).optional(),
+  /**
+   * Plugin ids the user trusts to run with full host access. A plugin can also
+   * ask for it in its manifest (`trust: "full"`); this is the other direction —
+   * the player deciding, for a plugin that did not ask. Absent = nobody extra.
+   */
+  trustedPlugins: z.array(z.string()).default([]),
+  /** Ids of the game's own plugins the player switched off. */
+  disabledPlugins: z.array(z.string()).default([]),
   lastLevelId: z.string().optional(),
   /** The world to resume into (one world = one life). */
   lastWorldId: z.string().optional(),

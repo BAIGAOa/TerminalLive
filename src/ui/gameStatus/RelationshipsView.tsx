@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useFocusState } from "ink-cartridge";
 import Player from "../../world/Player.js";
 import { container } from "../../Container.js";
@@ -10,7 +10,6 @@ import { ScrollList } from "../kit/index.js";
 import NpcModal from "../NpcModal.js";
 import { dismissModal, presentModal } from "../layers/modalBus.js";
 import { NPC_MODAL_ID } from "../layers/layerIds.js";
-import { useTerminalSize } from "../TerminalSizeContext.js";
 import { useThemeColors } from "../../hooks/theme/ThematicCommunicator.js";
 import { bar } from "./common.js";
 import {
@@ -39,7 +38,7 @@ export default function RelationshipsView({
   const npcReg = container.resolve(NpcRegistry);
   const system = container.resolve(RelationshipSystem);
   const game = container.resolve(Game);
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   const colors = useThemeColors();
   const contentH = height ?? Math.max(8, rows - 16);
   const focused = useFocusState("rel-cards", "game-main");

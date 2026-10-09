@@ -1,18 +1,19 @@
 import React, { useCallback } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { gotoScreen, useScreenSystem } from "ink-cartridge";
 import { MenuList } from "./kit/index.js";
 import Logo from "./Logo.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
 import { computeMenuLayout } from "./menuLayout.js";
 import { container } from "../Container.js";
 import WorldManager from "../worlds/WorldManager.js";
 import LineageStore from "../core/store/LineageStore.js";
-import WorldSelection from "./WorldSelection.js";
-import WorldGame from "./WorldGame.js";
-import Setting from "./Setting.js";
+import {
+  SettingScreen as Setting,
+  WorldGameScreen as WorldGame,
+  WorldSelectionScreen as WorldSelection,
+} from "./slots/screens.js";
 import Language from "./Language.js";
 import AchievementScreen from "./Achievement.js";
 import Archive from "./Archive.js";
@@ -25,7 +26,7 @@ export default function MainMenu() {
   const { t } = useI18n();
   const colors = useThemeColors();
   const { skip } = useScreenSystem();
-  const { columns: termCols, rows: termRows } = useTerminalSize();
+  const { columns: termCols, rows: termRows } = useWindowSize();
 
   const hasActiveLife = container.resolve(WorldManager).hasActiveWorld();
 

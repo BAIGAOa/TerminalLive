@@ -23,7 +23,7 @@ import PressureLoader from "../world/pressures/PressureLoader.js";
 import NpcLoader from "../world/relationships/NpcLoader.js";
 import WorldRuleLoader from "../world/rules/WorldRuleLoader.js";
 import BuiltinPluginRegistry from "../core/mod/BuiltinPlugin.js";
-import ModPluginLoader from "../core/mod/ModPluginLoader.js";
+import PluginHost from "../core/plugin/PluginHost.js";
 
 /** The built-in + mod content that every world layers on top of. */
 interface WorldContentBase {
@@ -53,7 +53,7 @@ export default class WorldContentLoader {
   private builtins: BuiltinPluginRegistry;
   private npcLoader: NpcLoader;
   private ruleLoader: WorldRuleLoader;
-  private mods: ModPluginLoader;
+  private mods: PluginHost;
 
   private base: WorldContentBase | null = null;
 
@@ -68,7 +68,7 @@ export default class WorldContentLoader {
     this.npcLoader = inject(NpcLoader);
     this.ruleLoader = inject(WorldRuleLoader);
     this.builtins = inject(BuiltinPluginRegistry);
-    this.mods = inject(ModPluginLoader);
+    this.mods = inject(PluginHost);
   }
 
   /**

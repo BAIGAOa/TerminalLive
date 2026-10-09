@@ -20,6 +20,32 @@ export default class ReplRegistry {
     for (const n of names) this.byName.set(n, cmd);
   }
 
+  /**
+   * Insert or replace a command by name — what plugins use.
+   *
+   * Replacing drops the old command outright, aliases included, so a plugin
+   * that overrides `mods` cannot leave a stale `mod` alias pointing at the
+   * built-in. Any other command whose name or alias collides is displaced too,
+   * for the same reason: the newest registration owns its tokens.
+   */
+  public set(cmd: ReplCommand): void {
+    const names = [cmd.name, ...(cmd.aliases ?? [])];
+    for (const n of [...new Set(names)]) {
+      const clash = this.byName.get(n.toLowerCase());
+      if (clash) this.remove(clash);
+    }
+    this.register(cmd);
+  }
+
+  /** Drop a command and every name that resolves to it. */
+  public remove(cmd: ReplCommand): void {
+    const index = this.commands.indexOf(cmd);
+    if (index !== -1) this.commands.splice(index, 1);
+    for (const [name, target] of [...this.byName]) {
+      if (target === cmd) this.byName.delete(name);
+    }
+  }
+
   /** Resolve a token to a command (by name or alias). */
   public resolve(token: string): ReplCommand | undefined {
     return this.byName.get(token.toLowerCase());

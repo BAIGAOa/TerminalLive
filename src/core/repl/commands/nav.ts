@@ -1,7 +1,7 @@
 import { gotoScreen } from "ink-cartridge";
 import ReplRegistry from "../ReplRegistry.js";
 import { ReplCommand } from "../types.js";
-import Setting from "../../../ui/Setting.js";
+import { SettingScreen as Setting } from "../../../ui/slots/screens.js";
 import Language from "../../../ui/Language.js";
 import AchievementScreen from "../../../ui/Achievement.js";
 import Archive from "../../../ui/Archive.js";

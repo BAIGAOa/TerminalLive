@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { writeFileSync } from "node:fs";
 import { useKeyboard } from "ink-cartridge";
 import { useI18n } from "../core/language/LanguageContext.js";
@@ -7,7 +7,6 @@ import { resourcePath } from "../core/paths.js";
 import { buildLifeReviewFromContainer } from "../game/lifeReviewContext.js";
 import { ModalFrame, ScrollPanel } from "./kit/index.js";
 import { statusViewHeight } from "./kit/viewport.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
 import { bar } from "./gameStatus/common.js";
 import { dismissModal } from "./layers/modalBus.js";
 
@@ -23,7 +22,7 @@ export default function LifeReview({ reason }: { reason?: "death" | "complete" }
   const { boundKeyboard } = useKeyboard();
   const review = useMemo(() => buildLifeReviewFromContainer(reason), [reason]);
   const [message, setMessage] = useState<string | null>(null);
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   const bioH = statusViewHeight(rows, { min: 3, max: 10, reserved: 12 });
 
   const close = () => dismissModal("life-review");

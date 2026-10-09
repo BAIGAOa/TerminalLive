@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useKeyboard } from "ink-cartridge";
 import {
   ConsoleNotification,
@@ -7,8 +7,8 @@ import {
 } from "../core/console/ConsoleStore.js";
 import { useControlConsole } from "../hooks/useControlConsole.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
-import { computeConsoleLayout } from "./consoleLayout.js";
+import { completionWindow, computeConsoleLayout } from "./consoleLayout.js";
+import { wrapLine } from "./textWrap.js";
 import { ModalFrame, ScrollPanel, TextField } from "./kit/index.js";
 
 function NotificationItem({
@@ -56,55 +56,76 @@ function NotificationItem({
   }
 }
 
-function CommandResultItem({
-  result,
-  t,
-}: {
-  result: ConsoleCommandResult;
-  t: (key: string, params?: Record<string, string | number>) => string;
-}) {
-  const colors = useThemeColors();
-  const color =
-    result.type === "success"
-      ? colors.success
-      : result.type === "error"
-        ? colors.error
-        : colors.info;
-  const text = result.messageKey
-    ? t(result.messageKey, result.messageParams as Record<string, string | number>)
-    : (result.message ?? "");
-  return <Text color={color}>{text}</Text>;
+/**
+ * Resolved text and theme colour for one console result. A plain function —
+ * the caller wraps the text into rows, so this cannot be a component.
+ */
+function resultText(
+  result: ConsoleCommandResult,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  colors: ReturnType<typeof useThemeColors>,
+): { text: string; color: string } {
+  return {
+    text: result.messageKey
+      ? t(result.messageKey, result.messageParams as Record<string, string | number>)
+      : (result.message ?? ""),
+    color:
+      result.type === "success"
+        ? colors.success
+        : result.type === "error"
+          ? colors.error
+          : colors.info,
+  };
 }
 
-/** Desired panel height; ModalFrame clamps it to the terminal. */
+/** Desired panel size; ModalFrame clamps both axes to the terminal. */
+const DESIRED_W = 76;
 const DESIRED_H = 24;
 
 export default function ControlConsole({ onClose }: { onClose: () => void }) {
   const data = useControlConsole();
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
-  const { rows } = useTerminalSize();
+  const { rows, columns } = useWindowSize();
 
   // Size the inner layout to exactly fill the frame ModalFrame will render.
-  const { notifH, gap, compH, resultsH } = computeConsoleLayout({
-    rows,
-    desiredH: DESIRED_H,
-    notifications: data.notifications.length,
-    completions: data.completions.length,
-    inputMode: data.inputMode,
-  });
+  const { notifH, gap, compH, descH, resultsH, resultsW } =
+    computeConsoleLayout({
+      rows,
+      columns,
+      desiredH: DESIRED_H,
+      desiredW: DESIRED_W,
+      notifications: data.notifications.length,
+      completions: data.completions.length,
+      inputMode: data.inputMode,
+      description: data.description,
+    });
 
-  // The store keeps results newest-first; show them chronologically (like a
-  // terminal) so multi-line command output reads top-to-bottom.
-  const lines = useMemo<React.ReactNode[]>(
-    () =>
-      data.commandResults.length === 0
-        ? [<Text key="__empty" dimColor>{data.t("console.noResults")}</Text>]
-        : [...data.commandResults]
-            .reverse()
-            .map((r) => <CommandResultItem key={r.id} result={r} t={data.t} />),
-    [data.commandResults, data.t],
+  const hasCompletions = data.completions.length > 0;
+  // The menu scrolls with the highlight instead of growing past compH rows.
+  const completionStart = completionWindow(
+    data.completionIndex,
+    data.completions.length,
+    compH,
   );
+
+  // The store keeps results newest-first and each entry may be longer than the
+  // viewport is wide. Show them chronologically (like a terminal), pre-wrapped
+  // into physical rows: the panel scrolls by row, so a soft-wrapped line has to
+  // be its own rows rather than one tall entry.
+  const lines = useMemo<React.ReactNode[]>(() => {
+    if (data.commandResults.length === 0) {
+      return [<Text key="__empty" dimColor>{data.t("console.noResults")}</Text>];
+    }
+    return [...data.commandResults].reverse().flatMap((r) => {
+      const { text, color } = resultText(r, data.t, colors);
+      return wrapLine(text, resultsW).map((row, i) => (
+        <Text key={`${r.id}-${i}`} color={color} wrap="truncate">
+          {row}
+        </Text>
+      ));
+    });
+  }, [data.commandResults, data.t, colors, resultsW]);
 
   const maxOffset = Math.max(0, lines.length - resultsH);
   const [offset, setOffset] = useState(0);
@@ -149,13 +170,16 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
       if (!data.inputMode) data.enterInputMode();
       else data.acceptCompletion();
     });
-    // ↑/↓ walk command history only while typing; otherwise they scroll output
-    // (see the scroll effect above), so don't bind them twice.
+    // ↑/↓ belong to whatever is on screen: the completion menu while it has
+    // entries, the command history otherwise. Outside input mode they scroll
+    // the output (see the scroll effect above), so don't bind them twice.
     const unbinds = [uEsc, uTab];
     if (data.inputMode) {
+      const up = hasCompletions ? data.completionPrev : data.historyPrev;
+      const down = hasCompletions ? data.completionNext : data.historyNext;
       unbinds.push(
-        boundKeyboard(["up"], () => data.historyPrev()),
-        boundKeyboard(["down"], () => data.historyNext()),
+        boundKeyboard(["up"], () => up()),
+        boundKeyboard(["down"], () => down()),
       );
     }
     return () => unbinds.forEach((u) => u());
@@ -166,6 +190,9 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
     data.enterInputMode,
     data.exitInputMode,
     data.acceptCompletion,
+    hasCompletions,
+    data.completionPrev,
+    data.completionNext,
     data.historyPrev,
     data.historyNext,
   ]);
@@ -185,7 +212,8 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
               ? "[Tab] " +
                 data.t("console.complete") +
                 "  [↑↓] " +
-                data.t("console.history") +
+                // ↑/↓ drive the completion menu when there is one to drive.
+                data.t(hasCompletions ? "console.select" : "console.history") +
                 "  [Esc] " +
                 data.t("console.exitInputMode")
               : "[↑↓ PgUp/PgDn] " +
@@ -220,16 +248,23 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
 
         {compH > 0 ? (
           <Box flexDirection="column">
-            {data.completions.slice(0, compH).map((candidate, i) => (
-              <Text
-                key={candidate}
-                color={i === 0 ? colors.success : colors.muted}
-                dimColor={i !== 0}
-              >
-                {i === 0 ? "▸ " : "  "}
-                {candidate}
-              </Text>
-            ))}
+            {data.completions
+              .slice(completionStart, completionStart + compH)
+              .map((candidate, i) => {
+                const index = completionStart + i;
+                const selected = index === data.completionIndex;
+                return (
+                  <Text
+                    key={candidate}
+                    color={selected ? colors.success : colors.muted}
+                    dimColor={!selected}
+                    wrap="truncate"
+                  >
+                    {selected ? "▸ " : "  "}
+                    {candidate}
+                  </Text>
+                );
+              })}
           </Box>
         ) : null}
 
@@ -242,14 +277,30 @@ export default function ControlConsole({ onClose }: { onClose: () => void }) {
               <TextField
                 value={data.inputText}
                 onChange={data.setInputText}
-                onSubmit={data.submitCommand}
+                onSubmit={data.submitOrComplete}
                 focusId="console-input"
+                caret="terminal"
               />
             </>
           ) : (
             <Text dimColor>{data.t("console.inputHint")}</Text>
           )}
         </Box>
+
+        {/* Help for the command being typed (or the highlighted completion),
+            pinned right under the input line. */}
+        {descH > 0 && data.description ? (
+          <Box flexDirection="column">
+            {data.description.usage ? (
+              <Text color={colors.info} wrap="truncate">
+                {data.description.usage}
+              </Text>
+            ) : null}
+            <Text color={colors.muted} wrap="truncate">
+              {data.description.summary}
+            </Text>
+          </Box>
+        ) : null}
       </Box>
     </ModalFrame>
   );

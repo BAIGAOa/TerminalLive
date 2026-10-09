@@ -36,6 +36,7 @@ npx vitest run -t "buildLifeReview"                    # single test by name
 npx tsc --noEmit     # cheap typecheck; preferred over heavy suites during iteration
 
 npm run test:engine  # build + headless full-life simulation (dist/dev/validate.js)
+node scripts/plugins-probe.mjs  # build + boot, then list what the plugin kernel mounted
 npm run test:ui      # build + scripts/ui-smoke.mjs (drives the screen tree via ink-testing-library)
 npm run balance      # build + dist/dev/montecarlo.js — balance simulation
 ```
@@ -49,8 +50,9 @@ costly. `npm test` is the default unit-test entry point.
 
 **Runtime:** Ink + React for the TUI; [`ink-cartridge`](https://github.com/BAIGAOa/ink-cartridge)
 provides the screen tree, floating/modal layers, layered keyboard engine, focus system and
-mouse regions. `ink` must stay **>= 7.1.1** — mouse regions rely on `measureElement()`
-returning `x`/`y`, which older ink omits (options silently become unhittable on 7.0.x).
+mouse regions. `ink` must stay **>= 8.0.0** — ink 8 is what requires React >= 19.3, and
+mouse regions rely on `measureElement()` returning `x`/`y`, which older ink omits
+(options silently become unhittable on 7.0.x).
 
 **Dependency injection:** a tiny hand-rolled lazy-singleton container in `src/Container.ts`
 (`container.resolve(Ctor)` / `inject(Ctor)`). There are **no decorators and no `di-wise`** —
@@ -64,9 +66,30 @@ registers every screen into ink-cartridge's tree via `registerComponent(...)`. N
 is `gotoScreen` / `skip` / `back`. Adding a screen means registering it here and, if it's a
 Settings sub-page, also into `SettingRegistry`.
 
+**Plugin architecture (microkernel):** everything the game does beyond its core is a
+plugin, and so is every mod — one manifest schema, one capability model, one context
+API. Three sources differ only in where they are found: the game's own plugins
+(`src/plugins/`, TypeScript), shipped plugins (`resource/plugins/`, JSON + optional
+`index.js`), and user mods (`~/.mod_live/`, JS).
+- `src/core/plugin/` is the kernel: `PluginHost` (discover → plan → evaluate → mount →
+  dispatch → unload), `manifest.ts` (unified schema), `discovery.ts` (both roots),
+  `sources.ts` (enablement + ordering), `loadOrder.ts`, `trust.ts` (sandbox vs full
+  evaluation), `evaluate.ts`, `storage.ts` (per-plugin persistence), `services.ts`
+  (plugins extending plugins), `ui.ts` (`UiSlotRegistry`), `kernel.ts` (the typed
+  system surface plugins get as `ctx.kernel`).
+- Plugins **replace** as well as add: `overrideScreen(slot, …)` through `ui/slots/`,
+  `addStatusView`/`addCommand`/`addSetting` upsert over the built-in of the same id.
+- Adding a feature means adding `src/plugins/<id>/index.ts` and an entry in
+  `src/plugins/index.ts` — not editing the kernel. The game's own plugins so far:
+  `core.status-views` (the in-game panels), `core.console-commands` (the `P`
+  console toolkit), `core.keybindings` (the Settings → Key bindings page, which
+  also publishes the `ui.keyactions` service other plugins add hotkeys through).
+- `core/mod/` keeps the mod-shaped pieces: `ModMonitor` (discovery paths),
+  `capabilities.ts`, `EventTypes`, `eventValidation`, `ModWatcher`.
+
 **Layering (logic → UI):**
 - `src/core/` — infrastructure: `GameInitialization`, `Game` (the gameplay facade),
-  `TypedEventBus`, registries, random, archive/save, mod sandbox, theme, repl, stores.
+  `TypedEventBus`, registries, random, archive/save, theme, repl, stores.
 - `src/content/` — content loaders that populate registries from `resource/*.json` and mods
   (`Actions`, `Effects`, `Traits`, `Weather`, `Conditions`, `GameStatus`, `Arcs`, …).
   World content/manifests are loaded by `src/worlds/`.
@@ -90,9 +113,13 @@ Settings sub-page, also into `SettingRegistry`.
 `SeededRandom` / `RandomJournal` — so runs are reproducible and replayable. Use it instead
 of `Math.random()`.
 
-**Mods & saves:** mods live in `~/.mod_live/`, run sandboxed (`node:vm`, capability-gated by
-manifest), and hot-reload via the `mods-watch` console command. Saves live in `~/.archive_live/`;
-`resource/` holds `config.json`, languages and achievement data.
+**Mods & saves:** mods live in `~/.mod_live/`, are capability-gated by their manifest, and
+hot-reload via the `mods-watch` console command or `R` in Settings → Plugins. A mod runs
+sandboxed (`node:vm`) unless it asks for `"trust": "full"` in its manifest or the player
+grants it (`trustedPlugins` in `config.json`) — the sandbox is defence-in-depth, not a
+security boundary, and the code says so. Plugin state lives in `~/.plugin_data/<id>/`;
+saves in `~/.archive_live/`; `resource/` holds `config.json`, languages and achievements.
+See `README_mod.md` for the plugin authoring guide.
 
 **Module resolution:** `tsconfig` uses Node16 — **relative imports must carry the `.js`
 extension** (`import Game from "./Game.js"`), even for `.ts`/`.tsx` sources. `src/__tests__`

@@ -1,11 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { resolveLoadOrder } from "../../core/mod/loadOrder.js";
-import { modManifestSchema, ResolvedMod } from "../../core/mod/types.js";
+import { resolveLoadOrder } from "../../core/plugin/loadOrder.js";
+import { pluginManifestSchema } from "../../core/plugin/manifest.js";
+import type { PluginRef } from "../../core/plugin/manifest.js";
 
-function mk(id: string, deps: string[] = []): ResolvedMod {
+function mk(id: string, deps: string[] = []): PluginRef {
   const dependencies = Object.fromEntries(deps.map((d) => [d, "*"]));
-  const manifest = modManifestSchema.parse({ name: id, dependencies });
-  return { dirName: id, id, manifest: { ...manifest, id } };
+  const manifest = pluginManifestSchema.parse({ name: id, dependencies });
+  return { dirName: id, id, dir: `/mods/${id}`, source: "mod", manifest: { ...manifest, id } };
 }
 
 describe("mod load order", () => {
@@ -39,16 +40,16 @@ describe("mod load order", () => {
   });
 });
 
-describe("mod manifest schema", () => {
+describe("plugin manifest schema", () => {
   it("applies sensible defaults", () => {
-    const m = modManifestSchema.parse({ name: "Cool Mod" });
+    const m = pluginManifestSchema.parse({ name: "Cool Mod" });
     expect(m.main).toBe("index.js");
     expect(m.version).toBe("0.0.0");
     expect(m.dependencies).toEqual({});
   });
 
   it("keeps declared dependencies", () => {
-    const m = modManifestSchema.parse({
+    const m = pluginManifestSchema.parse({
       name: "X",
       id: "x",
       dependencies: { core: "^1.0.0" },

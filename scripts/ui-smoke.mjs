@@ -22,26 +22,28 @@ import { container } from "../dist/Container.js";
 import GameInitialization from "../dist/core/GameInitialization.js";
 import ConfigStore from "../dist/core/store/ConfigStore.js";
 import { resolveKeymap } from "../dist/ui/keymap.js";
+import KeyActionRegistry from "../dist/core/registry/KeyActionRegistry.js";
 import { computeMenuLayout } from "../dist/ui/menuLayout.js";
 import { SettingRegistry } from "../dist/core/registry/SettingRegistry.js";
 import { LanguageProvider } from "../dist/core/language/LanguageContext.js";
-import { TerminalSizeProvider } from "../dist/ui/TerminalSizeContext.js";
 import { ThemeProvider } from "../dist/hooks/theme/ThematicCommunicator.js";
 
-import MainMenu from "../dist/ui/MainMenu.js";
-import LevelSelection from "../dist/ui/LevelSelection.js";
-import LevelGame from "../dist/ui/LevelGame.js";
-import Setting from "../dist/ui/Setting.js";
+import {
+  MainMenuScreen as MainMenu,
+  SettingScreen as Setting,
+  WorldGameScreen as WorldGame,
+  WorldSelectionScreen as WorldSelection,
+} from "../dist/ui/slots/screens.js";
 import PlayerConfig from "../dist/ui/PlayerConfig.js";
 import ModManager from "../dist/ui/ModManager.js";
 import ThemeScreen from "../dist/ui/ThemeScreen.js";
-import KeyBinding from "../dist/ui/KeyBinding.js";
 import Language from "../dist/ui/Language.js";
 import Achievement from "../dist/ui/Achievement.js";
 import Archive from "../dist/ui/Archive.js";
 import Traits from "../dist/ui/Traits.js";
 import Shop from "../dist/ui/Shop.js";
 import Codex from "../dist/ui/Codex.js";
+import Lineage from "../dist/ui/Lineage.js";
 import { ToastHost } from "../dist/ui/ToastHost.js";
 
 const h = React.createElement;
@@ -101,46 +103,43 @@ await container.resolve(GameInitialization).init();
 // Respect the player's configured end-turn key (they may have rebound it).
 const endTurnKey = resolveKeymap(
   container.resolve(ConfigStore).getKeyBindings(),
+  container.resolve(KeyActionRegistry).effective(),
 ).endTurn;
 
 registerComponent(MainMenu, {});
-registerComponent(LevelSelection, {}, { parent: MainMenu });
-registerComponent(LevelGame, {}, { parent: LevelSelection });
+registerComponent(WorldSelection, {}, { parent: MainMenu });
+registerComponent(WorldGame, {}, { parent: WorldSelection });
 registerComponent(Setting, {}, { parent: MainMenu });
 registerComponent(PlayerConfig, {}, { parent: Setting });
 registerComponent(ModManager, {}, { parent: Setting });
 registerComponent(ThemeScreen, {}, { parent: Setting });
-registerComponent(KeyBinding, {}, { parent: Setting });
 registerComponent(Language, {}, { parent: MainMenu });
 registerComponent(Achievement, {}, { parent: MainMenu });
 registerComponent(Archive, {}, { parent: MainMenu });
 registerComponent(Traits, {}, { parent: MainMenu });
 registerComponent(Shop, {}, { parent: MainMenu });
 registerComponent(Codex, {}, { parent: MainMenu });
+registerComponent(Lineage, {}, { parent: MainMenu });
 
 const settingReg = container.resolve(SettingRegistry);
 settingReg.register("playerConfig", { component: PlayerConfig, nameKey: "setting.playerConfig" });
 settingReg.register("modManager", { component: ModManager, nameKey: "setting.modManager" });
 settingReg.register("theme", { component: ThemeScreen, nameKey: "setting.theme" });
-settingReg.register("keyboard", { component: KeyBinding, nameKey: "setting.keyBoardConfig" });
+// NB: the keybindings page is registered by the  plugin.
 
 const tree = h(
   LanguageProvider,
   null,
   h(
-    TerminalSizeProvider,
+    ThemeProvider,
     null,
     h(
-      ThemeProvider,
-      null,
+      ScenarioManagementProvider,
+      { defaultScreen: MainMenu, fullScreen: true },
       h(
-        ScenarioManagementProvider,
-        { defaultScreen: MainMenu, fullScreen: true },
-        h(
-          KeyboardProvider,
-          { mouse: true, autoTab: true, modes: ["normal", "insert"], defaultMode: "normal" },
-          h(Box, { flexDirection: "column" }, h(ToastHost), h(CurrentScreen)),
-        ),
+        KeyboardProvider,
+        { mouse: true, autoTab: true, modes: ["normal", "insert"], defaultMode: "normal" },
+        h(Box, { flexDirection: "column" }, h(ToastHost), h(CurrentScreen)),
       ),
     ),
   ),
@@ -208,13 +207,13 @@ stdin.write("\u001B");
 check("back at main menu (2)", await waitUntil(backAtMenu));
 
 // Achievements screen — guards the multi-line card layout
-await menuGoTo(6);
+await menuGoTo(7);
 check("achievements screen reached", await waitUntil(() => has("成就") || has("Achievement")));
 stdin.write("\u001B");
 check("back at main menu (3)", await waitUntil(backAtMenu));
 
 // Settings: Esc leaves (the footer promises it)
-await menuGoTo(4);
+await menuGoTo(5);
 check(
   "setting screen reached",
   await waitUntil(() => has("设置界面") || has("Settings Menu")),

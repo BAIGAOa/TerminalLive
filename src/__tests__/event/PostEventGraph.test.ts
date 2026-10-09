@@ -4,7 +4,7 @@ import EventCenter from "../../event/EventCenter.js";
 import EventHistory from "../../event/EventHistory.js";
 import ChainTracker from "../../event/ChainTracker.js";
 import LogStore from "../../core/store/LogStore.js";
-import ModPluginLoader from "../../core/mod/ModPluginLoader.js";
+import PluginHost from "../../core/plugin/PluginHost.js";
 import DefaultEventAlgorithm from "../../event/DefaultEventAlgorithm.js";
 import { Incident } from "../../world/Incident.js";
 import Player from "../../world/Player.js";
@@ -22,7 +22,7 @@ function build(center: EventCenter, history = new EventHistory()) {
     eventCenter: center,
     logStore: new LogStore(),
     eventHistory: history,
-    modPluginLoader: container.resolve(ModPluginLoader),
+    pluginHost: container.resolve(PluginHost),
   });
   return { algo, history };
 }

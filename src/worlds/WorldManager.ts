@@ -4,7 +4,7 @@ import WorldManifestLoader from "./WorldManifestLoader.js";
 import Player from "../world/Player.js";
 import { Incident } from "../world/Incident.js";
 import EventHistory from "../event/EventHistory.js";
-import ModPluginLoader from "../core/mod/ModPluginLoader.js";
+import PluginHost from "../core/plugin/PluginHost.js";
 import ConfigStore from "../core/store/ConfigStore.js";
 import { dirname, join } from "node:path";
 import { existsSync } from "node:fs";
@@ -42,7 +42,7 @@ type Listener = () => void;
 
 export default class WorldManager {
   private levelLoader: WorldManifestLoader;
-  private modPluginLoader: ModPluginLoader;
+  private pluginHost: PluginHost;
   private modRegistry: ModMonitor;
   private configStore: ConfigStore;
   private eventBus: TypedEventBus;
@@ -87,7 +87,7 @@ export default class WorldManager {
 
   constructor() {
     this.levelLoader = inject(WorldManifestLoader);
-    this.modPluginLoader = inject(ModPluginLoader);
+    this.pluginHost = inject(PluginHost);
     this.modRegistry = inject(ModMonitor);
     this.configStore = inject(ConfigStore);
     this.eventBus = inject(TypedEventBus);
@@ -296,7 +296,7 @@ export default class WorldManager {
     // 加载事件到当前关卡
     this.loadEventsFor(level);
 
-    this.modPluginLoader.setPlayer(level.player);
+    this.pluginHost.setPlayer(level.player);
     this.eventBus.emit("level:started", { levelId: id });
     this.lastPlayedLevelId = id;
     this.configStore.update({ lastLevelId: id });
@@ -374,8 +374,8 @@ export default class WorldManager {
   public update(): void {
     this.current.endTurn();
     // Let mods observe the player and the year.
-    this.modPluginLoader.firePlayerUpdate(this.current.player);
-    this.modPluginLoader.fireYear(this.current.player);
+    this.pluginHost.firePlayerUpdate(this.current.player);
+    this.pluginHost.fireYear(this.current.player);
     this.applyObjectives();
     this.eventBus.emit("player:updated");
     this.notify();
@@ -568,7 +568,7 @@ export default class WorldManager {
     if (level.eventCenter.getAllRanges().length === 0) {
       this.loadEventsFor(level);
     }
-    this.modPluginLoader.setPlayer(player);
+    this.pluginHost.setPlayer(player);
     this.lastPlayedLevelId = levelId;
     this.eventBus.emit("level:started", { levelId });
     this.notify();

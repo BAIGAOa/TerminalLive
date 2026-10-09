@@ -4,6 +4,9 @@ import { useKeyboard } from "ink-cartridge";
 import { MenuList, ModalFrame } from "./kit/index.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import type { PendingChoice } from "../event/PendingChoice.js";
+import { container } from "../Container.js";
+import RelationshipSystem from "../world/relationships/RelationshipSystem.js";
+import { NpcOfferIncident } from "../world/relationships/NpcOfferIncident.js";
 
 /**
  * Modal dialog offering the player an event's branches. Rendered inside a
@@ -20,6 +23,22 @@ export function ChoiceModal({
 }) {
   const { t } = useI18n();
   const { boundKeyboard } = useKeyboard();
+
+  // An NPC asking something and the world rolling an event are answered in this
+  // same dialog, so they have to look different: same frame, same colours and
+  // the player cannot tell who is acting on them.
+  const offeredBy =
+    choice.incident instanceof NpcOfferIncident ? choice.incident.npcId : null;
+  const npcName = offeredBy
+    ? (() => {
+        try {
+          const detail = container.resolve(RelationshipSystem).getDetail(offeredBy);
+          return detail ? t(detail.labelKey) : offeredBy;
+        } catch {
+          return offeredBy;
+        }
+      })()
+    : null;
 
   const items = choice.options.map((o, i) => ({
     value: o.def.id,
@@ -41,8 +60,12 @@ export function ChoiceModal({
   return (
     <ModalFrame
       width={64}
-      title={t(choice.nameKey ?? "choice.title")}
-      borderColor="yellow"
+      title={
+        npcName
+          ? t("choice.fromNpc", { name: npcName })
+          : t(choice.nameKey ?? "choice.title")
+      }
+      borderColor={npcName ? "green" : "yellow"}
       draggable
     >
       <Box marginBottom={1}>
@@ -55,7 +78,7 @@ export function ChoiceModal({
         items={items}
         onSelect={(item) => onResolve(item.value)}
         renderItem={(item) => (
-          <Text color={item.disabled ? "gray" : "yellowBright"}>
+          <Text color={item.disabled ? "gray" : npcName ? "greenBright" : "yellowBright"}>
             {item.label}
             {item.disabled ? `  (${t("choice.locked")})` : ""}
           </Text>

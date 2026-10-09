@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect } from "react";
+import { useKeymap } from "../hooks/useKeymap.js";
 import { Box, Text } from "ink";
 import { back, useKeyboard } from "ink-cartridge";
 import { ScrollList, TextField } from "./kit/index.js";
 import { statusViewHeight } from "./kit/viewport.js";
 import { useArchiveScreen } from "../hooks/useArchiveScreen.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
+import { bindingsFor } from "./keymap.js";
 
 export default function Archive({ onBack }: { onBack?: () => void }) {
   // Esc leaves the screen with `back()`, like every sibling screen. `onBack`
@@ -18,6 +20,8 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
   const data = useArchiveScreen(goBack);
   const colors = useThemeColors();
   const { boundKeyboard } = useKeyboard();
+  // Rebindable: the archive's save/delete shortcuts are the player's to set.
+  const { keymap } = useKeymap();
 
   useEffect(() => {
     const uEsc = boundKeyboard(["escape"], () => data.handleCancel());
@@ -26,13 +30,18 @@ export default function Archive({ onBack }: { onBack?: () => void }) {
 
   useEffect(() => {
     if (data.saveMode) return;
-    const u1 = boundKeyboard(["s", "S"], () => data.handleStartSave());
-    const u2 = boundKeyboard(["d", "D"], () => data.handleDelete());
+    // Bound from the keymap, in both cases: `s` and `S` are different names.
+    const u1 = boundKeyboard(bindingsFor(keymap.saveArchive), () =>
+      data.handleStartSave(),
+    );
+    const u2 = boundKeyboard(bindingsFor(keymap.deleteArchive), () =>
+      data.handleDelete(),
+    );
     return () => {
       u1();
       u2();
     };
-  }, [data.saveMode, data.handleStartSave, data.handleDelete, boundKeyboard]);
+  }, [data.saveMode, data.handleStartSave, data.handleDelete, boundKeyboard, keymap]);
 
   const items = data.saves.map((save) => ({
     value: save.name,

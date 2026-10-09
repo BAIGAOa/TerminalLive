@@ -6,6 +6,7 @@ import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { container } from "../Container.js";
 import ConfigStore from "../core/store/ConfigStore.js";
+import KeyActionRegistry from "../core/registry/KeyActionRegistry.js";
 import { resolveKeymap } from "./keymap.js";
 
 export function HelpModal({ onClose }: { onClose: () => void }) {
@@ -14,7 +15,10 @@ export function HelpModal({ onClose }: { onClose: () => void }) {
   const { boundKeyboard } = useKeyboard();
 
   // Drive the legend from the (rebindable) keymap so it never drifts.
-  const keymap = resolveKeymap(container.resolve(ConfigStore).getKeyBindings());
+  const keymap = resolveKeymap(
+    container.resolve(ConfigStore).getKeyBindings(),
+    container.resolve(KeyActionRegistry).effective(),
+  );
   const helpKeys = useMemo<Array<[string, string]>>(
     () => [
       ["↑ ↓ ⏎", "help.k.nav"],

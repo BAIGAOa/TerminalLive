@@ -8,6 +8,19 @@ export default class BaseRegistry<T> {
     this.entries.set(key, value);
   }
 
+  /**
+   * Insert or replace, returning whether it replaced something.
+   *
+   * Boot-time content uses `register`, where a duplicate key is a bug worth
+   * catching. Plugins use `set`: replacing a built-in registration is the whole
+   * point of the extension model, so it is allowed — and the caller logs it.
+   */
+  public set(key: string, value: T): boolean {
+    const replaced = this.entries.has(key);
+    this.entries.set(key, value);
+    return replaced;
+  }
+
   public unregister(key: string): void {
     if (!this.entries.has(key)) {
       throw new Error(`key "${key}" 不存在，无法删除`);

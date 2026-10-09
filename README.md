@@ -65,9 +65,13 @@ game itself.
   menu later. A finished life clears the slot. Named save slots are also available.
 - 🎲 **Event engine** — weighted random events, age-range and world gating, predecessor /
   block / once logic, delayed post-event chains and mod-defined event types.
-- 🧩 **Mod support** — install mods into `~/.mod_live/` to add events, levels, items, NPCs,
-  translations, achievements and UI screens. Mods run **sandboxed** (`node:vm`, restricted
-  `require`) and support **hot-reload** via the `mods-watch` console command.
+- 🧩 **Everything is a plugin** — a microkernel: events, worlds, the status screen and the
+  console commands are plugins, and so is your mod in `~/.mod_live/`. One manifest, one
+  capability model, one API. Plugins don't only add — they **replace**: take over a screen
+  (`overrideScreen`), a status panel, a console command or a settings page, and the built-in
+  steps aside. Plugins also extend *each other* through a service registry, keep their own
+  persistent storage, and hot-reload from **Settings → Plugins** (`R`).
+  Trusted plugins run with full host access; everything else stays sandboxed.
 - 🌐 **Multi-language** — English, 中文, 日本語, Русский included.
 - 🖱 **Mouse-driven UI** — hover to focus, click to select, wheel to scroll, drag modal
   windows; the keyboard always works too, and focus is shared between them.
@@ -111,9 +115,9 @@ framework by the same author. It enhances Ink with the primitives a complex TUI 
 ### Requirements
 
 - **Node.js** >= 22
-- **`ink` >= 7.1.1** — pinned in `package.json`; mouse regions rely on
-  `measureElement()` returning `x`/`y`, which older ink versions omit (regions
-  silently become unhittable on ink <= 7.0.x).
+- **`ink` >= 8.0.0** — pinned in `package.json` (ink 8 needs React >= 19.3);
+  mouse regions rely on `measureElement()` returning `x`/`y`, which older ink
+  versions omit (regions silently become unhittable on ink <= 7.0.x).
 - A terminal with Unicode support, 256 colours and mouse reporting
   (mouse needs a real TTY; without one the game falls back to keyboard-only)
 
@@ -142,8 +146,13 @@ age up and let events unfold. Some events pause for a decision.
 | `Q` | Back to the main menu |
 
 Mouse: hover a list to focus it, click to select, scroll the journal with the wheel, and
-drag modal windows (choices, console, help) to move them. Every key binding above is
-re-bindable from **Settings → Key bindings**.
+drag modal windows (choices, console, help) to move them.
+
+**Settings → Key bindings** rebinds the lot: the seven above, journal scrolling
+(`PgUp`/`PgDn`/`Home`/`End`), the archive's save/delete keys and the plugin screen's reload
+and trust keys. Press `Enter` on a row and then any key to bind it, `R` to restore every
+default. Two actions that end up on the same key are flagged on both rows. The list is an
+extension point — a plugin can offer a shortcut of its own and it shows up here.
 
 ---
 
@@ -151,7 +160,7 @@ re-bindable from **Settings → Key bindings**.
 
 | Document | Contents |
 |----------|----------|
-| **[README_mod.md](./README_mod.md)** | Mod development guide — directory structure, manifest format, plugin API, lifecycle hooks, and the event/choice/item schema. |
+| **[README_mod.md](./README_mod.md)** | Plugin & mod development guide — the three plugin sources, manifest and capabilities, trust, extending *and replacing* built-ins, the context API, lifecycle hooks, and the event/choice/item schema. |
 | **[ink-cartridge](https://github.com/BAIGAOa/ink-cartridge)** | Full API reference for the framework (screens, layers, keyboard, focus, mouse). |
 
 ---

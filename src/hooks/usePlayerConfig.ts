@@ -3,7 +3,7 @@ import { container } from "../Container.js";
 import Player from "../world/Player.js";
 import ConfigStore from "../core/store/ConfigStore.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import { useTerminalSize } from "../ui/TerminalSizeContext.js";
+import { useWindowSize } from "ink";
 import { PlayerConfigType } from "../types/ConfigType.js";
 import {
   ATTRIBUTE_META,
@@ -54,7 +54,7 @@ export function usePlayerConfig(
   onBack?: () => void,
 ): PlayerConfigData {
   const { t } = useI18n();
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   const configStore = container.resolve(ConfigStore);
 
   const [focus, setFocus] = useState<FocusPanel>("left");

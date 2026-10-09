@@ -5,7 +5,7 @@ import WorldState from "../../world/chronicle/WorldState.js";
 import EventCenter from "../../event/EventCenter.js";
 import EventHistory from "../../event/EventHistory.js";
 import LogStore from "../../core/store/LogStore.js";
-import ModPluginLoader from "../../core/mod/ModPluginLoader.js";
+import PluginHost from "../../core/plugin/PluginHost.js";
 import DefaultEventAlgorithm from "../../event/DefaultEventAlgorithm.js";
 import ChoiceEvent from "../../world/events/ChoiceEvent.js";
 import Player from "../../world/Player.js";
@@ -20,7 +20,7 @@ function buildGated(world: WorldState) {
   const eventCenter = new EventCenter();
   const eventHistory = new EventHistory();
   const logStore = new LogStore();
-  const modPluginLoader = container.resolve(ModPluginLoader);
+  const pluginHost = container.resolve(PluginHost);
   const incident = new ChoiceEvent({
     id: "gated_ev",
     nameKey: "gated_ev",
@@ -33,7 +33,7 @@ function buildGated(world: WorldState) {
     eventCenter,
     logStore,
     eventHistory,
-    modPluginLoader,
+    pluginHost,
     world,
   });
   return algo;
@@ -70,7 +70,7 @@ describe("world-gated events (engine integration)", () => {
       eventCenter,
       logStore: new LogStore(),
       eventHistory: new EventHistory(),
-      modPluginLoader: container.resolve(ModPluginLoader),
+      pluginHost: container.resolve(PluginHost),
       world,
     });
     eventCenter.add(

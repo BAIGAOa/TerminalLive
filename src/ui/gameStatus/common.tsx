@@ -1,8 +1,7 @@
 import React from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { ScrollPanel } from "../kit/index.js";
 import { bar, statusViewHeight } from "../kit/viewport.js";
-import { useTerminalSize } from "../TerminalSizeContext.js";
 
 // Re-exported so existing status views can keep importing `bar` from here.
 export { bar } from "../kit/viewport.js";
@@ -19,7 +18,7 @@ export function StatusScroll({
   height?: number;
   lines: React.ReactNode[];
 }) {
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   const viewH = Math.max(
     1,
     height ?? statusViewHeight(rows, { min: 6, reserved: 13 }),

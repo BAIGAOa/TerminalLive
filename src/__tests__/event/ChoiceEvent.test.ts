@@ -3,7 +3,7 @@ import { container } from "../../Container.js";
 import EventCenter from "../../event/EventCenter.js";
 import EventHistory from "../../event/EventHistory.js";
 import LogStore from "../../core/store/LogStore.js";
-import ModPluginLoader from "../../core/mod/ModPluginLoader.js";
+import PluginHost from "../../core/plugin/PluginHost.js";
 import DefaultEventAlgorithm from "../../event/DefaultEventAlgorithm.js";
 import ChoiceEvent from "../../world/events/ChoiceEvent.js";
 import Player from "../../world/Player.js";
@@ -14,7 +14,7 @@ function build(choices: ChoiceDef[]) {
   const eventCenter = new EventCenter();
   const eventHistory = new EventHistory();
   const logStore = new LogStore();
-  const modPluginLoader = container.resolve(ModPluginLoader);
+  const pluginHost = container.resolve(PluginHost);
   const incident = new ChoiceEvent({
     id: "c1",
     nameKey: "c1",
@@ -26,7 +26,7 @@ function build(choices: ChoiceDef[]) {
     eventCenter,
     logStore,
     eventHistory,
-    modPluginLoader,
+    pluginHost,
   });
   return { algo, eventHistory };
 }

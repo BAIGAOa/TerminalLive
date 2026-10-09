@@ -1,8 +1,7 @@
 import React from "react";
-import { Text } from "ink";
+import { Text, useWindowSize } from "ink";
 import Player from "../../world/Player.js";
 import { StatBar, StatusScroll } from "./common.js";
-import { useTerminalSize } from "../TerminalSizeContext.js";
 import { barWidthFor } from "../kit/viewport.js";
 import { averageCoreSkills, skillTier } from "../../game/skillTier.js";
 
@@ -16,7 +15,7 @@ export default function SkillsView({
   height?: number;
 }) {
   const avg = averageCoreSkills(player);
-  const { columns } = useTerminalSize();
+  const { columns } = useWindowSize();
   const barW = barWidthFor(columns);
 
   const lines: React.ReactNode[] = [

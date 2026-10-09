@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useKeyboard } from "ink-cartridge";
 import { MenuList, TextField } from "./kit/index.js";
 import Player from "../world/Player.js";
 import { usePlayerConfig } from "../hooks/usePlayerConfig.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { container } from "../Container.js";
 import WorldManager from "../worlds/WorldManager.js";
@@ -17,7 +16,7 @@ interface PlayerConfigProps {
 export default function PlayerConfig({ player: playerProp, onBack }: PlayerConfigProps) {
   const player = playerProp ?? container.resolve(WorldManager).getPlayer();
   const data = usePlayerConfig(player, onBack);
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   const colors = useThemeColors();
   const { boundKeyboard, focusSet } = useKeyboard();
 

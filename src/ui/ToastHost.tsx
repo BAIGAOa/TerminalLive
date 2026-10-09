@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useScreenSystem } from "ink-cartridge";
 import { container } from "../Container.js";
 import TypedEventBus from "../core/TypedEventBus.js";
 import { useI18n } from "../core/language/LanguageContext.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { useTrackedTimeout } from "../hooks/useFlash.js";
 
@@ -39,7 +38,7 @@ function colorFor(
 function Toasts() {
   const { t } = useI18n();
   const colors = useThemeColors();
-  const { columns } = useTerminalSize();
+  const { columns } = useWindowSize();
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
   const counter = useRef(0);
   const later = useTrackedTimeout();

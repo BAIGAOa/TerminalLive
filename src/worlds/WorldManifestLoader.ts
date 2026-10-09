@@ -7,7 +7,7 @@ import Player from "../world/Player.js";
 import EventCenter from "../event/EventCenter.js";
 import EventHistory from "../event/EventHistory.js";
 import LogStore from "../core/store/LogStore.js";
-import ModPluginLoader from "../core/mod/ModPluginLoader.js";
+import PluginHost from "../core/plugin/PluginHost.js";
 import EventTypeRegistry from "../core/mod/EventTypeRegistry.js";
 import { WorldEventLoader } from "../event/WorldEventLoader.js";
 import { worldManifestSchema, WorldJsonConfig } from "./WorldManifestSchema.js";
@@ -32,7 +32,7 @@ const _dirname = dirname(_filename);
 export default class WorldManifestLoader {
   private algorithmRegistry: AlgorithmRegistry;
   private filterRegistry: FilterRegistry;
-  private modPluginLoader: ModPluginLoader;
+  private pluginHost: PluginHost;
   private eventTypeRegistry: EventTypeRegistry;
 
   public readonly worldsDir: string;
@@ -42,7 +42,7 @@ export default class WorldManifestLoader {
   constructor() {
     this.algorithmRegistry = inject(AlgorithmRegistry);
     this.filterRegistry = inject(FilterRegistry);
-    this.modPluginLoader = inject(ModPluginLoader);
+    this.pluginHost = inject(PluginHost);
     this.eventTypeRegistry = inject(EventTypeRegistry);
     this.conditionCenter = inject(WorldConditionRegistry);
     this.worldsDir = join(_dirname, "..", "..", "resource", "worlds");
@@ -129,7 +129,7 @@ export default class WorldManifestLoader {
       eventCenter,
       logStore,
       eventHistory,
-      modPluginLoader: this.modPluginLoader,
+      pluginHost: this.pluginHost,
       filters,
       world: container.resolve(WorldState),
       pressures: container.resolve(PressureState),

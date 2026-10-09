@@ -40,6 +40,12 @@ export interface IncidentParameter {
   postEvent?: string | PostIncidentConfig[];
 
   params?: Record<string, unknown>;
+
+  /**
+   * Who raised this incident. Defaults to the world (the event pool).
+   * See {@link Incident.origin} for why the UI needs to know.
+   */
+  origin?: IncidentOrigin;
 }
 
 /**
@@ -67,6 +73,9 @@ export interface PostIncidentConfig {
   minAge?: number;
   maxAge?: number;
 }
+
+/** Where an incident came from. See {@link Incident.origin}. */
+export type IncidentOrigin = "world" | "npc";
 
 export abstract class Incident {
   /** 事件的唯一标识 */
@@ -100,6 +109,17 @@ export abstract class Incident {
   /** 事件触发时的具体影响逻辑 */
   public abstract apply(player: Player): void;
 
+  /**
+   * Who raised this incident.
+   *
+   * `"world"` is the event pool — weather, chance, the world acting on the
+   * player. `"npc"` is one of the cast acting on their own initiative (see
+   * `NpcOfferIncident`). The two are answered in the same dialog, so the dialog
+   * has to be able to say which it is: without this an NPC asking a favour
+   * looks exactly like the world rolling an event.
+   */
+  public origin: IncidentOrigin = "world";
+
   /** 前置事件 前面历史必须要发生过什么事件才可以触发此事件*/
   public predecessorEvent: string | null = null;
 
@@ -127,6 +147,7 @@ export abstract class Incident {
   }
 
   protected setup(parameter: IncidentParameter) {
+    this.origin = parameter.origin ?? this.origin;
     this.id = parameter.id ?? this.id;
     this.rangeKey = parameter.rangeKey ?? this.rangeKey;
     this.weight = parameter.weight ?? this.weight;

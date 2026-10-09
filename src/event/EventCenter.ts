@@ -67,6 +67,16 @@ export default class EventCenter {
     return this.incidentById.get(id);
   }
 
+  /**
+   * Every incident id this center knows, in registration order. The id index
+   * holds one entry per incident however many ranges it is registered in, so
+   * this is the deduplicated set — the same set {@link getIncidentById}
+   * accepts (used by `force-event` completion).
+   */
+  public getAllIncidentIds(): string[] {
+    return Array.from(this.incidentById.keys());
+  }
+
   public getAllRanges(): string[] {
     return Array.from(this.eventMap.keys());
   }

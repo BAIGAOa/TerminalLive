@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useSyncExternalStore } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { MenuList, ScrollPanel } from "./kit/index.js";
 import { container } from "../Container.js";
@@ -7,14 +7,13 @@ import WorldState from "../world/chronicle/WorldState.js";
 import ChronicleRegistry from "../world/chronicle/ChronicleRegistry.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
 import { statusViewHeight } from "./kit/viewport.js";
 
 /** The codex — world lore unlocked as a life unfolds. */
 export default function Codex() {
   const { t } = useI18n();
   const colors = useThemeColors();
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
   const { boundKeyboard } = useKeyboard();
   const { back } = useScreenSystem();
   const world = container.resolve(WorldState);

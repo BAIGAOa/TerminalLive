@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useMouseRegion } from "ink-cartridge";
-import { useTerminalSize } from "../TerminalSizeContext.js";
 import { clampHeight, clampWidth } from "./viewport.js";
 
 export interface ModalFrameProps {
@@ -36,7 +35,7 @@ export function ModalFrame({
   paddingX = 2,
   paddingY = 1,
 }: ModalFrameProps) {
-  const { columns, rows } = useTerminalSize();
+  const { columns, rows } = useWindowSize();
 
   // Never let a modal overflow the terminal — narrow terminals used to wrap and
   // shred the frame. Leave a 2-cell margin on each axis.

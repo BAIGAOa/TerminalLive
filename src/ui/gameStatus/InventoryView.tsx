@@ -1,11 +1,10 @@
 import React, { useSyncExternalStore } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import Player from "../../world/Player.js";
 import { container } from "../../Container.js";
 import ItemRegistry from "../../world/items/ItemRegistry.js";
 import { ScrollList } from "../kit/index.js";
 import { StatusScroll } from "./common.js";
-import { useTerminalSize } from "../TerminalSizeContext.js";
 import { statusViewHeight } from "../kit/viewport.js";
 
 export default function InventoryView({
@@ -18,7 +17,7 @@ export default function InventoryView({
   height?: number;
 }) {
   const itemReg = container.resolve(ItemRegistry);
-  const { rows } = useTerminalSize();
+  const { rows } = useWindowSize();
 
   // Re-render when the inventory changes (use/remove).
   useSyncExternalStore(

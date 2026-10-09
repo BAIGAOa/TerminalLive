@@ -33,13 +33,26 @@ export interface ReplSink {
   close?: () => void;
 }
 
+/**
+ * One candidate for an argument position. `detailKey` is an i18n key for the
+ * one-line description the console shows while the candidate is highlighted;
+ * a bare string candidate simply has none.
+ */
+export interface ReplCandidate {
+  value: string;
+  detailKey?: string;
+}
+
+/** What an argument completer returns: values, optionally self-describing. */
+export type ReplCandidates = Array<string | ReplCandidate>;
+
 export interface ReplSubcommand {
   name: string;
   /** i18n key for the one-line description. */
   summary: string;
   usage?: string;
   /** Answers for the Nth argument (0 = first arg after the subcommand). */
-  complete?: (args: string[]) => string[];
+  complete?: (args: string[]) => ReplCandidates;
   run: (ctx: ReplContext) => void | Promise<void>;
 }
 
@@ -53,6 +66,6 @@ export interface ReplCommand {
   hidden?: boolean;
   subcommands?: ReplSubcommand[];
   /** Answers for the Nth argument (0 = first arg after the command name). */
-  complete?: (args: string[]) => string[];
+  complete?: (args: string[]) => ReplCandidates;
   run: (ctx: ReplContext) => void | Promise<void>;
 }

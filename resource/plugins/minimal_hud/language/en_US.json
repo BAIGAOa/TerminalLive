@@ -1,0 +1,8 @@
+{
+  "minimal_hud.name": "Minimal HUD (optional)",
+  "minimal_hud.desc": "Replaces the in-game screen with one compact panel: stats, actions and the latest event, one line each. For small terminals, or players who want less on screen.",
+  "minimal_hud.years": "yrs",
+  "minimal_hud.stat.health": "Health",
+  "minimal_hud.stat.happiness": "Mood",
+  "minimal_hud.stat.money": "Cash"
+}

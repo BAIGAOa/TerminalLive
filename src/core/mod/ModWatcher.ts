@@ -1,7 +1,7 @@
 import { FSWatcher, watch } from "node:fs";
 import { inject } from "../../Container.js";
 import ModMonitor from "./ModMonitor.js";
-import ModPluginLoader from "./ModPluginLoader.js";
+import PluginHost from "../plugin/PluginHost.js";
 import TypedEventBus from "../TypedEventBus.js";
 
 /**
@@ -10,7 +10,7 @@ import TypedEventBus from "../TypedEventBus.js";
  */
 export default class ModWatcher {
   private registry: ModMonitor;
-  private loader: ModPluginLoader;
+  private loader: PluginHost;
   private bus: TypedEventBus;
 
   private watcher: FSWatcher | null = null;
@@ -19,7 +19,7 @@ export default class ModWatcher {
 
   constructor() {
     this.registry = inject(ModMonitor);
-    this.loader = inject(ModPluginLoader);
+    this.loader = inject(PluginHost);
     this.bus = inject(TypedEventBus);
   }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useSyncExternalStore } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useWindowSize } from "ink";
 import { useKeyboard, useScreenSystem } from "ink-cartridge";
 import { ScrollList } from "./kit/index.js";
 import { container } from "../Container.js";
@@ -8,7 +8,6 @@ import WorldManager from "../worlds/WorldManager.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import { useThemeColors } from "../hooks/theme/ThematicCommunicator.js";
 import { useFlash } from "../hooks/useFlash.js";
-import { useTerminalSize } from "./TerminalSizeContext.js";
 import { clampWidth, statusViewHeight } from "./kit/viewport.js";
 
 /** Spend money on items (priced items only). Uses the shared player. */
@@ -19,7 +18,7 @@ export default function Shop() {
   const { back } = useScreenSystem();
   const reg = container.resolve(ItemRegistry);
   const player = container.resolve(WorldManager).getPlayer();
-  const { columns, rows } = useTerminalSize();
+  const { columns, rows } = useWindowSize();
   const { value: message, flash } = useFlash<string>(2500);
 
   useSyncExternalStore(

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, Text } from "ink";
 import { useFocusState, useKeyboard, useMouseRegion } from "ink-cartridge";
-import { firstEnabled, lastEnabled, seek } from "./listNav.js";
+import { firstEnabled, lastEnabled, seek, windowStart } from "./listNav.js";
 
 export interface MenuEntry {
   value: string;
@@ -38,6 +38,20 @@ export interface MenuListProps {
   columnWidth?: number;
   /** Horizontal gap between grid cells (default 1). */
   colGap?: number;
+  /**
+   * Terminal rows the list may occupy. When the list is taller it scrolls to
+   * keep the highlight in view and shows a scrollbar; shorter lists are
+   * untouched, so giving a height never changes a list that already fits.
+   */
+  height?: number;
+  /**
+   * Rows each item occupies — 1 for a plain line, 3 for the bordered rows the
+   * game's lists use. `height` is in terminal rows, so this is what divides it
+   * into a number of items; get it wrong and the list overflows its box.
+   */
+  rowHeight?: number;
+  /** Scrollbar thumb colour. */
+  barColor?: string;
 }
 
 function MenuRow({
@@ -119,11 +133,16 @@ export function MenuList({
   columns = 1,
   columnWidth,
   colGap = 1,
+  height,
+  rowHeight = 1,
+  barColor = "green",
 }: MenuListProps) {
   const { boundKeyboard, focusSet, focusUnregister } = useKeyboard();
   const focused = useFocusState(focusId, group);
 
   const [index, setIndex] = useState(() => firstEnabled(items, initialIndex ?? 0));
+  /** Where the viewport currently starts, so the window scrolls minimally. */
+  const windowRef = useRef(0);
 
   const indexRef = useRef(index);
   indexRef.current = index;
@@ -244,12 +263,52 @@ export function MenuList({
     );
   };
 
-  if (columnWidth == null) {
-    return (
-      <Box flexDirection="column">
-        {items.map((item, i) => renderRow(item, i, rowGap))}
+  // Window the list when a `height` is given and there is more than fits: a
+  // long list (many plugins, many shortcuts) scrolls instead of running off the
+  // screen. Short lists are untouched, so nothing else changes shape.
+  const visibleCount =
+    height && height > 0
+      ? Math.max(1, Math.floor(height / Math.max(1, rowHeight)))
+      : items.length;
+  const scrolling = visibleCount < items.length;
+  /** Rows the list actually occupies, for sizing the scrollbar beside it. */
+  const visibleRows = scrolling ? visibleCount * Math.max(1, rowHeight) : 0;
+  const start = scrolling
+    ? windowStart(index, items.length, visibleCount, windowRef.current)
+    : 0;
+  windowRef.current = start;
+  const windowed = scrolling ? items.slice(start, start + visibleCount) : items;
+  /** Where the scrollbar thumb sits, as a row of the viewport. */
+  const thumbRow = scrolling
+    ? Math.round((start / (items.length - visibleCount)) * (visibleCount - 1))
+    : 0;
+
+  const renderList = (list: MenuEntry[], indexOf: (i: number) => number, gap: number) => (
+    <Box flexDirection="column">
+      {list.map((item, i) => renderRow(item, indexOf(i), gap))}
+    </Box>
+  );
+
+  /** The list itself, plus its scrollbar when the window is narrower than it. */
+  const withBar = (list: React.ReactNode) =>
+    scrolling ? (
+      <Box flexDirection="row">
+        {list}
+        <Box flexDirection="column" marginLeft={1}>
+          {Array.from({ length: Math.min(visibleRows, visibleCount * Math.max(1, rowHeight)) }).map((_, i) => (
+            <Text key={i} color={i === thumbRow ? barColor : undefined} dimColor={i !== thumbRow}>
+              {i === thumbRow ? "█" : "│"}
+            </Text>
+          ))}
+        </Box>
       </Box>
+    ) : (
+      list
     );
+
+  if (columnWidth == null) {
+    // Absolute indices, so selection and hover stay correct inside the window.
+    return withBar(renderList(windowed, (i) => start + i, rowGap));
   }
 
   // Centered, uniform-width grid: each cell is a fixed-width box so buttons
@@ -257,25 +316,31 @@ export function MenuList({
   const rows: MenuEntry[][] = [];
   // Guard against columns <= 0, which would make this loop never advance.
   const cols = Math.max(1, Math.floor(columns));
-  for (let i = 0; i < items.length; i += cols) {
+  const first = scrolling ? start - (start % cols) : 0;
+  const last = scrolling ? Math.min(items.length, first + visibleCount) : items.length;
+  for (let i = first; i < last; i += cols) {
     rows.push(items.slice(i, i + cols));
   }
-  return (
+  return withBar(
     <Box flexDirection="column">
       {rows.map((row, r) => (
         <Box key={r} flexDirection="row" justifyContent="center">
-          {row.map((item, c) => (
-            <Box
-              key={item.value}
-              width={columnWidth}
-              flexDirection="column"
-              marginRight={c < row.length - 1 ? colGap : 0}
-            >
-              {renderRow(item, r * cols + c, rowGap)}
-            </Box>
-          ))}
+          {row.map((item, c) => {
+            // The row's first absolute index: windowing can start mid-row.
+            const absolute = first + r * cols + c;
+            return (
+              <Box
+                key={item.value}
+                width={columnWidth}
+                flexDirection="column"
+                marginRight={c < row.length - 1 ? colGap : 0}
+              >
+                {renderRow(item, absolute, rowGap)}
+              </Box>
+            );
+          })}
         </Box>
       ))}
-    </Box>
+    </Box>,
   );
 }

@@ -12,7 +12,6 @@ import {
   useKeyboard,
 } from "ink-cartridge";
 import { LanguageProvider, useI18n } from "./core/language/LanguageContext.js";
-import { TerminalSizeProvider } from "./ui/TerminalSizeContext.js";
 import {
   ThemeProvider,
   useThemeColors,
@@ -21,12 +20,9 @@ import GameInitialization from "./core/GameInitialization.js";
 import { container } from "./Container.js";
 import ConsoleStore from "./core/console/ConsoleStore.js";
 import ConfigStore from "./core/store/ConfigStore.js";
+import KeyActionRegistry from "./core/registry/KeyActionRegistry.js";
 import { SettingRegistry } from "./core/registry/SettingRegistry.js";
 import { resolveKeymap } from "./ui/keymap.js";
-import MainMenu from "./ui/MainMenu.js";
-import WorldSelection from "./ui/WorldSelection.js";
-import WorldGame from "./ui/WorldGame.js";
-import Setting from "./ui/Setting.js";
 import PlayerConfig from "./ui/PlayerConfig.js";
 import ModManager from "./ui/ModManager.js";
 import ThemeScreen from "./ui/ThemeScreen.js";
@@ -37,37 +33,27 @@ import Traits from "./ui/Traits.js";
 import Shop from "./ui/Shop.js";
 import Codex from "./ui/Codex.js";
 import Lineage from "./ui/Lineage.js";
-import KeyBinding from "./ui/KeyBinding.js";
 import { ToastHost } from "./ui/ToastHost.js";
 import { HelpModal } from "./ui/HelpModal.js";
 import { dismissModal, presentModal } from "./ui/layers/modalBus.js";
 import { toggleConsole } from "./ui/layers/consoleLayer.js";
-import { registerStatusViews } from "./ui/gameStatus/registerStatusViews.js";
+import {
+  MainMenuScreen,
+  SettingScreen,
+  WorldGameScreen,
+  WorldSelectionScreen,
+} from "./ui/slots/screens.js";
 import { replInput } from "./core/repl/replInputState.js";
 
-// ── 初始化游戏核心 ──
-await container.resolve(GameInitialization).init();
-// UI layer wires the status-view components into GameStatusMap (keeps content UI-free).
-registerStatusViews();
+// ink's `useWindowSize` subscribes to stdout's 'resize' event once per calling
+// component, and the game has far more than the ten listeners Node warns about.
+// The warning is written straight to stderr, which would corrupt the TUI, so
+// lift the ceiling rather than let it fire.
+process.stdout.setMaxListeners(0);
 
-// ── 注册屏幕树 ──
-registerComponent(MainMenu, {});
-registerComponent(WorldSelection, {}, { parent: MainMenu });
-registerComponent(WorldGame, {}, { parent: WorldSelection });
-registerComponent(Setting, {}, { parent: MainMenu });
-registerComponent(PlayerConfig, {}, { parent: Setting });
-registerComponent(ModManager, {}, { parent: Setting });
-registerComponent(ThemeScreen, {}, { parent: Setting });
-registerComponent(KeyBinding, {}, { parent: Setting });
-registerComponent(Language, {}, { parent: MainMenu });
-registerComponent(AchievementScreen, {}, { parent: MainMenu });
-registerComponent(Archive, {}, { parent: MainMenu });
-registerComponent(Traits, {}, { parent: MainMenu });
-registerComponent(Shop, {}, { parent: MainMenu });
-registerComponent(Codex, {}, { parent: MainMenu });
-registerComponent(Lineage, {}, { parent: MainMenu });
-
-// 设置子页面注册到 SettingRegistry（供 Setting 组件动态渲染）
+// 设置子页面注册到 SettingRegistry（供 Setting 组件动态渲染）。
+// Registered *before* the plugins load so the pages the game ships with keep
+// their order, and a plugin's page is appended after them.
 const settingReg = container.resolve(SettingRegistry);
 settingReg.register("playerConfig", {
   component: PlayerConfig,
@@ -81,10 +67,29 @@ settingReg.register("theme", {
   component: ThemeScreen,
   nameKey: "setting.theme",
 });
-settingReg.register("keyboard", {
-  component: KeyBinding,
-  nameKey: "setting.keyBoardConfig",
-});
+// Key bindings are not registered here: `core.keybindings` owns that page, and
+// the list of rebindable shortcuts behind it.
+
+// ── 初始化游戏核心（含插件加载）──
+await container.resolve(GameInitialization).init();
+
+// ── 注册屏幕树 ──
+// The main screens are slots (see `ui/slots/`), so a plugin that provides one
+// of those ids renders in place of the built-in screen.
+registerComponent(MainMenuScreen, {});
+registerComponent(WorldSelectionScreen, {}, { parent: MainMenuScreen });
+registerComponent(WorldGameScreen, {}, { parent: WorldSelectionScreen });
+registerComponent(SettingScreen, {}, { parent: MainMenuScreen });
+registerComponent(PlayerConfig, {}, { parent: SettingScreen });
+registerComponent(ModManager, {}, { parent: SettingScreen });
+registerComponent(ThemeScreen, {}, { parent: SettingScreen });
+registerComponent(Language, {}, { parent: MainMenuScreen });
+registerComponent(AchievementScreen, {}, { parent: MainMenuScreen });
+registerComponent(Archive, {}, { parent: MainMenuScreen });
+registerComponent(Traits, {}, { parent: MainMenuScreen });
+registerComponent(Shop, {}, { parent: MainMenuScreen });
+registerComponent(Codex, {}, { parent: MainMenuScreen });
+registerComponent(Lineage, {}, { parent: MainMenuScreen });
 
 function NotificationBanner() {
   const colors = useThemeColors();
@@ -113,7 +118,10 @@ function App() {
   const keymapJson = useSyncExternalStore(configStore.subscribe, () =>
     JSON.stringify(configStore.getKeyBindings()),
   );
-  const keymap = resolveKeymap(JSON.parse(keymapJson));
+  const keymap = resolveKeymap(
+    JSON.parse(keymapJson),
+    container.resolve(KeyActionRegistry).effective(),
+  );
   // While the pseudo-terminal is capturing input, the letter shortcuts must not
   // steal keystrokes from the prompt.
   const typing = useSyncExternalStore(
@@ -148,7 +156,7 @@ function App() {
       },
       {
         key: keymap.menu,
-        operate: () => gotoScreen(MainMenu, {}),
+        operate: () => gotoScreen(MainMenuScreen, {}),
         category: "*",
         cover: true,
       },
@@ -223,21 +231,19 @@ class AppErrorBoundary extends React.Component<
 
 render(
   <LanguageProvider>
-    <TerminalSizeProvider>
-      <ThemeProvider>
-        <ScenarioManagementProvider defaultScreen={MainMenu} fullScreen>
-          <KeyboardProvider
-            mouse
-            autoTab
-            modes={["normal", "insert"]}
-            defaultMode="normal"
-          >
-            <AppErrorBoundary>
-              <App />
-            </AppErrorBoundary>
-          </KeyboardProvider>
-        </ScenarioManagementProvider>
-      </ThemeProvider>
-    </TerminalSizeProvider>
+    <ThemeProvider>
+      <ScenarioManagementProvider defaultScreen={MainMenuScreen} fullScreen>
+        <KeyboardProvider
+          mouse
+          autoTab
+          modes={["normal", "insert"]}
+          defaultMode="normal"
+        >
+          <AppErrorBoundary>
+            <App />
+          </AppErrorBoundary>
+        </KeyboardProvider>
+      </ScenarioManagementProvider>
+    </ThemeProvider>
   </LanguageProvider>,
 );

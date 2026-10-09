@@ -1,0 +1,11 @@
+{
+  "id": "minimal_hud",
+  "nameKey": "minimal_hud.name",
+  "descKey": "minimal_hud.desc",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "author": "TerminalLive",
+  "capabilities": ["ui", "kernel"],
+  "defaultEnabled": false,
+  "dependencies": {}
+}

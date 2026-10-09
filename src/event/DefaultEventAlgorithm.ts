@@ -14,7 +14,7 @@ import PostEventScheduler, {
   PendingPostEvent,
   SerializedPendingPostEvent,
 } from "./PostEventScheduler.js";
-import ModPluginLoader from "../core/mod/ModPluginLoader.js";
+import PluginHost from "../core/plugin/PluginHost.js";
 import FilterContext from "./FilterContext.js";
 import { IEventAlgorithm } from "./IEventAlgorithm.js";
 import { PendingChoice, PendingOption } from "./PendingChoice.js";
@@ -53,7 +53,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
   private eventCenter: EventCenter;
   private logStore: LogStore;
   private eventHistory: EventHistory;
-  private modPluginLoader: ModPluginLoader;
+  private pluginHost: PluginHost;
   private postEventScheduler: PostEventScheduler;
   private filters: IncidentFilter[];
   private eventBus: TypedEventBus;
@@ -81,7 +81,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     eventCenter: EventCenter;
     logStore: LogStore;
     eventHistory: EventHistory;
-    modPluginLoader: ModPluginLoader;
+    pluginHost: PluginHost;
     filters?: IncidentFilter[];
     world?: WorldState | null;
     pressures?: PressureState | null;
@@ -90,7 +90,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     this.eventCenter = deps.eventCenter;
     this.logStore = deps.logStore;
     this.eventHistory = deps.eventHistory;
-    this.modPluginLoader = deps.modPluginLoader;
+    this.pluginHost = deps.pluginHost;
     this.world = deps.world ?? null;
     this.pressures = deps.pressures ?? null;
     this.weather = deps.weather ?? null;
@@ -174,7 +174,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     if (!incident) return false;
 
     this.commitIncident(incident, pending.rangeKey, player, option.def);
-    this.modPluginLoader.fireChoice(incident, optionId, player);
+    this.pluginHost.fireChoice(incident, optionId, player);
     this.eventBus.emit("choice:resolved", {
       incidentId: incident.id,
       optionId,
@@ -418,7 +418,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     rangeKey: string,
     player: Player,
   ): void {
-    if (!this.modPluginLoader.fireIncidentTrigger(incident, player)) return;
+    if (!this.pluginHost.fireIncidentTrigger(incident, player)) return;
 
     if (incident.hasChoices()) {
       this.offerChoice(incident, rangeKey, player);
@@ -496,7 +496,7 @@ export default class DefaultEventAlgorithm implements IEventAlgorithm {
     const post: PostEventSpec | null = chosen?.postEvent ?? incident.postEvent;
     if (post) this.schedulePostEvents(incident.id, post, player);
 
-    this.modPluginLoader.fireIncidentExecuted(incident, player);
+    this.pluginHost.fireIncidentExecuted(incident, player);
     this.eventBus.emit("incident:executed", { incidentId: incident.id });
   }
 

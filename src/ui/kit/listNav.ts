@@ -21,6 +21,29 @@ export function lastEnabled(items: MenuEntry[]): number {
 }
 
 /**
+ * First index of the window of `size` rows that keeps `index` visible.
+ *
+ * Scrolls the *minimum* amount from where the window already is — the list
+ * holds still until the highlight reaches an edge, then follows one row at a
+ * time. (The alternative, centring the highlight, makes the whole list slide on
+ * every keypress.) Pass the previous start as `current` to keep it steady;
+ * returns 0 when everything fits, so callers can treat 0 as "not scrolled".
+ */
+export function windowStart(
+  index: number,
+  total: number,
+  size: number,
+  current = 0,
+): number {
+  if (size <= 0 || total <= size) return 0;
+  const max = total - size;
+  const start = Math.max(0, Math.min(current, max));
+  if (index < start) return Math.max(0, index);
+  if (index >= start + size) return Math.min(index - size + 1, max);
+  return start;
+}
+
+/**
  * Step `step` from `from`, skipping disabled rows. With `wrap` a boundary
  * folds back modulo the list; without it the move is rejected (returns `from`)
  * at the first row that would leave the list.

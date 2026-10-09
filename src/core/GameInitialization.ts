@@ -3,7 +3,7 @@ import Game from "./Game.js";
 import ConfigStore from "./store/ConfigStore.js";
 import Player from "../world/Player.js";
 import EventTypes from "./mod/EventTypes.js";
-import ModPluginLoader from "./mod/ModPluginLoader.js";
+import PluginHost from "./plugin/PluginHost.js";
 import ConsoleStore from "./console/ConsoleStore.js";
 import { container } from "../Container.js";
 import EventHistory from "../event/EventHistory.js";
@@ -40,6 +40,23 @@ import LineageManager from "../world/lineage/LineageManager.js";
 import WorldRecordsStore from "./store/WorldRecordsStore.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import KernelServices from "./plugin/kernel.js";
+import FirstPartyPlugins from "./plugin/FirstParty.js";
+import ReplRegistry from "./repl/ReplRegistry.js";
+import { registerReplCommands } from "./repl/commands/index.js";
+import { registerFirstPartyPlugins } from "../plugins/index.js";
+import RandomService from "./random/RandomService.js";
+import EventDirector from "../event/EventDirector.js";
+import TypedEventBus from "./TypedEventBus.js";
+import WorldState from "../world/chronicle/WorldState.js";
+import PoliticsSystem from "../world/politics/PoliticsSystem.js";
+import EconomySystem from "../world/economy/EconomySystem.js";
+import HealthSystem from "../world/health/HealthSystem.js";
+import NarrativeSystem from "../world/narrative/NarrativeSystem.js";
+import WorldChainSystem from "../world/chains/WorldChainSystem.js";
+import RegionsSystem from "../world/regions/RegionsSystem.js";
+import CareerSystem from "../world/careers/CareerSystem.js";
+import KeyActionRegistry from "./registry/KeyActionRegistry.js";
 
 export default class GameInitialization {
   public configStore: ConfigStore;
@@ -48,7 +65,7 @@ export default class GameInitialization {
   public player!: Player;
   public eventHistory: EventHistory;
   public archiveManager: ArchiveManager;
-  public modPluginLoader: ModPluginLoader;
+  public pluginHost: PluginHost;
   public levelManager: WorldManager;
 
   constructor() {
@@ -57,7 +74,7 @@ export default class GameInitialization {
     this.modRegistry = inject(ModMonitor);
     this.eventHistory = inject(EventHistory);
     this.archiveManager = inject(ArchiveManager);
-    this.modPluginLoader = inject(ModPluginLoader);
+    this.pluginHost = inject(PluginHost);
     this.levelManager = inject(WorldManager);
   }
 
@@ -204,6 +221,35 @@ export default class GameInitialization {
     achievementManager.bindPlayer(this.player);
   }
 
+  /**
+   * Hand plugins the game systems they may reach (`ctx.kernel`).
+   *
+   * Built here, at the composition root, so the kernel never imports the game:
+   * the dependency runs one way and there is no import cycle to reason about.
+   */
+  private installKernelServices(): void {
+    const worlds = container.resolve(WorldManager);
+    container.resolve(KernelServices).install({
+      random: container.resolve(RandomService),
+      director: container.resolve(EventDirector),
+      bus: container.resolve(TypedEventBus),
+      config: this.configStore,
+      worlds,
+      // The active world owns its event table; there is none between lives.
+      events: () => worlds.getCurrentWorld()?.eventCenter ?? null,
+      chronicle: container.resolve(WorldState),
+      politics: container.resolve(PoliticsSystem),
+      economy: container.resolve(EconomySystem),
+      health: container.resolve(HealthSystem),
+      narrative: container.resolve(NarrativeSystem),
+      chains: container.resolve(WorldChainSystem),
+      regions: container.resolve(RegionsSystem),
+      lineage: container.resolve(LineageStore),
+      careers: container.resolve(CareerSystem),
+      keyActions: container.resolve(KeyActionRegistry),
+    });
+  }
+
   public async init() {
     container.resolve(ConsoleStore);
     container.resolve(VersionProvider);
@@ -216,8 +262,17 @@ export default class GameInitialization {
     const levelManager = container.resolve(WorldManager);
     levelManager.setPlayer(this.player);
 
-    this.modPluginLoader.setPlayer(this.player);
-    this.modPluginLoader.loadEnabled();
+    // The console's own commands are the baseline every plugin layers over:
+    // installed before any plugin loads, so a plugin that replaces `seed`
+    // displaces the built-in instead of colliding with it.
+    registerReplCommands(container.resolve(ReplRegistry));
+    // The game's own features are plugins too — register them before the host
+    // plans its load order.
+    registerFirstPartyPlugins(container.resolve(FirstPartyPlugins));
+    this.installKernelServices();
+
+    this.pluginHost.setPlayer(this.player);
+    this.pluginHost.loadEnabled();
     // Mod NPC JSON is parsed only after the mods registered their types.
     this.loadModNpcContent();
     // Capture the built-in + mod content baseline that every world layers over.
@@ -227,7 +282,7 @@ export default class GameInitialization {
     // happen in its constructor.
     this.player.seedRelationships(container.resolve(NpcRegistry).getAll());
     // Let plugins react to the player being created (after they've loaded).
-    this.modPluginLoader.firePlayerCreated(this.player);
+    this.pluginHost.firePlayerCreated(this.player);
     levelManager.loadAllWorlds();
 
     this.initThemes();

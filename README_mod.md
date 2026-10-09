@@ -1,6 +1,21 @@
-# Mod Development Guide
+# Plugin & Mod Development Guide
 
-TerminalLive mods live in `~/.mod_live/`. A mod can add **custom events**, **translations**, **UI screens**, **achievements**, and **arbitrary game logic** — all through a simple plugin API with lifecycle hooks.
+TerminalLive is a microkernel: its events, worlds, status screen and console
+commands are all **plugins**, and so is anything you write. A plugin can add
+custom events, translations, UI screens, achievements and arbitrary game logic —
+and can **replace** the ones the game ships with.
+
+Plugins come from three places, and the only difference between them is where
+they were found:
+
+| Source | Location | Written in |
+|--------|----------|-----------|
+| The game's own features | `src/plugins/` (compiled in) | TypeScript |
+| Shipped plugins | `resource/plugins/<id>/plugin.json` | JSON, optionally `index.js` |
+| **Your mod** | `~/.mod_live/<folder>/mod.json` | `index.js` |
+
+They share one manifest schema, one capability model and one context API. This
+guide is for the third row — but everything here applies to the other two.
 
 ---
 
@@ -9,6 +24,9 @@ TerminalLive mods live in `~/.mod_live/`. A mod can add **custom events**, **tra
 - [Quick Start](#quick-start)
 - [Directory Structure](#directory-structure)
 - [Manifest (`mod.json`)](#manifest-modjson)
+- [Capabilities & Trust](#capabilities--trust)
+- [Extending & Replacing](#extending--replacing)
+- [Talking to Other Plugins](#talking-to-other-plugins)
 - [Adding Events (JSON)](#adding-events-json)
   - [Event Definition Reference](#event-definition-reference)
   - [Post-Event Chains](#post-event-chains)
@@ -84,7 +102,13 @@ Every mod must have a `mod.json` at its root.
 | `description` | — | Short description shown in the Mod Manager. |
 | `main` | — | Plugin entry file (relative to mod root). Defaults to `index.js`. |
 | `author` | — | Displayed in the Mod Manager. |
-| `dependencies` | — | `{ "modId": "semver-range" }`. Dependencies load first; a mod whose dependency is **missing** (or that sits on a **dependency cycle**) is skipped with a warning instead of crashing the game. |
+| `dependencies` | — | `{ "modId": "semver-range" }`. Dependencies load first; a mod whose dependency is **missing** (or that sits on a **dependency cycle**) is skipped with a warning instead of crashing the game. Ids are shared with the plugins the game ships, so a mod may depend on one. |
+| `capabilities` | — | What the mod may touch: `events`, `items`, `npcs`, `levels`, `world`, `random`, `ui`, `storage`, `kernel`. **Omitted = the four content ones** (`events`, `items`, `npcs`, `levels`) — a mod that never declares them cannot add an axis, lore, a panel or a console command. |
+| `trust` | — | `"sandbox"` (default) or `"full"`. See [Capabilities & Trust](#capabilities--trust). |
+
+The same schema is what the game's own plugins use: a plugin shipped in
+`resource/plugins/` reads the identical fields from `plugin.json`. "Mod" is just
+the name for a plugin that came from `~/.mod_live/`.
 
 A mod is valid if it ships a `mod.json`, an `index.js`, or any resource pack directory
 (`events/`, `items/`, `npcs/`, `levels/`, `achievements/`, `pressures/`, `language/`).
@@ -305,6 +329,14 @@ module.exports = {
 | **`onChoice(incident, optionId, player, ctx)`** | When the player resolves a choice. | React to specific branches, track decisions. |
 | **`onIncidentTrigger(incident, player, ctx)`** | Before an incident is executed. | Conditionally block events. Return `false` to prevent execution; return nothing (or `true`) to allow it. |
 | **`onIncidentExecuted(incident, player, ctx)`** | After an incident has been executed. | Logging, follow-up actions, chaining custom effects. |
+| **`onWorldStart(levelId, player, ctx)`** | A world starts: a new life, or resuming a save. | Per-life setup, seeding your own state. |
+| **`onLifeEnd({ reason, age }, player, ctx)`** | The life ended — `reason` is `"death"` or `"complete"`. | Epilogues, persisting a lifetime summary to `ctx.storage`. |
+| **`onDispose(ctx)`** | The plugin is unloaded (hot reload, or a settings change). | Releasing anything the kernel does not own for you. |
+
+> The world/turn/lifecycle hooks are conveniences over the event bus. Anything
+> else is a subscription away: `ctx.events.on("turn:ended", …)`. Subscriptions
+> made through `ctx.events` are **automatically torn down** when the plugin
+> unloads, so a hot reload can never leave a listener pointing at dead code.
 
 > Hooks run in **dependency order** (dependencies first), then alphabetical among independent mods. Every hook call is **error-isolated**: a mod that throws is logged and skipped without taking down the game.
 
@@ -455,6 +487,165 @@ ctx.addAlgorithm("myAlgorithm", (deps) => new MyAlgorithm(deps));
 // Add a custom condition (reusable check for achievements, filters, etc.)
 ctx.addCondition("myCondition", MyConditionClass, myConditionSchema);
 ```
+
+---
+
+## Capabilities & Trust
+
+The game is a microkernel: everything beyond its core — events, worlds, the
+status screen, the console commands — is a plugin, and so is your mod. What
+separates them is only **where they were found**, never what they may do.
+
+That makes two questions worth asking out loud.
+
+### What may a plugin touch?
+
+`capabilities` in the manifest. Nothing is granted implicitly:
+
+| Capability | Unlocks |
+|-----------|---------|
+| `events` | `createEventClass`, `addCondition`, `addAlgorithm`, `addFilter`, event JSON |
+| `npcs` | `createNpcClass`, `registerNpcType`, NPC JSON |
+| `items` / `levels` | the matching content folders |
+| `world` | `addPressureAxis`, `addPressureRule`, `addLore`, `addFateArc`, `addWorldEvent`, `addTrait`, `addWorldRule` |
+| `ui` | `registerScreen`, `overrideScreen`, `addStatusView`, `addSetting`, `addCommand` |
+| `storage` | `ctx.storage` (per-plugin persistence) |
+| `random` | `ctx.random`, a forked deterministic stream |
+| `kernel` | `ctx.kernel` — the live game systems |
+
+Reaching for something you did not declare is refused with a warning naming the
+capability — never a crash.
+
+### How much does the game trust it?
+
+`trust` decides how the entry file is evaluated:
+
+| `trust` | Evaluation |
+|---------|-----------|
+| `"sandbox"` (default) | a `node:vm` context; `require` limited to react / ink / ink-cartridge |
+| `"full"` | plain host evaluation with a real `require`, and access to anything Node gives you |
+
+Deep plugins need `"full"`: the sandbox lives in a separate realm, where
+`instanceof` against a game class is false and `class X extends SomeGameClass`
+produces something the game does not recognise as its own.
+
+Declaring `"full"` is asking the player for permission. They can also grant it
+the other way: **Settings → Plugins**, select a plugin, press `T`. That is the
+only place trust lives, and it is stored in `config.json` as `trustedPlugins`.
+A player who wants no exceptions at all can force everything into the sandbox.
+
+---
+
+## Extending & Replacing
+
+Adding things is the easy half. **Replacing** is what makes a plugin able to own
+a feature rather than decorate it, and every one of these displaces a built-in.
+
+### Take over a screen
+
+```js
+// The game publishes its main screens as slots. Provide one and yours renders
+// instead — the built-in never mounts.
+ctx.overrideScreen("screen.main-menu", MyMenu);
+```
+
+The slots are `screen.main-menu`, `screen.world-selection`, `screen.world-game`
+and `screen.settings`. A higher `priority` on `overrideScreen` wins over a
+plain one; with equal priority the newest registration wins, which is why the
+game registers its own screens first.
+
+### Replace a status panel
+
+```js
+// Same id as a built-in panel = you own that panel now ("attributes",
+// "skills", "inventory", "relationships", …). A new id adds one.
+ctx.addStatusView("inventory", MyInventoryPanel);
+```
+
+### Replace a console command
+
+```js
+// Same name = you own it, aliases included: the built-in `seed` is gone.
+ctx.addCommand({
+  name: "seed",
+  summary: "my.seed",
+  usage: "seed <number>",
+  complete: (args) => args.length ? [] : ["42", "1337"],
+  run: (c) => c.print(`seeded ${c.args[0]}`, "success"),
+});
+```
+
+Commands registered by plugins appear in `help` and get Tab/Enter completion
+and the description line under the console, exactly like the built-ins.
+
+### Replace a settings page
+
+```js
+ctx.addSetting("playerConfig", { component: MyScreen, nameKey: "my.setting" });
+```
+
+---
+
+## Talking to Other Plugins
+
+Plugins extend each other, not just the game.
+
+```js
+// Publish an interface. The kernel never learns what it means.
+ctx.services.provide("economy.prices", { wheat: 3, iron: 11 });
+
+// Consume someone else's. `require` throws a named error if the provider is
+// not loaded — which is what you want for a declared dependency.
+const prices = ctx.services.require("economy.prices");
+```
+
+Declare `dependencies: { "their-plugin": "*" }` in your manifest so it loads
+first, and the service is guaranteed to be there.
+
+One is provided by the game, and it shows what services are for: the keybindings
+plugin publishes `ui.keyactions`, so a mod with a screen of its own can offer a
+rebindable hotkey and it appears in **Settings → Key bindings**, conflict
+checking included.
+
+```js
+module.exports = {
+  id: "my-mod",
+  // The provider must load first.
+  hooks: {
+    onInit(ctx) {
+      const keys = ctx.services.require("ui.keyactions");
+      keys.add({ id: "my-mod.open", labelKey: "my.open", defaultKey: "o" });
+    },
+  },
+};
+```
+
+With `"dependencies": { "core.keybindings": "*" }` in your manifest, and
+`"labelKey": "my.open"` in your `language/*.json`, the shortcut is listable,
+rebindable, and checked for collisions against the built-ins.
+
+### Persist your own data
+
+```js
+const seen = ctx.storage.read({ worlds: [] });          // needs "storage"
+if (!seen.worlds.includes(levelId)) {
+  ctx.storage.update((s) => ({ worlds: [...s.worlds, levelId] }), seen);
+}
+```
+
+One JSON document per plugin, written for you — no paths, no filesystem.
+
+### Reach the game itself
+
+```js
+// needs "kernel"
+const { random, worlds, director, events } = ctx.kernel;
+```
+
+`ctx.kernel` exposes the live systems: the random stream a replay seed controls,
+the world manager, the event director, the chronicle/region/politics state. It
+is a small, typed surface on purpose — what a plugin can reach is a type you
+can read, rather than an open door to the dependency container.
 
 ---
 
@@ -633,11 +824,18 @@ Your `index.js` is evaluated inside an isolated V8 context (`node:vm`), not
   else throws.
 - `module` / `exports` / `console` / `__filename` / `__dirname` are provided.
 
-Everything else you need arrives through the `ModContext` your hooks receive —
-there is no need to import game internals.
+Everything else you need arrives through the `PluginContext` your hooks receive
+— there is no need to import game internals.
+
+`react`, `ink` and `ink-cartridge` resolve to the **game's own module
+instances**, not copies: a plugin that rendered with its own React would produce
+elements the game's reconciler rejects. (Ink is ESM-only, so a plain `require`
+could not load it at all — the kernel injects it.)
 
 > This is defence-in-depth for a single-player game, **not a security
-> boundary**. Only install mods you trust.
+> boundary**. The host has to hand a plugin live game objects, so a determined
+> plugin escapes the sandbox anyway. Only install mods you trust — and see
+> [Capabilities & Trust](#capabilities--trust) for the honest version of this.
 
 ### Hot-reload
 

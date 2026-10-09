@@ -1,11 +1,13 @@
 {
-  "example.pressure.wonder": "Любопытство",
-  "example.lore.title": "Пример легенды",
-  "example.lore.body": "Запись кодекса, добавленная примером мода — показывает, как мод расширяет мир.",
-  "example.toast.decade": "Прошло ещё одно десятилетие.",
-  "example.ev.kindness": "Маленькая доброта",
-  "example.npc.guardian": "Хранитель",
-  "example.npc.guardian.desc": "Наблюдательный персонаж, добавленный примером мода.",
-  "example.npc.guardian.line1": "Держись рядом. Я пригляжу.",
-  "example.npc.guardian.watch": "Хранитель незаметно прикрыл вас."
+    "example.pressure.wonder": "Любопытство",
+    "example.lore.title": "Пример легенды",
+    "example.lore.body": "Запись кодекса, добавленная примером мода — показывает, как мод расширяет мир.",
+    "example.toast.decade": "Прошло ещё одно десятилетие.",
+    "example.ev.kindness": "Маленькая доброта",
+    "example.npc.guardian": "Хранитель",
+    "example.npc.guardian.desc": "Наблюдательный персонаж, добавленный примером мода.",
+    "example.npc.guardian.line1": "Держись рядом. Я пригляжу.",
+    "example.npc.guardian.watch": "Хранитель незаметно прикрыл вас.",
+    "example.cmd.wonder": "Желание №{count} (хранится в хранилище плагина)",
+    "example.panel.title": "Чудо"
 }
