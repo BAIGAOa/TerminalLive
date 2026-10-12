@@ -161,6 +161,22 @@ export default class RelationshipSystem {
     };
   }
 
+  /**
+   * The NPCs that count as part of this life.
+   *
+   * "Known" = the player has met them (affinity > 0) *and* the meeting is
+   * age-appropriate. The second clause is what keeps a boss or a rival out of a
+   * toddler's year entirely. Exposed because anything that wants to address the
+   * player as someone who knows them — the yearly pass, the mail — has to draw
+   * from exactly this set.
+   */
+  public knownNpcIds(player: Player): string[] {
+    return this.registry
+      .getAll()
+      .map((n) => n.id)
+      .filter((id) => player.getRelationship(id) > 0 && this.isKnown(id));
+  }
+
   /** A line to show when the player opens an NPC. */
   public dialogue(npcId: string): string | null {
     const keys = this.registry.get(npcId)?.dialogueKeys ?? [];
@@ -207,13 +223,7 @@ export default class RelationshipSystem {
   // ── yearly agency ──────────────────────────────────────────────
   /** Every known NPC with a beating heart may act; returns nothing. */
   public tickYear(player: Player): void {
-    // "Known" = the player has met them (affinity > 0) *and* the meeting is
-    // age-appropriate. The second clause is what keeps a boss or rival out of a
-    // toddler's year entirely.
-    const known = this.registry
-      .getAll()
-      .map((n) => n.id)
-      .filter((id) => player.getRelationship(id) > 0 && this.isKnown(id));
+    const known = this.knownNpcIds(player);
     if (known.length === 0) return;
     const knownSet = new Set(known);
 

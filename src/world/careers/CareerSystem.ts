@@ -7,7 +7,13 @@ import TypedEventBus from "../../core/TypedEventBus.js";
 import {
   emptyWorkState,
   gateSatisfied,
+  GUILD_CERT,
+  guildBlocks,
+  hasCert,
+  hazardDrain,
+  paidSalary,
   promotionGate,
+  publicityDrift,
   startVenture,
   tickVenture,
   tickWork,
@@ -19,6 +25,13 @@ import {
   WorkStats,
 } from "./careerEngine.js";
 import type { CareerDefinition, CareerRank } from "./CareerDefinition.js";
+import { buildCareerBoard, entryMet, type CareerCard } from "./careerBoard.js";
+import {
+  attemptRefusal,
+  resignation,
+  startCooldown,
+} from "./hiring.js";
+import type { StatDelta } from "../stats.js";
 
 export interface CareerState {
   career: CareerDefinition;
@@ -62,25 +75,136 @@ export default class CareerSystem {
     this.work = emptyWorkState();
   }
 
-  /** Take a job (rank 0). Replaces any current job on the player and engine. */
-  public join(player: Player, careerId: string): boolean {
+  /** The job board, as the career picker renders it. */
+  public getBoard(player: Player): CareerCard[] {
+    return buildCareerBoard(player, this.registry.getAll(), this.work, this.now(player));
+  }
+
+  /** The year a gate is measured against — the player's age. */
+  private now(player: Player): number {
+    return Math.floor(player.age);
+  }
+
+  /**
+   * Why an *attempt* is refused — cooldown or action points. Separate from
+   * {@link joinBlocker}, which answers whether the player qualifies: a job you
+   * are qualified for can still be one you cannot afford to apply to today.
+   */
+  public attemptBlocker(
+    player: Player,
+    careerId: string,
+  ): { key: string; params?: Record<string, string | number> } | null {
     const career = this.registry.get(careerId);
-    if (!career) return false;
-    player.careerId = careerId;
-    player.careerRank = 0;
-    this.work.careerId = careerId;
-    this.work.rank = 0;
-    this.work.tenure = 0;
+    if (!career) return { key: "career.err.unknown" };
+    return attemptRefusal(career, this.work, player.actionPoints, this.now(player));
+  }
+
+  /**
+   * Charge one application: spend its action points and start its cooldown.
+   *
+   * Called for a failed interview as well as a successful one, so retrying a
+   * rejection is a real decision rather than a free reroll.
+   */
+  public consumeAttempt(player: Player, careerId: string): boolean {
+    const career = this.registry.get(careerId);
+    if (!career || player.actionPoints < career.terms.applyAp) return false;
+    player.actionPoints -= career.terms.applyAp;
+    this.work = startCooldown(
+      this.work,
+      careerId,
+      career.terms.applyCooldown,
+      this.now(player),
+    );
     player.notify();
     return true;
   }
 
-  public quit(player: Player): void {
+  /**
+   * Why this job cannot be taken right now, as an i18n key — or `null` when it
+   * can. Every route into a career (the board, an event's `career` payload, a
+   * mod action) goes through this, so the entry gates cannot be bypassed by
+   * picking a different door.
+   */
+  public joinBlocker(player: Player, careerId: string): string | null {
+    const career = this.registry.get(careerId);
+    if (!career) return "career.err.unknown";
+    if (player.careerId === careerId) return null;
+    const held = player.careerId ? this.registry.get(player.careerId) : undefined;
+    if (held?.lifelong) return "career.err.sealed";
+    if (!entryMet(player, career)) return "career.err.gates";
+    return null;
+  }
+
+  public canJoin(player: Player, careerId: string): boolean {
+    return this.joinBlocker(player, careerId) === null;
+  }
+
+  /** Take a job (rank 0). Replaces any current job on the player and engine. */
+  public join(player: Player, careerId: string): boolean {
+    const blocker = this.joinBlocker(player, careerId);
+    if (blocker !== null) {
+      // A refused join has to say why: silently doing nothing reads as a bug.
+      this.eventBus.emit("toast", { textKey: blocker, kind: "warn" });
+      return false;
+    }
+    // Re-taking the same job must not wipe the ladder the player has climbed —
+    // events and repeated content can both re-offer the job they already hold.
+    if (player.careerId === careerId) return true;
+
+    // Cooldowns are per-career and outlive the job that set them, so only the
+    // work *track* is reset here, not the whole state.
+    this.work = { ...emptyWorkState(), careerId, rank: 0, cooldowns: this.work.cooldowns };
+    player.careerId = careerId;
+    player.careerRank = 0;
+    player.notify();
+    // Announced on the bus rather than called directly: the mail system wants
+    // to react (a new boss writes to you), and reaching for it here would close
+    // a dependency cycle through RelationshipSystem → WorldManager → here.
+    this.eventBus.emit("career:joined", { careerId, rank: 0 });
+    return true;
+  }
+
+  /** Why the player cannot resign right now, or `null` when they can. */
+  public resignBlocker(player: Player): string | null {
+    if (!player.careerId) return "career.err.noJob";
+    const held = this.registry.get(player.careerId);
+    if (held?.lifelong) return "career.err.lifelong";
+    return null;
+  }
+
+  /**
+   * Walk out. Charges the career's resignation terms, scaled down by tenure,
+   * and closes the field to the player for its cooldown.
+   */
+  public resign(player: Player): {
+    ok: boolean;
+    blocker?: string;
+    cost?: StatDelta;
+    cooldown?: number;
+    halfNotice?: boolean;
+  } {
+    const blocker = this.resignBlocker(player);
+    if (blocker) {
+      this.eventBus.emit("toast", { textKey: blocker, kind: "warn" });
+      return { ok: false, blocker };
+    }
+    const careerId = player.careerId!;
+    const held = this.registry.get(careerId)!;
+    const { cost, cooldown, halfNotice } = resignation(held, this.work.tenure);
+
+    player.applyDelta(cost);
+    this.work = startCooldown(this.work, careerId, cooldown, this.now(player));
+    this.work = { ...this.work, careerId: null, rank: 0, tenure: 0 };
     player.careerId = null;
     player.careerRank = 0;
-    this.work.careerId = null;
-    this.work.rank = 0;
     player.notify();
+    this.eventBus.emit("career:resigned", { careerId, rank: held.ranks.length });
+    return { ok: true, cost, cooldown, halfNotice };
+  }
+
+  /** Event/mod-driven resignation: the same price as pressing the button. */
+  public quit(player: Player): void {
+    this.resign(player);
   }
 
   public rankOf(player: Player): CareerRank | null {
@@ -162,21 +286,44 @@ export default class CareerSystem {
 
     if (career && career.ranks.length > 0) {
       const rank = Math.min(player.careerRank, career.ranks.length - 1);
-      const pay = career.ranks[rank].salary;
-      if (pay > 0) player.applyDelta({ money: pay });
-
       this.work.careerId = career.id;
       this.work.rank = rank;
       const events = tickWork(this.work, this.statsOf(player), this.random.next.bind(this.random));
       this.emit(events);
 
+      // Pay is settled after the year's work, so a commission job is paid for
+      // the year it actually had rather than for the rank alone.
+      const pay = paidSalary(
+        career.ranks[rank].salary,
+        career.mechanics,
+        this.work.performance,
+      );
+      if (pay > 0) player.applyDelta({ money: pay });
+
+      const hazard = hazardDrain(career.mechanics);
+      if (hazard > 0) player.applyDelta({ health: -hazard });
+
+      const drift = publicityDrift(career.mechanics, this.work.performance);
+      if (drift !== 0) player.applyDelta({ reputation: drift });
+
       const next = career.ranks[rank + 1];
+      const guildOpen = !guildBlocks(
+        career.mechanics,
+        rank,
+        hasCert(this.work, GUILD_CERT),
+      );
       if (
         next &&
+        guildOpen &&
         tryPromote(this.work, career.ranks.length, meetsRequirements(player, next.requires))
       ) {
         player.careerRank = this.work.rank;
         this.emit([{ kind: "work.promoted", params: { title: next.titleKey } }]);
+        // The boss has something to say about this; the mail system listens.
+        this.eventBus.emit("career:promoted", {
+          careerId: career.id,
+          rank: this.work.rank,
+        });
       }
       player.notify();
     }

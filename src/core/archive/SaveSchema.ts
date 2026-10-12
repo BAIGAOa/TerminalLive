@@ -18,6 +18,9 @@ export const saveDataSchema = z.object({
     fitness: z.number().default(0),
     happiness: z.number().default(50),
     reputation: z.number().default(0),
+    // Saved lives from before this stat existed default to the same neutral 50
+    // the Player constructor uses, so an old save resumes unchanged.
+    appearance: z.number().default(50),
     angerValue: z.number().default(0),
     excitationValue: z.number().default(0),
     depressionValue: z.number().default(0),
@@ -174,6 +177,8 @@ export const saveDataSchema = z.object({
             })
             .nullable()
             .default(null),
+          /** careerId → the age at which that career opens again. */
+          cooldowns: z.record(z.string(), z.number()).default({}),
         })
         .default({
           careerId: null,
@@ -185,6 +190,7 @@ export const saveDataSchema = z.object({
           certs: [],
           standing: {},
           venture: null,
+          cooldowns: {},
         }),
     })
     .default({
@@ -198,8 +204,57 @@ export const saveDataSchema = z.object({
         certs: [],
         standing: {},
         venture: null,
+        cooldowns: {},
       },
     }),
+  /** The AI correspondence: the letters, and who is on what cooldown. */
+  mail: z
+    .object({
+      box: z
+        .object({
+          letters: z
+            .array(
+              z.object({
+                id: z.string(),
+                npcId: z.string(),
+                year: z.number(),
+                subject: z.string(),
+                body: z.string(),
+                choices: z
+                  .array(
+                    z.object({
+                      id: z.string(),
+                      label: z.string(),
+                      affinity: z.number(),
+                    }),
+                  )
+                  .default([]),
+                status: z.enum(["unread", "read", "answered"]).default("unread"),
+                /** How far into the exchange this letter is; 0 = the NPC began it. */
+                depth: z.number().default(0),
+                reply: z.string().optional(),
+                chosen: z.string().optional(),
+              }),
+            )
+            .default([]),
+          cooldowns: z.record(z.string(), z.number()).default({}),
+          countedYear: z.number().default(-1),
+          sentThisYear: z.number().default(0),
+          lastDecisionYear: z.number().default(-1),
+          replyYear: z.number().default(-1),
+          repliesThisYear: z.number().default(0),
+        })
+        .default({
+          letters: [],
+          cooldowns: {},
+          countedYear: -1,
+          sentThisYear: 0,
+          lastDecisionYear: -1,
+          replyYear: -1,
+          repliesThisYear: 0,
+        }),
+    })
+    .optional(),
   /** Market + personal portfolio/debt. */
   economy: z
     .object({

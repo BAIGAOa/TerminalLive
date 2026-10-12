@@ -42,3 +42,19 @@ export function dismissModal(id: string): void {
     /* no provider, or already gone */
   }
 }
+
+/**
+ * Whether this modal is currently up.
+ *
+ * Callers need it to avoid stacking one popup on another — a background event
+ * that wants to raise a dialog must first check that nothing already owns the
+ * screen.
+ */
+export function isModalOpen(id: string): boolean {
+  return opened.has(id);
+}
+
+/** Whether *any* modal is up, for a caller that must not interrupt anything. */
+export function anyModalOpen(): boolean {
+  return opened.size > 0;
+}

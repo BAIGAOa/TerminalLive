@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Box, Text, useWindowSize } from "ink";
 import { gotoScreen, useKeyboard } from "ink-cartridge";
 import useWorldGameScreen from "../hooks/useWorldGameScreen.js";
@@ -8,7 +8,16 @@ import AchievementManager from "../achievement/AchievementManager.js";
 import { ActionPanel } from "./ActionPanel.js";
 import { ScrollPanel } from "./kit/index.js";
 import { GameOver } from "./GameOver.js";
-import { dismissModal, presentModal } from "./layers/modalBus.js";
+import { anyModalOpen, dismissModal, isModalOpen, presentModal } from "./layers/modalBus.js";
+import {
+  GJ_MODAL_ID,
+  MAILBOX_MODAL_ID,
+  MAIL_DECISION_MODAL_ID,
+} from "./layers/layerIds.js";
+import CareerBoard from "./CareerBoard.js";
+import Mailbox from "./Mailbox.js";
+import MailDecision from "./MailDecision.js";
+import MailService from "../world/mail/MailService.js";
 import useNarrative from "../hooks/useNarrative.js";
 import {
   MainMenuScreen as MainMenu,
@@ -34,7 +43,7 @@ import WorldRecordsStore from "../core/store/WorldRecordsStore.js";
 export default function WorldGame() {
   const data = useWorldGameScreen();
   const colors = useThemeColors();
-  const { boundKeyboard, focusSet, focusNext } = useKeyboard();
+  const { boundKeyboard, boundSequence, focusSet, focusNext } = useKeyboard();
   const narrative = useNarrative().join(" ");
   const { keymap } = useKeymap();
   const endTurnKey = keymap.endTurn;
@@ -54,6 +63,45 @@ export default function WorldGame() {
       uRight();
     };
   }, [boundKeyboard, endTurnKey, data.status, data.pendingChoice, data.endTurn, data.onPrevView, data.onNextView]);
+
+  // The `g`-prefixed commands: g j for the career board, g e for the inbox.
+  // Sequences rather than single keys, so a mismatched second key cancels and
+  // falls through to the normal bindings — pressing `g` alone costs nothing.
+  const mail = container.resolve(MailService);
+  useEffect(() => {
+    const unbindJobs = boundSequence(["g", "j"], () =>
+      presentModal(GJ_MODAL_ID, CareerBoard, {}, 900),
+    );
+    const unbindMail = boundSequence(["g", "e"], () => {
+      // Opening the inbox is itself an answer to "deal with this": defer the
+      // pending popup so it does not sit on top of the letter being read.
+      const pending = mail.decision();
+      if (pending) mail.defer(pending.id);
+      presentModal(MAILBOX_MODAL_ID, Mailbox, {}, 1000);
+    });
+    return () => {
+      unbindJobs();
+      unbindMail();
+    };
+  }, [boundSequence, mail]);
+
+  // A letter that puts a question to the player is the only kind allowed to
+  // interrupt, and only when nothing else already owns the screen. Everything
+  // else waits in the inbox.
+  const mailVersion = useSyncExternalStore(mail.subscribe, mail.getSnapshot);
+  useEffect(() => {
+    if (data.status !== "playing" || data.pendingChoice) return;
+    const decision = mail.decision();
+    if (!decision) {
+      dismissModal(MAIL_DECISION_MODAL_ID);
+      return;
+    }
+    // Already up, or a modal the player opened (the inbox, the console) is in
+    // front — either way, do not re-present and do not stack.
+    if (isModalOpen(MAIL_DECISION_MODAL_ID) || anyModalOpen()) return;
+    presentModal(MAIL_DECISION_MODAL_ID, MailDecision, {}, 900);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mailVersion, data.status, data.pendingChoice]);
 
   // Focus: the action panel + the relationships cards share the "game-main"
   // group; Tab toggles between them (only on the relationships page). Leaving

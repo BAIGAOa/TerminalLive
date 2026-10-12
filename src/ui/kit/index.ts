@@ -6,6 +6,10 @@ export type {
 } from "./MenuList.js";
 export { TextField } from "./TextField.js";
 export type { TextFieldProps } from "./TextField.js";
+export { TextArea } from "./TextArea.js";
+export type { TextAreaProps } from "./TextArea.js";
+export { TerminalCaret } from "./TerminalCaret.js";
+export type { CaretStyle } from "./TerminalCaret.js";
 export { Button } from "./Button.js";
 export type { ButtonProps } from "./Button.js";
 export { ScrollPanel } from "./ScrollPanel.js";

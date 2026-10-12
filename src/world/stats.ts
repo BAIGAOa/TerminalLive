@@ -15,6 +15,7 @@ export type StatKey =
   | "fitness"
   | "happiness"
   | "reputation"
+  | "appearance"
   | "angerValue"
   | "excitationValue"
   | "depressionValue"
@@ -31,6 +32,7 @@ export const STAT_KEYS: StatKey[] = [
   "fitness",
   "happiness",
   "reputation",
+  "appearance",
   "angerValue",
   "excitationValue",
   "depressionValue",
@@ -63,6 +65,7 @@ const GAUGES: StatKey[] = [
   "fitness",
   "happiness",
   "reputation",
+  "appearance",
   "angerValue",
   "excitationValue",
   "depressionValue",

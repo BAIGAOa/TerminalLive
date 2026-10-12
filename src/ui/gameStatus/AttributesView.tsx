@@ -44,6 +44,12 @@ export default function AttributesView({
       color="cyan"
       width={barW}
     />,
+    <StatBar
+      label={t("playerConfig.attr.appearance")}
+      value={player.appearance}
+      color="yellowBright"
+      width={barW}
+    />,
     null,
     <Text color="gray">
       {t("playerConfig.attr.height")}: {player.height}m |{" "}

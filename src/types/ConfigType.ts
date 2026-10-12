@@ -12,6 +12,7 @@ export const DEFAULT_PLAYER_CONFIG = {
   fitness: 10,
   happiness: 60,
   reputation: 0,
+  appearance: 50,
   angerValue: 0,
   excitationValue: 0,
   depressionValue: 0,
@@ -30,6 +31,7 @@ const PlayerConfigSchema = z.object({
   fitness: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.fitness),
   happiness: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.happiness),
   reputation: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.reputation),
+  appearance: z.number().min(0).max(100).default(DEFAULT_PLAYER_CONFIG.appearance),
   angerValue: z
     .number()
     .min(0)
@@ -88,6 +90,19 @@ const ConfigSchema = z.object({
   traits: z.array(z.string()).default([]),
   /** Accessibility: reduce information density across the UI. */
   simplified: z.boolean().default(false),
+  /**
+   * DeepSeek API key, for the optional AI job interview. Empty means the
+   * feature is off and hiring falls back to the numeric entry gates alone.
+   *
+   * Stored in plaintext in `config.json`, like every other setting here — the
+   * key is the player's own, on their own machine.
+   */
+  deepseekApiKey: z.string().default(""),
+  /**
+   * How often AI characters may write to the player. "off" also disables the
+   * job interview letters; "low" is one voice a year.
+   */
+  aiMailFrequency: z.enum(["off", "low", "normal"]).default("low"),
 });
 
 export type ConfigType = z.infer<typeof ConfigSchema>;

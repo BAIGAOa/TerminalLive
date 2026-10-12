@@ -19,6 +19,8 @@ export default class ConfigStore {
     keyBindings: {},
     traits: [],
     simplified: false,
+    deepseekApiKey: "",
+    aiMailFrequency: "low",
   };
   private listeners: Set<Listener> = new Set();
   private jsonParser = new JSONparsing("config.json");
@@ -47,6 +49,28 @@ export default class ConfigStore {
 
   public async setTheme(theme: string): Promise<void> {
     this.config = { ...this.config, theme };
+    await this.persist();
+    this.emitChange();
+  }
+
+  /** Empty when the player has not configured one — the AI interview is off. */
+  public getDeepseekApiKey(): string {
+    return this.config.deepseekApiKey ?? "";
+  }
+
+  public async setDeepseekApiKey(key: string): Promise<void> {
+    this.config = { ...this.config, deepseekApiKey: key.trim() };
+    await this.persist();
+    this.emitChange();
+  }
+
+  /** How talkative the AI is allowed to be (see the mail system). */
+  public getMailFrequency(): "off" | "low" | "normal" {
+    return this.config.aiMailFrequency ?? "low";
+  }
+
+  public async setMailFrequency(value: "off" | "low" | "normal"): Promise<void> {
+    this.config = { ...this.config, aiMailFrequency: value };
     await this.persist();
     this.emitChange();
   }

@@ -19,6 +19,7 @@ import PoliticsSystem from "../world/politics/PoliticsSystem.js";
 import RegionsSystem from "../world/regions/RegionsSystem.js";
 import WorldChainSystem from "../world/chains/WorldChainSystem.js";
 import NarrativeSystem from "../world/narrative/NarrativeSystem.js";
+import MailService from "../world/mail/MailService.js";
 import RandomService from "./random/RandomService.js";
 import WorldRuleEngine from "../world/rules/WorldRuleEngine.js";
 
@@ -51,6 +52,7 @@ export default class Game {
   private regions: RegionsSystem;
   private chains: WorldChainSystem;
   private narrative: NarrativeSystem;
+  private mail: MailService;
   private random: RandomService;
   private rules: WorldRuleEngine;
 
@@ -69,6 +71,7 @@ export default class Game {
     this.regions = inject(RegionsSystem);
     this.chains = inject(WorldChainSystem);
     this.narrative = inject(NarrativeSystem);
+    this.mail = inject(MailService);
     this.health = inject(HealthSystem);
     this.random = inject(RandomService);
     this.rules = inject(WorldRuleEngine);
@@ -189,6 +192,10 @@ export default class Game {
     // `alive` during its own tick; keep the flag consistent with health so the
     // HUD and the headless dev loops agree on when the life is over.
     this.player.alive = this.player.health > 0;
+    // Let the AI characters decide whether anyone writes this year. It returns
+    // immediately — letters are generated in the background and land in the
+    // mailbox when they land, so a slow model never stalls the turn.
+    this.mail.tickYear(this.player);
     this.eventBus.emit("turn:ended", { age: this.player.age });
   }
 

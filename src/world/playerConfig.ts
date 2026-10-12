@@ -32,6 +32,7 @@ export const ATTRIBUTE_META: Record<PlayerConfigCategory, PlayerAttributeMeta[]>
     { key: "fitness", type: "number", min: 0, max: 100 },
     { key: "happiness", type: "number", min: 0, max: 100 },
     { key: "reputation", type: "number", min: 0, max: 100 },
+    { key: "appearance", type: "number", min: 0, max: 100 },
   ],
   [PlayerConfigCategory.psychological]: [
     { key: "angerValue", type: "number", min: 0, max: 100 },

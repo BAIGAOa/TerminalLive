@@ -16,6 +16,7 @@ import PoliticsSystem from "../../world/politics/PoliticsSystem.js";
 import RegionsSystem from "../../world/regions/RegionsSystem.js";
 import WorldChainSystem from "../../world/chains/WorldChainSystem.js";
 import NarrativeSystem from "../../world/narrative/NarrativeSystem.js";
+import MailService from "../../world/mail/MailService.js";
 import RandomService from "../random/RandomService.js";
 import WorldContentLoader from "../../worlds/WorldContentLoader.js";
 import ChainTracker from "../../event/ChainTracker.js";
@@ -52,6 +53,7 @@ export function captureSaveData(): SaveData {
       fitness: player.fitness,
       happiness: player.happiness,
       reputation: player.reputation,
+      appearance: player.appearance,
       angerValue: player.angerValue,
       excitationValue: player.excitationValue,
       depressionValue: player.depressionValue,
@@ -99,6 +101,7 @@ export function captureSaveData(): SaveData {
     regions: container.resolve(RegionsSystem).snapshot(),
     chains: container.resolve(WorldChainSystem).snapshot(),
     narrative: container.resolve(NarrativeSystem).snapshot(),
+    mail: container.resolve(MailService).snapshot(),
     random: container.resolve(RandomService).snapshot(),
     chain: container.resolve(ChainTracker).snapshot(),
     // Queued post-event steps — without these a delayed / gated narrative line
@@ -183,6 +186,7 @@ export function applySaveData(data: SaveData): boolean {
   container.resolve(RegionsSystem).restore(data.regions);
   container.resolve(WorldChainSystem).restore(data.chains);
   container.resolve(NarrativeSystem).restore(data.narrative);
+  container.resolve(MailService).restore(data.mail);
   // Resume the exact same random stream (seed + step), graph and streak memory.
   container.resolve(RandomService).restore(data.random);
   container.resolve(ChainTracker).restore(data.chain);

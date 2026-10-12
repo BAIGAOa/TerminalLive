@@ -22,6 +22,7 @@ export interface PlayerAttributes {
   fitness?: number;
   happiness?: number;
   reputation?: number;
+  appearance?: number;
   angerValue?: number;
   excitationValue?: number;
   depressionValue?: number;
@@ -70,6 +71,7 @@ export default class Player {
   public fitness: number;
   public happiness: number;
   public reputation: number;
+  public appearance: number;
 
   public angerValue: number;
   public excitationValue: number;
@@ -104,6 +106,7 @@ export default class Player {
     this.fitness = attrs.fitness ?? 10;
     this.happiness = attrs.happiness ?? 60;
     this.reputation = attrs.reputation ?? 0;
+    this.appearance = attrs.appearance ?? 50;
 
     this.angerValue = attrs.angerValue ?? 0;
     this.excitationValue = attrs.excitationValue ?? 0;
@@ -140,6 +143,7 @@ export default class Player {
     this.fitness = base.fitness ?? 10;
     this.happiness = base.happiness ?? 60;
     this.reputation = base.reputation ?? 0;
+    this.appearance = base.appearance ?? 50;
 
     this.angerValue = base.angerValue ?? 0;
     this.excitationValue = base.excitationValue ?? 0;

@@ -26,6 +26,7 @@ import { resolveKeymap } from "./ui/keymap.js";
 import PlayerConfig from "./ui/PlayerConfig.js";
 import ModManager from "./ui/ModManager.js";
 import ThemeScreen from "./ui/ThemeScreen.js";
+import AiSettings from "./ui/AiSettings.js";
 import Language from "./ui/Language.js";
 import AchievementScreen from "./ui/Achievement.js";
 import Archive from "./ui/Archive.js";
@@ -67,6 +68,10 @@ settingReg.register("theme", {
   component: ThemeScreen,
   nameKey: "setting.theme",
 });
+settingReg.register("ai", {
+  component: AiSettings,
+  nameKey: "setting.ai",
+});
 // Key bindings are not registered here: `core.keybindings` owns that page, and
 // the list of rebindable shortcuts behind it.
 
@@ -83,6 +88,7 @@ registerComponent(SettingScreen, {}, { parent: MainMenuScreen });
 registerComponent(PlayerConfig, {}, { parent: SettingScreen });
 registerComponent(ModManager, {}, { parent: SettingScreen });
 registerComponent(ThemeScreen, {}, { parent: SettingScreen });
+registerComponent(AiSettings, {}, { parent: SettingScreen });
 registerComponent(Language, {}, { parent: MainMenuScreen });
 registerComponent(AchievementScreen, {}, { parent: MainMenuScreen });
 registerComponent(Archive, {}, { parent: MainMenuScreen });

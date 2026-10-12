@@ -3,51 +3,918 @@
     "id": "career_clerk",
     "labelKey": "career.clerk",
     "descKey": "career.clerk.desc",
+    "icon": "💼",
+    "fieldKey": "career.field.corporate",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 18
+      },
+      {
+        "prop": "intelligence",
+        "gte": 20
+      }
+    ],
     "ranks": [
-      { "titleKey": "career.clerk.r0", "salary": 30, "requires": [] },
-      { "titleKey": "career.clerk.r1", "salary": 65, "requires": [{ "prop": "intelligence", "gte": 30 }] },
-      { "titleKey": "career.clerk.r2", "salary": 120, "requires": [{ "prop": "intelligence", "gte": 50 }, { "prop": "reputation", "gte": 15 }] },
-      { "titleKey": "career.clerk.r3", "salary": 220, "requires": [{ "prop": "intelligence", "gte": 70 }, { "prop": "reputation", "gte": 35 }] }
-    ]
+      {
+        "titleKey": "career.clerk.r0",
+        "salary": 30,
+        "requires": []
+      },
+      {
+        "titleKey": "career.clerk.r1",
+        "salary": 65,
+        "requires": [
+          {
+            "prop": "intelligence",
+            "gte": 30
+          }
+        ]
+      },
+      {
+        "titleKey": "career.clerk.r2",
+        "salary": 120,
+        "requires": [
+          {
+            "prop": "intelligence",
+            "gte": 50
+          },
+          {
+            "prop": "reputation",
+            "gte": 15
+          }
+        ]
+      },
+      {
+        "titleKey": "career.clerk.r3",
+        "salary": 220,
+        "requires": [
+          {
+            "prop": "intelligence",
+            "gte": 70
+          },
+          {
+            "prop": "reputation",
+            "gte": 35
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 1,
+      "applyCooldown": 1,
+      "resignCost": {
+        "money": 50,
+        "happiness": -3
+      },
+      "resignCooldown": 1
+    }
   },
   {
     "id": "career_teacher",
     "labelKey": "career.teacher",
     "descKey": "career.teacher.desc",
+    "icon": "📚",
+    "fieldKey": "career.field.public",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 22
+      },
+      {
+        "prop": "intelligence",
+        "gte": 45
+      },
+      {
+        "prop": "reputation",
+        "gte": 10
+      }
+    ],
     "ranks": [
-      { "titleKey": "career.teacher.r0", "salary": 28, "requires": [] },
-      { "titleKey": "career.teacher.r1", "salary": 60, "requires": [{ "prop": "intelligence", "gte": 35 }] },
-      { "titleKey": "career.teacher.r2", "salary": 130, "requires": [{ "prop": "intelligence", "gte": 60 }, { "prop": "reputation", "gte": 25 }] }
-    ]
+      {
+        "titleKey": "career.teacher.r0",
+        "salary": 28,
+        "requires": []
+      },
+      {
+        "titleKey": "career.teacher.r1",
+        "salary": 60,
+        "requires": [
+          {
+            "prop": "intelligence",
+            "gte": 35
+          }
+        ]
+      },
+      {
+        "titleKey": "career.teacher.r2",
+        "salary": 130,
+        "requires": [
+          {
+            "prop": "intelligence",
+            "gte": 60
+          },
+          {
+            "prop": "reputation",
+            "gte": 25
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 1,
+      "applyCooldown": 2,
+      "resignCost": {
+        "reputation": -8,
+        "happiness": -3
+      },
+      "resignCooldown": 2
+    }
   },
   {
     "id": "career_artist",
     "labelKey": "career.artist",
     "descKey": "career.artist.desc",
+    "icon": "🎨",
+    "fieldKey": "career.field.creative",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 16
+      },
+      {
+        "prop": "appearance",
+        "gte": 55
+      },
+      {
+        "prop": "happiness",
+        "gte": 40
+      }
+    ],
+    "mechanics": [
+      "commission"
+    ],
     "ranks": [
-      { "titleKey": "career.artist.r0", "salary": 18, "requires": [] },
-      { "titleKey": "career.artist.r1", "salary": 70, "requires": [{ "prop": "happiness", "gte": 50 }] },
-      { "titleKey": "career.artist.r2", "salary": 190, "requires": [{ "prop": "reputation", "gte": 45 }] }
-    ]
+      {
+        "titleKey": "career.artist.r0",
+        "salary": 18,
+        "requires": []
+      },
+      {
+        "titleKey": "career.artist.r1",
+        "salary": 70,
+        "requires": [
+          {
+            "prop": "happiness",
+            "gte": 50
+          }
+        ]
+      },
+      {
+        "titleKey": "career.artist.r2",
+        "salary": 190,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 45
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 1,
+      "applyCooldown": 1,
+      "resignCost": {
+        "happiness": -4
+      },
+      "resignCooldown": 1
+    }
   },
   {
-    "id": "career_trader",
-    "labelKey": "career.trader",
-    "descKey": "career.trader.desc",
+    "id": "career_model",
+    "labelKey": "career.model",
+    "descKey": "career.model.desc",
+    "icon": "👠",
+    "fieldKey": "career.field.creative",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 16
+      },
+      {
+        "prop": "age",
+        "lte": 35
+      },
+      {
+        "prop": "appearance",
+        "gte": 75
+      },
+      {
+        "prop": "fitness",
+        "gte": 50
+      }
+    ],
+    "mechanics": [
+      "commission"
+    ],
     "ranks": [
-      { "titleKey": "career.trader.r0", "salary": 35, "requires": [] },
-      { "titleKey": "career.trader.r1", "salary": 85, "requires": [{ "prop": "money", "gte": 300 }] },
-      { "titleKey": "career.trader.r2", "salary": 240, "requires": [{ "prop": "money", "gte": 2000 }, { "prop": "reputation", "gte": 30 }] }
-    ]
+      {
+        "titleKey": "career.model.r0",
+        "salary": 40,
+        "requires": []
+      },
+      {
+        "titleKey": "career.model.r1",
+        "salary": 110,
+        "requires": [
+          {
+            "prop": "appearance",
+            "gte": 80
+          }
+        ]
+      },
+      {
+        "titleKey": "career.model.r2",
+        "salary": 260,
+        "requires": [
+          {
+            "prop": "appearance",
+            "gte": 88
+          },
+          {
+            "prop": "reputation",
+            "gte": 40
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 1,
+      "applyCooldown": 1,
+      "resignCost": {
+        "reputation": -10,
+        "appearance": -2
+      },
+      "resignCooldown": 1
+    }
   },
   {
     "id": "career_engineer",
     "labelKey": "career.engineer",
     "descKey": "career.engineer.desc",
+    "icon": "🛠",
+    "fieldKey": "career.field.tech",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 22
+      },
+      {
+        "prop": "intelligence",
+        "gte": 55
+      }
+    ],
     "ranks": [
-      { "titleKey": "career.engineer.r0", "salary": 32, "requires": [] },
-      { "titleKey": "career.engineer.r1", "salary": 78, "requires": [{ "prop": "intelligence", "gte": 45 }] },
-      { "titleKey": "career.engineer.r2", "salary": 200, "requires": [{ "prop": "intelligence", "gte": 65 }, { "prop": "reputation", "gte": 30 }] }
-    ]
+      {
+        "titleKey": "career.engineer.r0",
+        "salary": 32,
+        "requires": []
+      },
+      {
+        "titleKey": "career.engineer.r1",
+        "salary": 78,
+        "requires": [
+          {
+            "prop": "intelligence",
+            "gte": 45
+          }
+        ]
+      },
+      {
+        "titleKey": "career.engineer.r2",
+        "salary": 200,
+        "requires": [
+          {
+            "prop": "intelligence",
+            "gte": 65
+          },
+          {
+            "prop": "reputation",
+            "gte": 30
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 2,
+      "applyCooldown": 2,
+      "resignCost": {
+        "money": 150,
+        "reputation": -5
+      },
+      "resignCooldown": 2
+    }
+  },
+  {
+    "id": "career_doctor",
+    "labelKey": "career.doctor",
+    "descKey": "career.doctor.desc",
+    "icon": "🩺",
+    "fieldKey": "career.field.medical",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 26
+      },
+      {
+        "prop": "intelligence",
+        "gte": 70
+      },
+      {
+        "prop": "reputation",
+        "gte": 20
+      }
+    ],
+    "mechanics": [
+      "guild"
+    ],
+    "ranks": [
+      {
+        "titleKey": "career.doctor.r0",
+        "salary": 55,
+        "requires": []
+      },
+      {
+        "titleKey": "career.doctor.r1",
+        "salary": 130,
+        "requires": [
+          {
+            "prop": "intelligence",
+            "gte": 75
+          }
+        ]
+      },
+      {
+        "titleKey": "career.doctor.r2",
+        "salary": 300,
+        "requires": [
+          {
+            "prop": "intelligence",
+            "gte": 85
+          },
+          {
+            "prop": "reputation",
+            "gte": 50
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 2,
+      "applyCooldown": 3,
+      "resignCost": {
+        "money": 500,
+        "reputation": -20,
+        "happiness": -8
+      },
+      "resignCooldown": 4
+    }
+  },
+  {
+    "id": "career_soldier",
+    "labelKey": "career.soldier",
+    "descKey": "career.soldier.desc",
+    "icon": "🎖",
+    "fieldKey": "career.field.public",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 18
+      },
+      {
+        "prop": "age",
+        "lte": 28
+      },
+      {
+        "prop": "fitness",
+        "gte": 60
+      },
+      {
+        "prop": "health",
+        "gte": 70
+      }
+    ],
+    "lifelong": true,
+    "mechanics": [
+      "hazard"
+    ],
+    "ranks": [
+      {
+        "titleKey": "career.soldier.r0",
+        "salary": 34,
+        "requires": []
+      },
+      {
+        "titleKey": "career.soldier.r1",
+        "salary": 82,
+        "requires": [
+          {
+            "prop": "fitness",
+            "gte": 70
+          }
+        ]
+      },
+      {
+        "titleKey": "career.soldier.r2",
+        "salary": 170,
+        "requires": [
+          {
+            "prop": "fitness",
+            "gte": 80
+          },
+          {
+            "prop": "reputation",
+            "gte": 35
+          }
+        ]
+      },
+      {
+        "titleKey": "career.soldier.r3",
+        "salary": 320,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 60
+          },
+          {
+            "prop": "social",
+            "gte": 60
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 2,
+      "applyCooldown": 2,
+      "resignCost": {},
+      "resignCooldown": 0
+    }
+  },
+  {
+    "id": "career_monk",
+    "labelKey": "career.monk",
+    "descKey": "career.monk.desc",
+    "icon": "🕯",
+    "fieldKey": "career.field.faith",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 18
+      },
+      {
+        "prop": "happiness",
+        "gte": 50
+      }
+    ],
+    "lifelong": true,
+    "ranks": [
+      {
+        "titleKey": "career.monk.r0",
+        "salary": 8,
+        "requires": []
+      },
+      {
+        "titleKey": "career.monk.r1",
+        "salary": 24,
+        "requires": [
+          {
+            "prop": "happiness",
+            "gte": 65
+          }
+        ]
+      },
+      {
+        "titleKey": "career.monk.r2",
+        "salary": 60,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 45
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 1,
+      "applyCooldown": 2,
+      "resignCost": {},
+      "resignCooldown": 0
+    }
+  },
+  {
+    "id": "career_police",
+    "labelKey": "career.police",
+    "descKey": "career.police.desc",
+    "icon": "🚔",
+    "fieldKey": "career.field.public",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 20
+      },
+      {
+        "prop": "age",
+        "lte": 32
+      },
+      {
+        "prop": "fitness",
+        "gte": 55
+      },
+      {
+        "prop": "health",
+        "gte": 60
+      },
+      {
+        "prop": "reputation",
+        "gte": 15
+      }
+    ],
+    "mechanics": [
+      "hazard"
+    ],
+    "ranks": [
+      {
+        "titleKey": "career.police.r0",
+        "salary": 32,
+        "requires": []
+      },
+      {
+        "titleKey": "career.police.r1",
+        "salary": 74,
+        "requires": [
+          {
+            "prop": "fitness",
+            "gte": 65
+          }
+        ]
+      },
+      {
+        "titleKey": "career.police.r2",
+        "salary": 165,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 45
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 2,
+      "applyCooldown": 2,
+      "resignCost": {
+        "reputation": -12,
+        "money": 120
+      },
+      "resignCooldown": 3
+    }
+  },
+  {
+    "id": "career_trader",
+    "labelKey": "career.trader",
+    "descKey": "career.trader.desc",
+    "icon": "📈",
+    "fieldKey": "career.field.finance",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 22
+      },
+      {
+        "prop": "money",
+        "gte": 500
+      },
+      {
+        "prop": "intelligence",
+        "gte": 40
+      }
+    ],
+    "mechanics": [
+      "commission"
+    ],
+    "ranks": [
+      {
+        "titleKey": "career.trader.r0",
+        "salary": 35,
+        "requires": []
+      },
+      {
+        "titleKey": "career.trader.r1",
+        "salary": 85,
+        "requires": [
+          {
+            "prop": "money",
+            "gte": 300
+          }
+        ]
+      },
+      {
+        "titleKey": "career.trader.r2",
+        "salary": 240,
+        "requires": [
+          {
+            "prop": "money",
+            "gte": 2000
+          },
+          {
+            "prop": "reputation",
+            "gte": 30
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 1,
+      "applyCooldown": 1,
+      "resignCost": {
+        "money": 400,
+        "reputation": -6
+      },
+      "resignCooldown": 1
+    }
+  },
+  {
+    "id": "career_actor",
+    "labelKey": "career.actor",
+    "descKey": "career.actor.desc",
+    "icon": "🎬",
+    "fieldKey": "career.field.creative",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 18
+      },
+      {
+        "prop": "appearance",
+        "gte": 80
+      },
+      {
+        "prop": "social",
+        "gte": 60
+      }
+    ],
+    "mechanics": [
+      "commission",
+      "public"
+    ],
+    "ranks": [
+      {
+        "titleKey": "career.actor.r0",
+        "salary": 45,
+        "requires": []
+      },
+      {
+        "titleKey": "career.actor.r1",
+        "salary": 150,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 30
+          }
+        ]
+      },
+      {
+        "titleKey": "career.actor.r2",
+        "salary": 420,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 60
+          },
+          {
+            "prop": "appearance",
+            "gte": 85
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 2,
+      "applyCooldown": 2,
+      "resignCost": {
+        "reputation": -15,
+        "happiness": -5
+      },
+      "resignCooldown": 2
+    }
+  },
+  {
+    "id": "career_chef",
+    "labelKey": "career.chef",
+    "descKey": "career.chef.desc",
+    "icon": "🍳",
+    "fieldKey": "career.field.service",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 18
+      },
+      {
+        "prop": "fitness",
+        "gte": 40
+      },
+      {
+        "prop": "health",
+        "gte": 50
+      }
+    ],
+    "ranks": [
+      {
+        "titleKey": "career.chef.r0",
+        "salary": 26,
+        "requires": []
+      },
+      {
+        "titleKey": "career.chef.r1",
+        "salary": 68,
+        "requires": [
+          {
+            "prop": "social",
+            "gte": 35
+          }
+        ]
+      },
+      {
+        "titleKey": "career.chef.r2",
+        "salary": 160,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 40
+          },
+          {
+            "prop": "money",
+            "gte": 800
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 1,
+      "applyCooldown": 1,
+      "resignCost": {
+        "money": 80,
+        "happiness": -4
+      },
+      "resignCooldown": 1
+    }
+  },
+  {
+    "id": "career_athlete",
+    "labelKey": "career.athlete",
+    "descKey": "career.athlete.desc",
+    "icon": "🏅",
+    "fieldKey": "career.field.sport",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 16
+      },
+      {
+        "prop": "age",
+        "lte": 30
+      },
+      {
+        "prop": "fitness",
+        "gte": 80
+      },
+      {
+        "prop": "health",
+        "gte": 70
+      }
+    ],
+    "mechanics": [
+      "commission",
+      "hazard"
+    ],
+    "ranks": [
+      {
+        "titleKey": "career.athlete.r0",
+        "salary": 30,
+        "requires": []
+      },
+      {
+        "titleKey": "career.athlete.r1",
+        "salary": 120,
+        "requires": [
+          {
+            "prop": "fitness",
+            "gte": 85
+          }
+        ]
+      },
+      {
+        "titleKey": "career.athlete.r2",
+        "salary": 380,
+        "requires": [
+          {
+            "prop": "fitness",
+            "gte": 90
+          },
+          {
+            "prop": "reputation",
+            "gte": 50
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 2,
+      "applyCooldown": 2,
+      "resignCost": {
+        "reputation": -12,
+        "fitness": -5,
+        "happiness": -6
+      },
+      "resignCooldown": 2
+    }
+  },
+  {
+    "id": "career_politician",
+    "labelKey": "career.politician",
+    "descKey": "career.politician.desc",
+    "icon": "🏛",
+    "fieldKey": "career.field.public",
+    "entry": [
+      {
+        "prop": "age",
+        "gte": 35
+      },
+      {
+        "prop": "reputation",
+        "gte": 50
+      },
+      {
+        "prop": "social",
+        "gte": 65
+      }
+    ],
+    "mechanics": [
+      "public"
+    ],
+    "ranks": [
+      {
+        "titleKey": "career.politician.r0",
+        "salary": 60,
+        "requires": []
+      },
+      {
+        "titleKey": "career.politician.r1",
+        "salary": 160,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 65
+          }
+        ]
+      },
+      {
+        "titleKey": "career.politician.r2",
+        "salary": 400,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 80
+          },
+          {
+            "prop": "social",
+            "gte": 75
+          }
+        ]
+      },
+      {
+        "titleKey": "career.politician.r3",
+        "salary": 900,
+        "requires": [
+          {
+            "prop": "reputation",
+            "gte": 90
+          },
+          {
+            "prop": "money",
+            "gte": 5000
+          }
+        ]
+      }
+    ],
+    "terms": {
+      "applyAp": 2,
+      "applyCooldown": 3,
+      "resignCost": {
+        "reputation": -25,
+        "happiness": -5
+      },
+      "resignCooldown": 3
+    }
   }
 ]

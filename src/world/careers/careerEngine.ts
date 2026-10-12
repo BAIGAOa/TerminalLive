@@ -5,6 +5,8 @@
  * singleton (`CareerSystem`) are thin layers over this.
  */
 
+import type { CareerMechanic } from "./CareerDefinition.js";
+
 export const WORK_SKILLS = ["craft", "lead", "network", "finance"] as const;
 export type WorkSkillId = (typeof WORK_SKILLS)[number];
 
@@ -29,6 +31,11 @@ export interface WorkState {
   /** Office faction → standing (-100..100). */
   standing: Record<string, number>;
   venture: VentureState | null;
+  /**
+   * careerId → the age at which that career opens again. Written by a failed
+   * application and by a resignation; absent means "no gate".
+   */
+  cooldowns: Record<string, number>;
 }
 
 /** Minimal player view the engine needs (kept plain so tests avoid the Player). */
@@ -63,6 +70,7 @@ export function emptyWorkState(): WorkState {
     certs: [],
     standing: { peers: 0, bosses: 0, rivals: 0 },
     venture: null,
+    cooldowns: {},
   };
 }
 
@@ -83,6 +91,51 @@ export function addCert(state: WorkState, id: string): boolean {
   state.certs.push(id);
   state.performance = clamp(state.performance + 5);
   return true;
+}
+
+// ── career mechanics ────────────────────────────────────────────────
+// What makes one job play differently from another. Each is a pure read of a
+// career's `mechanics` list, so the yearly tick applies them without knowing
+// which job it is looking at.
+
+/** The certification a closed-shop career demands before the second rung. */
+export const GUILD_CERT = "cert_core";
+
+/**
+ * Salary actually paid this year. A commission job pays for results; a plain
+ * one pays its rank's figure however the year went.
+ */
+export function paidSalary(
+  base: number,
+  mechanics: readonly CareerMechanic[],
+  performance: number,
+): number {
+  if (!mechanics.includes("commission")) return base;
+  const factor = 0.6 + (clamp(performance) / 100) * 0.9; // 0.6× … 1.5×
+  return Math.round(base * factor);
+}
+
+/** Extra health a year costs on top of the baseline drain. */
+export function hazardDrain(mechanics: readonly CareerMechanic[]): number {
+  return mechanics.includes("hazard") ? 2 : 0;
+}
+
+/** Yearly reputation drift — a public-facing job lives and dies by its record. */
+export function publicityDrift(
+  mechanics: readonly CareerMechanic[],
+  performance: number,
+): number {
+  if (!mechanics.includes("public")) return 0;
+  return Math.round((clamp(performance) - 50) / 25); // -2 … +2
+}
+
+/** Whether the guild gate closes the next rung off. */
+export function guildBlocks(
+  mechanics: readonly CareerMechanic[],
+  rank: number,
+  certified: boolean,
+): boolean {
+  return mechanics.includes("guild") && rank >= 1 && !certified;
 }
 
 // ── player-driven work actions (AP-priced elsewhere) ────────────────

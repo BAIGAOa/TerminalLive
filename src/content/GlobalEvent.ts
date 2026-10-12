@@ -45,6 +45,18 @@ declare global {
     /** 通用提示条 */
     "toast": { textKey: string; kind?: "info" | "success" | "warn" };
 
+    /** 玩家入职某个职业（邮件系统据此让老板来一封信） */
+    "career:joined": { careerId: string; rank: number };
+
+    /** 玩家辞去某个职业 */
+    "career:resigned": { careerId: string; rank: number };
+
+    /** 玩家在职级阶梯上爬了一级 */
+    "career:promoted": { careerId: string; rank: number };
+
+    /** 收到一封新的 AI 来信 */
+    "mail:arrived": { npcId: string; demandsAnswer: boolean };
+
     /** 成就解锁 */
     "achievement:unlocked": { id: string; remindKey: string };
 
