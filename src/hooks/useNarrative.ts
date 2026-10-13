@@ -2,6 +2,7 @@ import { useSyncExternalStore } from "react";
 import { container } from "../Container.js";
 import { useI18n } from "../core/language/LanguageContext.js";
 import WorldState from "../world/chronicle/WorldState.js";
+import ChronicleRegistry from "../world/chronicle/ChronicleRegistry.js";
 import PressureState from "../world/pressures/PressureState.js";
 import PressureRegistry from "../world/pressures/PressureRegistry.js";
 import WeatherState from "../world/weather/WeatherState.js";
@@ -12,6 +13,7 @@ import CareerSystem from "../world/careers/CareerSystem.js";
 import NarrativeSystem from "../world/narrative/NarrativeSystem.js";
 import {
   buildNarrative,
+  chronicleLineKey,
   deriveMood,
   NarrativeMemory,
 } from "../world/narrative/compose.js";
@@ -32,6 +34,7 @@ export default function useNarrative(): string[] {
   const { t } = useI18n();
   const levelManager = container.resolve(WorldManager);
   const world = container.resolve(WorldState);
+  const chronicle = container.resolve(ChronicleRegistry);
   const pressures = container.resolve(PressureState);
   const pressureReg = container.resolve(PressureRegistry);
   const weather = container.resolve(WeatherState);
@@ -88,10 +91,17 @@ export default function useNarrative(): string[] {
     arc: arcs[0] ? t(arcs[0].def.labelKey) : undefined,
   };
 
+  // The era and region ids are world-scoped, so their names live with the world
+  // rather than in `narr.*`. Ask the chronicle the world currently has loaded.
+  const eraDef = chronicle.getEras().find((e) => e.id === world.eraId);
+  const regionDef = chronicle.getRegion(world.regionId);
+
   const segments = buildNarrative({
     year: world.year,
     eraId: world.eraId,
     regionId: world.regionId,
+    eraKey: chronicleLineKey(eraDef, `narr.era.${world.eraId}`),
+    regionKey: chronicleLineKey(regionDef, `narr.region.${world.regionId}`),
     weatherId: weather.currentIdValue(),
     season: seasonOf(world.year),
     karma: world.karma,

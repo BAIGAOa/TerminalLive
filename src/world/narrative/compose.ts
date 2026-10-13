@@ -30,6 +30,36 @@ export interface NarrativeState {
   mood: MoodKey;
   /** Already-localized recall material the narrator may reference. */
   memory?: NarrativeMemory;
+  /**
+   * Translation key for the era / region beat. Supplied by the caller, which
+   * can reach the world's own chronicle definitions; without it the classic
+   * `narr.era.<id>` convention is assumed, which only the classic world's ids
+   * satisfy.
+   */
+  eraKey?: string;
+  regionKey?: string;
+}
+
+/** The chronicle fields the narrator needs to name an era or a region. */
+export interface NarratableDefinition {
+  narrKey?: string;
+  descKey?: string;
+  labelKey?: string;
+}
+
+/**
+ * The translation key for an era's or region's line in the scene.
+ *
+ * Prefers the world's own narratable prose, then its description, then its
+ * name — the first two of which a world always defines for itself, unlike the
+ * `narr.*` namespace, which is global and only ever knew the classic world.
+ * The fallback is what the classic convention used to be inline here.
+ */
+export function chronicleLineKey(
+  def: NarratableDefinition | undefined,
+  fallback: string,
+): string {
+  return def?.narrKey ?? def?.descKey ?? def?.labelKey ?? fallback;
 }
 
 /**
@@ -120,8 +150,15 @@ export function buildNarrative(state: NarrativeState): NarrativeSegment[] {
   const segments: NarrativeSegment[] = [
     { key: `narr.scene.${state.weatherId}` },
   ];
-  if (state.eraId) segments.push({ key: `narr.era.${state.eraId}` });
-  if (state.regionId) segments.push({ key: `narr.region.${state.regionId}` });
+  // Era and region are the only world-scoped vocabulary in the scene: weather
+  // ids and pressure classes are global, but `era_wilds_1` is a name only the
+  // wilds world can translate. The caller passes the world's own key; the
+  // synthesis below is the classic convention, kept for a state with no
+  // definition behind it.
+  if (state.eraId) segments.push({ key: state.eraKey ?? `narr.era.${state.eraId}` });
+  if (state.regionId) {
+    segments.push({ key: state.regionKey ?? `narr.region.${state.regionId}` });
+  }
 
   const pressure = strongestPressure(state.pressures);
   if (pressure) {

@@ -6,6 +6,12 @@ export interface RegionDefinition {
   id: string;
   labelKey: string;
   descKey: string;
+  /**
+   * Translation key for the region's line in the narrator's scene paragraph.
+   * Optional for the same reason as {@link EraDefinition.narrKey}: region ids
+   * are world-scoped, so only the world knows what to call them.
+   */
+  narrKey?: string;
   icon?: string;
   /** Faction the region leans toward (starting standing bonus). */
   favorFaction?: string;

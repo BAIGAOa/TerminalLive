@@ -9,11 +9,11 @@ import { WorldEventDefinition } from "../world/chronicle/worldEvents.js";
 
 /** The world's history, passed one era at a time across a life. */
 const ERAS: EraDefinition[] = [
-  { id: "era_dawn", labelKey: "era.dawn", descKey: "era.dawn.desc", fromYear: 0, icon: "🌅", color: "yellow" },
-  { id: "era_iron", labelKey: "era.iron", descKey: "era.iron.desc", fromYear: 20, icon: "⚒", color: "gray" },
-  { id: "era_steam", labelKey: "era.steam", descKey: "era.steam.desc", fromYear: 40, icon: "⚙", color: "white" },
-  { id: "era_electric", labelKey: "era.electric", descKey: "era.electric.desc", fromYear: 60, icon: "⚡", color: "cyan" },
-  { id: "era_star", labelKey: "era.star", descKey: "era.star.desc", fromYear: 85, icon: "✦", color: "magentaBright" },
+  { id: "era_dawn", labelKey: "era.dawn", descKey: "era.dawn.desc", narrKey: "narr.era.era_dawn", fromYear: 0, icon: "🌅", color: "yellow" },
+  { id: "era_iron", labelKey: "era.iron", descKey: "era.iron.desc", narrKey: "narr.era.era_iron", fromYear: 20, icon: "⚒", color: "gray" },
+  { id: "era_steam", labelKey: "era.steam", descKey: "era.steam.desc", narrKey: "narr.era.era_steam", fromYear: 40, icon: "⚙", color: "white" },
+  { id: "era_electric", labelKey: "era.electric", descKey: "era.electric.desc", narrKey: "narr.era.era_electric", fromYear: 60, icon: "⚡", color: "cyan" },
+  { id: "era_star", labelKey: "era.star", descKey: "era.star.desc", narrKey: "narr.era.era_star", fromYear: 85, icon: "✦", color: "magentaBright" },
 ];
 
 /** The four powers whose favour a life can win. */
@@ -26,10 +26,10 @@ const FACTIONS: FactionDefinition[] = [
 
 /** Birthplaces, each colouring a life with a starting tone. */
 const REGIONS: RegionDefinition[] = [
-  { id: "reg_heartland", labelKey: "region.heartland", descKey: "region.heartland.desc", icon: "🌾", favorFaction: "fac_merchants", startKarma: { ambition: 5 }, climate: "temperate", neighbors: ["reg_harbor", "reg_highland"] },
-  { id: "reg_highland", labelKey: "region.highland", descKey: "region.highland.desc", icon: "⛰", favorFaction: "fac_scholars", startKarma: { wisdom: 5 }, climate: "highland", neighbors: ["reg_heartland", "reg_wastes"] },
-  { id: "reg_harbor", labelKey: "region.harbor", descKey: "region.harbor.desc", icon: "⚓", favorFaction: "fac_wardens", startKarma: { benevolence: 5 }, climate: "coastal", neighbors: ["reg_heartland", "reg_wastes"] },
-  { id: "reg_wastes", labelKey: "region.wastes", descKey: "region.wastes.desc", icon: "🌪", favorFaction: "fac_shadows", startKarma: { rebellion: 5 }, climate: "arid", neighbors: ["reg_highland", "reg_harbor"] },
+  { id: "reg_heartland", labelKey: "region.heartland", descKey: "region.heartland.desc", narrKey: "narr.region.reg_heartland", icon: "🌾", favorFaction: "fac_merchants", startKarma: { ambition: 5 }, climate: "temperate", neighbors: ["reg_harbor", "reg_highland"] },
+  { id: "reg_highland", labelKey: "region.highland", descKey: "region.highland.desc", narrKey: "narr.region.reg_highland", icon: "⛰", favorFaction: "fac_scholars", startKarma: { wisdom: 5 }, climate: "highland", neighbors: ["reg_heartland", "reg_wastes"] },
+  { id: "reg_harbor", labelKey: "region.harbor", descKey: "region.harbor.desc", narrKey: "narr.region.reg_harbor", icon: "⚓", favorFaction: "fac_wardens", startKarma: { benevolence: 5 }, climate: "coastal", neighbors: ["reg_heartland", "reg_wastes"] },
+  { id: "reg_wastes", labelKey: "region.wastes", descKey: "region.wastes.desc", narrKey: "narr.region.reg_wastes", icon: "🌪", favorFaction: "fac_shadows", startKarma: { rebellion: 5 }, climate: "arid", neighbors: ["reg_highland", "reg_harbor"] },
 ];
 
 /** Scripted events in the world's own chronology. */
