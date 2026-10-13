@@ -1,24 +1,19 @@
 import z from "zod";
-import { StatKey } from "./stats.js";
+import { STAT_KEYS, type StatKey } from "./stats.js";
 
-export const STAT_KEY_VALUES = [
-  "age",
-  "health",
-  "height",
-  "weight",
-  "money",
-  "intelligence",
-  "social",
-  "fitness",
-  "happiness",
-  "reputation",
-  "angerValue",
-  "excitationValue",
-  "depressionValue",
-  "weakValue",
-] as const;
+/**
+ * The stat vocabulary, taken from the one place that defines it.
+ *
+ * This used to be a second, hand-copied list of the same keys. Adding
+ * `appearance` updated `stats.ts` and missed here — and because this schema is
+ * what validates content JSON, the failure was silent and total: every career
+ * in `resource/careers/careers.json` failed to parse, the whole file was
+ * skipped, and all that came out was a line on stderr. Deriving the list makes
+ * that drift impossible.
+ */
+export const STAT_KEY_VALUES: readonly StatKey[] = STAT_KEYS;
 
-export const statKeySchema = z.enum(STAT_KEY_VALUES) as unknown as z.ZodType<StatKey>;
+export const statKeySchema = z.enum(STAT_KEY_VALUES as [StatKey, ...StatKey[]]);
 
 export const statDeltaSchema = z.partialRecord(statKeySchema, z.number());
 

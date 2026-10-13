@@ -16,16 +16,29 @@ export default class CareerLoader {
     if (!existsSync(dir)) return;
     for (const name of readdirSync(dir)) {
       if (!name.endsWith(".json")) continue;
+      let entries: unknown[];
       try {
         const raw = JSON.parse(readFileSync(join(dir, name), "utf-8"));
-        const entries = Array.isArray(raw) ? raw : [raw];
-        for (const entry of entries) {
-          const data = careerSchema.parse(entry) as CareerDefinition;
-          if (this.registry.has(data.id)) continue;
-          this.registry.register(data);
-        }
+        entries = Array.isArray(raw) ? raw : [raw];
       } catch (err) {
-        console.warn(`[careers] 加载 ${name} 失败:`, (err as Error).message);
+        console.warn(`[careers] ${name} 不是合法 JSON:`, (err as Error).message);
+        continue;
+      }
+      // Validated one entry at a time on purpose: a single bad career used to
+      // throw out of the loop and take the rest of the file with it, so one
+      // typo in one job silently emptied the whole board. The message names the
+      // job that failed, because a console warning on stderr is all a TUI run
+      // ever shows of this.
+      for (const entry of entries) {
+        const id = (entry as { id?: string } | null)?.id;
+        try {
+          const data = careerSchema.parse(entry) as CareerDefinition;
+          if (!this.registry.has(data.id)) this.registry.register(data);
+        } catch (err) {
+          console.warn(
+            `[careers] 跳过 "${id ?? "?"}"（${name}）: ${(err as Error).message}`,
+          );
+        }
       }
     }
   }

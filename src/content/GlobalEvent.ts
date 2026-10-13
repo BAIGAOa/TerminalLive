@@ -54,8 +54,17 @@ declare global {
     /** 玩家在职级阶梯上爬了一级 */
     "career:promoted": { careerId: string; rank: number };
 
+    /** 玩家被解雇（不是主动辞职） */
+    "career:fired": { careerId: string };
+
     /** 收到一封新的 AI 来信 */
     "mail:arrived": { npcId: string; demandsAnswer: boolean };
+
+    /**
+     * 玩家认识的人去世了。带着当时的好感度，因为哀伤的分量取决于
+     * 失去的是谁 —— 点头之交和一个至亲不是一回事。
+     */
+    "npc:died": { npcId: string; affinity: number };
 
     /** 成就解锁 */
     "achievement:unlocked": { id: string; remindKey: string };

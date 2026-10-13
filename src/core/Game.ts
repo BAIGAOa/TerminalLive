@@ -20,6 +20,8 @@ import RegionsSystem from "../world/regions/RegionsSystem.js";
 import WorldChainSystem from "../world/chains/WorldChainSystem.js";
 import NarrativeSystem from "../world/narrative/NarrativeSystem.js";
 import MailService from "../world/mail/MailService.js";
+import VitalsSystem from "../world/VitalsSystem.js";
+import GenesisService from "../world/ai/GenesisService.js";
 import RandomService from "./random/RandomService.js";
 import WorldRuleEngine from "../world/rules/WorldRuleEngine.js";
 
@@ -53,6 +55,8 @@ export default class Game {
   private chains: WorldChainSystem;
   private narrative: NarrativeSystem;
   private mail: MailService;
+  private vitals: VitalsSystem;
+  private genesis: GenesisService;
   private random: RandomService;
   private rules: WorldRuleEngine;
 
@@ -72,6 +76,8 @@ export default class Game {
     this.chains = inject(WorldChainSystem);
     this.narrative = inject(NarrativeSystem);
     this.mail = inject(MailService);
+    this.vitals = inject(VitalsSystem);
+    this.genesis = inject(GenesisService);
     this.health = inject(HealthSystem);
     this.random = inject(RandomService);
     this.rules = inject(WorldRuleEngine);
@@ -188,6 +194,11 @@ export default class Game {
     );
     // Age the body and mind: conditions, trauma, meaning, addictions.
     this.health.tickYear(this.player);
+    // Then let the numbers react to each other. This runs after health (so it
+    // reads the year's settled mood and conditions, not a half-applied one) and
+    // before the alive check (so a coupling that drains health can end the
+    // life, the same as any illness would).
+    this.vitals.tickYear(this.player);
     // health.tickYear can drop HP to 0 after the player already recomputed
     // `alive` during its own tick; keep the flag consistent with health so the
     // HUD and the headless dev loops agree on when the life is over.
@@ -196,6 +207,9 @@ export default class Game {
     // immediately — letters are generated in the background and land in the
     // mailbox when they land, so a slow model never stalls the turn.
     this.mail.tickYear(this.player);
+    // And let somebody new walk into the life, some years. Also fire-and-forget,
+    // and also gated on nothing else owning the screen.
+    this.genesis.tickYear(this.player);
     this.eventBus.emit("turn:ended", { age: this.player.age });
   }
 

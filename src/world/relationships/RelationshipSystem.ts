@@ -237,6 +237,15 @@ export default class RelationshipSystem {
         if (ev.player) this.applyPlayerImpact(ev.npcId, ev.player, player);
       } else {
         this.log(`npc.life.${ev.kind}`);
+        if (ev.kind === "died") {
+          // Announced on the bus rather than wired directly: grief lands in the
+          // health system, and reaching for it from here would close a cycle
+          // through the systems this one already depends on.
+          this.eventBus.emit("npc:died", {
+            npcId: ev.npcId,
+            affinity: player.getRelationship(ev.npcId),
+          });
+        }
       }
     }
 

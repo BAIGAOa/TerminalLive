@@ -319,13 +319,15 @@ export default class Player {
     }
     this.activeEffects = next;
 
-    // Psych drift: high-arousal states fade year over year; gloom eases as
-    // mood recovers. Without this, threshold effects never expire.
+    // Psych drift: high-arousal states fade year over year. Without this,
+    // threshold effects never expire.
+    //
+    // The old `happiness >= 55 → depression -2` used to live here, on its own,
+    // with nothing for the other half of the range — an unhappy player's
+    // despair simply did not move. Both halves are now one rule in the
+    // couplings table (`vitalsEngine`), where they are visible as a pair.
     this.angerValue = Math.max(0, this.angerValue - 1);
     this.excitationValue = Math.max(0, this.excitationValue - 2);
-    if (this.happiness >= 55) {
-      this.depressionValue = Math.max(0, this.depressionValue - 2);
-    }
     this.weakValue = Math.max(0, this.weakValue - 2);
 
     this.syncPsychEffects();

@@ -258,6 +258,8 @@ export default function WorldGame() {
     hintH: HINT_H,
     short,
     actionsW,
+    actionsInnerW,
+    carouselInnerW,
     journalH,
     showJournal,
     middleH,
@@ -322,9 +324,12 @@ export default function WorldGame() {
       </Box>
 
       <Box flexDirection="row" width="100%" height={middleH} marginTop={1}>
-        {/* actions */}
-        <Box width={actionsW} flexDirection="column" borderStyle="bold" borderColor={colors.success} paddingX={1} marginRight={1} overflowY="hidden">
-          <ActionPanel data={data} height={middleH - 2} />
+        {/* actions — `flexShrink={0}` so the column keeps the width the layout
+            computed: if yoga is allowed to squeeze it, the carousel gets more
+            than the layout promised and the two disagree about where the
+            boundary is. */}
+        <Box width={actionsW} flexShrink={0} flexDirection="column" borderStyle="bold" borderColor={colors.success} paddingX={1} marginRight={1} overflowY="hidden">
+          <ActionPanel data={data} height={middleH - 2} width={actionsInnerW} />
         </Box>
 
         {/* status carousel */}
@@ -340,7 +345,7 @@ export default function WorldGame() {
             </Text>
           </Box>
           <Box height={carouselContentH} overflowY="hidden" flexDirection="column">
-            {data.renderCurrentView(carouselContentH)}
+            {data.renderCurrentView(carouselContentH, carouselInnerW)}
           </Box>
           {/* victory conditions */}
           <Box flexDirection="column">

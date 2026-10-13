@@ -60,6 +60,7 @@ function MenuRow({
   state,
   onHover,
   onActivate,
+  onWheel,
   renderItem,
   indicator,
   rowGap,
@@ -69,15 +70,20 @@ function MenuRow({
   state: MenuRenderState;
   onHover: (index: number) => void;
   onActivate: (index: number) => void;
+  /** Wheel delta in rows: -1 up, +1 down. */
+  onWheel: (delta: number) => void;
   renderItem?: (item: MenuEntry, state: MenuRenderState) => React.ReactNode;
   indicator?: ((state: MenuRenderState) => React.ReactNode) | null;
   rowGap: number;
 }) {
-  // Hover/click drive the shared focus target so keyboard and mouse converge.
+  // Hover/click/wheel drive the shared focus target so keyboard and mouse
+  // converge. The wheel moves the highlight rather than the view, which is
+  // what makes it scroll: the window follows the highlight.
   const ref = useMouseRegion(
     {
       onEnter: () => onHover(index),
       onClick: () => onActivate(index),
+      onWheel: (event) => onWheel(event.button === "wheel-up" ? -1 : 1),
     },
     { priority: 1 },
   );
@@ -143,6 +149,15 @@ export function MenuList({
   const [index, setIndex] = useState(() => firstEnabled(items, initialIndex ?? 0));
   /** Where the viewport currently starts, so the window scrolls minimally. */
   const windowRef = useRef(0);
+
+  /**
+   * Cells per row. One in a plain list; `columns` in a grid.
+   *
+   * This is also the distance one ↑/↓ (or one wheel notch) travels, and the
+   * unit the window scrolls in — a grid step that moved by one cell would crawl
+   * sideways along a row instead of down the board.
+   */
+  const cellCols = columnWidth != null ? Math.max(1, Math.floor(columns)) : 1;
 
   const indexRef = useRef(index);
   indexRef.current = index;
@@ -212,10 +227,9 @@ export function MenuList({
   );
 
   useEffect(() => {
-    const vertical = columnWidth != null && columns > 1 ? columns : 1;
     const unbinds = [
-      boundKeyboard(["up"], () => move(-vertical), { focusId: focusOpt }),
-      boundKeyboard(["down"], () => move(vertical), { focusId: focusOpt }),
+      boundKeyboard(["up"], () => move(-cellCols), { focusId: focusOpt }),
+      boundKeyboard(["down"], () => move(cellCols), { focusId: focusOpt }),
       boundKeyboard(
         ["home"],
         () => setIndex(firstEnabled(itemsRef.current, 0)),
@@ -230,14 +244,14 @@ export function MenuList({
         focusId: focusOpt,
       }),
     ];
-    if (columnWidth != null && columns > 1) {
+    if (cellCols > 1) {
       unbinds.push(
         boundKeyboard(["left"], () => move(-1), { focusId: focusOpt }),
         boundKeyboard(["right"], () => move(1), { focusId: focusOpt }),
       );
     }
     return () => unbinds.forEach((u) => u());
-  }, [boundKeyboard, focusOpt, move, activate, columns, columnWidth]);
+  }, [boundKeyboard, focusOpt, move, activate, cellCols]);
 
   const renderRow = (item: MenuEntry, i: number, gap: number) => {
     const state: MenuRenderState = {
@@ -256,6 +270,10 @@ export function MenuList({
           hover(j);
           activate(j);
         }}
+        // One notch walks one row, exactly like ↑/↓, and the window follows.
+        // The list does not steal focus on wheel: scrolling a list you are not
+        // on is not a thing a menu should do.
+        onWheel={(delta) => move(delta * cellCols)}
         renderItem={renderItem}
         indicator={indicator}
         rowGap={gap}
@@ -266,21 +284,32 @@ export function MenuList({
   // Window the list when a `height` is given and there is more than fits: a
   // long list (many plugins, many shortcuts) scrolls instead of running off the
   // screen. Short lists are untouched, so nothing else changes shape.
-  const visibleCount =
-    height && height > 0
-      ? Math.max(1, Math.floor(height / Math.max(1, rowHeight)))
-      : items.length;
-  const scrolling = visibleCount < items.length;
-  /** Rows the list actually occupies, for sizing the scrollbar beside it. */
-  const visibleRows = scrolling ? visibleCount * Math.max(1, rowHeight) : 0;
-  const start = scrolling
-    ? windowStart(index, items.length, visibleCount, windowRef.current)
+  //
+  // The unit is a **row**, because a row is what the list actually draws. In
+  // grid mode one row holds `cellCols` cells, so counting items here instead
+  // would treat a 3×5 page as "three visible entries" and drop everything but
+  // the first few cards.
+  const isGrid = columnWidth != null;
+  const rowStep = Math.max(1, rowHeight);
+  const totalRows = isGrid ? Math.ceil(items.length / cellCols) : items.length;
+  const capacityRows =
+    height && height > 0 ? Math.max(1, Math.floor(height / rowStep)) : totalRows;
+  const scrolling = capacityRows < totalRows;
+  /** The row the highlight is on — the unit `windowStart` scrolls in. */
+  const selectedRow = isGrid ? Math.floor(index / cellCols) : index;
+  /** First visible row. (Not an item index — the grid multiplies it below.) */
+  const startRow = scrolling
+    ? windowStart(selectedRow, totalRows, capacityRows, windowRef.current)
     : 0;
-  windowRef.current = start;
-  const windowed = scrolling ? items.slice(start, start + visibleCount) : items;
+  windowRef.current = startRow;
+  const shownRows = scrolling ? capacityRows : totalRows;
+  /** Rows of the viewport the list occupies, for sizing the scrollbar beside it. */
+  const barRows = scrolling ? shownRows * rowStep : 0;
   /** Where the scrollbar thumb sits, as a row of the viewport. */
   const thumbRow = scrolling
-    ? Math.round((start / (items.length - visibleCount)) * (visibleCount - 1))
+    ? Math.round(
+        (startRow / Math.max(1, totalRows - capacityRows)) * (barRows - 1),
+      )
     : 0;
 
   const renderList = (list: MenuEntry[], indexOf: (i: number) => number, gap: number) => (
@@ -295,7 +324,7 @@ export function MenuList({
       <Box flexDirection="row">
         {list}
         <Box flexDirection="column" marginLeft={1}>
-          {Array.from({ length: Math.min(visibleRows, visibleCount * Math.max(1, rowHeight)) }).map((_, i) => (
+          {Array.from({ length: barRows }).map((_, i) => (
             <Text key={i} color={i === thumbRow ? barColor : undefined} dimColor={i !== thumbRow}>
               {i === thumbRow ? "█" : "│"}
             </Text>
@@ -306,28 +335,31 @@ export function MenuList({
       list
     );
 
-  if (columnWidth == null) {
+  if (!isGrid) {
+    const windowed = scrolling
+      ? items.slice(startRow, startRow + shownRows)
+      : items;
     // Absolute indices, so selection and hover stay correct inside the window.
-    return withBar(renderList(windowed, (i) => start + i, rowGap));
+    return withBar(renderList(windowed, (i) => startRow + i, rowGap));
   }
 
   // Centered, uniform-width grid: each cell is a fixed-width box so buttons
   // align regardless of label length, and every row is centered as a whole.
   const rows: MenuEntry[][] = [];
-  // Guard against columns <= 0, which would make this loop never advance.
-  const cols = Math.max(1, Math.floor(columns));
-  const first = scrolling ? start - (start % cols) : 0;
-  const last = scrolling ? Math.min(items.length, first + visibleCount) : items.length;
-  for (let i = first; i < last; i += cols) {
-    rows.push(items.slice(i, i + cols));
+  // A window of `shownRows` rows is `shownRows * cols` cells, whole rows only.
+  const first = startRow * cellCols;
+  const last = Math.min(items.length, first + shownRows * cellCols);
+  for (let i = first; i < last; i += cellCols) {
+    rows.push(items.slice(i, i + cellCols));
   }
   return withBar(
     <Box flexDirection="column">
       {rows.map((row, r) => (
         <Box key={r} flexDirection="row" justifyContent="center">
           {row.map((item, c) => {
-            // The row's first absolute index: windowing can start mid-row.
-            const absolute = first + r * cols + c;
+            // Absolute index, so selection and hover stay correct inside the
+            // window — which always starts on a row boundary.
+            const absolute = first + r * cellCols + c;
             return (
               <Box
                 key={item.value}

@@ -1,4 +1,6 @@
 import z from "zod";
+import { npcSchema } from "../../world/relationships/NpcDefinition.js";
+import { modEventSchema } from "../../types/EventJsonType.js";
 
 export const saveDataSchema = z.object({
   version: z.number(),
@@ -163,6 +165,10 @@ export const saveDataSchema = z.object({
           tenure: z.number().default(0),
           performance: z.number().default(40),
           burnout: z.number().default(0),
+          /** Consecutive bad years; the third one costs the job. */
+          strikes: z.number().default(0),
+          /** Age before which nobody hires you, set by a dismissal. */
+          banUntil: z.number().default(0),
           skills: z.record(z.string(), z.number()).default({}),
           certs: z.array(z.string()).default([]),
           standing: z.record(z.string(), z.number()).default({}),
@@ -186,6 +192,8 @@ export const saveDataSchema = z.object({
           tenure: 0,
           performance: 40,
           burnout: 0,
+          strikes: 0,
+          banUntil: 0,
           skills: {},
           certs: [],
           standing: {},
@@ -200,6 +208,8 @@ export const saveDataSchema = z.object({
         tenure: 0,
         performance: 40,
         burnout: 0,
+        strikes: 0,
+        banUntil: 0,
         skills: {},
         certs: [],
         standing: {},
@@ -207,6 +217,26 @@ export const saveDataSchema = z.object({
         cooldowns: {},
       },
     }),
+  /**
+   * Characters invented at runtime, stored as whole definitions.
+   *
+   * The id alone would not do: a load rebuilds `NpcRegistry` from disk and
+   * `NpcSimulation.restore` re-derives every NPC's traits from its definition,
+   * so an id without a definition comes back as a stranger with default traits
+   * and none of the behaviour they had.
+   */
+  genesis: z
+    .object({
+      npcs: z.array(npcSchema).default([]),
+      /** Invented events, re-registered into the world's pool on entry. */
+      events: z.array(modEventSchema).default([]),
+      /** The world they belong to; invented things do not follow you between worlds. */
+      worldId: z.string().nullable().default(null),
+      /** Ages of the last arrival and the last event, so a reload does not resend. */
+      lastNpcAt: z.number().default(-999),
+      lastEventAt: z.number().default(-999),
+    })
+    .optional(),
   /** The AI correspondence: the letters, and who is on what cooldown. */
   mail: z
     .object({

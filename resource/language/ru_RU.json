@@ -1957,5 +1957,11 @@
     "ai.frequency.off.hint": "Никто не пишет. Собеседование тоже отключено.",
     "ai.frequency.low.hint": "Примерно одно письмо в год; дважды за десятилетие — нет.",
     "ai.frequency.normal.hint": "До двух писем в год, персонажи переписываются чаще.",
-    "mail.scrollHint": "▲ {from}-{to} из {total}   [PgUp/PgDn]"
+    "mail.scrollHint": "▲ {from}-{to} из {total}   [PgUp/PgDn]",
+    "sheet.stats": "Характеристики",
+    "sheet.mind": "Дух и тело",
+    "career.ev.work.fired": "Уволен. Трёх плохих лет хватило.",
+    "career.err.banned": "Вас недавно уволили — пока никто не берёт.",
+    "ai.npc.arrived": "В вашей жизни появился новый человек",
+    "ai.event.added": "Что-то должно произойти"
 }

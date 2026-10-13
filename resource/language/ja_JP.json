@@ -1957,5 +1957,11 @@
     "ai.frequency.off.hint": "誰も書かない。面接も無効になる。",
     "ai.frequency.low.hint": "年に一通ほど。同じ人物が十年に二度書くことはない。",
     "ai.frequency.normal.hint": "年に最大二通。人物同士のやり取りも増える。",
-    "mail.scrollHint": "▲ {from}-{to} / {total} 行   [PgUp/PgDn]"
+    "mail.scrollHint": "▲ {from}-{to} / {total} 行   [PgUp/PgDn]",
+    "sheet.stats": "能力値",
+    "sheet.mind": "心身",
+    "career.ev.work.fired": "解雇された。三年連続では、もう言い訳にならない。",
+    "career.err.banned": "最近解雇されたばかりで、まだどこも雇ってくれない。",
+    "ai.npc.arrived": "新しい人物が人生に入ってきた",
+    "ai.event.added": "何かが起こりそうだ"
 }

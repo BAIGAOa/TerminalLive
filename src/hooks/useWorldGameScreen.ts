@@ -48,8 +48,15 @@ export interface GameScreenData {
   performAction: (id: string) => void;
   endTurn: () => void;
   resolveChoice: (id: string) => void;
-  /** Render the active status view, told how many rows it may occupy. */
-  renderCurrentView: (height: number) => React.ReactNode;
+  /**
+   * Render the active status view, told the box it has been given.
+   *
+   * Both numbers are passed because the view cannot work them out for itself:
+   * it renders into one panel of a row, not into the screen, and a view that
+   * measures the terminal draws wider than its box — which ink clips at the
+   * screen edge, so the symptom is text cut off mid-word, not a layout error.
+   */
+  renderCurrentView: (height: number, width: number) => React.ReactNode;
 }
 
 export default function useWorldGameScreen(): GameScreenData {
@@ -159,7 +166,7 @@ export default function useWorldGameScreen(): GameScreenData {
   }, [viewCount]);
 
   const renderCurrentView = useCallback(
-    (height: number): React.ReactNode => {
+    (height: number, width: number): React.ReactNode => {
       // `tryGet`, not `get`: the panels are registered by a plugin now, so a
       // player who switches that plugin off leaves this registry empty — and a
       // throw here lands in the middle of the game screen's render.
@@ -171,7 +178,7 @@ export default function useWorldGameScreen(): GameScreenData {
           t("game.status.none"),
         );
       }
-      return renderFn({ player, t, height });
+      return renderFn({ player, t, height, width });
     },
     [gameStatusMap, currentViewId, player, t],
   );

@@ -29,6 +29,7 @@ function fakeCtx() {
   const lore: string[] = [];
   const commands: string[] = [];
   const views: string[] = [];
+  const couplings: string[] = [];
   const provided = new Map<string, unknown>();
   const listened: string[] = [];
   const stored: { value: unknown } = { value: undefined };
@@ -41,6 +42,7 @@ function fakeCtx() {
       addLore: (def: { id: string }) => lore.push(def.id),
       addCommand: (cmd: { name: string }) => commands.push(cmd.name),
       addStatusView: (id: string) => views.push(id),
+      addCoupling: (rule: { id: string }) => couplings.push(rule.id),
       createEventClass: () => class FakeEvent {},
       services: {
         provide: (id: string, impl: unknown) => provided.set(id, impl),
@@ -61,6 +63,7 @@ function fakeCtx() {
     lore,
     commands,
     views,
+    couplings,
     provided,
     listened,
   };
@@ -89,6 +92,14 @@ describe("example mod template", () => {
     plugin.hooks.onInit(ctx);
     expect(axes).toContain("pr_example_wonder");
     expect(lore).toContain("lore_example_note");
+  });
+
+  it("onInit teaches the simulation two cross-stat rules", () => {
+    const plugin = loadExample();
+    const { ctx, couplings } = fakeCtx();
+    plugin.hooks.onInit(ctx);
+    expect(couplings).toContain("example:companionship");
+    expect(couplings).toContain("example:small_wonder");
   });
 
   it("onYear fires a toast every decade", () => {

@@ -1957,5 +1957,11 @@
     "ai.frequency.off.hint": "Nobody writes. The job interview is also off.",
     "ai.frequency.low.hint": "About one letter a year, and no one writes twice in a decade.",
     "ai.frequency.normal.hint": "Up to two letters a year. Characters answer each other more often.",
-    "mail.scrollHint": "▲ {from}-{to} of {total}   [PgUp/PgDn]"
+    "mail.scrollHint": "▲ {from}-{to} of {total}   [PgUp/PgDn]",
+    "sheet.stats": "Attributes",
+    "sheet.mind": "Mind & body",
+    "career.ev.work.fired": "Dismissed. Three bad years was three too many.",
+    "career.err.banned": "You were let go recently — nobody is hiring you yet.",
+    "ai.npc.arrived": "Someone new has entered your life",
+    "ai.event.added": "Something is about to happen"
 }

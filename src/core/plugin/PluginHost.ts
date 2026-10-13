@@ -22,6 +22,7 @@ import NpcTypeRegistry from "../../world/relationships/NpcTypeRegistry.js";
 import EventDirector from "../../event/EventDirector.js";
 import GameStatusMap from "../registry/GameStatusMap.js";
 import { UiSlotRegistry } from "./ui.js";
+import CouplingRegistry from "../registry/CouplingRegistry.js";
 import KernelServices, { deniedKernel } from "./kernel.js";
 import { Npc, type NpcConstructor } from "../../world/relationships/Npc.js";
 import { inWindow, type AgeWindow } from "../../world/relationships/AgeWindow.js";
@@ -102,6 +103,7 @@ export default class PluginHost {
   private worldRegistry = inject(ChronicleRegistry);
   private traitRegistry = inject(TraitRegistry);
   private worldRuleRegistry = inject(WorldRuleRegistry);
+  private couplingRegistry = inject(CouplingRegistry);
   private director = inject(EventDirector);
   private statusViews = inject(GameStatusMap);
   private uiSlots = inject(UiSlotRegistry);
@@ -653,6 +655,20 @@ export default class PluginHost {
       addWeightRule: (rule) => {
         const ruleId = `${id}:rule${++this.weightRuleSeq}`;
         disposers.push(this.director.addRule(ruleId, rule));
+      },
+      addCoupling: (rule) => {
+        if (!can("world")) return;
+        reg(() => {
+          this.couplingRegistry.addRule(rule);
+          // Registered only after the add succeeded, so a duplicate id (a hot
+          // reload racing, or two mods colliding) cannot leave a disposer that
+          // would delete the *other* rule on unload.
+          disposers.push(() => {
+            if (this.couplingRegistry.has(rule.id)) {
+              this.couplingRegistry.unregister(rule.id);
+            }
+          });
+        }, "coupling");
       },
 
       registerScreen: (key, screen) => {

@@ -30,6 +30,17 @@ export interface WorkState {
   certs: string[];
   /** Office faction → standing (-100..100). */
   standing: Record<string, number>;
+  /** Consecutive bad years. Three of them and the job is gone. */
+  strikes: number;
+  /**
+   * Age before which nobody will hire you, set by being dismissed.
+   *
+   * Without it, a fired worker simply joined the next trade on the following
+   * turn — the harness showed a hundred per cent of lives ending with three to
+   * five firings, an old and burned-out worker bouncing between employers.
+   * Word gets around.
+   */
+  banUntil: number;
   venture: VentureState | null;
   /**
    * careerId → the age at which that career opens again. Written by a failed
@@ -69,6 +80,8 @@ export function emptyWorkState(): WorkState {
     skills: { craft: 0, lead: 0, network: 0, finance: 0 },
     certs: [],
     standing: { peers: 0, bosses: 0, rivals: 0 },
+    strikes: 0,
+    banUntil: 0,
     venture: null,
     cooldowns: {},
   };
@@ -208,12 +221,30 @@ export function tickWork(state: WorkState, stats: WorkStats, rng: Rng): WorkEven
 
   const skillPull = skillTotal(state) * 0.25;
   const fitPull = (stats.fitness - 50) * 0.05;
+  // `WorkStats` has declared health, happiness, intelligence and social since
+  // it was written, and read exactly two of them. A body that is unwell and a
+  // mind that is unhappy both show up at work, and now they do.
+  const healthPull = (stats.health - 60) * 0.06;
+  const moodPull = (stats.happiness - 55) * 0.06;
   state.performance = clamp(
-    state.performance + 1 + skillPull + fitPull - state.burnout * 0.12 + (rng() - 0.5) * 6,
+    state.performance +
+      1 +
+      skillPull +
+      fitPull +
+      healthPull +
+      moodPull -
+      state.burnout * 0.12 +
+      (rng() - 0.5) * 6,
   );
-  state.burnout = clamp(
-    state.burnout + 3 - (stats.fitness - 40) * 0.08 + (stats.age > 50 ? 1 : 0),
-  );
+  // Burnout accrues against physical capacity and recovers in proportion to how
+  // well the rest of life is going. It used to be a flat +3 with only fitness
+  // against it and *no* recovery at all, so every worker alive drifted into
+  // collapse by their sixties — which nobody noticed until dismissal existed
+  // and the whole population started losing jobs.
+  const capacity = (stats.fitness - 40) * 0.06;
+  const strain = 1.2 + (stats.age > 50 ? 0.8 : 0) + (stats.health < 50 ? 1 : 0);
+  const recovery = 1.0 + (stats.happiness - 50) * 0.03;
+  state.burnout = clamp(state.burnout + strain - capacity - recovery);
 
   // Office politics drift: networking-heavy people accumulate standing.
   state.standing.peers = clamp(
@@ -235,12 +266,31 @@ export function tickWork(state: WorkState, stats: WorkStats, rng: Rng): WorkEven
     100,
   );
 
+  // Strikes: a bad year is one, and *any* year that is not a bad one clears the
+  // run. Three in a row, literally — an earlier version only cleared at a
+  // comfortable 55, so a career oscillating between bad and mediocre was fired
+  // for years that were, on average, fine.
+  if (state.performance < STRIKE_PERFORMANCE) {
+    state.strikes = (state.strikes ?? 0) + 1;
+  } else {
+    state.strikes = 0;
+  }
+
   if (state.burnout >= 80) events.push({ kind: "work.burnout" });
-  if (state.performance < 20 && rng() < 0.35) {
-    events.push({ kind: "work.warned" });
+  if (state.strikes >= STRIKES_TO_FIRE) {
+    events.push({ kind: "work.fired" });
+  } else if (state.strikes > 0) {
+    events.push({ kind: "work.warned", params: { n: state.strikes } });
   }
   return events;
 }
+
+/** Below this, the year counts against you. */
+export const STRIKE_PERFORMANCE = 35;
+/** At or above this, the slate is clean — one bad year is not a pattern. */
+export const SAFE_PERFORMANCE = 55;
+/** Consecutive bad years that cost you the job. */
+export const STRIKES_TO_FIRE = 3;
 
 /** Try to promote within a ladder of `maxRank` steps; returns true if it rose. */
 export function tryPromote(

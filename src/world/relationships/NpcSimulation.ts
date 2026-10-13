@@ -42,6 +42,28 @@ function pairKey(a: string, b: string): string {
   return a < b ? `${a}|${b}` : `${b}|${a}`;
 }
 
+/** A stable 32-bit hash, so an NPC's numbers never change between sessions. */
+function hashId(id: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < id.length; i++) {
+    h ^= id.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h >>> 0;
+}
+
+/**
+ * Three small jitters derived from an id rather than drawn from the RNG.
+ *
+ * Used by {@link NpcSimulation.addNpc}, which must not touch the seeded stream:
+ * a single extra draw would shift every subsequent roll and break the seeded
+ * replay the dev harnesses rely on.
+ */
+function idJitter(id: string): [number, number, number] {
+  const h = hashId(id);
+  return [(h % 10) - 5, ((h >>> 8) % 20) - 10, ((h >>> 16) % 15) - 7];
+}
+
 export default class NpcSimulation {
   private registry: NpcRegistry;
   private random: RandomService;
@@ -125,6 +147,89 @@ export default class NpcSimulation {
         }
         if (kind) this.setEdge(a.id, b.id, { kind, affinity, trust: 50 });
       }
+    }
+  }
+
+  /**
+   * Give one NPC a life, mid-life.
+   *
+   * `reset()` is the only other way in, and it re-rolls the *whole* cast — so a
+   * character who arrives later (an AI-invented stranger, a mod's NPC) had no
+   * way to join a running life. This mirrors the per-NPC half of `reset()` and
+   * the per-NPC half of `seedGraph()`, and nothing else.
+   *
+   * Two things it deliberately does not do:
+   *
+   * - It does not draw from the seeded RNG. `reset()` rolls the three jitters
+   *   from the shared stream; doing that here would shift every later draw and
+   *   break the byte-for-byte replay that the dev harnesses depend on. The
+   *   jitter is derived from the NPC's id instead — stable, and free.
+   * - It does not call `seedGraph`, which only ever links NPCs *within* the
+   *   array it is handed. Passing one NPC would miss every existing peer.
+   */
+  public addNpc(npc: Npc): void {
+    if (this.lives.has(npc.id)) return;
+
+    const age = npc.startAge ?? 30;
+    const t = npc.traits();
+    const [jHealth, jWealth, jMood] = idJitter(npc.id);
+
+    this.traits.set(npc.id, t);
+    // Bonds are mandatory, not decoration: `playerCoupling` reads
+    // `this.bonds.get(ev.npcId)` and silently skips when it is absent, so an
+    // NPC without one has a whole life that can never move any bond.
+    this.bonds.set(npc.id, { trust: 40, debt: 0, conflict: 0 });
+    this.lives.set(npc.id, {
+      age,
+      stage: stageOf(age),
+      alive: true,
+      health: clamp(70 + t.stability * 20 + jHealth, 20, 100),
+      wealth: clamp(30 + t.ambition * 40 + jWealth, 5, 100),
+      mood: clamp(50 + t.warmth * 20 + jMood, 10, 100),
+      careerTier: t.ambition > 0.6 ? 1 : 0,
+      partnerId: null,
+      children: 0,
+      moved: false,
+      homeRegion: null,
+      goals: goalsFor(npc.roleKey, t),
+      flags: [],
+    });
+
+    this.seedEdgesFor(npc);
+  }
+
+  /** The per-NPC half of {@link seedGraph}, against the roster as it stands. */
+  private seedEdgesFor(npc: Npc): void {
+    for (const kinId of npc.kinOf ?? []) {
+      if (this.registry.has(kinId)) {
+        this.setEdge(npc.id, kinId, { kind: "kin", affinity: 60, trust: 70 });
+      }
+    }
+    if (npc.partnerOf && this.registry.has(npc.partnerOf)) {
+      this.setEdge(npc.id, npc.partnerOf, { kind: "partner", affinity: 85, trust: 80 });
+      const life = this.lives.get(npc.id);
+      if (life) life.partnerId = npc.partnerOf;
+    }
+
+    const role = npc.roleKey ?? "";
+    let kind: EdgeKind | null = null;
+    let affinity = 40;
+    if (role === "npc.role.family") {
+      kind = "kin";
+      affinity = 55;
+    } else if (role === "npc.role.friend") {
+      kind = "friend";
+      affinity = 60;
+    } else if (role === "npc.role.work") {
+      kind = "colleague";
+      affinity = 25;
+    }
+    if (!kind) return;
+
+    for (const other of this.registry.getAll()) {
+      if (other.id === npc.id || other.roleKey !== role) continue;
+      if (this.edges.has(pairKey(npc.id, other.id))) continue;
+      this.setEdge(npc.id, other.id, { kind, affinity, trust: 50 });
     }
   }
 

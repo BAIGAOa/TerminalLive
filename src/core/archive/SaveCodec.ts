@@ -17,6 +17,7 @@ import RegionsSystem from "../../world/regions/RegionsSystem.js";
 import WorldChainSystem from "../../world/chains/WorldChainSystem.js";
 import NarrativeSystem from "../../world/narrative/NarrativeSystem.js";
 import MailService from "../../world/mail/MailService.js";
+import GenesisService from "../../world/ai/GenesisService.js";
 import RandomService from "../random/RandomService.js";
 import WorldContentLoader from "../../worlds/WorldContentLoader.js";
 import ChainTracker from "../../event/ChainTracker.js";
@@ -102,6 +103,7 @@ export function captureSaveData(): SaveData {
     chains: container.resolve(WorldChainSystem).snapshot(),
     narrative: container.resolve(NarrativeSystem).snapshot(),
     mail: container.resolve(MailService).snapshot(),
+    genesis: container.resolve(GenesisService).snapshot(),
     random: container.resolve(RandomService).snapshot(),
     chain: container.resolve(ChainTracker).snapshot(),
     // Queued post-event steps — without these a delayed / gated narrative line
@@ -177,6 +179,16 @@ export function applySaveData(data: SaveData): boolean {
   // the hidden-score web, and the weather.
   container.resolve(WorldState).restore(data.world, player.flags);
   container.resolve(PressureState).restore(data.pressures);
+
+  // Invented characters must be back in the registry *before* the simulation
+  // restores, and *after* `loadFor` above — those two facts are the window.
+  // `loadFor` rebuilt the registry from disk (wiping them), and
+  // `NpcSimulation.restore` re-derives each NPC's traits from its definition,
+  // so an id without a definition comes back as a stranger with default traits.
+  const genesis = container.resolve(GenesisService);
+  genesis.restore(data.genesis);
+  genesis.registerPersisted(data.run.worldId ?? null);
+
   container.resolve(WeatherState).restore(data.weather);
   container.resolve(NpcSimulation).restore(data.npcSim);
   container.resolve(CareerSystem).restore(data.career);

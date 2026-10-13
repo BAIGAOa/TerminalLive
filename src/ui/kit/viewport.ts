@@ -27,11 +27,6 @@ export function bar(value: number, width = 18, max = 100): string {
   return "█".repeat(filled) + "░".repeat(Math.max(0, width - filled));
 }
 
-/** Responsive StatBar width: ~22% of the terminal, held to 8–20 cells. */
-export function barWidthFor(columns: number): number {
-  return Math.max(8, Math.min(20, Math.floor(columns * 0.22)));
-}
-
 export interface StatusViewHeightOptions {
   /** Floor, so a view stays usable on a very short terminal. */
   min: number;

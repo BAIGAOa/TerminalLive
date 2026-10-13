@@ -22,6 +22,8 @@ export type LetterOccasion =
   | "promotion"
   /** The player walked out of the NPC's trade. */
   | "resignation"
+  /** The player was dismissed from the NPC's trade. */
+  | "fired"
   /** The player wrote back, and the character gets to answer — or not. */
   | "reply";
 
@@ -66,6 +68,8 @@ const OCCASION_BRIEF: Record<LetterOccasion, string> = {
     "They have just moved up a rung. Write to them about what you now expect from them.",
   resignation:
     "They have just walked out of this trade. Write to them about what you think of that.",
+  fired:
+    "You have just let them go — they were not good enough, and you are the one who had to say so. Write to them about it.",
   reply:
     "They have answered the message you sent. This is your chance to say something back.",
 };

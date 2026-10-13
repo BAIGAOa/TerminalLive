@@ -286,6 +286,34 @@ items and relationship characters.
 Items and NPCs referenced by events (via `items` / `relationship`) must be registered here
 (or shipped as built-ins).
 
+### Giving an NPC a personality of its own
+
+By default a character's personality comes from its role table (`ROLE_TRAITS`). A
+definition can override that with `params.traits`, which is what lets two friends
+be different people rather than the same one twice:
+
+```json
+{
+  "id": "npc_neighbor",
+  "labelKey": "npc.neighbor",
+  "descKey": "npc.neighbor.desc",
+  "roleKey": "npc.role.friend",
+  "initial": 25,
+  "params": {
+    "traits": { "warmth": -0.6, "ambition": 0.9, "stability": 0.2, "sociability": 0.3 }
+  }
+}
+```
+
+The four axes — `warmth`, `ambition`, `stability`, `sociability` — drive the whole NPC
+simulation: whether they chase career or family, how their mood moves, whether they
+scheme, how they react to a peer's misfortune. Each is `-1…1`. A profile with anything
+missing or out of range is ignored and the role default is used instead, so a typo
+falls back to a working character rather than a broken one.
+
+The same dictionary is where a custom NPC type's own fields live — see
+`registerNpcTypes` below.
+
 ---
 
 ## Plugin Entry (`index.js`)
@@ -488,6 +516,54 @@ ctx.addAlgorithm("myAlgorithm", (deps) => new MyAlgorithm(deps));
 ctx.addCondition("myCondition", MyConditionClass, myConditionSchema);
 ```
 
+### Cross-stat rules (`ctx.addCoupling`)
+
+Most of what makes a life feel alive is one number pulling on another: despair
+makes you ill, illness costs you your work, work pays for everything else. The
+game ships a table of those relationships in `src/world/vitalsEngine.ts`, and a
+mod can add to it:
+
+```javascript
+ctx.addCoupling({
+  id: "mymod:night_shift",            // unique, and what shows up in the logs
+  note: "Working nights costs you your looks.",  // for humans reading the table
+  when: (c) => c.employed && c.weakValue > 40,
+  then: { appearance: -0.5, happiness: -1 },
+  chance: 0.3,                        // optional: a dice roll instead of a rule
+});
+```
+
+The rule runs once a year, **after** the game's own rules. `when` receives a
+plain snapshot — `VitalsContext`, quoted in full at the top of
+`vitalsEngine.ts` — and `then` is a stat delta.
+
+Two things it can do beyond moving numbers:
+
+| Field | Effect |
+|---|---|
+| `chance` | Fires on a roll instead of whenever `when` holds (0–1). |
+| `acquire` | Diagnoses a condition, e.g. `"cond_anxiety"`. |
+| `indulge` / `tend` | Starts feeding, or starts treating, an addiction (`"add_alcohol"`). |
+
+Notes:
+
+- **It adds, it does not replace.** A rule whose `id` collides with a built-in
+  is simply an extra rule; the game's own table is a compile-time constant and
+  a mod cannot reach into it. That cuts both ways — your dependence cannot be
+  removed by another mod either.
+- **Only the whitelisted stats are safe to move.** `age`, `height`, `weight`
+  and `money` are not gauges and have no upper bound; moving them from a rule
+  is how you get an unbounded life. Move the gauge stats and reach the body
+  through the health system instead.
+- **It is balanced by the harness, not by vibes.** `npm run balance` prints a
+  `[couplings / life]` table with every rule's fire count. A rule firing every
+  single year is not a consequence, it is a tax — that table is where you find
+  out. (The game's own table was tuned exactly that way; one rule was firing 48
+  times per life and it cost 24 years of average lifespan.)
+
+Note this is a different thing from `addPressureRule`, which is a rule between
+two of the world's hidden-score axes. This one is about the *player*.
+
 ---
 
 ## Capabilities & Trust
@@ -507,7 +583,7 @@ That makes two questions worth asking out loud.
 | `events` | `createEventClass`, `addCondition`, `addAlgorithm`, `addFilter`, event JSON |
 | `npcs` | `createNpcClass`, `registerNpcType`, NPC JSON |
 | `items` / `levels` | the matching content folders |
-| `world` | `addPressureAxis`, `addPressureRule`, `addLore`, `addFateArc`, `addWorldEvent`, `addTrait`, `addWorldRule` |
+| `world` | `addPressureAxis`, `addPressureRule`, `addLore`, `addFateArc`, `addWorldEvent`, `addTrait`, `addWorldRule`, `addCoupling` |
 | `ui` | `registerScreen`, `overrideScreen`, `addStatusView`, `addSetting`, `addCommand` |
 | `storage` | `ctx.storage` (per-plugin persistence) |
 | `random` | `ctx.random`, a forked deterministic stream |
@@ -673,6 +749,7 @@ The `ctx` object passed to all hooks and `registerEventTypes` is your mod's **on
 | **`ctx.addFateArc(def)`** | Adds a fate arc (condition → weight bias + buff). |
 | **`ctx.addWorldEvent(def)`** | Adds a scripted world event at a given year. |
 | **`ctx.addTrait(def)`** | Adds a starting trait. |
+| **`ctx.addCoupling(rule)`** | Adds a cross-stat rule to the yearly simulation (see below). |
 
 ### Resource packs
 

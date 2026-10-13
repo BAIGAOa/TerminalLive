@@ -12,6 +12,7 @@ import {
   validateValue,
 } from "../world/playerConfig.js";
 import { useFlash } from "./useFlash.js";
+import { bodyText } from "../world/vitalsEngine.js";
 
 export { PlayerConfigCategory } from "../world/playerConfig.js";
 export type { PlayerAttributeMeta } from "../world/playerConfig.js";
@@ -85,7 +86,10 @@ export function usePlayerConfig(
     return metas.map((meta) => ({
       label: t(`playerConfig.attr.${meta.key}`),
       value: meta.key,
-      currentValue: String((player as any)[meta.key] ?? ""),
+      // The body readings drift by fractions of a unit, so they are stored as
+      // long floats and have to be rounded for display — the same way the
+      // character sheet rounds them.
+      currentValue: bodyText(meta.key, (player as any)[meta.key]),
     }));
   }, [activeCategory, player, t]);
 

@@ -33,6 +33,9 @@ import {
 } from "./hiring.js";
 import type { StatDelta } from "../stats.js";
 
+/** Years nobody will hire you after a dismissal. */
+const HIRING_BAN_YEARS = 3;
+
 export interface CareerState {
   career: CareerDefinition;
   rank: number;
@@ -129,6 +132,9 @@ export default class CareerSystem {
     const career = this.registry.get(careerId);
     if (!career) return "career.err.unknown";
     if (player.careerId === careerId) return null;
+    // Just dismissed: nobody is hiring, whatever the trade. Checked before the
+    // gates so the refusal names the real reason.
+    if (this.now(player) < (this.work.banUntil ?? 0)) return "career.err.banned";
     const held = player.careerId ? this.registry.get(player.careerId) : undefined;
     if (held?.lifelong) return "career.err.sealed";
     if (!entryMet(player, career)) return "career.err.gates";
@@ -291,6 +297,14 @@ export default class CareerSystem {
       const events = tickWork(this.work, this.statsOf(player), this.random.next.bind(this.random));
       this.emit(events);
 
+      // Showed the door: no pay, no rung, no standing. The rest of this block
+      // is about a job the player still has.
+      if (events.some((ev) => ev.kind === "work.fired")) {
+        this.fired(player, career.id);
+        player.notify();
+        return this.tickVenture(player);
+      }
+
       // Pay is settled after the year's work, so a commission job is paid for
       // the year it actually had rather than for the rank alone.
       const pay = paidSalary(
@@ -328,21 +342,53 @@ export default class CareerSystem {
       player.notify();
     }
 
-    if (this.work.venture) {
-      const venture = this.work.venture;
-      const result = tickVenture(venture, this.random.next.bind(this.random));
-      // The owner draws a dividend out of PROFIT (revenue net of the wage bill),
-      // and it is debited from capital so no money is conjured.
-      const profit = result.revenue - venture.staff * 12;
-      if (profit > 0) {
-        const dividend = Math.min(Math.round(profit * 0.3), venture.capital);
-        venture.capital -= dividend;
-        if (dividend > 0) player.applyDelta({ money: dividend });
-      }
-      this.emit(result.events);
-      if (result.bankrupt) this.work.venture = null;
-      player.notify();
+    this.tickVenture(player);
+  }
+
+  /** The venture runs whether or not the player still has a day job. */
+  private tickVenture(player: Player): void {
+    if (!this.work.venture) return;
+    const venture = this.work.venture;
+    const result = tickVenture(venture, this.random.next.bind(this.random));
+    // The owner draws a dividend out of PROFIT (revenue net of the wage bill),
+    // and it is debited from capital so no money is conjured.
+    const profit = result.revenue - venture.staff * 12;
+    if (profit > 0) {
+      const dividend = Math.min(Math.round(profit * 0.3), venture.capital);
+      venture.capital -= dividend;
+      if (dividend > 0) player.applyDelta({ money: dividend });
     }
+    this.emit(result.events);
+    if (result.bankrupt) this.work.venture = null;
+    player.notify();
+  }
+
+  /**
+   * Let go. The counterpart to {@link resign}, and deliberately not the same
+   * thing: no resignation terms are charged, but the trade closes behind you
+   * and the shame is its own cost.
+   */
+  public fired(player: Player, careerId: string): void {
+    const career = this.registry.get(careerId);
+    // Cooldowns are per-career and outlive the job that set them.
+    const carried = this.work.cooldowns;
+    const now = this.now(player);
+    this.work = startCooldown(
+      { ...emptyWorkState(), cooldowns: carried },
+      careerId,
+      career?.terms.resignCooldown ?? 2,
+      now,
+    );
+    // Being dismissed is not the same as resigning: the trade closes behind you
+    // *and* nobody else takes you on for a while.
+    this.work.banUntil = now + HIRING_BAN_YEARS;
+    player.careerId = null;
+    player.careerRank = 0;
+    player.applyDelta({ reputation: -5, happiness: -6, depressionValue: 3 });
+    player.notify();
+    // Grief, shame and a closed door. The health system is listening; so is
+    // the mail system, which is how the boss gets to say something about it.
+    this.eventBus.emit("career:fired", { careerId });
   }
 
   public snapshot(): { work: WorkState } {

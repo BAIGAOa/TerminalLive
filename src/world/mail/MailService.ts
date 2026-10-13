@@ -108,6 +108,9 @@ export default class MailService {
     this.eventBus.on("career:resigned", () => {
       this.queueCareerLetter("resignation");
     });
+    this.eventBus.on("career:fired", () => {
+      this.queueCareerLetter("fired");
+    });
 
     // A new life starts with an empty box. Keyed off the *root* world so that
     // moving between stages of one life keeps the correspondence going.
@@ -143,6 +146,36 @@ export default class MailService {
     if (next === this.box) return;
     this.box = next;
     this.notify();
+  }
+
+  /**
+   * File a letter whose text is already written, without asking the model.
+   *
+   * Used when the words arrive in the same breath as something else — an
+   * invented character's opening line comes with the character, and paying a
+   * second request to have them say hello again would be silly.
+   */
+  public fileLetter(
+    player: Player,
+    npcId: string,
+    subject: string,
+    body: string,
+  ): void {
+    if (!this.npcs.get(npcId) || !body.trim()) return;
+    const letter: Letter = {
+      id: `mail-${Math.floor(player.age)}-${npcId}-${++this.seq}`,
+      npcId,
+      year: Math.floor(player.age),
+      subject,
+      body,
+      choices: [],
+      status: "unread",
+      depth: 0,
+    };
+    this.box = addLetter(this.box, letter);
+    this.notify();
+    this.eventBus.emit("mail:arrived", { npcId, demandsAnswer: false });
+    this.eventBus.emit("toast", { textKey: "mail.toast.new", kind: "info" });
   }
 
   /**

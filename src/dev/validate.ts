@@ -11,9 +11,20 @@ import GameInitialization from "../core/GameInitialization.js";
 import WorldManager from "../worlds/WorldManager.js";
 import ItemRegistry from "../world/items/ItemRegistry.js";
 import NpcRegistry from "../world/relationships/NpcRegistry.js";
+import type { NpcDefinition } from "../world/relationships/NpcDefinition.js";
+import GenesisService from "../world/ai/GenesisService.js";
 import AchievementRegistry from "../core/registry/AchievementRegistry.js";
 import ActionRegistry from "../game/actions/ActionRegistry.js";
 import EffectRegistry from "../world/effects/EffectRegistry.js";
+import HealthSystem from "../world/health/HealthSystem.js";
+import VitalsSystem from "../world/VitalsSystem.js";
+import ConfigStore from "../core/store/ConfigStore.js";
+import {
+  WEIGHT_MAX,
+  WEIGHT_MIN,
+  formatHeight,
+  formatWeight,
+} from "../world/vitalsEngine.js";
 import Game from "../core/Game.js";
 import TypedEventBus from "../core/TypedEventBus.js";
 import AutoSave from "../core/archive/AutoSave.js";
@@ -80,6 +91,11 @@ process.on("exit", restoreConfig);
 async function main() {
   backupPersisted();
   await container.resolve(GameInitialization).init();
+  // Force the harness offline: a configured API key turns every run into a
+  // network test, and the point of this file is that a seed replays the same.
+  const config = container.resolve(ConfigStore);
+  await config.setDeepseekApiKey("");
+  await config.setMailFrequency("off");
   const lm = container.resolve(WorldManager);
   const game = container.resolve(Game);
 
@@ -130,6 +146,45 @@ async function main() {
   while (player.alive && player.age <= 100 && guard < 800) {
     guard++;
 
+    // Register one invented character by hand before the save. The AI path
+    // needs an API key, but the *persistence* path is the same code either way,
+    // and this is the only place that runs it end to end — `loadFor` rebuilds
+    // the NPC registry from disk, so without the generated definitions being
+    // carried in the save and re-registered in the right window, this character
+    // would simply be gone after a reload.
+    if (guard === 8 && !container.resolve(NpcRegistry).has("ai_npc_probe")) {
+      const genesis = container.resolve(GenesisService);
+      const synthetic: NpcDefinition = {
+        id: "ai_npc_probe",
+        labelKey: "Probe",
+        descKey: "A character invented for this check.",
+        type: "friend",
+        roleKey: "npc.role.friend",
+        initial: 12,
+        knownFromAge: player.age,
+        // Deliberately unlike the friend role default, so a restore that falls
+        // back to `ROLE_TRAITS` is caught rather than passing by accident.
+        params: {
+          traits: { warmth: -0.5, ambition: 0.9, stability: 0.1, sociability: 0.2 },
+        },
+      };
+      genesis.restore({
+        npcs: [synthetic],
+        events: [],
+        worldId: lm.getCurrentWorldId(),
+        lastNpcAt: player.age,
+        lastEventAt: -999,
+      });
+      genesis.registerPersisted(lm.getCurrentWorldId());
+      const reg = container.resolve(NpcRegistry);
+      check("an invented character registers", reg.has("ai_npc_probe"));
+      check(
+        "their personality is the one given, not the role default",
+        reg.get("ai_npc_probe")?.traits().warmth === -0.5,
+        `warmth ${reg.get("ai_npc_probe")?.traits().warmth}`,
+      );
+    }
+
     // Mid-life: prove the auto-save round-trips the live state.
     if (guard === 12 && player.alive && lm.hasActiveWorld()) {
       autoSave.save();
@@ -144,6 +199,16 @@ async function main() {
       check(
         "auto-save reloads in place",
         !!reloaded && reloaded.player.age === player.age,
+      );
+      const afterLoad = container.resolve(NpcRegistry);
+      check(
+        "an invented character survives a save round-trip",
+        afterLoad.has("ai_npc_probe"),
+      );
+      check(
+        "…with their personality intact (not reverted to the role default)",
+        afterLoad.get("ai_npc_probe")?.traits().sociability === 0.2,
+        `sociability ${afterLoad.get("ai_npc_probe")?.traits().sociability}`,
       );
       midLifeSaved = true;
     }
@@ -190,6 +255,39 @@ async function main() {
   );
   console.log(
     `  skills int=${player.intelligence} soc=${player.social} fit=${player.fitness} hap=${Math.round(player.happiness)}`,
+  );
+  // Body and mind used to be invisible here, which meant the couplings that
+  // move them could degenerate without the harness noticing.
+  const health = container.resolve(HealthSystem).getState();
+  console.log(
+    `  body h=${formatHeight(player.height)} w=${formatWeight(player.weight)} look=${Math.round(
+      player.appearance,
+    )}  mind dep=${Math.round(player.depressionValue)} ang=${Math.round(
+      player.angerValue,
+    )} weak=${Math.round(player.weakValue)}`,
+  );
+  console.log(
+    `  conditions=[${Object.keys(health.conditions).join(",")}] addictions=[${Object.keys(
+      health.addictions,
+    ).join(",")}] trauma=${Math.round(health.trauma)} resilience=${Math.round(
+      health.resilience,
+    )}`,
+  );
+  check(
+    "body stayed inside its band",
+    player.weight <= WEIGHT_MAX && player.weight >= WEIGHT_MIN,
+    `w=${formatWeight(player.weight)}`,
+  );
+  check(
+    "weight drifted at all (it used to be frozen)",
+    Math.abs(player.weight - 45) > 0.05 || player.age < 30,
+    `w=${formatWeight(player.weight)}`,
+  );
+  const couplings = [...container.resolve(VitalsSystem).fireCounts.entries()].sort(
+    (a, b) => b[1] - a[1],
+  );
+  console.log(
+    `  couplings: ${couplings.map(([id, n]) => `${id}x${n}`).join(" ")}`,
   );
   console.log(
     `  effects=[${player.activeEffects.map((e) => e.id).join(",")}] inventory=[${player.inventory

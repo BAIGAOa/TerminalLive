@@ -14,10 +14,19 @@ import type { GameScreenData } from "../hooks/useWorldGameScreen.js";
 export function ActionPanel({
   data,
   height,
+  width,
 }: {
   data: GameScreenData;
   /** Rows the panel box can occupy (from the game screen). */
   height?: number;
+  /**
+   * Cells the panel's contents may use, from the game screen's layout.
+   *
+   * Not measured here, because this panel renders into one column of a row —
+   * `useWindowSize` would report the whole terminal and the header would draw
+   * straight through the box's border.
+   */
+  width?: number;
 }) {
   const { t, actionViews, actionPoints, maxActionPoints } = data;
   const focused = useFocusState("game-actions", "game-main");
@@ -35,17 +44,27 @@ export function ActionPanel({
   const listH = Math.max(1, budget - (hidden > 0 ? 1 : 0));
 
   return (
-    <Box flexDirection="column" width="100%">
-      <Box marginBottom={1} justifyContent="space-between">
-        <Text bold color={focused ? "cyanBright" : "gray"}>
-          {focused ? "▶" : " "} {t("game.actions.title")}
-        </Text>
-        <Text color="yellow">
-          {t("game.actions.apShort")} {actionPoints}/{maxActionPoints}
-        </Text>
+    <Box flexDirection="column" width={width ?? "100%"}>
+      {/* The title gives way and the action-point counter does not: a squeezed
+          box must lose the word "actions", never the number the player is
+          deciding with. Two `Text`s sharing a row without a flexible side just
+          overlap each other, which is what this used to do. */}
+      <Box marginBottom={1} flexDirection="row">
+        <Box flexGrow={1} flexShrink={1}>
+          <Text bold wrap="truncate" color={focused ? "cyanBright" : "gray"}>
+            {focused ? "▶" : " "} {t("game.actions.title")}
+          </Text>
+        </Box>
+        <Box flexShrink={0}>
+          <Text color="yellow">
+            {t("game.actions.apShort")} {actionPoints}/{maxActionPoints}
+          </Text>
+        </Box>
       </Box>
       {items.length === 0 ? (
-        <Text dimColor>{t("game.actions.none")}</Text>
+        <Text dimColor wrap="truncate">
+          {t("game.actions.none")}
+        </Text>
       ) : (
         <>
           <ScrollList
@@ -62,25 +81,25 @@ export function ActionPanel({
               // merely-selected row dims so it is clear where focus actually is.
               const active = state.focused && state.selected;
               return (
-                <Box
-                  flexDirection="row"
-                  flexGrow={1}
-                  justifyContent="space-between"
-                >
-                  <Text
-                    bold={active}
-                    wrap="truncate"
-                    color={
-                      item.disabled ? "gray" : active ? "greenBright" : "white"
-                    }
-                  >
-                    {active ? "❯ " : "  "}
-                    {item.label}
-                  </Text>
-                  <Text dimColor>
-                    {t("game.actions.apShort")}
-                    {av?.def.apCost ?? 1}
-                  </Text>
+                <Box flexDirection="row" flexGrow={1}>
+                  <Box flexGrow={1} flexShrink={1}>
+                    <Text
+                      bold={active}
+                      wrap="truncate"
+                      color={
+                        item.disabled ? "gray" : active ? "greenBright" : "white"
+                      }
+                    >
+                      {active ? "❯ " : "  "}
+                      {item.label}
+                    </Text>
+                  </Box>
+                  <Box flexShrink={0}>
+                    <Text dimColor>
+                      {t("game.actions.apShort")}
+                      {av?.def.apCost ?? 1}
+                    </Text>
+                  </Box>
                 </Box>
               );
             }}

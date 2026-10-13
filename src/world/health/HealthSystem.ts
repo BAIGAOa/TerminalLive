@@ -4,6 +4,8 @@ import RandomService from "../../core/random/RandomService.js";
 import TypedEventBus from "../../core/TypedEventBus.js";
 import {
   acquireCondition,
+  addTrauma,
+  buildResilience,
   emptyHealthState,
   HealthEvent,
   HealthState,
@@ -30,6 +32,27 @@ export default class HealthSystem {
   constructor() {
     this.random = inject(RandomService);
     this.eventBus = inject(TypedEventBus);
+
+    // Grief is the trauma this game never had. These two hooks are why
+    // `addTrauma` used to be dead code with no production caller, which in turn
+    // made `trauma > 50 → cond_depression` unreachable — the whole second road
+    // into depression was closed.
+    // No toast here: the death is already narrated to the journal by the
+    // relationship system. This just makes it cost something.
+    this.eventBus.on("npc:died", ({ affinity }) => {
+      // Losing someone you barely knew is not the same as losing your mother.
+      const closeness = Math.max(0, Math.min(100, affinity)) / 100;
+      if (closeness <= 0.2) return;
+      // Resilience is what a person has already survived: it does not stop the
+      // grief, it only means less of it sticks.
+      const absorbed = 1 - this.state.resilience / 200;
+      addTrauma(this.state, Math.round(30 * closeness * absorbed));
+    });
+
+    // Losing the work you built a life around is its own kind of loss.
+    this.eventBus.on("career:fired", () => {
+      addTrauma(this.state, 10);
+    });
   }
 
   public reset(): void {
@@ -65,9 +88,28 @@ export default class HealthSystem {
     return [{ kind: "health.recovering", params: { id } }];
   }
 
-  public diagnose(id: string, severity = 20): HealthEvent[] {
-    acquireCondition(this.state, id, 0, severity);
+  /**
+   * Diagnose a condition. `sinceAge` used to be hardcoded to 0, so every
+   * condition read "since age 0" however late it arrived; callers now pass the
+   * player's age.
+   */
+  public diagnose(id: string, severity = 20, sinceAge = 0): HealthEvent[] {
+    acquireCondition(this.state, id, sinceAge, severity);
     return [{ kind: "health.diagnosed", params: { id } }];
+  }
+
+  /**
+   * What a bad year leaves behind, and what surviving one builds.
+   *
+   * Both were exported from `healthEngine` and called from nowhere, which is
+   * why trauma never moved and half the depression rules could not fire.
+   */
+  public addTrauma(amount: number): void {
+    addTrauma(this.state, amount);
+  }
+
+  public buildResilience(amount: number): void {
+    buildResilience(this.state, amount);
   }
 
   private statsOf(player: Player): HealthStats {
@@ -99,6 +141,15 @@ export default class HealthSystem {
       effects.depressionValue = -moodDelta;
     }
     if (Object.keys(effects).length > 0) player.applyDelta(effects);
+
+    // A crisis is a brush with death, and it leaves a mark even when the body
+    // pulls through. This is the second road into trauma, alongside grief, and
+    // between them the `trauma > 50 → cond_depression` branch is finally
+    // reachable — it had been unreachable for as long as the game has existed.
+    if (events.some((ev) => ev.kind === "health.crisis")) {
+      addTrauma(this.state, 12);
+    }
+
     this.emit(events);
     player.notify();
   }

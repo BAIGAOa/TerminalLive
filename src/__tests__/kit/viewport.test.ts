@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   bar,
-  barWidthFor,
   clampHeight,
   clampWidth,
   statusViewHeight,
@@ -26,15 +25,6 @@ describe("bar", () => {
   it("honors a custom max and the default width", () => {
     expect(bar(50, 10, 200)).toBe("███░░░░░░░"); // 50/200 = 0.25 → 2.5 → 3
     expect(bar(100)).toHaveLength(18);
-  });
-});
-
-describe("barWidthFor", () => {
-  it("scales ~22% of the terminal, clamped to 8–20", () => {
-    expect(barWidthFor(40)).toBe(8); // floor(8.8) = 8
-    expect(barWidthFor(20)).toBe(8); // floor(4.4) → clamped up
-    expect(barWidthFor(100)).toBe(20); // floor(22) → clamped down
-    expect(barWidthFor(91)).toBe(20); // floor(20.02) = 20
   });
 });
 

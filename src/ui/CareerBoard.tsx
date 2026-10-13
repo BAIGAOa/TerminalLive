@@ -20,7 +20,7 @@ import { deltaEntries, type StatDelta } from "../world/stats.js";
 import { MenuList, ModalFrame, clampHeight, clampWidth } from "./kit/index.js";
 import { dismissModal } from "./layers/modalBus.js";
 import { GJ_MODAL_ID } from "./layers/layerIds.js";
-import { CARD_H, computeCareerGrid } from "./careerGrid.js";
+import { cardHeight, computeCareerGrid, type CardSize } from "./careerGrid.js";
 
 /**
  * The career board: the `g j` modal.
@@ -33,12 +33,21 @@ import { CARD_H, computeCareerGrid } from "./careerGrid.js";
  * The detail pane is two columns rather than one long scroll: what the job is
  * and whether you qualify on the left, the ladder you are buying into on the
  * right. In a terminal, height is the scarce resource.
+ *
+ * The board adapts to that scarcity rather than fighting it: the cards shed
+ * their borders, then their extra lines, before the board sheds jobs — and what
+ * still does not fit scrolls, because `MenuList` windows the grid by row.
  */
 
-/** Rows the modal spends on chrome before the grid gets any. */
-const MODAL_CHROME = 6; // borders 2 + paddingY 2 + the title block 2
-const BOARD_HEADER = 1;
-const BOARD_FOOTER = 2;
+/** Rows the frame spends on borders, padding and the title block. */
+const MODAL_CHROME = 6;
+/** The summary line above the grid, with its margin. */
+const BOARD_HEADER = 2;
+/** The hint lines below the grid, with their margin. */
+const BOARD_FOOTER = 3;
+/** Below these, the chrome rows are better spent on cards. */
+const HEADER_MIN_ROWS = 9;
+const FOOTER_MIN_ROWS = 7;
 
 export default function CareerBoard() {
   const { t } = useI18n();
@@ -69,9 +78,21 @@ export default function CareerBoard() {
   const innerCols = width - 6;
   const innerRows = height - MODAL_CHROME;
 
+  // The board's own chrome is only worth its rows when there is room to spare.
+  // On a short terminal every row goes to the cards, which is the point.
+  const showHeader = innerRows >= HEADER_MIN_ROWS;
+  const showFooter = innerRows >= FOOTER_MIN_ROWS;
+  const reserve =
+    (showHeader ? BOARD_HEADER : 0) + (showFooter ? BOARD_FOOTER : 0);
+
   const layout = useMemo(
-    () => computeCareerGrid(innerCols, innerRows - BOARD_HEADER - BOARD_FOOTER, cards.length),
-    [innerCols, innerRows, cards.length],
+    () =>
+      computeCareerGrid(
+        innerCols,
+        Math.max(1, innerRows - reserve),
+        cards.length,
+      ),
+    [innerCols, innerRows, reserve, cards.length],
   );
 
   const [detailId, setDetailId] = useState<string | null>(null);
@@ -185,14 +206,11 @@ export default function CareerBoard() {
     [cards, t],
   );
 
-  // MenuList's window counts *items* (`height / rowHeight`) while its grid
-  // slices by *rows*, so a window smaller than the board would silently drop
-  // whole rows. A grid therefore asks for a window big enough for every card
-  // and relies on `computeCareerGrid` above to have already proved it fits;
-  // only the single-column fallback genuinely pages, and there items and rows
-  // are the same thing.
-  const listHeight =
-    layout.cols > 1 ? cards.length * CARD_H : layout.rows * CARD_H;
+  // Exactly the rows `computeCareerGrid` proved fit. When the board needs more
+  // than that — a genuinely tiny terminal, where no card shape can put every
+  // job on one page — `MenuList` windows the grid by row and scrolls through
+  // the rest, so the board never draws past the frame.
+  const listHeight = layout.rows * layout.cardH;
 
   return (
     <ModalFrame
@@ -226,14 +244,16 @@ export default function CareerBoard() {
         />
       ) : (
         <>
-          <BoardHeader summary={summary} width={innerCols} t={t} />
+          {showHeader ? (
+            <BoardHeader summary={summary} width={innerCols} t={t} />
+          ) : null}
           <MenuList
             items={items}
             focusId="career-board"
             wrap={false}
             columns={layout.cols}
             columnWidth={layout.cardW}
-            rowHeight={CARD_H}
+            rowHeight={layout.cardH}
             height={listHeight}
             colGap={2}
             // No marker column: a card is the whole cell, and the border colour
@@ -248,14 +268,22 @@ export default function CareerBoard() {
             renderItem={(item, state) => {
               const card = cards.find((c) => c.id === item.value);
               return card ? (
-                <JobCard card={card} state={state} colors={colors} t={t} />
+                <JobCard
+                  card={card}
+                  size={layout.size}
+                  state={state}
+                  colors={colors}
+                  t={t}
+                />
               ) : null;
             }}
           />
-          <Box flexDirection="column" alignItems="center" marginTop={1}>
-            <Text dimColor>{t("careerBoard.hint.grid")}</Text>
-            <Text dimColor>{t("careerBoard.hint.open")}</Text>
-          </Box>
+          {showFooter ? (
+            <Box flexDirection="column" alignItems="center" marginTop={1}>
+              <Text dimColor>{t("careerBoard.hint.grid")}</Text>
+              <Text dimColor>{t("careerBoard.hint.open")}</Text>
+            </Box>
+          ) : null}
         </>
       )}
     </ModalFrame>
@@ -310,7 +338,14 @@ function cardColor(card: CareerCard, colors: Colors): string {
   return colors.muted;
 }
 
-function stateGlyph(card: CareerCard): string {
+/**
+ * The state mark, or nothing when there is nothing to say.
+ *
+ * An available job is the unmarked case — most of the board is available, and a
+ * glyph on every card is noise. The cramped shapes drop it too: there the
+ * border colour (or the text colour, on an unbordered row) already carries it.
+ */
+function stateGlyph(card: CareerCard, always = false): string {
   switch (card.state) {
     case "current":
       return "★";
@@ -321,35 +356,86 @@ function stateGlyph(card: CareerCard): string {
     case "locked":
       return "🔒";
     default:
-      return "●";
+      return always ? "●" : "";
   }
 }
 
+/**
+ * One job, at whichever size the board could afford.
+ *
+ * `full` is the bordered card with three lines; `compact` keeps the border but
+ * one line, putting the salary where the field used to be; `line` drops the
+ * border entirely, because two rows of border per card is more than a short
+ * terminal can pay.
+ */
 function JobCard({
   card,
+  size,
   state,
   colors,
   t,
 }: {
   card: CareerCard;
+  size: CardSize;
   state: { selected: boolean; focused: boolean; index: number };
   colors: Colors;
   t: T;
 }) {
   const color = cardColor(card, colors);
   const active = state.focused && state.selected;
+  const textColor = active ? color : card.state === "available" ? colors.text : colors.muted;
+  const pay =
+    card.state === "cooling"
+      ? t("careerBoard.cooldownLeft", { n: card.cooldownYears })
+      : `$${card.entrySalary}→$${card.topSalary}`;
+  const payColor = card.state === "available" ? colors.money : colors.muted;
+
+  if (size === "line") {
+    return (
+      <Box width="100%" flexDirection="row" overflow="hidden">
+        <Text wrap="truncate" bold={active} color={textColor}>
+          {active ? "❯ " : ""}
+          {stateGlyph(card) ? `${stateGlyph(card)} ` : ""}
+          {card.icon} {t(card.labelKey)}
+          {"   "}
+          <Text color={payColor}>{pay}</Text>
+        </Text>
+      </Box>
+    );
+  }
+
+  if (size === "compact") {
+    return (
+      <Box
+        width="100%"
+        height={cardHeight("compact")}
+        borderStyle="bold"
+        borderColor={active ? color : "gray"}
+        flexDirection="column"
+        paddingX={1}
+        overflowY="hidden"
+      >
+        <Text wrap="truncate" bold={active} color={textColor}>
+          {card.icon} {t(card.labelKey)}
+          {"   "}
+          <Text color={payColor}>{pay}</Text>
+        </Text>
+      </Box>
+    );
+  }
+
   return (
     <Box
       width="100%"
-      height={CARD_H}
+      height={cardHeight("full")}
       borderStyle="bold"
       borderColor={active ? color : "gray"}
       flexDirection="column"
       paddingX={1}
       overflowY="hidden"
     >
-      <Text wrap="truncate" bold={active} color={active ? color : colors.text}>
-        {card.icon} {t(card.labelKey)} {stateGlyph(card)}
+      <Text wrap="truncate" bold={active} color={textColor}>
+        {card.icon} {t(card.labelKey)} {stateGlyph(card, true)}
       </Text>
       <Text wrap="truncate" dimColor>
         {t(card.fieldKey)}
@@ -358,13 +444,8 @@ function JobCard({
           : ""}
         {card.lifelong ? `  ${t("careerBoard.lifelongShort")}` : ""}
       </Text>
-      <Text
-        wrap="truncate"
-        color={card.state === "available" ? colors.money : colors.muted}
-      >
-        {card.state === "cooling"
-          ? t("careerBoard.cooldownLeft", { n: card.cooldownYears })
-          : `$${card.entrySalary}→$${card.topSalary}`}
+      <Text wrap="truncate" color={payColor}>
+        {pay}
       </Text>
     </Box>
   );

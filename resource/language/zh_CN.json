@@ -1957,5 +1957,11 @@
     "ai.frequency.off.hint": "没有人写信。面试也会一并关闭。",
     "ai.frequency.low.hint": "大约每年一封，同一个人十年内不会写第二次。",
     "ai.frequency.normal.hint": "每年最多两封，角色之间往来更频繁。",
-    "mail.scrollHint": "▲ 第 {from}-{to} 行 / 共 {total} 行   [PgUp/PgDn]"
+    "mail.scrollHint": "▲ 第 {from}-{to} 行 / 共 {total} 行   [PgUp/PgDn]",
+    "sheet.stats": "属性",
+    "sheet.mind": "心身",
+    "career.ev.work.fired": "被解雇了。连续三年，足够了。",
+    "career.err.banned": "你刚被解雇，暂时没有人会雇你。",
+    "ai.npc.arrived": "有个人走进了你的人生",
+    "ai.event.added": "有件事要发生了"
 }

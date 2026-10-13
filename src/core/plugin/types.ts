@@ -22,6 +22,7 @@ import type { WorldEventDefinition } from "../../world/chronicle/worldEvents.js"
 import type { TraitDefinition } from "../../world/traits/TraitDefinition.js";
 import type { RandomSource } from "../random/RandomSource.js";
 import type { WeightRule } from "../../event/EventDirector.js";
+import type { Coupling } from "../../world/vitalsEngine.js";
 import type { WorldRuleDef } from "../../world/rules/WorldRule.js";
 import type { ReplCommand, TranslateFn } from "../repl/types.js";
 import type { PluginStorage } from "./storage.js";
@@ -108,6 +109,19 @@ export interface PluginContext {
   addWeightRule: (rule: WeightRule) => void;
   /** Register a world rule (a world may then list its id in `worldRules`). */
   addWorldRule: (def: WorldRuleDef) => void;
+  /**
+   * Register a cross-stat coupling: a rule that moves the player's numbers
+   * when its `when` holds, evaluated once a year. Needs "world".
+   *
+   * This is how a mod gives the simulation a relationship it did not have —
+   * "a heavy drinker loses their looks", "the pious sleep better" — without
+   * touching the game's own table. Rules run *after* the built-in ones, `chance`
+   * makes one probabilistic, and `acquire`/`indulge`/`tend` reach the health
+   * system (a condition, a substance) rather than only nudging a number.
+   *
+   * See `src/world/vitalsEngine.ts` for the shape and the built-ins.
+   */
+  addCoupling: (rule: Coupling) => void;
 
   // ── UI extension points ───────────────────────────────────────
   /** Add a brand-new screen, reachable via `navigateTo`. Needs "ui". */

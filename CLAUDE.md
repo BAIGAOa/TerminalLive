@@ -24,11 +24,11 @@ principle is that **UI correctness is never tested** — only pure logic is test
 ## Commands
 
 ```bash
-npm run dev          # build (tsc) then run via bun
+npm start            # run src/main.tsx directly with bun — no build step
+npm run dev          # alias of start
 npm run watch        # tsc --watch, rebuilds dist/
-npm run build        # tsc --locale zh-CN → dist/
-npm run start        # run the built dist/main.js (bun)
-npm run runtsc       # run src/main.tsx directly with tsx (no build)
+npm run build        # tsc --locale zh-CN → dist/ (only the dist-based tools need this)
+npm run runtsc       # the same entry point via tsx, for when bun is unavailable
 
 npm test             # vitest run — unit tests for pure logic / engine
 npx vitest run src/__tests__/game/lifeReview.test.ts   # single test file
@@ -38,6 +38,7 @@ npx tsc --noEmit     # cheap typecheck; preferred over heavy suites during itera
 npm run test:engine  # build + headless full-life simulation (dist/dev/validate.js)
 node scripts/plugins-probe.mjs  # build + boot, then list what the plugin kernel mounted
 npm run test:ui      # build + scripts/ui-smoke.mjs (drives the screen tree via ink-testing-library)
+npm run test:layout  # build + scripts/layout-probe.mjs — every screen at every width, flags overflow
 npm run balance      # build + dist/dev/montecarlo.js — balance simulation
 ```
 

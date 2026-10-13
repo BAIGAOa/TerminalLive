@@ -1,6 +1,6 @@
 {
     "name": "@baigao_h/terminal-live",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "description": "A small game running on the terminal.",
     "main": "dist/main.js",
     "types": "dist/main.d.ts",
@@ -20,8 +20,8 @@
     },
     "scripts": {
         "build": "tsc --locale zh-CN",
-        "start": "bun dist/main.js",
-        "dev": "npm run build && npm run start",
+        "start": "bun src/main.tsx",
+        "dev": "bun src/main.tsx",
         "watch": "tsc --watch --locale zh-CN",
         "clean": "rm -rf dist",
         "runtsc": "npx tsx src/main.tsx",
@@ -30,7 +30,8 @@
         "test:ink": "vitest run --config vitest.ink.config.ts",
         "test:engine": "npm run build && node dist/dev/validate.js",
         "balance": "npm run build && node dist/dev/montecarlo.js",
-        "test:ui": "npm run build && node scripts/ui-smoke.mjs"
+        "test:ui": "npm run build && node scripts/ui-smoke.mjs",
+        "test:layout": "npm run build && node scripts/layout-probe.mjs"
     },
     "keywords": [
         "terminal",

@@ -80,6 +80,33 @@ module.exports = {
         drift: 0.05,
       });
 
+      // Teach the simulation a relationship it did not have. A coupling is a
+      // claim about the player — "when this holds, these numbers move" — and it
+      // runs once a year, after the game's own rules. The game's table is in
+      // src/world/vitalsEngine.ts; yours is appended to it, never replacing it.
+      //
+      // `when` reads a plain snapshot (see VitalsContext): the stats, the body,
+      // the conditions and addictions, and whether the player is bonded,
+      // partnered or employed. `then` is a stat delta. `chance` makes it a dice
+      // roll; `acquire` / `indulge` / `tend` reach the health system instead —
+      // a diagnosis, a substance, a recovery.
+      ctx.addCoupling({
+        id: "example:companionship",
+        note: "The game knows marriage raises happiness; this says it also eases despair.",
+        when: (c) => c.partnered && c.depressionValue > 20,
+        then: { depressionValue: -1 },
+      });
+
+      // A probabilistic one: five per cent of poor, idle years are simply
+      // beautiful.
+      ctx.addCoupling({
+        id: "example:small_wonder",
+        note: "Occasionally, being broke and idle is not the whole story.",
+        when: (c) => !c.employed && c.money < 100,
+        then: { happiness: 2 },
+        chance: 0.05,
+      });
+
       // Add a codex entry, unlocked after year 5.
       ctx.addLore({
         id: "lore_example_note",

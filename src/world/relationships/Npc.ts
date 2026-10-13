@@ -12,6 +12,18 @@ export interface NpcConstructor {
   new (def: NpcDefinition): Npc;
 }
 
+const TRAIT_AXES = ["warmth", "ambition", "stability", "sociability"] as const;
+
+/** Whether `value` is a complete, in-range personality profile. */
+function isTraitProfile(value: unknown): value is NpcTraits {
+  if (typeof value !== "object" || value === null) return false;
+  const rec = value as Record<string, unknown>;
+  return TRAIT_AXES.every((axis) => {
+    const v = rec[axis];
+    return typeof v === "number" && Number.isFinite(v) && v >= -1 && v <= 1;
+  });
+}
+
 /**
  * The base NPC class. It owns an {@link NpcDefinition} (parsed from JSON by
  * {@link NpcLoader}) and adds *behaviour*, mirroring how `Incident` subclasses
@@ -86,8 +98,19 @@ export abstract class Npc {
   /** Parse type-specific custom fields out of `params`. No-op by default. */
   protected parseParams(_params: Record<string, unknown>): void {}
 
-  /** Personality axes; defaults to the role table so untyped NPCs behave as before. */
+  /**
+   * Personality axes; defaults to the role table so untyped NPCs behave as
+   * before.
+   *
+   * A definition may override them in `params.traits`, which is how a character
+   * who was not hand-written into a cast file — an AI-invented stranger, a
+   * mod's NPC — gets a personality of its own instead of its role's default.
+   * Anything out of range is ignored rather than clamped: a malformed profile
+   * should fall back to the role, not become a slightly-wrong person.
+   */
   public traits(): NpcTraits {
+    const custom = this.params.traits;
+    if (isTraitProfile(custom)) return custom;
     return ROLE_TRAITS[this.roleKey ?? ""] ?? DEFAULT_TRAITS;
   }
 
