@@ -151,11 +151,15 @@ AI.md
 # Runtime game state written by the stores (not source). The game recreates
 # these from defaults on first run, so they must not be committed or shipped.
 resource/life.json
+resource/mail.json.gz
 resource/config.json
 resource/lineage.json
 resource/levels_progress.json
 resource/history.json
 resource/achievement/unlocked.json
+
+# Local scratch — screenshots, one-off notes, ad-hoc probes.
+.temporary/
 
 # Stray atomic-write temp files (should be cleaned up, but never commit them)
 resource/*.tmp-*
