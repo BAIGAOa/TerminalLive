@@ -58,6 +58,8 @@ import {
   type MailFrequency,
 } from "./mailbox.js";
 import MailStore from "./MailStore.js";
+import { digestJournal, type JournalDigest } from "./journal.js";
+import { translate } from "../../core/language/translator.js";
 
 /** Names the model is told to write in, so a letter is never in the wrong tongue. */
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -408,9 +410,11 @@ export default class MailService {
       return;
     }
 
+    const journal = this.journalDigest();
     const ctx: LetterContext = {
       year,
-      recent: this.recentLines(),
+      recent: journal.own,
+      around: journal.around,
       situation: this.situationLines(npcId),
       player: playerDossier(player),
       occasion,
@@ -476,15 +480,16 @@ export default class MailService {
     });
   }
 
-  /** This year's journal entries, as plain lines the model can read. */
-  private recentLines(): string[] {
+  /**
+   * This year's journal, as plain translated lines the model can read, split by
+   * whose life each one happened in.
+   */
+  private journalDigest(): JournalDigest {
     try {
       const store = this.worlds.getCurrentLogStore();
-      return (store?.getSnapshot() ?? [])
-        .slice(0, 6)
-        .map((e) => e.incident.nameKey ?? e.incident.id);
+      return digestJournal(store?.getSnapshot() ?? [], translate);
     } catch {
-      return [];
+      return { own: [], around: [] };
     }
   }
 

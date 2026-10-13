@@ -32,6 +32,12 @@ export interface LetterContext {
   year: number;
   /** What happened to the player this year, already translated to plain lines. */
   recent: string[];
+  /**
+   * What happened to the people around them, translated. Kept apart from
+   * {@link recent} on purpose: under one heading the model reads somebody
+   * else's promotion as the player's.
+   */
+  around: string[];
   /** The writer's own year: their health, job, mood, whatever the sim knows. */
   situation: string[];
   /** The complete player state, the same one every AI character receives. */
@@ -107,6 +113,7 @@ export function letterSystemPrompt(persona: Persona, ctx: LetterContext): string
       : "- Write in first person, 2 to 5 sentences. Plain prose — no markdown, no bullet lists, no headings, no emoji.",
     "- It is a personal note, not a report. Do not summarise their stats back to them; you would not know them that precisely.",
     "- Never invent events, people, items or numbers that are not in the material you were given.",
+    "- The people around them have lives of their own. When the material says something happened to someone else, it happened to *that person* — do not retell it as something that happened to the person you are writing to.",
     "- Never promise a reward, a stat change, or a game mechanic. You are a person, not a shop.",
     "- You may be blunt, cold, or unimpressed. Not every message should be friendly.",
     ...silenceRules,
@@ -149,6 +156,9 @@ export function letterUserPrompt(
     ...exchange,
     "## What happened to them this year",
     ctx.recent.length > 0 ? ctx.recent.map((l) => `- ${l}`).join("\n") : "- (nothing notable)",
+    "",
+    "## What happened to the people around them this year",
+    ctx.around.length > 0 ? ctx.around.map((l) => `- ${l}`).join("\n") : "- (nothing notable)",
     "",
     "## Your own situation",
     ctx.situation.length > 0 ? ctx.situation.map((l) => `- ${l}`).join("\n") : "- (nothing notable)",
