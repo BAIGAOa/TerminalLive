@@ -115,15 +115,17 @@ export default class GenesisService {
     // invented), and the world is current. Subscribed rather than called from
     // the world manager, which would close a dependency cycle — this service
     // reads the world manager itself.
-    this.eventBus.on("level:started", ({ levelId }) => {
+    this.eventBus.on("level:started", ({ levelId, resumed }) => {
       let isRoot = false;
       try {
         isRoot = this.worlds.getRootWorldIds().includes(levelId);
       } catch {
         /* world not ready */
       }
-      // A new life starts with nothing invented.
-      if (isRoot) {
+      // A new life starts with nothing invented — but re-entering a saved root
+      // world is not a new life. The save has just put the invented cast back,
+      // and that cast is exactly what `registerPersisted` below re-installs.
+      if (isRoot && !resumed) {
         this.reset();
         return;
       }

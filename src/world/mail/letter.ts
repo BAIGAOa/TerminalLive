@@ -52,11 +52,13 @@ export const MAX_SUBJECT = 48;
  *
  * The letter is shown in a scrollable window, so a long one costs nothing to
  * read and is never cut — the only reason to bound it at all is to keep a
- * malfunctioning model from writing a megabyte into the save file. Set far
- * above anything the prompt asks for ("2 to 5 sentences"), so a character who
- * genuinely has a lot to say is not edited down.
+ * malfunctioning model from writing a megabyte into the save file. The prompt
+ * asks for "2 to 5 sentences", and this sits far above the longest thing that
+ * request plausibly produces, so a character who genuinely has a lot to say is
+ * never edited down. Total storage is bounded separately, by the mailbox's byte
+ * budget (see `MAIL_LETTERS_MAX_BYTES`).
  */
-export const MAX_BODY = 6000;
+export const MAX_BODY = 2000;
 /**
  * Cells one rendered line may occupy, for the parts the UI shows on a single
  * row: the subject, and a choice's label. The inbox and the decision popup are

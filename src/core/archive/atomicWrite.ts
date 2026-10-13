@@ -8,10 +8,10 @@ let tmpSeq = 0;
  * the target. `rename` is atomic within a filesystem, so a crash mid-write can
  * never leave a truncated JSON blob where a previous good save used to be.
  */
-export function atomicWriteFileSync(file: string, data: string): void {
+export function atomicWriteFileSync(file: string, data: string | Buffer): void {
   const tmp = `${file}.tmp-${process.pid}-${tmpSeq++}`;
   try {
-    writeFileSync(tmp, data, "utf8");
+    writeFileSync(tmp, data, typeof data === "string" ? "utf8" : undefined);
     renameSync(tmp, file);
   } catch (err) {
     // Don't leave a stray temp file behind if the write/rename failed.
@@ -22,6 +22,14 @@ export function atomicWriteFileSync(file: string, data: string): void {
     }
     throw err;
   }
+}
+
+/**
+ * Same crash-safety for a binary payload — the compressed mailbox, where the
+ * bytes must not be run through a text encoding on the way to disk.
+ */
+export function atomicWriteBufferSync(file: string, data: Buffer): void {
+  atomicWriteFileSync(file, data);
 }
 
 /** Atomic JSON write with 2-space indentation (the project's save format). */

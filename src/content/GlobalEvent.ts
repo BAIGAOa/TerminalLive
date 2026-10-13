@@ -2,8 +2,14 @@ export {};
 
 declare global {
   interface EventMap {
-    /** 关卡开始 */
-    "level:started": { levelId: string };
+    /**
+     * 关卡开始。
+     *
+     * `resumed` 为真表示这是读档后重新进入已保存的关卡，而不是一条新生命的
+     * 开始 —— 凡是按"root 关卡 = 新生命"来重置状态的监听者（信箱、AI 造人）
+     * 都必须跳过它，否则会把存档刚还回来的内容当场清空。
+     */
+    "level:started": { levelId: string; resumed?: boolean };
 
     /** 玩家属性更新*/
     "player:updated": void;

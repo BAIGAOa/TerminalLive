@@ -1,5 +1,5 @@
 import { inject } from "../../Container.js";
-import { existsSync, mkdirSync, cpSync } from "node:fs";
+import { existsSync, mkdirSync, cpSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { saveDataSchema } from "./SaveSchema.js";
@@ -8,6 +8,7 @@ import { atomicWriteJsonSync } from "./atomicWrite.js";
 import { isValidSaveName, resolveWithin } from "./saveName.js";
 import type ConfigStore from "../store/ConfigStore.js";
 import ModMonitor from "../mod/ModMonitor.js";
+import MailStore, { MAIL_FILENAME } from "../../world/mail/MailStore.js";
 
 export class ArchivingKeeper {
   private readonly ARCHIVE_ROOT = join(homedir(), ".archive_live");
@@ -28,6 +29,30 @@ export class ArchivingKeeper {
     const data = captureSaveData();
     saveDataSchema.parse(data);
     atomicWriteJsonSync(join(archiveDir, "archive.json"), data);
+    this.saveMail(archiveDir);
+  }
+
+  /**
+   * Copy the mailbox in beside the save.
+   *
+   * The letters have their own file now, so an archive holding only the JSON
+   * blob would restore a life without its correspondence. Copying keeps the
+   * archive self-contained, the way mods already are.
+   */
+  private saveMail(archiveDir: string): void {
+    const store = inject(MailStore);
+    const dest = join(archiveDir, MAIL_FILENAME);
+    try {
+      if (store.exists()) {
+        cpSync(store.path, dest);
+        return;
+      }
+      // Overwriting an archive with a life that has no letters must not leave
+      // the previous save's mailbox sitting there for the next load to find.
+      if (existsSync(dest)) rmSync(dest, { force: true });
+    } catch (err) {
+      console.warn("[Archive] 信箱未能写入存档:", (err as Error).message);
+    }
   }
 
   private saveMod(archiveDir: string, modNames: string[]): void {

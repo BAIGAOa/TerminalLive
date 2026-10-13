@@ -57,6 +57,7 @@ import {
   type Mailbox,
   type MailFrequency,
 } from "./mailbox.js";
+import MailStore from "./MailStore.js";
 
 /** Names the model is told to write in, so a letter is never in the wrong tongue. */
 const LANGUAGE_NAMES: Record<string, string> = {
@@ -78,6 +79,7 @@ export default class MailService {
   private npcs: NpcRegistry;
   private relationships: RelationshipSystem;
   private worlds: WorldManager;
+  private store: MailStore;
 
   private box: Mailbox = emptyMailbox();
   private listeners = new Set<Listener>();
@@ -96,6 +98,7 @@ export default class MailService {
     this.npcs = inject(NpcRegistry);
     this.relationships = inject(RelationshipSystem);
     this.worlds = inject(WorldManager);
+    this.store = inject(MailStore);
 
     // A new job is the clearest reason an NPC has to write: the boss introduces
     // themselves and hands over the first task.
@@ -113,8 +116,12 @@ export default class MailService {
     });
 
     // A new life starts with an empty box. Keyed off the *root* world so that
-    // moving between stages of one life keeps the correspondence going.
-    this.eventBus.on("level:started", ({ levelId }) => {
+    // moving between stages of one life keeps the correspondence going — but
+    // only when the life is genuinely new. `restoreWorld` re-enters a saved
+    // root world and emits the same event, and resetting there would discard
+    // the letters the save had only just handed back.
+    this.eventBus.on("level:started", ({ levelId, resumed }) => {
+      if (resumed) return;
       try {
         if (this.worlds.getRootWorldIds().includes(levelId)) this.reset();
       } catch {
@@ -131,7 +138,23 @@ export default class MailService {
 
   public getSnapshot = (): number => this.version;
 
+  /**
+   * Every mutation lands here, so this is the one place that has to know the
+   * box changed and now belongs on disk.
+   *
+   * Persisting from here instead of from the auto-save is the whole point of
+   * the split: letters change a handful of times a year, while the auto-save
+   * fires on every player action. The write is synchronous, and the payload is
+   * bounded by construction (see `MAIL_LETTERS_MAX_BYTES`), so it is far too
+   * small to be felt.
+   */
   private notify(): void {
+    this.bump();
+    this.store.write(this.box);
+  }
+
+  /** Tell the UI the box changed, without touching the disk. */
+  private bump(): void {
     this.version++;
     for (const fn of [...this.listeners]) fn();
   }
@@ -513,17 +536,32 @@ export default class MailService {
   }
 
   // ── persistence ────────────────────────────────────────────────
-  public snapshot(): { box: Mailbox } {
-    return { box: JSON.parse(JSON.stringify(this.box)) as Mailbox };
-  }
-
+  /**
+   * Adopt a mailbox that arrived inside a save blob.
+   *
+   * Only saves written before the split carry one — the letters have their own
+   * file now — so this is a one-way migration: take what the save holds, write
+   * it straight to the mailbox file, and let the save's copy fall out of use.
+   */
   public restore(snap: { box?: Mailbox } | undefined): void {
     if (!snap?.box) {
-      this.box = emptyMailbox();
+      this.loadFromStore();
       return;
     }
     this.box = { ...emptyMailbox(), ...snap.box };
     this.notify();
+  }
+
+  /**
+   * Load this life's correspondence from its own file. Runs once per load,
+   * after the save has put the player back in their world.
+   */
+  public loadFromStore(): void {
+    this.box = this.store.read() ?? emptyMailbox();
+    // The disk already holds this, so bump the version for the UI but do not
+    // write back what was just read — and never overwrite a file that failed
+    // to parse, since that copy is the only one the letters have left.
+    this.bump();
   }
 
   /** A new life starts with an empty box. */

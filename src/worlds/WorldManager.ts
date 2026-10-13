@@ -570,7 +570,10 @@ export default class WorldManager {
     }
     this.pluginHost.setPlayer(player);
     this.lastPlayedLevelId = levelId;
-    this.eventBus.emit("level:started", { levelId });
+    // `resumed` distinguishes re-entering a saved world from starting a life:
+    // listeners that treat a root world as "everything begins again" would
+    // otherwise undo what the save just restored.
+    this.eventBus.emit("level:started", { levelId, resumed: true });
     this.notify();
   }
 

@@ -1,6 +1,7 @@
 import z from "zod";
 import { npcSchema } from "../../world/relationships/NpcDefinition.js";
 import { modEventSchema } from "../../types/EventJsonType.js";
+import { mailboxSchema } from "../../world/mail/mailSchema.js";
 
 export const saveDataSchema = z.object({
   version: z.number(),
@@ -237,52 +238,21 @@ export const saveDataSchema = z.object({
       lastEventAt: z.number().default(-999),
     })
     .optional(),
-  /** The AI correspondence: the letters, and who is on what cooldown. */
+  /**
+   * The AI correspondence — read-only, and legacy.
+   *
+   * The mailbox now lives in its own gzipped file (`MailStore`) rather than in
+   * this blob: it is the one part of the save that grows monotonically, and
+   * carrying it here meant rewriting every letter in full on every auto-save,
+   * which fires once per player action. The schema stays so that a save written
+   * before the split still hands its letters over on the next load.
+   */
   mail: z
     .object({
-      box: z
-        .object({
-          letters: z
-            .array(
-              z.object({
-                id: z.string(),
-                npcId: z.string(),
-                year: z.number(),
-                subject: z.string(),
-                body: z.string(),
-                choices: z
-                  .array(
-                    z.object({
-                      id: z.string(),
-                      label: z.string(),
-                      affinity: z.number(),
-                    }),
-                  )
-                  .default([]),
-                status: z.enum(["unread", "read", "answered"]).default("unread"),
-                /** How far into the exchange this letter is; 0 = the NPC began it. */
-                depth: z.number().default(0),
-                reply: z.string().optional(),
-                chosen: z.string().optional(),
-              }),
-            )
-            .default([]),
-          cooldowns: z.record(z.string(), z.number()).default({}),
-          countedYear: z.number().default(-1),
-          sentThisYear: z.number().default(0),
-          lastDecisionYear: z.number().default(-1),
-          replyYear: z.number().default(-1),
-          repliesThisYear: z.number().default(0),
-        })
-        .default({
-          letters: [],
-          cooldowns: {},
-          countedYear: -1,
-          sentThisYear: 0,
-          lastDecisionYear: -1,
-          replyYear: -1,
-          repliesThisYear: 0,
-        }),
+      // Optional rather than defaulted: a save that carries no letters must
+      // still parse, and a missing box simply means "read the mailbox file".
+      // A parse failure here would quarantine the player's whole life.
+      box: mailboxSchema.optional(),
     })
     .optional(),
   /** Market + personal portfolio/debt. */

@@ -7,8 +7,9 @@ import {
   renameSync,
 } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { container } from "../../Container.js";
+import MailStore, { MAIL_FILENAME } from "../../world/mail/MailStore.js";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import { applySaveData } from "./SaveCodec.js";
 import { migrateSave, RawSave } from "./migrations.js";
@@ -24,17 +25,51 @@ export class ArchiveLoader {
     const data = this.readArchiveData(archiveDir);
 
     this.loadMod(archiveDir, container.resolve(ModMonitor).MOD_ROOT);
+    // Before `applySaveData`: it is what decides where the letters come from,
+    // and by then the mailbox file has to be the archive's, not the outgoing
+    // life's.
+    this.loadMail(archiveDir);
     if (!applySaveData(data)) {
       throw new Error(
         "存档所指的世界不存在或内容已变更，无法加载。 The save's world is missing or changed; cannot load.",
       );
     }
 
+    // The letters travelled in their own file (or, for a pre-split archive,
+    // were just adopted by `applySaveData` above). Drop the inline copy so it
+    // is not adopted a second time on every future load of this life.
+    delete data.mail;
+
     // Make this the life the next launch resumes, so the reload lands on it.
     container.resolve(AutoSave).writeData(data);
 
     console.log("存档已加载，游戏即将重启…… Archive loaded, restarting...");
     setTimeout(() => process.exit(0), 1500);
+  }
+
+  /**
+   * Put the archive's mailbox in place.
+   *
+   * An archive written after the split carries the letters as a sibling file;
+   * one written before it carries them inside `archive.json`, and
+   * `applySaveData` will hand those over. Either way the mailbox already on
+   * disk belongs to the life being replaced and must not survive the load.
+   */
+  private loadMail(archiveDir: string): void {
+    const store = container.resolve(MailStore);
+    const src = join(archiveDir, MAIL_FILENAME);
+    if (!existsSync(src)) {
+      store.clear();
+      return;
+    }
+    try {
+      mkdirSync(dirname(store.path), { recursive: true });
+      cpSync(src, store.path);
+    } catch (err) {
+      // Falling through with no mailbox beats failing the whole load.
+      console.warn("[Archive] 信箱未能从存档恢复:", (err as Error).message);
+      store.clear();
+    }
   }
 
   private loadMod(archiveDir: string, modRootPath: string): void {

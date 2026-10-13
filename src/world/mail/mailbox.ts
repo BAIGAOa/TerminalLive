@@ -31,6 +31,17 @@ export interface Mailbox {
 export const MAILBOX_CAP = 40;
 
 /**
+ * Byte ceiling for the letters the box keeps.
+ *
+ * The count cap alone does not bound the file: forty letters is forty letters
+ * whether each is a two-line note or the longest thing the model is allowed to
+ * write. This is the real storage bound — generous enough that it never fires
+ * in normal play (forty typical letters land well under half of it), tight
+ * enough that a malfunctioning model cannot inflate the save without limit.
+ */
+export const MAIL_LETTERS_MAX_BYTES = 128 * 1024;
+
+/**
  * Write-backs allowed per year, on top of the initiation budget.
  *
  * Answering a stack of old letters should not fire a stack of requests, so the
@@ -170,19 +181,66 @@ export function noteSent(
   };
 }
 
-/** Insert a letter, dropping the oldest *read* letters past the cap. */
-export function addLetter(box: Mailbox, letter: Letter, cap = MAILBOX_CAP): Mailbox {
-  const letters = [letter, ...box.letters];
-  if (letters.length <= cap) return { ...box, letters };
+/**
+ * UTF-8 length of a string.
+ *
+ * Spelled out rather than reached for through `Buffer`: this module is plain
+ * policy, and the byte budget has to be a stable number the plain tests can
+ * assert against. Wide glyphs (CJK) cost three bytes, astral ones four — which
+ * is exactly the case a character count would get wrong.
+ */
+export function utf8Length(text: string): number {
+  let bytes = 0;
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    if (code < 0x80) bytes += 1;
+    else if (code < 0x800) bytes += 2;
+    else if (code >= 0xd800 && code <= 0xdbff) {
+      // High surrogate: the pair is one code point, four bytes.
+      bytes += 4;
+      i++;
+    } else bytes += 3;
+  }
+  return bytes;
+}
 
-  // Never drop something the player has not answered: an unanswered letter is
-  // still a live promise, a read one is just paper.
+/** Bytes the letter list takes up once serialised. */
+export function lettersBytes(letters: readonly Letter[]): number {
+  return utf8Length(JSON.stringify(letters));
+}
+
+function overBudget(
+  letters: readonly Letter[],
+  cap: number,
+  maxBytes: number,
+): boolean {
+  return letters.length > cap || lettersBytes(letters) > maxBytes;
+}
+
+/**
+ * Trim a letter list back to the storage budget.
+ *
+ * Letters are held newest-first, so the tail is the oldest. The oldest *read*
+ * letters go first — an unanswered letter is still a live promise, a read one
+ * is just paper — and only when that is not enough does the oldest unread
+ * letter get dropped too.
+ */
+export function fitMailbox(
+  letters: readonly Letter[],
+  cap: number = MAILBOX_CAP,
+  maxBytes: number = MAIL_LETTERS_MAX_BYTES,
+): Letter[] {
   const keep = [...letters];
-  for (let i = keep.length - 1; i >= 0 && keep.length > cap; i--) {
+  for (let i = keep.length - 1; i >= 0 && overBudget(keep, cap, maxBytes); i--) {
     if (keep[i].status !== "unread") keep.splice(i, 1);
   }
-  // Still over the cap: everything left is unread, so drop the oldest anyway.
-  return { ...box, letters: keep.slice(0, cap) };
+  while (overBudget(keep, cap, maxBytes) && keep.length > 0) keep.pop();
+  return keep;
+}
+
+/** Insert a letter, trimming the box back to its storage budget. */
+export function addLetter(box: Mailbox, letter: Letter, cap = MAILBOX_CAP): Mailbox {
+  return { ...box, letters: fitMailbox([letter, ...box.letters], cap) };
 }
 
 export function unreadCount(box: Mailbox): number {

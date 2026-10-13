@@ -102,7 +102,10 @@ export function captureSaveData(): SaveData {
     regions: container.resolve(RegionsSystem).snapshot(),
     chains: container.resolve(WorldChainSystem).snapshot(),
     narrative: container.resolve(NarrativeSystem).snapshot(),
-    mail: container.resolve(MailService).snapshot(),
+    // The mailbox is deliberately absent: the letters live in their own
+    // gzipped file and are written when they change, not on every auto-save.
+    // Putting them here would re-serialise every letter each time the player
+    // does anything, which is exactly the cost this split exists to remove.
     genesis: container.resolve(GenesisService).snapshot(),
     random: container.resolve(RandomService).snapshot(),
     chain: container.resolve(ChainTracker).snapshot(),
@@ -198,6 +201,10 @@ export function applySaveData(data: SaveData): boolean {
   container.resolve(RegionsSystem).restore(data.regions);
   container.resolve(WorldChainSystem).restore(data.chains);
   container.resolve(NarrativeSystem).restore(data.narrative);
+  // A save written before the split carries the letters inline; `restore` adopts
+  // them and writes them to the mailbox file. One written after it carries
+  // nothing, and the mailbox is already on disk — either way this ends with the
+  // box loaded and the file authoritative.
   container.resolve(MailService).restore(data.mail);
   // Resume the exact same random stream (seed + step), graph and streak memory.
   container.resolve(RandomService).restore(data.random);

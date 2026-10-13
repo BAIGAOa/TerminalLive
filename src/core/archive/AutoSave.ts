@@ -6,13 +6,18 @@ import WorldManager from "../../worlds/WorldManager.js";
 import { SaveData, saveDataSchema } from "./SaveSchema.js";
 import { applySaveData, captureSaveData } from "./SaveCodec.js";
 import { atomicWriteJsonSync, quarantineFileSync } from "./atomicWrite.js";
+import { createSaveScheduler, type SaveScheduler } from "./saveScheduler.js";
 import { migrateSave, RawSave } from "./migrations.js";
 
 /**
  * Continuous auto-save of the current life, so quitting mid-game and relaunching
- * resumes exactly where the player left off. Writes are small and driven by game
- * events (turn end, action, choice, level change); death / life-complete clears
- * the slot so a finished life is not resumed.
+ * resumes exactly where the player left off. Writes are driven by game events
+ * (turn end, action, choice, level change); death / life-complete clears the
+ * slot so a finished life is not resumed.
+ *
+ * Several of those events land in the same tick, and serialising the whole game
+ * for each of them was pure waste — only the last state is ever read back. The
+ * requests are coalesced through a short window, so a burst costs one write.
  *
  * `TL_AUTOSAVE` overrides the file path: a path to use it there, or `off` to
  * disable auto-saving entirely (used by the headless test harnesses).
@@ -22,6 +27,7 @@ export default class AutoSave {
   private eventBus: TypedEventBus;
   private readonly filePath: string;
   private readonly enabled: boolean;
+  private readonly scheduler: SaveScheduler;
 
   constructor() {
     this.levelManager = inject(WorldManager);
@@ -32,12 +38,24 @@ export default class AutoSave {
     this.filePath =
       override && override !== "off" ? override : resourcePath("life.json");
 
-    const save = () => this.save();
-    this.eventBus.on("turn:ended", save);
-    this.eventBus.on("action:performed", save);
-    this.eventBus.on("choice:resolved", save);
-    this.eventBus.on("level:started", save);
+    this.scheduler = createSaveScheduler({ write: () => this.save() });
+
+    const request = () => this.scheduler.request();
+    this.eventBus.on("turn:ended", request);
+    this.eventBus.on("action:performed", request);
+    this.eventBus.on("choice:resolved", request);
+    this.eventBus.on("level:started", request);
     this.eventBus.on("game:over", () => this.clear());
+
+    // Last chance for a write still inside the window: an exit that never goes
+    // through a game event (Ctrl-C, or the archive loader's `process.exit`).
+    process.on("exit", () => {
+      try {
+        this.scheduler.flush();
+      } catch {
+        /* nothing useful left to do on the way out */
+      }
+    });
   }
 
   /** Path of the auto-save slot (exposed for diagnostics / tests). */
@@ -69,6 +87,9 @@ export default class AutoSave {
   /** Write a specific save blob (used when loading an archive). */
   public writeData(data: SaveData): void {
     if (!this.enabled) return;
+    // An archive load is about to restart the process onto exactly this blob. A
+    // write still inside the debounce window would land afterwards and undo it.
+    this.scheduler.cancel();
     try {
       atomicWriteJsonSync(this.filePath, data);
     } catch (err) {
@@ -114,6 +135,9 @@ export default class AutoSave {
 
   public clear(): void {
     if (!this.enabled) return;
+    // A life that just ended must not be resurrected by a write still waiting
+    // in the window.
+    this.scheduler.cancel();
     try {
       if (existsSync(this.filePath)) rmSync(this.filePath, { force: true });
     } catch {
