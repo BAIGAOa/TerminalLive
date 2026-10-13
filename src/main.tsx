@@ -244,6 +244,13 @@ render(
           autoTab
           modes={["normal", "insert"]}
           defaultMode="normal"
+          // ink-cartridge 6.2.0. A focus target exists because something bound
+          // keys to it, so when the last binding goes the target should go too.
+          // Only some of the kit components unregister by hand (`MenuList`,
+          // `ScrollList`, `TextArea`, `TextField`); the rest — `Button`,
+          // `ScrollPanel`, and every screen that just passes a `focusId` —
+          // leave theirs behind, and Tab walks onto ghosts of closed modals.
+          releaseFocusWhenEmpty
         >
           <AppErrorBoundary>
             <App />
