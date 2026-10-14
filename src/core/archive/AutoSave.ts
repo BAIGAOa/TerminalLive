@@ -40,7 +40,7 @@ export default class AutoSave {
 
     this.scheduler = createSaveScheduler({ write: () => this.save() });
 
-    const request = () => this.scheduler.request();
+    const request = () => this.requestSave();
     this.eventBus.on("turn:ended", request);
     this.eventBus.on("action:performed", request);
     this.eventBus.on("choice:resolved", request);
@@ -61,6 +61,26 @@ export default class AutoSave {
   /** Path of the auto-save slot (exposed for diagnostics / tests). */
   public get path(): string {
     return this.filePath;
+  }
+
+  /**
+   * Ask for a save — deferred, except when the life has already ended.
+   *
+   * The dead-player check lives here rather than only inside the deferred
+   * write, because the promise it keeps is "the next launch must not resume a
+   * corpse", and a promise like that cannot wait on a timer. `game:over` is
+   * emitted by the in-game screen, so a headless run never hears it: without
+   * this, the only thing clearing a finished life's slot would be a write that
+   * happens a debounce window later — or never, if the process is killed first.
+   */
+  private requestSave(): void {
+    if (!this.enabled) return;
+    if (!this.levelManager.hasActiveWorld()) return;
+    if (this.levelManager.getPlayer().health <= 0) {
+      this.clear();
+      return;
+    }
+    this.scheduler.request();
   }
 
   public exists(): boolean {
