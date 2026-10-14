@@ -26,7 +26,12 @@
         "emitDecoratorMetadata": false,
         "experimentalDecorators": false,
         "jsx": "react",
-        "types": ["node"]
+        "types": ["node"],
+        // Reuse the previous run's type-check state (`.tsbuildinfo`), so a check
+        // only re-does the files that changed and whatever depends on them.
+        // Without this every `tsc` — including each `--watch` start on a machine
+        // where that cost is painful — is a full re-check from scratch.
+        "incremental": true
         
     },
     "include": [
