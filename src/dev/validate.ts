@@ -13,6 +13,8 @@ import ItemRegistry from "../world/items/ItemRegistry.js";
 import NpcRegistry from "../world/relationships/NpcRegistry.js";
 import type { NpcDefinition } from "../world/relationships/NpcDefinition.js";
 import GenesisService from "../world/ai/GenesisService.js";
+import { setChatTransport } from "../core/ai/transport.js";
+import { parseGeneratedEvent, toEventDef } from "../world/ai/generatedEvent.js";
 import AchievementRegistry from "../core/registry/AchievementRegistry.js";
 import ActionRegistry from "../game/actions/ActionRegistry.js";
 import EffectRegistry from "../world/effects/EffectRegistry.js";
@@ -88,6 +90,44 @@ function restoreConfig(): void {
 // Fire last — after any pending async persistence has flushed.
 process.on("exit", restoreConfig);
 
+/**
+ * What the model answers with, in the shape the event prompt asks for.
+ *
+ * The AI path is otherwise unreachable here — it needs a key and a network —
+ * so the transport is faked and this answer is fed through the real parsers,
+ * the real gate and the real registration. Everything except the model's own
+ * words is the production code.
+ */
+const CANNED_EVENT_REPLY = JSON.stringify({
+  title: "A stranger's gift",
+  body: "Someone left something at the door, and was gone before you looked up.",
+  effects: { happiness: 4 },
+  weight: 0.4,
+});
+
+/**
+ * What the model answers with when the *live* path runs. Deliberately not the
+ * same words as {@link CANNED_EVENT_REPLY}: an invented event's id is a hash of
+ * its own text, so a reply already registered would be skipped as a duplicate
+ * and the check would prove nothing.
+ */
+const CANNED_LIVE_REPLY = JSON.stringify({
+  title: "The wrong platform",
+  body: "You waited half an hour for a train that had already gone.",
+  effects: { happiness: -3 },
+  weight: 0.4,
+});
+
+/**
+ * Answer as the model. Always an event: the year this runs in has its arrival
+ * slot banked, so only the event branch is due. If that ever stops being true
+ * the assertion looks for a *new* `ai_ev_*` id, which a person would not
+ * produce — so the check fails loudly instead of quietly testing nothing.
+ */
+function fakeModel(): void {
+  setChatTransport(async () => ({ ok: true, text: CANNED_LIVE_REPLY }));
+}
+
 async function main() {
   backupPersisted();
   await container.resolve(GameInitialization).init();
@@ -143,6 +183,8 @@ async function main() {
   let actions = 0;
   let guard = 0;
   let midLifeSaved = false;
+  let inventedEventId: string | null = null;
+  let aiProbed = false;
   while (player.alive && player.age <= 100 && guard < 800) {
     guard++;
 
@@ -168,14 +210,29 @@ async function main() {
           traits: { warmth: -0.5, ambition: 0.9, stability: 0.1, sociability: 0.2 },
         },
       };
+      // The event half of the same path. It went unexercised for a different
+      // reason than the character half — nothing ever handed `genesis` a
+      // generated event — so the answer is put through the real parsers first,
+      // and what is restored is exactly what a live reply would have produced.
+      const draftedEvent = parseGeneratedEvent(CANNED_EVENT_REPLY);
+      check("a model answer parses into an event", draftedEvent !== null);
+      const inventedEvent = draftedEvent ? toEventDef(draftedEvent, player.age) : null;
+      check("…and survives the event schema", inventedEvent !== null);
+      inventedEventId = inventedEvent?.id ?? null;
+
       genesis.restore({
         npcs: [synthetic],
-        events: [],
+        events: inventedEvent ? [inventedEvent] : [],
         worldId: lm.getCurrentWorldId(),
         lastNpcAt: player.age,
         lastEventAt: -999,
       });
       genesis.registerPersisted(lm.getCurrentWorldId());
+      genesis.registerEventsInto(lm.current);
+      check(
+        "an invented event reaches the level's pool",
+        !!inventedEventId && !!lm.current.eventCenter.getIncidentById(inventedEventId),
+      );
       const reg = container.resolve(NpcRegistry);
       check("an invented character registers", reg.has("ai_npc_probe"));
       check(
@@ -210,7 +267,53 @@ async function main() {
         afterLoad.get("ai_npc_probe")?.traits().sociability === 0.2,
         `sociability ${afterLoad.get("ai_npc_probe")?.traits().sociability}`,
       );
+      check(
+        "an invented event survives a save round-trip",
+        !!inventedEventId &&
+          container
+            .resolve(GenesisService)
+            .snapshot()
+            .events.some((e) => e.id === inventedEventId),
+      );
       midLifeSaved = true;
+    }
+
+    // The AI path end to end, with the model faked: the real gate, the real
+    // prompt, the real parsers, the real registration. Nothing else runs it —
+    // a live call needs a key and a network, and for the opposite reason the
+    // unit suite cannot, because this needs a booted game.
+    if (
+      !aiProbed &&
+      guard >= 10 &&
+      player.alive &&
+      lm.hasActiveWorld() &&
+      !lm.getPendingChoice()
+    ) {
+      aiProbed = true;
+      const genesis = container.resolve(GenesisService);
+      const before = new Set(lm.current.eventCenter.getAllIncidentIds());
+
+      // Bank the arrival slot, so this year is due for an event rather than for
+      // a new person — and carry over whatever is already invented.
+      genesis.restore({ ...genesis.snapshot(), lastEventAt: -999 });
+
+      fakeModel();
+      await config.setDeepseekApiKey("probe-key");
+      await config.setMailFrequency("normal");
+      genesis.tickYear(player);
+      await genesis.whenIdle();
+      setChatTransport(null);
+      await config.setMailFrequency("off");
+
+      const invented = [...lm.current.eventCenter.getAllIncidentIds()].filter(
+        (id) => id.startsWith("ai_ev_") && !before.has(id),
+      );
+      if (invented[0]) inventedEventId = invented[0];
+      check(
+        "the model's answer becomes a real event in the pool (transport faked)",
+        invented.length === 1,
+        invented.join(",") || "none",
+      );
     }
 
     const pc = lm.getPendingChoice();
@@ -240,6 +343,7 @@ async function main() {
   check("actions were performed", actions > 0, `${actions}`);
   check("life reached old age or death", player.age >= 20, `age ${player.age}`);
   check("mid-life auto-save happened", midLifeSaved);
+  check("the AI path was exercised end to end", aiProbed);
   check("NPCs acted on their own", npcActed > 0, `${npcActed}`);
   check("an NPC offer was answered", npcOffers > 0, `${npcOffers}`);
   check("played an NPC interaction", npcInteractions > 0, `${npcInteractions}`);

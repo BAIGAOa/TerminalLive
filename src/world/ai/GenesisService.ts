@@ -8,7 +8,7 @@ import NpcSimulation from "../relationships/NpcSimulation.js";
 import type { Npc } from "../relationships/Npc.js";
 import type { NpcDefinition, NpcJson } from "../relationships/NpcDefinition.js";
 import MailService from "../mail/MailService.js";
-import { deepseekChat } from "../../core/ai/deepseek.js";
+import { chat } from "../../core/ai/transport.js";
 import { playerDossier } from "../playerDossier.js";
 import { npcMessages, plausibleRoles, eventMessages, type NpcPromptContext } from "./prompts.js";
 import { parseGeneratedNpc, toNpcDefinition } from "./generated.js";
@@ -99,7 +99,8 @@ export default class GenesisService {
   private lastEventAt = -999;
 
   private queue: Array<() => Promise<void>> = [];
-  private running = false;
+  /** The in-flight drain, or null when nothing is being generated. */
+  private running: Promise<void> | null = null;
 
   constructor() {
     this.config = inject(ConfigStore);
@@ -185,7 +186,7 @@ export default class GenesisService {
       mood: this.moodLine(player),
     };
 
-    const result = await deepseekChat(
+    const result = await chat(
       this.config.getDeepseekApiKey(),
       npcMessages(ctx),
       // Warmer than the mail: this is invention, not correspondence, and a
@@ -230,7 +231,7 @@ export default class GenesisService {
   /** One queued event: ask, validate into a definition, and add it to the pool. */
   private async inventEvent(player: Player): Promise<void> {
     const year = Math.floor(player.age);
-    const result = await deepseekChat(
+    const result = await chat(
       this.config.getDeepseekApiKey(),
       eventMessages({
         dossier: playerDossier(player),
@@ -352,8 +353,12 @@ export default class GenesisService {
    * `WorldEventLoader.registerEvent` builds a *new* incident each time — a
    * second registration of the same id would be a different instance, which
    * `EventCenter.add` rejects.
+   *
+   * Public because it pairs with {@link registerPersisted}: a harness that
+   * restores invented content by hand has to put it back into the pool too, and
+   * the event half has no `level:started` boundary to ride on.
    */
-  private registerEventsInto(world: World | null): void {
+  public registerEventsInto(world: World | null): void {
     if (!world) return;
     for (const def of this.events) {
       if (world.eventCenter.getIncidentById(def.id)) continue;
@@ -375,24 +380,33 @@ export default class GenesisService {
   private enqueue(task: () => Promise<void>): void {
     if (this.queue.length >= MAX_QUEUE) return;
     this.queue.push(task);
-    void this.drain();
+    // `??=`: a drain already in flight will pick this up as it loops, so there
+    // is never more than one.
+    this.running ??= this.drain().finally(() => {
+      this.running = null;
+    });
+  }
+
+  /**
+   * Resolve once nothing is in flight.
+   *
+   * Generation is fire-and-forget by design — a turn must never wait on the
+   * network — which leaves a harness with no way to tell when a year's arrival
+   * has actually landed. This is that signal, and it exists only for them.
+   */
+  public whenIdle(): Promise<void> {
+    return this.running ?? Promise.resolve();
   }
 
   private async drain(): Promise<void> {
-    if (this.running) return;
-    this.running = true;
-    try {
-      for (;;) {
-        const task = this.queue.shift();
-        if (!task) break;
-        try {
-          await task();
-        } catch (err) {
-          console.warn("[genesis] 任务失败:", err);
-        }
+    for (;;) {
+      const task = this.queue.shift();
+      if (!task) break;
+      try {
+        await task();
+      } catch (err) {
+        console.warn("[genesis] 任务失败:", err);
       }
-    } finally {
-      this.running = false;
     }
   }
 }

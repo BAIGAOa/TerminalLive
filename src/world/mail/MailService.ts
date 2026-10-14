@@ -26,7 +26,7 @@ import NpcRegistry from "../relationships/NpcRegistry.js";
 import RelationshipSystem from "../relationships/RelationshipSystem.js";
 import WorldManager from "../../worlds/WorldManager.js";
 import Player from "../Player.js";
-import { deepseekChat } from "../../core/ai/deepseek.js";
+import { chat } from "../../core/ai/transport.js";
 import { playerDossier } from "../playerDossier.js";
 import { buildPersona, type Persona } from "./persona.js";
 import {
@@ -426,7 +426,7 @@ export default class MailService {
       mayStaySilent: extra.mayStaySilent,
     };
 
-    const result = await deepseekChat(
+    const result = await chat(
       this.config.getDeepseekApiKey(),
       letterMessages(persona, ctx),
       // The persona's temperature is what makes a volatile character read

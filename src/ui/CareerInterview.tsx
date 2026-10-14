@@ -15,7 +15,7 @@ import {
   pitchTooShort,
   type Verdict,
 } from "../world/careers/interview.js";
-import { deepseekChat } from "../core/ai/deepseek.js";
+import { chat } from "../core/ai/transport.js";
 import { TextArea } from "./kit/index.js";
 
 type Phase = "pitch" | "waiting" | "verdict";
@@ -91,7 +91,7 @@ export default function CareerInterview({
       pitch,
       def.id,
     );
-    const result = await deepseekChat(key, messages);
+    const result = await chat(key, messages);
     if (!aliveRef.current) return;
 
     if (!result.ok) {
