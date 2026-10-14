@@ -35,16 +35,27 @@ export default function RegionView({
       .neighbors(sim.id)
       .map((id) => t(reg.getRegion(id)?.labelKey ?? id))
       .join(" · ");
+    // A collapsed region has its own word rather than reading as merely
+    // "declining" — `prosperityTier` itself stays as it is, because its cutoffs
+    // are load-bearing elsewhere.
+    const tierKey = sim.collapsed ? "region.tier.ruined" : prosperityTier(sim);
     lines.push(
       <Text key={sim.id} color={current ? "cyanBright" : "white"}>
         {current ? "◆ " : "  "}
-        {def ? t(def.labelKey) : sim.id} — <Text color="yellow">{t(prosperityTier(sim))}</Text>
+        {def ? t(def.labelKey) : sim.id} —{" "}
+        <Text color={sim.collapsed ? "red" : "yellow"}>{t(tierKey)}</Text>
       </Text>,
       <Text dimColor>
         {"    "}
         {t("region.prosperity")} {bar(sim.prosperity, 8)}
         {"  "}
         {t("region.stability")} {bar(sim.stability, 6)}
+      </Text>,
+      <Text dimColor>
+        {"    "}
+        {t("region.population")} {bar(sim.population, 8)}
+        {"  "}
+        {t("region.development")} {bar(sim.development, 6)}
       </Text>,
       neighbors ? (
         <Text key={`${sim.id}_n`} dimColor>

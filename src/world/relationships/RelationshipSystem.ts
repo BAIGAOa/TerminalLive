@@ -18,6 +18,8 @@ import WorldState from "../chronicle/WorldState.js";
 import TypedEventBus from "../../core/TypedEventBus.js";
 import RandomService from "../../core/random/RandomService.js";
 import NpcSimulation from "./NpcSimulation.js";
+import RegionsSystem from "../regions/RegionsSystem.js";
+import type { NpcRegion, NpcRegionView } from "../regions/npcRegion.js";
 import BuiltinPluginRegistry from "../../core/mod/BuiltinPlugin.js";
 
 /** Odds/limits for the once-a-year NPC agency pass. */
@@ -60,6 +62,7 @@ export default class RelationshipSystem {
   private random: RandomService;
   private sim: NpcSimulation;
   private builtins: BuiltinPluginRegistry;
+  private regions: RegionsSystem;
 
   private logSeq = 0;
   /** Offers awaiting an answer, so we can narrate the chosen outcome. */
@@ -74,6 +77,7 @@ export default class RelationshipSystem {
     this.random = inject(RandomService);
     this.sim = inject(NpcSimulation);
     this.builtins = inject(BuiltinPluginRegistry);
+    this.regions = inject(RegionsSystem);
 
     this.eventBus.on("choice:resolved", ({ incidentId, optionId }) => {
       const rec = this.pendingOffers.get(incidentId);
@@ -85,6 +89,38 @@ export default class RelationshipSystem {
   }
 
   // ── lookups ────────────────────────────────────────────────────
+  /**
+   * The region layer as the NPC simulation is allowed to see it: numbers,
+   * read-only, and tolerant of ids that are not regions at all — a save can
+   * carry one, and a lookup that throws would take the year down with it.
+   */
+  private regionView(): NpcRegionView {
+    const state = this.regions.getState();
+    const adjacency = this.regions.getAdjacency();
+    const asRegion = (id: string): NpcRegion | undefined => {
+      const sim = state.regions[id];
+      if (!sim) return undefined;
+      return {
+        id: sim.id,
+        prosperity: sim.prosperity,
+        stability: sim.stability,
+        population: sim.population,
+      };
+    };
+    return {
+      currentId: state.currentId,
+      of: (regionId) => (regionId ? asRegion(regionId) : undefined),
+      bestNeighbor: (regionId) => {
+        let best: NpcRegion | undefined;
+        for (const id of adjacency[regionId] ?? []) {
+          const r = asRegion(id);
+          if (r && (!best || r.prosperity > best.prosperity)) best = r;
+        }
+        return best;
+      },
+    };
+  }
+
   /** Whether the player knows this NPC at their current age. */
   public isKnown(npcId: string): boolean {
     const npc = this.registry.get(npcId);
@@ -230,7 +266,7 @@ export default class RelationshipSystem {
     // NPCs live their own lives first: age + life events (marriage, promotion,
     // illness, moving away, death) and archetype schemes. Only known faces are
     // narrated, and only their schemes can touch the player.
-    for (const ev of this.sim.tickYear(player)) {
+    for (const ev of this.sim.tickYear(player, this.regionView())) {
       if (!knownSet.has(ev.npcId)) continue;
       if (ev.kind === "scheme") {
         if (ev.logKey) this.log(ev.logKey);

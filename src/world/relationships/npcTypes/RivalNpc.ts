@@ -1,7 +1,8 @@
 import { Npc } from "../Npc.js";
 import type { NpcSchemeResult, NpcYearContext } from "../NpcScheme.js";
 import type { NpcSimEvent } from "../NpcState.js";
-import { chance, neighbors, pick } from "./schemeUtils.js";
+import { desperation } from "../../regions/npcRegion.js";
+import { chance, homeOf, neighbors, pick } from "./schemeUtils.js";
 
 /**
  * A rival. The darkest archetype: it sabotages other NPCs, and — once the
@@ -36,6 +37,25 @@ export class RivalNpc extends Npc {
     }
 
     if (!ctx.knowsPlayer(this.id)) return out;
+
+    // A region in turmoil has no oversight and a lot more desperate people in
+    // it. Predation gets likelier exactly where the world has stopped working.
+    const desperationNow = desperation(homeOf(ctx, this.id));
+    if (desperationNow > 0.5 && chance(ctx, 0.06 + desperationNow * 0.12)) {
+      return [
+        {
+          actorId: this.id,
+          actor: { wealth: 8 },
+          player: {
+            effects: { money: -180, happiness: -5, angerValue: 7 },
+            bond: { conflict: 14, trust: -12 },
+            toastKey: "npc.scheme.rival.desperation",
+          },
+          logKey: "npc.scheme.rival.desperation",
+        },
+      ];
+    }
+
     const aff = ctx.playerAffinity(this.id);
 
     // Blackmail: leverage over the player converts into money or pain.

@@ -1,4 +1,17 @@
+import type { NpcRegion } from "../../regions/npcRegion.js";
 import type { NpcPeer, NpcYearContext } from "../NpcScheme.js";
+
+/**
+ * The region an NPC lives in, or `undefined`.
+ *
+ * Always `undefined` when the context was built without a region view, and when
+ * the id is not a region this world has — so a scheme must treat it as "no
+ * region" rather than assuming one. That is what keeps every region-aware branch
+ * inert in the tests and in saves that predate regions.
+ */
+export function homeOf(ctx: NpcYearContext, npcId: string): NpcRegion | undefined {
+  return ctx.region?.(ctx.homeRegion?.(npcId) ?? null);
+}
 
 /** All living peers other than the actor. */
 export function alivePeers(ctx: NpcYearContext, actorId: string): NpcPeer[] {

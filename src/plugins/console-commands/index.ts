@@ -29,7 +29,7 @@ export const plugin: Plugin = {
   id,
   hooks: {
     onInit(ctx) {
-      const { random, director, worlds, config, events } = ctx.kernel;
+      const { random, director, worlds, config, events, regions } = ctx.kernel;
 
       ctx.addCommand({
         name: "random-state",
@@ -115,6 +115,33 @@ export const plugin: Plugin = {
             return;
           }
           c.print(c.t("console.cmd.forceEvent", { id: target }), "success");
+        },
+      });
+
+      ctx.addCommand({
+        name: "move-region",
+        summary: "repl.cmd.moveRegion",
+        usage: "move-region <id>",
+        // Only neighbours are offered: the engine refuses the rest anyway, and a
+        // completion list full of places you cannot reach is a lie.
+        complete: (args) =>
+          args.length > 0
+            ? []
+            : regions
+                .neighbors(regions.getState().currentId)
+                .map((id) => ({ value: id })),
+        run: (c) => {
+          const target = c.args[0];
+          if (!target) {
+            c.print(c.t("console.cmd.moveRegionUsage"), "error");
+            return;
+          }
+          const events = regions.tryMove(worlds.getPlayer(), target);
+          if (events[0]?.kind === "region.unreachable") {
+            c.print(c.t("console.cmd.moveRegionUnreachable", { id: target }), "error");
+            return;
+          }
+          c.print(c.t("console.cmd.moveRegion", { id: target }), "success");
         },
       });
 

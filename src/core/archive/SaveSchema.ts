@@ -364,6 +364,10 @@ export const saveDataSchema = z.object({
             population: z.number().default(50),
             stability: z.number().default(50),
             development: z.number().default(30),
+            // Optional rather than defaulted: absent in saves written before
+            // regions could collapse, and the engine reads it as `=== true`, so
+            // "not there" and `false` already mean the same thing.
+            collapsed: z.boolean().optional(),
           }),
         )
         .default({}),

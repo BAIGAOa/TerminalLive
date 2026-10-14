@@ -1,6 +1,7 @@
 import { Npc } from "../Npc.js";
 import type { NpcSchemeResult, NpcYearContext } from "../NpcScheme.js";
-import { chance, neighbors, pick } from "./schemeUtils.js";
+import { emigrationPressure, regionDisposition } from "../../regions/npcRegion.js";
+import { chance, homeOf, neighbors, pick } from "./schemeUtils.js";
 
 /**
  * Kin. Beyond the role's quiet care autonomies, family NPCs can fall out over
@@ -11,6 +12,32 @@ export class FamilyNpc extends Npc {
     const out: NpcSchemeResult[] = [];
     const kin = neighbors(ctx, this.id);
     if (kin.length === 0) return out;
+
+    // When home stops being habitable the family scatters — the exact thing a
+    // collapsing region should mean to the people living in it. Inert with no
+    // region view, or somewhere merely ordinary.
+    const home = homeOf(ctx, this.id);
+    if (
+      regionDisposition(home) === "bust" &&
+      chance(ctx, 0.08 + emigrationPressure(home) * 0.12)
+    ) {
+      return [
+        {
+          actorId: this.id,
+          targetId: kin[0].npc.id,
+          actor: { moved: true, mood: -6, wealth: -8 },
+          target: { moved: true, mood: -8 },
+          player: ctx.knowsPlayer(this.id)
+            ? {
+                effects: { happiness: -3 },
+                bond: { conflict: 6, trust: -4 },
+                toastKey: "npc.scheme.family.emigrate",
+              }
+            : undefined,
+          logKey: "npc.scheme.family.emigrate",
+        },
+      ];
+    }
 
     // Inheritance dispute: an ageing relative's estate invites a scramble.
     const elder = pick(

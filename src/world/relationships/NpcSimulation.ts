@@ -3,6 +3,14 @@ import NpcRegistry from "./NpcRegistry.js";
 import RandomService from "../../core/random/RandomService.js";
 import WorldRuleEngine from "../rules/WorldRuleEngine.js";
 import type { Npc } from "./Npc.js";
+import {
+  homeMoodDrift,
+  homeWealthDrift,
+  migrateMultiplier,
+  returnMultiplier,
+  type NpcRegion,
+  type NpcRegionView,
+} from "../regions/npcRegion.js";
 import { clamp, DEFAULT_TRAITS, goalsFor, stageOf } from "./NpcTraits.js";
 import type {
   EdgeKind,
@@ -310,25 +318,40 @@ export default class NpcSimulation {
   }
 
   // ── the yearly tick ────────────────────────────────────────────
-  public tickYear(player?: NpcPlayerRef): NpcSimEvent[] {
+  public tickYear(player?: NpcPlayerRef, regions?: NpcRegionView): NpcSimEvent[] {
     const events: NpcSimEvent[] = [];
     for (const [npcId, life] of this.lives) {
       if (!life.alive) continue;
+      // Where somebody lives, decided once. Derived from the view rather than
+      // drawn from the RNG: one extra draw would shift every later roll and
+      // break the seeded replay the dev harnesses depend on.
+      if (life.homeRegion == null && regions) life.homeRegion = regions.currentId;
+      const home = this.homeOf(life, regions);
       const t = this.getTraits(npcId);
       this.ageOne(npcId, life, events);
       if (!life.alive) continue;
-      this.driftStats(life, t);
+      this.driftStats(life, t, home);
       this.career(npcId, life, t, events);
       this.healthPass(npcId, life, t, events);
-      this.lifeGoals(npcId, life, t, events);
+      this.lifeGoals(npcId, life, t, events, home, regions);
     }
     this.socialPass(events);
     // The life events collected so far are what peers may *react* to.
     const lifeEvents = events.slice();
-    this.schemePass(player, events);
-    this.reactions(lifeEvents, player, events);
+    this.schemePass(player, regions, events);
+    this.reactions(lifeEvents, player, regions, events);
     this.playerCoupling(events);
     return events;
+  }
+
+  /**
+   * An NPC's home region — `undefined` when there is no view, and when the id is
+   * not a region this world has. Callers must treat `undefined` as "no region",
+   * so a save carrying a stale id stays inert instead of throwing.
+   */
+  private homeOf(life: NpcLife, regions?: NpcRegionView): NpcRegion | undefined {
+    if (!regions) return undefined;
+    return regions.of(life.homeRegion ?? regions.currentId);
   }
 
   /** Age, stage transitions, and old-age mortality. */
@@ -349,15 +372,27 @@ export default class NpcSimulation {
     }
   }
 
-  /** Personality-scaled drift of health / wealth / mood. */
-  private driftStats(life: NpcLife, t: NpcTraits): void {
+  /** Personality-scaled drift of health / wealth / mood, plus the home region. */
+  private driftStats(life: NpcLife, t: NpcTraits, home?: NpcRegion): void {
     const elder = life.stage === "elder" ? 1 : 0;
     life.health = clamp(life.health - 0.4 - elder * 1.2 + t.stability * 0.5, 0, 100);
     const careerPull = life.careerTier * 0.5;
-    life.wealth = clamp(life.wealth + t.ambition * 0.8 + careerPull - 0.5, 0, 100);
+    // Where you live is worth something: a thriving region makes a person
+    // richer and steadier, a ruined one grinds them down. No draws — this is
+    // a function of state, so the NPC random stream is untouched.
+    life.wealth = clamp(
+      life.wealth + t.ambition * 0.8 + careerPull - 0.5 + homeWealthDrift(home),
+      0,
+      100,
+    );
     const attach = life.partnerId ? 0.6 : 0;
     life.mood = clamp(
-      life.mood + t.warmth * 0.4 + attach + (life.health - 55) / 60 - (life.moved ? 0.8 : 0),
+      life.mood +
+        t.warmth * 0.4 +
+        attach +
+        (life.health - 55) / 60 -
+        (life.moved ? 0.8 : 0) +
+        homeMoodDrift(home),
       0,
       100,
     );
@@ -400,12 +435,29 @@ export default class NpcSimulation {
   }
 
   /** Love, family and migration — the goals each NPC is chasing. */
-  private lifeGoals(npcId: string, life: NpcLife, t: NpcTraits, events: NpcSimEvent[]): void {
-    // Moving away / returning, driven by ambition (opportunity) and restlessness.
-    if (!life.moved && life.stage === "adult" && this.chance(0.015 * (0.5 + t.ambition))) {
+  private lifeGoals(
+    npcId: string,
+    life: NpcLife,
+    t: NpcTraits,
+    events: NpcSimEvent[],
+    home?: NpcRegion,
+    regions?: NpcRegionView,
+  ): void {
+    // Moving away / returning, driven by ambition (opportunity) and restlessness
+    // — and now by what the home region has become. Both multipliers are exactly
+    // 1 with no region view, or for a region merely getting by, so this is the
+    // same rule it always was until a place actually fails.
+    if (
+      !life.moved &&
+      life.stage === "adult" &&
+      this.chance(0.015 * (0.5 + t.ambition) * migrateMultiplier(home))
+    ) {
       life.moved = true;
+      // They go somewhere better, if there is somewhere better to go.
+      const better = regions?.bestNeighbor(life.homeRegion ?? "");
+      if (better) life.homeRegion = better.id;
       events.push({ npcId, kind: "moved" });
-    } else if (life.moved && this.chance(0.05)) {
+    } else if (life.moved && this.chance(0.05 * returnMultiplier(home))) {
       life.moved = false;
       events.push({ npcId, kind: "returned" });
     }
@@ -485,7 +537,10 @@ export default class NpcSimulation {
 
   // ── behaviour: NPC↔NPC / NPC→player schemes ───────────────────
   /** A read-only world view handed to each archetype's scheme hooks. */
-  private makeContext(player: NpcPlayerRef | undefined): NpcYearContext {
+  private makeContext(
+    player: NpcPlayerRef | undefined,
+    regions?: NpcRegionView,
+  ): NpcYearContext {
     const playerAge = player?.age ?? 0;
     const peers: NpcPeer[] = [];
     for (const [id, life] of this.lives) {
@@ -502,12 +557,20 @@ export default class NpcSimulation {
       bond: (id) => this.bond(id),
       playerAffinity: (id) => player?.getRelationship(id) ?? 0,
       knowsPlayer: (id) => this.registry.get(id)?.knowsAt(playerAge) ?? false,
+      // Read-only, numbers only: an archetype may look at a region, never move
+      // one. Absent when there is no view, so every branch must guard for it.
+      region: (regionId) => regions?.of(regionId),
+      homeRegion: (npcId) => this.lives.get(npcId)?.homeRegion ?? null,
     };
   }
 
   /** Every living archetype gets a chance to scheme against a peer/player. */
-  private schemePass(player: NpcPlayerRef | undefined, out: NpcSimEvent[]): void {
-    const ctx = this.makeContext(player);
+  private schemePass(
+    player: NpcPlayerRef | undefined,
+    regions: NpcRegionView | undefined,
+    out: NpcSimEvent[],
+  ): void {
+    const ctx = this.makeContext(player, regions);
     for (const [id, life] of this.lives) {
       if (!life.alive) continue;
       const npc = this.registry.get(id);
@@ -533,10 +596,11 @@ export default class NpcSimulation {
   private reactions(
     causes: NpcSimEvent[],
     player: NpcPlayerRef | undefined,
+    regions: NpcRegionView | undefined,
     out: NpcSimEvent[],
   ): void {
     if (causes.length === 0) return;
-    const ctx = this.makeContext(player);
+    const ctx = this.makeContext(player, regions);
     for (const cause of causes) {
       if (cause.kind === "scheme" || cause.kind === "died") continue;
       for (const { npcId } of this.neighbors(cause.npcId)) {
@@ -581,6 +645,7 @@ export default class NpcSimulation {
     if (d.alive !== undefined) life.alive = d.alive;
     if (d.moved !== undefined) life.moved = d.moved;
     if (d.partnerId !== undefined) life.partnerId = d.partnerId;
+    if (d.homeRegion !== undefined) life.homeRegion = d.homeRegion;
     if (d.flags) {
       for (const f of d.flags) if (!life.flags.includes(f)) life.flags.push(f);
     }

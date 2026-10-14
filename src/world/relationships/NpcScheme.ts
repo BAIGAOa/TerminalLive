@@ -1,4 +1,5 @@
 import type { RandomSource } from "../../core/random/RandomSource.js";
+import type { NpcRegion } from "../regions/npcRegion.js";
 import type { Npc } from "./Npc.js";
 import type {
   NpcBond,
@@ -25,6 +26,11 @@ export interface NpcLifeDelta {
   moved?: boolean;
   partnerId?: string | null;
   flags?: string[];
+  /**
+   * Where they live now. A scheme that makes somebody leave — or settles them
+   * somewhere better — moves them by setting this.
+   */
+  homeRegion?: string | null;
 }
 
 export interface NpcEdgeDelta {
@@ -74,4 +80,14 @@ export interface NpcYearContext {
   playerAffinity(npcId: string): number;
   /** Whether the player knows this NPC at the current age. */
   knowsPlayer(npcId: string): boolean;
+  /**
+   * A region's condition, read-only — numbers, never the system.
+   *
+   * Optional, and it can return `undefined` for an id this world does not have,
+   * so every branch must treat "no answer" as "no region". Absent entirely on a
+   * context built without a region view.
+   */
+  region?(regionId: string | null | undefined): NpcRegion | undefined;
+  /** Which region an NPC belongs to, or `null` if they have not been placed. */
+  homeRegion?(npcId: string): string | null;
 }

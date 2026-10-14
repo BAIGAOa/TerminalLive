@@ -1,5 +1,6 @@
 import { KarmaDelta } from "./karma.js";
 import { Climate } from "../weather/WeatherDefinition.js";
+import type { RegionCharacter } from "../regions/regionEngine.js";
 
 /** A place the player is born into; colours the life with a starting tone. */
 export interface RegionDefinition {
@@ -21,4 +22,11 @@ export interface RegionDefinition {
   climate?: Climate;
   /** Adjacent region ids (the world's textual "map"). */
   neighbors?: string[];
+  /**
+   * Fixed economic character, overriding what the id derives.
+   *
+   * Optional because the id already guarantees a *distinct* region — this is for
+   * a world that wants a specific place to have a specific fate.
+   */
+  character?: Partial<RegionCharacter>;
 }
